@@ -1,0 +1,37 @@
+@import "tailwindcss";
+
+/* Tokens de marca: ver docs/guia-de-estilo.md. Nunca escribas un hex dentro de un componente. */
+@theme {
+  --color-pico-azul: #17225a;
+  --color-pico-azul-oscuro: #0f1740;
+  --color-pico-azul-claro: #e8eaf3;
+  --color-pico-rojo: #a90504;
+  --color-pico-rojo-oscuro: #850403;
+  --color-pico-blanco: #ffffff;
+  --color-gris-fondo: #f4f5f8;
+  --color-gris-borde: #e2e4ea;
+  --color-gris-texto: #5b6070;
+  --color-texto: #1a1d29;
+
+  --font-sans: var(--font-inter), system-ui, sans-serif;
+
+  --radius-tarjeta: 12px;
+  --radius-boton: 8px;
+  --radius-banner: 16px;
+  --radius-chip: 9999px;
+
+  --shadow-tarjeta: 0 1px 3px rgb(23 34 90 / 0.08);
+  --shadow-tarjeta-hover: 0 8px 24px rgb(23 34 90 / 0.14);
+}
+
+body {
+  @apply bg-gris-fondo text-texto font-sans antialiased;
+}
+
+/* Filas con desplazamiento horizontal (carruseles, barra de categorías) sin barra visible. */
+@utility sin-scrollbar {
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
