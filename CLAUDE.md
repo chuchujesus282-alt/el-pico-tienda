@@ -5,6 +5,7 @@ Dos personas trabajan en paralelo, cada una con su propia sesión de Claude Code
 
 Guía visual completa: @docs/guia-de-estilo.md
 Contrato de datos de productos: @docs/datos.md
+Next.js 16 (APIs distintas a las que conoces; consulta `node_modules/next/dist/docs/`): @AGENTS.md
 
 ## Fase actual del proyecto
 - Fase 1: catálogo por categorías con precios. El carrito NO cobra: arma un mensaje y redirige a WhatsApp para cerrar la venta.
@@ -14,6 +15,7 @@ Contrato de datos de productos: @docs/datos.md
 - `npm run dev` — servidor local en http://localhost:3000
 - `npm run build` — debe pasar sin errores antes de cada commit
 - `npm run lint` — debe pasar sin errores antes de cada commit
+- No hay pruebas automatizadas; `lint` + `build` (que también chequea tipos) son la verificación.
 
 ## Estructura
 - `app/page.tsx` — página principal (responsable: persona A)
@@ -28,6 +30,16 @@ Contrato de datos de productos: @docs/datos.md
 - `lib/mock/` — datos de prueba mientras el servidor no esté conectado
 - `types/` — tipos compartidos (Producto, Categoria, Banner)
 - `public/banners/`, `public/marcas/` — imágenes propias
+- `components/carrito/` — carrito (COMPARTIDO); `lib/whatsapp.ts` arma el mensaje del pedido, `lib/formato.ts` formatea precios
+- `app/muestra/` — vitrina TEMPORAL de los componentes compartidos (`/muestra`); útil para revisarlos
+
+## Arquitectura
+- `lib/catalogo.ts` importa `server-only`: solo se usa en Server Components. Los componentes cliente (`"use client"`) reciben los productos por props.
+- Sin `CATALOGO_API_URL`, `lib/catalogo.ts` responde con `lib/mock/`; con ella, consulta la API con `revalidate: 300`. Toda función nueva de datos debe cubrir ambos caminos.
+- Next 16: `params` es una `Promise` (`const { slug } = await params`) y las páginas se tipan con los helpers globales `PageProps<"/ruta">` / `LayoutProps<"/">`.
+- Carrito: `ProveedorCarrito` envuelve todo en `app/layout.tsx` y renderiza `PanelCarrito`. El estado vive en `localStorage` (clave `el-pico:carrito`) vía `useSyncExternalStore` en `almacenCarrito.ts`, sincronizado entre pestañas. Desde componentes cliente usa el hook `useCarrito()`.
+- Precios en USD como `number`; para mostrarlos, `Precio` (o `formatearPrecio` en texto plano, ej. el mensaje de WhatsApp).
+- Imágenes remotas: cuando la API entregue URLs, agrega el dominio a `images.remotePatterns` en `next.config.ts`.
 
 ## Reglas de diseño (obligatorias)
 - Colores: usa SOLO los tokens de `app/globals.css` (`bg-pico-azul`, `text-pico-rojo`, etc.). Nunca escribas un color hex dentro de un componente.
