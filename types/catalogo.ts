@@ -8,6 +8,7 @@ export type Producto = {
   imagen: string | null; // URL absoluta o null
   categoriaSlug: string;
   subcategoria: string | null;
+  descripcion?: string | null; // texto largo para la página de producto; llegará de la base de datos
 };
 
 export type Categoria = {
