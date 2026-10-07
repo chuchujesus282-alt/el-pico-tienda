@@ -7,11 +7,10 @@ export default function CargandoCategoria() {
     <Contenedor className="py-6 md:py-8">
       <div className="animate-pulse" aria-hidden>
         <div className="h-4 w-40 rounded bg-gris-borde" />
-        <div className="mt-4 h-32 rounded-banner bg-gris-borde md:h-44 lg:h-52" />
-        <div className="mt-8 mb-4 h-7 w-56 rounded bg-gris-borde md:mt-12" />
+        <div className="mt-4 h-36 rounded-banner bg-gris-borde md:h-48" />
       </div>
-      <div className="lg:grid lg:grid-cols-[15rem_1fr] lg:gap-6">
-        <div className="hidden h-80 animate-pulse rounded-tarjeta bg-gris-borde lg:block" aria-hidden />
+      <div className="mt-6 md:mt-10 lg:grid lg:grid-cols-[15rem_minmax(0,1fr)] lg:gap-8">
+        <div className="hidden h-80 animate-pulse rounded-banner bg-gris-borde lg:block" aria-hidden />
         <div>
           <div className="mb-4 flex justify-end">
             <div className="h-10 w-48 animate-pulse rounded-boton bg-gris-borde" aria-hidden />

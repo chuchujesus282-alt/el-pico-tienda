@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ChevronRight } from "lucide-react";
+import { ChevronRight, House } from "lucide-react";
 
 type Props = {
   actual: string;
@@ -11,7 +11,8 @@ export default function Breadcrumb({ actual }: Props) {
     <nav aria-label="Ruta de navegación" className="text-[13px] text-gris-texto">
       <ol className="flex flex-wrap items-center gap-1">
         <li>
-          <Link href="/" className="hover:text-pico-azul hover:underline">
+          <Link href="/" className="inline-flex items-center gap-1 hover:text-logo-marino hover:underline">
+            <House className="size-3.5" aria-hidden />
             Inicio
           </Link>
         </li>

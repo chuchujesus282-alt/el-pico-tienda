@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Check, RotateCcw } from "lucide-react";
 import { type EstadoCategoria, hrefCategoria } from "./rutas";
 
 type Props = {
@@ -13,7 +14,7 @@ type Opcion = { etiqueta: string; href: string; activa: boolean };
 function GrupoFiltro({ titulo, opciones }: { titulo: string; opciones: Opcion[] }) {
   return (
     <fieldset>
-      <legend className="mb-2 text-sm font-bold text-pico-azul">{titulo}</legend>
+      <legend className="mb-2 font-titulo text-xs font-bold tracking-[0.18em] text-logo-marino uppercase">{titulo}</legend>
       <ul className="space-y-1">
         {opciones.map((opcion) => (
           <li key={opcion.etiqueta}>
@@ -21,13 +22,20 @@ function GrupoFiltro({ titulo, opciones }: { titulo: string; opciones: Opcion[] 
               href={opcion.href}
               scroll={false}
               aria-current={opcion.activa ? "true" : undefined}
-              className={`block rounded-boton px-3 py-2 text-sm transition-colors ${
+              className={`group relative flex items-center gap-2 overflow-hidden rounded-boton py-2 pr-3 pl-4 text-sm transition duration-200 ${
                 opcion.activa
-                  ? "bg-pico-azul-claro font-semibold text-pico-azul"
-                  : "text-texto hover:bg-gris-fondo hover:text-pico-azul"
+                  ? "bg-logo-marino-claro font-semibold text-logo-marino"
+                  : "text-texto hover:bg-gris-fondo hover:text-logo-marino"
               }`}
             >
-              {opcion.etiqueta}
+              <span
+                className={`absolute inset-y-1.5 left-0 w-1 rounded-chip bg-logo-rojo transition-transform duration-200 ${
+                  opcion.activa ? "scale-y-100" : "scale-y-0 group-hover:scale-y-50"
+                }`}
+                aria-hidden
+              />
+              <span className="transition-transform duration-200 motion-safe:group-hover:translate-x-0.5">{opcion.etiqueta}</span>
+              {opcion.activa && <Check className="ml-auto size-4 shrink-0 motion-safe:animate-latido" aria-hidden />}
             </Link>
           </li>
         ))}
@@ -59,8 +67,9 @@ export default function FiltrosCategoria({ slug, estado, subcategorias, marcas }
         <Link
           href={hrefCategoria(slug, estado, { marca: undefined, subcategoria: undefined })}
           scroll={false}
-          className="inline-block text-sm font-semibold text-pico-rojo hover:underline"
+          className="group inline-flex items-center gap-1.5 text-sm font-semibold text-logo-rojo hover:underline"
         >
+          <RotateCcw className="size-3.5 transition-transform duration-300 motion-safe:group-hover:-rotate-180" aria-hidden />
           Limpiar filtros
         </Link>
       )}

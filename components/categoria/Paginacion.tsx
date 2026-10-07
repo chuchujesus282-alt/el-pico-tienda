@@ -17,7 +17,8 @@ function paginasVisibles(actual: number, total: number): (number | "…")[] {
 }
 
 const base =
-  "inline-flex h-10 min-w-10 items-center justify-center rounded-boton px-3 text-sm font-semibold transition-colors";
+  "group inline-flex h-10 min-w-10 items-center justify-center gap-1 rounded-boton px-3 font-titulo text-sm font-semibold transition duration-200 motion-safe:hover:-translate-y-0.5";
+const flecha = "text-logo-marino hover:bg-logo-marino-claro";
 
 export default function Paginacion({ slug, estado, totalPaginas }: Props) {
   if (totalPaginas <= 1) return null;
@@ -27,8 +28,8 @@ export default function Paginacion({ slug, estado, totalPaginas }: Props) {
   return (
     <nav aria-label="Paginación" className="flex flex-wrap items-center justify-center gap-2">
       {actual > 1 && (
-        <Link href={enlace(actual - 1)} className={`${base} text-pico-azul hover:bg-pico-azul-claro`}>
-          <ChevronLeft className="size-4" aria-hidden />
+        <Link href={enlace(actual - 1)} className={`${base} ${flecha}`}>
+          <ChevronLeft className="size-4 transition-transform motion-safe:group-hover:-translate-x-0.5" aria-hidden />
           <span className="hidden sm:inline">Anterior</span>
           <span className="sr-only sm:hidden">Página anterior</span>
         </Link>
@@ -46,8 +47,8 @@ export default function Paginacion({ slug, estado, totalPaginas }: Props) {
             aria-label={`Página ${pagina}`}
             className={`${base} ${
               pagina === actual
-                ? "bg-pico-azul text-pico-blanco"
-                : "border border-gris-borde bg-pico-blanco text-pico-azul hover:bg-pico-azul-claro"
+                ? "bg-logo-marino text-pico-blanco shadow-boton-hover"
+                : "border-2 border-gris-borde bg-pico-blanco text-logo-marino hover:border-logo-marino hover:shadow-tarjeta"
             }`}
           >
             {pagina}
@@ -55,10 +56,10 @@ export default function Paginacion({ slug, estado, totalPaginas }: Props) {
         ),
       )}
       {actual < totalPaginas && (
-        <Link href={enlace(actual + 1)} className={`${base} text-pico-azul hover:bg-pico-azul-claro`}>
+        <Link href={enlace(actual + 1)} className={`${base} ${flecha}`}>
           <span className="hidden sm:inline">Siguiente</span>
           <span className="sr-only sm:hidden">Página siguiente</span>
-          <ChevronRight className="size-4" aria-hidden />
+          <ChevronRight className="size-4 transition-transform motion-safe:group-hover:translate-x-0.5" aria-hidden />
         </Link>
       )}
     </nav>
