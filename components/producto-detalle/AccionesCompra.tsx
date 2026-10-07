@@ -7,6 +7,7 @@ import { useCarrito } from "@/components/carrito/ProveedorCarrito";
 import Precio from "@/components/ui/Precio";
 import { armarMensajePedido, enlaceWhatsApp } from "@/lib/whatsapp";
 import type { Producto } from "@/types/catalogo";
+import { fuentePaginas } from "./fuentes";
 
 const sinSuscripcion = () => () => {};
 const CANTIDAD_MAXIMA = 999;
@@ -151,7 +152,7 @@ export default function AccionesCompra({ producto }: { producto: Producto }) {
       {/* Barra fija en móvil. Portal al <body>: la animación de entrada de la columna haría que "fixed" quede encerrado en ella. */}
       {montado && createPortal(
       <div
-        className={`fixed inset-x-0 bottom-0 z-40 border-t border-gris-borde bg-pico-blanco/95 px-4 pt-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))] shadow-tarjeta-hover backdrop-blur transition-transform duration-300 md:hidden ${
+        className={`${fuentePaginas} fixed inset-x-0 bottom-0 z-40 border-t border-gris-borde bg-pico-blanco/95 px-4 pt-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))] shadow-tarjeta-hover backdrop-blur transition-transform duration-300 md:hidden ${
           barraVisible ? "translate-y-0" : "translate-y-full"
         }`}
         inert={!barraVisible}
