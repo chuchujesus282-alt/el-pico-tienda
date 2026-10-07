@@ -3,7 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 import FormularioPedido from "@/components/finalizar-pedido/FormularioPedido";
-import { chakra } from "@/components/producto-detalle/fuentes";
+import { fuentePaginas } from "@/components/producto-detalle/fuentes";
 import Contenedor from "@/components/ui/Contenedor";
 import { getProducto } from "@/lib/catalogo";
 import { getDireccionesCliente } from "@/lib/cliente";
@@ -34,7 +34,7 @@ export default async function PaginaFinalizarPedido({ searchParams }: PageProps<
   const direcciones = await getDireccionesCliente();
 
   return (
-    <div className={chakra.variable}>
+    <div className={fuentePaginas}>
       <Contenedor className="py-6 md:py-8">
         <Link
           href={id ? `/producto/${encodeURIComponent(id)}` : "/"}
