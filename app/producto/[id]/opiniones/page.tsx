@@ -5,7 +5,7 @@ import { ArrowLeft } from "lucide-react";
 import PanelOpiniones from "@/components/opiniones/PanelOpiniones";
 import { fuentePaginas } from "@/components/producto-detalle/fuentes";
 import RutaProducto from "@/components/producto-detalle/RutaProducto";
-import { tituloProducto } from "@/components/producto-detalle/tituloProducto";
+import { tituloProducto } from "@/lib/formato";
 import ImagenProducto from "@/components/producto/ImagenProducto";
 import Contenedor from "@/components/ui/Contenedor";
 import Precio from "@/components/ui/Precio";

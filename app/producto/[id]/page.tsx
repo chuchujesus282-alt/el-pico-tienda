@@ -8,11 +8,11 @@ import CodigoCompartir from "@/components/producto-detalle/CodigoCompartir";
 import { fuentePaginas } from "@/components/producto-detalle/fuentes";
 import GaleriaZoom from "@/components/producto-detalle/GaleriaZoom";
 import RutaProducto from "@/components/producto-detalle/RutaProducto";
-import { tituloProducto } from "@/components/producto-detalle/tituloProducto";
 import CarruselProductos from "@/components/producto/CarruselProductos";
 import Contenedor from "@/components/ui/Contenedor";
 import Precio from "@/components/ui/Precio";
 import { getCategorias, getProducto, getProductosPorCategoria } from "@/lib/catalogo";
+import { tituloProducto } from "@/lib/formato";
 import { getOpiniones } from "@/lib/opiniones";
 import type { Categoria, Producto } from "@/types/catalogo";
 
