@@ -9,14 +9,15 @@ import GaleriaZoom from "@/components/producto-detalle/GaleriaZoom";
 import ResumenEstrellas from "@/components/producto-detalle/ResumenEstrellas";
 import RutaProducto from "@/components/producto-detalle/RutaProducto";
 import SeccionCalificaciones from "@/components/producto-detalle/SeccionCalificaciones";
-import CarruselProductos from "@/components/producto/CarruselProductos";
+import ProductosRelacionados from "@/components/recomendaciones/ProductosRelacionados";
+import RegistrarSenal from "@/components/recomendaciones/RegistrarSenal";
 import Contenedor from "@/components/ui/Contenedor";
 import Precio from "@/components/ui/Precio";
-import { getCategorias, getProducto, getProductosPorCategoria } from "@/lib/catalogo";
+import { getCategorias, getProducto } from "@/lib/catalogo";
 import { tituloProducto } from "@/lib/formato";
 import { getOpiniones } from "@/lib/opiniones";
 import { resumirOpiniones } from "@/lib/resumirOpiniones";
-import type { Categoria, Producto } from "@/types/catalogo";
+import type { Categoria } from "@/types/catalogo";
 
 // Página de producto — responsable: persona B (rama `producto`).
 // Si el catálogo falla al buscar el producto, el error llega a error.tsx; mientras carga se muestra loading.tsx.
@@ -26,15 +27,6 @@ async function buscarCategoria(slug: string): Promise<Categoria | null> {
     return (await getCategorias()).find((c) => c.slug === slug) ?? null;
   } catch {
     return null; // sin la categoría la página igual funciona (la ruta muestra solo Inicio)
-  }
-}
-
-async function buscarRelacionados(producto: Producto): Promise<Producto[]> {
-  try {
-    const { productos } = await getProductosPorCategoria(producto.categoriaSlug, { porPagina: 11 });
-    return productos.filter((p) => p.id !== producto.id).slice(0, 10);
-  } catch {
-    return [];
   }
 }
 
@@ -53,9 +45,8 @@ export default async function PaginaProducto({ params }: PageProps<"/producto/[i
   const producto = await getProducto(id);
   if (!producto) notFound();
 
-  const [categoria, relacionados, opiniones] = await Promise.all([
+  const [categoria, opiniones] = await Promise.all([
     buscarCategoria(producto.categoriaSlug),
-    buscarRelacionados(producto),
     getOpiniones(producto.id).catch(() => []),
   ]);
   const titulo = tituloProducto(producto);
@@ -120,12 +111,13 @@ export default async function PaginaProducto({ params }: PageProps<"/producto/[i
 
         <SeccionCalificaciones resumen={resumen} className="mt-10 md:mt-14" />
 
-        <CarruselProductos
-          titulo="También te puede interesar"
-          productos={relacionados}
+        {/* "También te puede servir": complementarios + similares (lib/recomendaciones/). */}
+        <ProductosRelacionados
+          producto={producto}
           href={categoria ? `/categoria/${categoria.slug}` : undefined}
           className="mt-10 md:mt-14"
         />
+        <RegistrarSenal senales={[{ tipo: "visto", id: producto.id }]} />
       </Contenedor>
     </div>
   );

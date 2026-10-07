@@ -1,0 +1,33 @@
+{
+  "_instrucciones": "A la izquierda, un tipo de producto; a la derecha, lo que el cliente suele necesitar con él. El tipo es como empieza el nombre del producto (\"cemento\" sirve para \"CEMENTO GRIS SACO 42.5KG\"). Puedes usar sinónimos y plurales. Para agregar una línea, cópiala y cámbiala; separa con comas.",
+  "complementos": {
+    "cemento": ["llana", "pala", "cuchara de albanil", "balde", "carretilla", "guantes"],
+    "pego": ["llana", "balde", "cuchara de albanil"],
+    "bloque": ["cemento", "cabilla", "cuchara de albanil"],
+    "cabilla": ["cemento", "alambre", "segueta"],
+    "tornillo": ["ramplug", "broca", "destornillador"],
+    "ramplug": ["tornillo", "broca"],
+    "clavo": ["martillo"],
+    "perno": ["llave ajustable", "broca"],
+    "taladro": ["broca", "ramplug", "tornillo", "lentes de seguridad"],
+    "broca": ["taladro", "ramplug", "tornillo"],
+    "pintura": ["brocha", "rodillo", "bandeja", "cinta de papel", "lija"],
+    "esmalte": ["brocha", "rodillo", "cinta de papel", "thinner"],
+    "impermeabilizante": ["brocha", "rodillo", "guantes"],
+    "rodillo": ["bandeja", "pintura"],
+    "brocha": ["pintura", "cinta de papel"],
+    "tubo pvc": ["codo", "pegamento pvc", "teflon", "segueta"],
+    "codo": ["tubo pvc", "pegamento pvc", "teflon"],
+    "valvula": ["teflon", "tubo pvc"],
+    "grifo": ["manguera flexible", "teflon"],
+    "niple": ["teflon", "llave ajustable"],
+    "cable": ["cinta aislante", "tomacorriente", "breaker"],
+    "tomacorriente": ["cable", "cinta aislante", "destornillador"],
+    "breaker": ["cable", "cinta aislante"],
+    "bombillo": ["tomacorriente", "extension"],
+    "esmeril": ["disco", "lentes de seguridad", "guantes"],
+    "manguera jardin": ["aspersor"],
+    "pala": ["carretilla", "guantes"],
+    "aceite motor": ["guantes"]
+  }
+}
