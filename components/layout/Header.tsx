@@ -4,13 +4,13 @@ import BotonCarrito from "./BotonCarrito";
 import Logo from "./Logo";
 
 /**
- * Header blanco: el logo manda a la izquierda, el buscador es la pieza central (borde azul de
- * marca) y a la derecha "Mi cuenta" y el carrito con su texto. En móvil el buscador baja a una
- * segunda fila.
+ * Header blanco: el logo (las montañas del rebranding) a la izquierda, el buscador como pieza
+ * central (borde azul de marca) y a la derecha "Mi cuenta" y el carrito con su texto. En móvil
+ * el buscador baja a una segunda fila.
  */
 export default function Header() {
   return (
-    <header className="bg-pico-blanco">
+    <header className="relative z-10 border-b border-gris-borde bg-pico-blanco">
       <Contenedor className="flex flex-wrap items-center gap-x-6 gap-y-3 py-3 md:flex-nowrap md:gap-x-10 md:py-4">
         <Logo placa={false} />
 
@@ -19,7 +19,11 @@ export default function Header() {
           <label htmlFor="buscador" className="sr-only">
             Buscar productos
           </label>
-          <div className="flex h-12 items-center rounded-chip border-2 border-pico-azul bg-pico-blanco pr-1 pl-5 transition-shadow focus-within:ring-4 focus-within:ring-pico-azul-claro">
+          <div className="group flex h-12 items-center rounded-chip border-2 border-pico-azul bg-pico-blanco pr-1 pl-5 transition-shadow focus-within:shadow-tarjeta-hover focus-within:ring-4 focus-within:ring-pico-azul-claro">
+            <Search
+              className="mr-2 size-4 shrink-0 text-gris-texto transition-colors group-focus-within:text-pico-azul"
+              aria-hidden
+            />
             <input
               id="buscador"
               name="q"
@@ -29,9 +33,12 @@ export default function Header() {
             />
             <button
               type="submit"
-              className="flex h-9 items-center justify-center gap-2 rounded-chip bg-pico-azul px-3 text-sm font-semibold text-pico-blanco transition-colors hover:bg-pico-azul-oscuro focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-pico-azul md:px-5"
+              className="group/buscar flex h-9 items-center justify-center gap-2 rounded-chip bg-pico-azul px-3 text-sm font-semibold text-pico-blanco transition duration-200 hover:bg-pico-rojo focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-pico-azul md:px-5"
             >
-              <Search className="size-4" aria-hidden />
+              <Search
+                className="size-4 transition-transform duration-300 motion-safe:group-hover/buscar:scale-110 motion-safe:group-hover/buscar:-rotate-12"
+                aria-hidden
+              />
               <span className="sr-only md:not-sr-only">Buscar</span>
             </button>
           </div>
@@ -40,10 +47,10 @@ export default function Header() {
         <div className="ml-auto flex items-center gap-1 md:gap-2">
           {/* Fase 1: aún no hay cuentas de cliente; solo visual. */}
           <span
-            className="flex items-center gap-2 rounded-boton p-2 text-sm font-semibold text-pico-azul"
+            className="group flex cursor-default items-center gap-2 rounded-boton p-2 text-sm font-semibold text-pico-azul transition-colors hover:bg-pico-azul-claro"
             title="Muy pronto"
           >
-            <User className="size-6" aria-hidden />
+            <User className="size-6 transition-transform duration-300 motion-safe:group-hover:-translate-y-0.5" aria-hidden />
             <span className="hidden lg:inline">Mi cuenta</span>
           </span>
           <BotonCarrito />

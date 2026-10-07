@@ -22,21 +22,21 @@ type Props = {
 // llamado a la acción en blanco sobre azul, o en azul sobre azul claro.
 const variantes: Record<VarianteBanner, { fondo: string; titulo: string; texto: string; icono: string; boton: string }> = {
   azul: {
-    fondo: "bg-pico-azul",
+    fondo: "bg-gradient-to-br from-pico-azul via-pico-azul to-pico-azul-oscuro",
     titulo: "text-pico-blanco",
     texto: "text-pico-blanco/80",
     icono: "text-pico-blanco/10",
     boton: "bg-pico-blanco text-pico-azul group-hover:bg-pico-azul-claro",
   },
   oscuro: {
-    fondo: "bg-pico-azul-oscuro",
+    fondo: "bg-gradient-to-br from-pico-azul-oscuro to-pico-azul",
     titulo: "text-pico-blanco",
     texto: "text-pico-blanco/80",
     icono: "text-pico-blanco/10",
     boton: "bg-pico-blanco text-pico-azul group-hover:bg-pico-azul-claro",
   },
   claro: {
-    fondo: "bg-pico-azul-claro",
+    fondo: "bg-gradient-to-br from-pico-azul-claro to-pico-blanco",
     titulo: "text-pico-azul",
     texto: "text-pico-azul/75",
     icono: "text-pico-azul/10",
@@ -93,16 +93,24 @@ export default function BannerInicio({ banner, sizes, tamano = "normal", priorit
           grande ? "p-5 md:gap-3 md:px-16 md:py-10" : lateral ? "p-4 sm:p-5 md:p-6" : "p-5 md:p-6"
         }`}>
           {Icono && (
-            <Icono
-              className={`absolute -right-4 -bottom-6 transition-transform duration-300 group-hover:-rotate-6 ${estilo.icono} ${
-                grande ? "size-40 md:size-72" : lateral ? "size-20 sm:size-32 md:size-40" : "size-32 md:size-40"
-              }`}
-              strokeWidth={1.25}
-              aria-hidden
-            />
+            // El span se mece solo (flotar); el ícono, además, gira y crece al pasar el mouse.
+            <span className="absolute -right-4 -bottom-6 motion-safe:animate-flotar" aria-hidden>
+              <Icono
+                className={`transition-transform duration-500 ease-out group-hover:scale-110 group-hover:-rotate-12 ${estilo.icono} ${
+                  grande ? "size-40 md:size-72" : lateral ? "size-20 sm:size-32 md:size-40" : "size-32 md:size-40"
+                }`}
+                strokeWidth={1.25}
+              />
+            </span>
           )}
+          <span
+            className={`relative h-1 -skew-x-12 rounded-sm bg-pico-rojo transition-all duration-300 group-hover:w-14 ${
+              grande ? "w-10" : lateral ? "hidden w-8 sm:block" : "w-8"
+            }`}
+            aria-hidden
+          />
           <p
-            className={`relative max-w-[80%] font-extrabold tracking-tight text-balance ${estilo.titulo} ${
+            className={`relative max-w-[80%] font-bold text-balance ${estilo.titulo} ${
               grande
                 ? "text-2xl leading-tight md:text-4xl"
                 : lateral
@@ -126,12 +134,12 @@ export default function BannerInicio({ banner, sizes, tamano = "normal", priorit
           {banner.textoBoton && (
             // Es un span y no <Boton>: todo el banner ya es un enlace. Misma forma que Boton.
             <span
-              className={`relative mt-1 h-10 w-fit items-center gap-1 rounded-boton px-4 text-sm font-semibold transition-colors ${estilo.boton} ${
+              className={`relative mt-1 h-10 w-fit items-center gap-1 rounded-boton px-4 text-sm font-semibold shadow-tarjeta transition duration-200 group-hover:shadow-boton-hover motion-safe:group-hover:-translate-y-0.5 ${estilo.boton} ${
                 grande ? "inline-flex md:mt-2" : lateral ? "hidden sm:inline-flex" : "inline-flex"
               }`}
             >
               {banner.textoBoton}
-              <ChevronRight className="size-4 transition-transform group-hover:translate-x-0.5" aria-hidden />
+              <ChevronRight className="size-4 transition-transform duration-300 group-hover:translate-x-1" aria-hidden />
             </span>
           )}
         </div>
