@@ -136,8 +136,9 @@ export default function AccionesCompra({ producto }: { producto: Producto }) {
           href={enlaceWhatsApp(armarMensajePedido([{ producto, cantidad }]))}
           target="_blank"
           rel="noopener noreferrer"
-          className={`${baseBoton} border-2 border-logo-marino bg-pico-blanco text-logo-marino hover:bg-logo-marino hover:text-pico-blanco hover:shadow-boton-hover`}
+          className={`${baseBoton} bg-logo-marino text-pico-blanco hover:bg-logo-marino-oscuro hover:shadow-boton-hover`}
         >
+          <Brillo />
           <MessageCircle className="size-5" aria-hidden />
           Comprar ahora
           <ArrowRight
