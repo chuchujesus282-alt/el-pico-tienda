@@ -15,7 +15,7 @@ type Props = {
 };
 
 const claseFlecha =
-  "hidden size-9 items-center justify-center rounded-chip border border-gris-borde bg-pico-blanco text-pico-azul shadow-tarjeta transition-colors hover:bg-pico-azul hover:text-pico-blanco md:flex";
+  "hidden size-9 items-center justify-center rounded-chip border border-gris-borde bg-pico-blanco text-pico-azul shadow-tarjeta transition duration-200 hover:bg-pico-azul hover:text-pico-blanco motion-safe:hover:scale-110 motion-safe:active:scale-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-pico-azul md:flex";
 
 /** Fila horizontal de ProductCard con título, "Ver todo" y flechas (en móvil se desliza con el dedo). */
 export default function CarruselProductos({ titulo, productos, href, className = "" }: Props) {
