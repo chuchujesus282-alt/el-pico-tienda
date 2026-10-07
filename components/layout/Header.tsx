@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { Search, User } from "lucide-react";
 import Contenedor from "@/components/ui/Contenedor";
 import BotonCarrito from "./BotonCarrito";
@@ -38,14 +39,13 @@ export default function Header() {
         </form>
 
         <div className="ml-auto flex items-center gap-1 md:gap-2">
-          {/* Fase 1: aún no hay cuentas de cliente; solo visual. */}
-          <span
-            className="flex items-center gap-2 rounded-boton p-2 text-sm font-semibold text-pico-azul"
-            title="Muy pronto"
+          <Link
+            href="/iniciar-sesion"
+            className="flex items-center gap-2 rounded-boton p-2 text-sm font-semibold text-pico-azul transition-colors hover:bg-pico-azul-claro focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-pico-azul"
           >
             <User className="size-6" aria-hidden />
-            <span className="hidden lg:inline">Mi cuenta</span>
-          </span>
+            <span className="sr-only lg:not-sr-only">Mi cuenta</span>
+          </Link>
           <BotonCarrito />
         </div>
       </Contenedor>

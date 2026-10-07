@@ -20,6 +20,9 @@ Next.js 16 (APIs distintas a las que conoces; consulta `node_modules/next/dist/d
 ## Estructura
 - `app/page.tsx` — página principal (responsable: persona A)
 - `app/categoria/[slug]/page.tsx` — página de categoría (responsable: persona B)
+- `app/iniciar-sesion/page.tsx` y `app/crear-cuenta/page.tsx` — cuenta del cliente: correo + contraseña o Google; crear cuenta pide los datos fiscales para la factura (responsable: persona A, rama `inicio-sesion`)
+- `components/cuenta/` — piezas de las páginas de cuenta (`Campos.tsx`: campos de formulario; `datosFiscales.ts`: estados, prefijos V/E/P/J/G y validaciones)
+- `lib/cuenta.ts` — ÚNICA puerta de entrada a las cuentas (iniciar sesión, Google, crear cuenta). Hoy responde "todavía no están activas"; cuando haya servidor de cuentas, solo cambia este archivo
 - `app/producto/[id]/page.tsx` — página de producto (fase posterior, aún no tocar)
 - `components/layout/` — Header, NavCategorias, Footer (COMPARTIDOS)
 - `components/ui/` — piezas base: Boton, Badge, Precio, Contenedor, TituloSeccion (COMPARTIDOS)
@@ -60,7 +63,7 @@ Next.js 16 (APIs distintas a las que conoces; consulta `node_modules/next/dist/d
 ## Reglas de trabajo en equipo
 - No modifiques componentes COMPARTIDOS sin que la tarea lo pida explícitamente. Si hace falta cambiar uno, avisa al usuario antes, porque afecta la página del compañero.
 - Si un componente compartido necesita una variante, agrégala con una prop opcional; no cambies su comportamiento por defecto.
-- Cada persona trabaja en su rama (`inicio`, `categorias`), nunca directo en `main`.
+- Cada persona trabaja en su rama (`inicio`, `categorias`, `inicio-sesion`), nunca directo en `main`.
 - Datos de productos: siempre a través de `lib/catalogo.ts`. Nunca hagas `fetch` al servidor desde un componente.
 - Variables secretas solo en `.env.local` (no se sube). Documenta cualquier variable nueva en `.env.example`.
 - Antes de hacer commit: `npm run lint` y `npm run build` sin errores.
@@ -68,5 +71,6 @@ Next.js 16 (APIs distintas a las que conoces; consulta `node_modules/next/dist/d
 
 ## Registro de cambios
 Lo más reciente arriba. Formato: fecha · rama · quién · qué cambió y qué debe saber el compañero.
+- 2026-10-06 · `inicio-sesion` · persona A · Páginas `/iniciar-sesion` y `/crear-cuenta` (datos de acceso, datos de facturación persona/empresa con cédula o RIF, dirección fiscal). Nuevos: `types/cuenta.ts`, `lib/cuenta.ts`, `components/cuenta/`, `public/google.svg`. Aún no hay servidor de cuentas: el envío muestra un aviso. **Compartido:** en `Header`, "Mi cuenta" ahora es un enlace a `/iniciar-sesion`.
 - 2026-10-06 · `inicio` · persona A · **Compartido:** `tituloProducto()` se movió de `components/producto-detalle/` a `lib/formato.ts`. `ProductCard` y `PanelCarrito` ahora muestran ese título (formato oración, con la marca); la tarjeta ya no tiene la línea aparte de la marca ni `uppercase`.
 - 2026-10-06 · `inicio` · persona A · **Compartido:** categorías nuevas en `lib/mock/categorias.ts`: herramientas, construccion, ferreteria, electricidad, plomeria, pinturas, hogar-y-jardin, seguridad-industrial, vehiculos. Desaparecen `tornilleria`, `jardin` y `seguridad` (sus productos de prueba pasaron a ferreteria, hogar-y-jardin y seguridad-industrial). La API debe usar estos mismos slugs.
