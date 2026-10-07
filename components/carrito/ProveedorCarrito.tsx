@@ -41,7 +41,7 @@ export default function ProveedorCarrito({ children }: { children: ReactNode }) 
         ? actuales.map((i) => (i.producto.id === producto.id ? { ...i, cantidad: i.cantidad + cantidad } : i))
         : [...actuales, { producto, cantidad }],
     );
-    setAbierto(true);
+    // No abre el panel: el cliente sigue comprando; "¡Agregado!" y el contador que late le confirman.
   }, []);
 
   const quitar = useCallback((id: string) => {

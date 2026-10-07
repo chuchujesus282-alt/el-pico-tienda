@@ -31,7 +31,7 @@ export default function BotonCarritoFlotante({ visible }: { visible: boolean }) 
       aria-label={`Abrir carrito (${cantidadTotal} ${cantidadTotal === 1 ? "producto" : "productos"})`}
       // Blanco con borde e ícono rojos; al pasar el mouse gana sombra y el ícono se sacude.
       // Aparece cayendo desde arriba con un pequeño rebote (curva que se pasa y vuelve).
-      className={`group fixed right-4 z-40 flex size-14 items-center justify-center rounded-chip border-2 border-pico-rojo bg-pico-blanco text-pico-rojo shadow-tarjeta-hover transition duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] hover:shadow-boton-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-pico-rojo md:right-6 md:bottom-[calc(1.5rem+env(safe-area-inset-bottom))] ${
+      className={`group fixed right-4 z-40 flex size-14 cursor-pointer items-center justify-center rounded-chip border-2 border-pico-rojo bg-pico-blanco text-pico-rojo shadow-tarjeta-hover transition duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] hover:shadow-boton-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-pico-rojo md:right-6 md:bottom-[calc(1.5rem+env(safe-area-inset-bottom))] ${
         sobreBarra ? "bottom-[calc(6rem+env(safe-area-inset-bottom))]" : "bottom-[calc(1rem+env(safe-area-inset-bottom))]"
       } ${
         mostrar
