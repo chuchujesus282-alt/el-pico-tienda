@@ -12,6 +12,7 @@ export type Producto = {
   imagen: string | null; // URL absoluta o null
   categoriaSlug: string;
   subcategoria: string | null;
+  descripcion?: string | null; // opcional; la página de producto la muestra solo si viene
 };
 
 export type Categoria = {
