@@ -4,11 +4,13 @@ import type { Categoria } from "@/types/catalogo";
 
 type Props = {
   categoria: Categoria | null;
+  /** En subpáginas del producto (ej. opiniones): enlace al producto antes de la página actual. */
+  producto?: { titulo: string; href: string };
   actual: string;
 };
 
-/** Inicio › Categoría › Producto. */
-export default function RutaProducto({ categoria, actual }: Props) {
+/** Inicio › Categoría › Producto (› Subpágina). */
+export default function RutaProducto({ categoria, producto, actual }: Props) {
   const separador = (
     <li aria-hidden>
       <ChevronRight className="size-3.5" />
@@ -30,6 +32,16 @@ export default function RutaProducto({ categoria, actual }: Props) {
             <li>
               <Link href={`/categoria/${categoria.slug}`} className="hover:text-logo-marino hover:underline">
                 {categoria.nombre}
+              </Link>
+            </li>
+          </>
+        )}
+        {producto && (
+          <>
+            {separador}
+            <li className="min-w-0">
+              <Link href={producto.href} className="line-clamp-1 hover:text-logo-marino hover:underline">
+                {producto.titulo}
               </Link>
             </li>
           </>

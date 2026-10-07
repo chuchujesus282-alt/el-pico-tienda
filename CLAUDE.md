@@ -22,6 +22,8 @@ Next.js 16 (APIs distintas a las que conoces; consulta `node_modules/next/dist/d
 - `app/categoria/[slug]/page.tsx` — página de categoría (responsable: persona B)
 - `app/producto/[id]/page.tsx` — página de producto (responsable: persona B, rama `producto`)
 - `components/producto-detalle/` — piezas exclusivas de la página de producto
+- `app/producto/[id]/opiniones/page.tsx` — opiniones de un producto: lista con filtro/orden + formulario (responsable: persona B, rama `opiniones`)
+- `components/opiniones/` — piezas de opiniones; `almacenOpiniones.ts` guarda las opiniones del cliente en `localStorage` (clave `el-pico:opiniones`)
 - `components/layout/` — Header, NavCategorias, Footer (COMPARTIDOS)
 - `components/ui/` — piezas base: Boton, Badge, Precio, Contenedor, TituloSeccion (COMPARTIDOS)
 - `components/producto/` — ProductCard, CarruselProductos, GrillaProductos (COMPARTIDOS)
@@ -49,6 +51,7 @@ Next.js 16 (APIs distintas a las que conoces; consulta `node_modules/next/dist/d
 - `Precio` tiene la prop opcional `tono="logo"` (rojo del rebranding). Sin la prop se ve igual que siempre.
 - Animaciones: `animate-aparecer` (entrada) y `animate-latido` en `globals.css`; úsalas con `motion-safe:`. Ojo: un elemento con animación de `transform` encierra a sus hijos `fixed`; por eso los modales/barras fijas de la página de producto se dibujan con `createPortal(…, document.body)`.
 - Opiniones (estrellas): tipos en `types/opiniones.ts`; datos por `lib/opiniones.ts` (`getOpiniones`, server-only) y el promedio con `lib/resumirOpiniones.ts` (sirve en cliente y servidor). Sin `CATALOGO_API_URL` salen opiniones FALSAS de prueba (`lib/mock/opiniones.ts`, solo para el diseño); con la API definida devuelve lista vacía hasta que exista el endpoint, para no mostrar nunca reseñas inventadas en producción.
+- Opiniones que escribe el cliente: sin base de datos se guardan en su navegador (`components/opiniones/almacenOpiniones.ts`) y se suman a las del servidor con `useOpinionesProducto()`. Las estrellas y la sección "Calificaciones" de la página de producto usan `EstrellasProducto` / `CalificacionesProducto` (`components/opiniones/CalificacionesVivas.tsx`) para incluirlas. Cuando exista la base de datos, `FormularioOpinion` debe enviar al servidor en vez de `agregarOpinion()`.
 
 ## Reglas de diseño (obligatorias)
 - Colores: usa SOLO los tokens de `app/globals.css` (`bg-pico-azul`, `text-pico-rojo`, etc.). Nunca escribas un color hex dentro de un componente.
@@ -68,7 +71,7 @@ Next.js 16 (APIs distintas a las que conoces; consulta `node_modules/next/dist/d
 ## Reglas de trabajo en equipo
 - No modifiques componentes COMPARTIDOS sin que la tarea lo pida explícitamente. Si hace falta cambiar uno, avisa al usuario antes, porque afecta la página del compañero.
 - Si un componente compartido necesita una variante, agrégala con una prop opcional; no cambies su comportamiento por defecto.
-- Cada persona trabaja en su rama (`inicio`, `categorias`, `producto`), nunca directo en `main`.
+- Cada persona trabaja en su rama (`inicio`, `categorias`, `producto`, `finalizar-pedido`, `opiniones`), nunca directo en `main`.
 - Datos de productos: siempre a través de `lib/catalogo.ts`. Nunca hagas `fetch` al servidor desde un componente.
 - Variables secretas solo en `.env.local` (no se sube). Documenta cualquier variable nueva en `.env.example`.
 - Antes de hacer commit: `npm run lint` y `npm run build` sin errores.
@@ -77,6 +80,7 @@ Next.js 16 (APIs distintas a las que conoces; consulta `node_modules/next/dist/d
 
 ## Registro de cambios
 Lo más reciente arriba. Formato: fecha · rama · quién · qué cambió y qué debe saber el compañero.
+- 2026-10-06 · `opiniones` (sale de `producto`) · persona B · Nueva página `/producto/[id]/opiniones`: resumen, lista (filtro por estrellas, orden, "Ver más") y formulario (estrellas, nombre, comentario) que guarda en el navegador; el cliente puede eliminar sus opiniones. En la página de producto, las estrellas llevan a esta página y "Calificaciones" tiene "Ver las N opiniones" y "Escribir opinión". `RutaProducto` acepta la prop opcional `producto` para subpáginas. Aún no subido a GitHub.
 - 2026-10-06 · `producto` · persona B · Página de producto con el rebranding (colores del logo + Chakra Petch), estrellas bajo el título y sección "Calificaciones" (promedio + barras), zoom de imagen (lupa con mouse + pantalla completa), botón de copiar código y compartir, animaciones en "Agregar al carrito"/"Comprar ahora" y barra fija de compra en móvil. **Compartido (solo se agregó, nada cambió de comportamiento):** tokens y animaciones nuevos en `app/globals.css`, prop opcional `tono` en `Precio`, `types/opiniones.ts`, `lib/opiniones.ts`, `lib/resumirOpiniones.ts`, `lib/mock/opiniones.ts`. Título: "20W50" ya no pasa a minúsculas. Aún no subido a GitHub.
 - 2026-10-06 · `producto` · persona B · Página de producto simplificada: se quitó el bloque "¿Cómo lo recibes?" (Delivery/Fletes/Pick-up; se borró `OpcionesEntrega.tsx`) y la nota bajo los botones. **Compartido:** la barra de categorías ya no se muestra en `/producto/*`. `NavCategorias` ahora envuelve el `<nav>` en el nuevo `components/layout/OcultarEnRutas.tsx` con `prefijos={["/producto/"]}`; en inicio y categorías se ve igual que antes. Para ocultarla en otra ruta, agrega el prefijo ahí.
 - 2026-10-06 · `producto` · persona B · Nueva página `/producto/[id]` (imagen, título, precio, cantidad, "Agregar al carrito", "Comprar ahora" por WhatsApp, bloque Delivery/Fletes/Pick-up, relacionados) con loading/error/not-found. Piezas en `components/producto-detalle/`. Archivos compartidos tocados: `types/catalogo.ts` y `docs/datos.md` (campo opcional `descripcion`, no rompe nada). Subida a GitHub en la rama `producto`, pendiente de pull request a `main`.

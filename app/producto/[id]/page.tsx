@@ -2,20 +2,18 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeft, House } from "lucide-react";
+import { CalificacionesProducto, EstrellasProducto } from "@/components/opiniones/CalificacionesVivas";
 import AccionesCompra from "@/components/producto-detalle/AccionesCompra";
 import CodigoCompartir from "@/components/producto-detalle/CodigoCompartir";
 import { chakra } from "@/components/producto-detalle/fuentes";
 import GaleriaZoom from "@/components/producto-detalle/GaleriaZoom";
-import ResumenEstrellas from "@/components/producto-detalle/ResumenEstrellas";
 import RutaProducto from "@/components/producto-detalle/RutaProducto";
-import SeccionCalificaciones from "@/components/producto-detalle/SeccionCalificaciones";
 import { tituloProducto } from "@/components/producto-detalle/tituloProducto";
 import CarruselProductos from "@/components/producto/CarruselProductos";
 import Contenedor from "@/components/ui/Contenedor";
 import Precio from "@/components/ui/Precio";
 import { getCategorias, getProducto, getProductosPorCategoria } from "@/lib/catalogo";
 import { getOpiniones } from "@/lib/opiniones";
-import { resumirOpiniones } from "@/lib/resumirOpiniones";
 import type { Categoria, Producto } from "@/types/catalogo";
 
 // Página de producto — responsable: persona B (rama `producto`).
@@ -60,7 +58,6 @@ export default async function PaginaProducto({ params }: PageProps<"/producto/[i
   ]);
   const titulo = tituloProducto(producto);
 
-  const resumen = resumirOpiniones(opiniones);
   const enlaceSecundario =
     "group inline-flex items-center gap-1.5 rounded-boton text-sm font-semibold text-logo-marino hover:underline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-logo-marino";
 
@@ -85,7 +82,7 @@ export default async function PaginaProducto({ params }: PageProps<"/producto/[i
                 <CodigoCompartir codigo={producto.id} titulo={titulo} />
               </div>
               <h1 className="font-titulo text-[1.75rem] leading-tight font-bold text-logo-marino md:text-4xl">{titulo}</h1>
-              <ResumenEstrellas resumen={resumen} href="#calificaciones" />
+              <EstrellasProducto productoId={producto.id} opiniones={opiniones} />
             </div>
 
             {producto.descripcion && (
@@ -118,7 +115,7 @@ export default async function PaginaProducto({ params }: PageProps<"/producto/[i
           </div>
         </article>
 
-        <SeccionCalificaciones resumen={resumen} className="mt-10 md:mt-14" />
+        <CalificacionesProducto productoId={producto.id} opiniones={opiniones} className="mt-10 md:mt-14" />
 
         <CarruselProductos
           titulo="También te puede interesar"
