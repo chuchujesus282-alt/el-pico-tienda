@@ -1,4 +1,5 @@
 import CarruselProductos from "@/components/producto/CarruselProductos";
+import TePuedeInteresar from "@/components/recomendaciones/TePuedeInteresar";
 import AvisoCatalogo from "@/components/inicio/AvisoCatalogo";
 import BannersPromocionales from "@/components/inicio/BannersPromocionales";
 import BloqueBanners from "@/components/inicio/BloqueBanners";
@@ -15,7 +16,7 @@ import {
 import type { BannerInicio } from "@/components/inicio/contenidoInicio";
 import Contenedor from "@/components/ui/Contenedor";
 import Revelar from "@/components/ui/Revelar";
-import { getCategorias, getProductosDestacados, getProductosPorCategoria } from "@/lib/catalogo";
+import { getCategorias, getMasVendidos, getProductosDestacados, getProductosPorCategoria } from "@/lib/catalogo";
 import type { Categoria, Producto } from "@/types/catalogo";
 
 // Página principal — responsable: persona A. Ver la distribución en docs/guia-de-estilo.md.
@@ -45,7 +46,7 @@ const sinProductos: Producto[] = [];
 export default async function Inicio() {
   const [categorias, interesar, recomendados, productosPorSeccion] = await Promise.all([
     seguro(getCategorias(), []),
-    seguro(getProductosDestacados("te-puede-interesar"), sinProductos),
+    seguro(getMasVendidos(10), sinProductos), // cliente nuevo; en el navegador se personaliza
     seguro(getProductosDestacados("recomendados"), sinProductos),
     Promise.all(
       seccionesCategoria.map((s) =>
@@ -76,7 +77,7 @@ export default async function Inicio() {
       ) : (
         <>
           <Revelar>
-            <CarruselProductos titulo="Te puede interesar" productos={interesar} />
+            <TePuedeInteresar inicial={interesar} />
           </Revelar>
 
           <Revelar>
