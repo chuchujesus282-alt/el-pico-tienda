@@ -23,6 +23,7 @@ import { useCarrito } from "@/components/carrito/ProveedorCarrito";
 import { tituloProducto } from "@/lib/formato";
 import ImagenProducto from "@/components/producto/ImagenProducto";
 import Precio from "@/components/ui/Precio";
+import { registrarSenales } from "@/lib/recomendaciones/almacenPerfil";
 import { enlaceWhatsApp, totalCarrito } from "@/lib/whatsapp";
 import type { ItemCarrito } from "@/types/carrito";
 import type { Direccion } from "@/types/cliente";
@@ -345,6 +346,8 @@ export default function FormularioPedido({ itemsDirectos, direcciones }: Props) 
                   href={enlaceWhatsApp(armarMensajeFinal({ items, retiro: retiro!, direccion, pago: pago!, combinados }))}
                   target="_blank"
                   rel="noopener noreferrer"
+                  // Señal más fuerte del perfil de "Te puede interesar": lo que el cliente pidió.
+                  onClick={() => registrarSenales(items.map((i) => ({ tipo: "whatsapp", id: i.producto.id })))}
                   className="group relative flex h-12 w-full items-center justify-center gap-2 overflow-hidden rounded-boton bg-logo-rojo text-base font-semibold text-pico-blanco transition duration-200 hover:bg-logo-rojo-oscuro hover:shadow-boton-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-logo-marino motion-safe:animate-latido motion-safe:hover:-translate-y-0.5 motion-safe:active:scale-[0.98]"
                 >
                   <Brillo />

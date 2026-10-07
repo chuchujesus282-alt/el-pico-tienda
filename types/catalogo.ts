@@ -9,6 +9,7 @@ export type Producto = {
   categoriaSlug: string;
   subcategoria: string | null;
   descripcion?: string | null; // texto largo para la página de producto; llegará de la base de datos
+  ventas?: number; // unidades vendidas en los últimos 90 días; ordena los "más vendidos" (opcional)
 };
 
 export type Categoria = {
@@ -34,6 +35,12 @@ export type OpcionesCategoria = {
   marca?: string;
   subcategoria?: string;
   orden?: OrdenProductos;
+};
+
+/** Producto que suele comprarse junto con otro (sale de las facturas del SQL). */
+export type CompradoJunto = {
+  id: string;
+  puntaje: number; // 0 a 1: qué tan seguido van en la misma factura
 };
 
 export type Banner = {

@@ -1,0 +1,27 @@
+{
+  "_instrucciones": "Productos que se gastan y se vuelven a comprar. Estos sí se pueden sugerir aunque el cliente ya los tenga en el carrito o ya los haya pedido. Escribe cómo empieza el nombre del producto, separado por comas.",
+  "tipos": [
+    "tornillo",
+    "clavo",
+    "ramplug",
+    "perno",
+    "broca",
+    "cinta aislante",
+    "cinta de papel",
+    "teflon",
+    "pegamento",
+    "silicon",
+    "lija",
+    "disco",
+    "pintura",
+    "esmalte",
+    "thinner",
+    "cemento",
+    "pego",
+    "bloque",
+    "bombillo",
+    "guantes",
+    "mascarilla",
+    "aceite"
+  ]
+}
