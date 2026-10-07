@@ -3,8 +3,8 @@
 ## Colores de marca
 | Token | Valor | Uso |
 |---|---|---|
-| `pico-azul` | #17225a | Color principal: header, barra de categorías, footer, títulos, botones secundarios |
-| `pico-azul-oscuro` | #0f1740 | Hover de elementos azules, barra superior |
+| `pico-azul` | #17225a | Color principal: barra de categorías, footer, títulos, botón de buscar, iconos del header, botones secundarios |
+| `pico-azul-oscuro` | #0f1740 | Hover de elementos azules |
 | `pico-azul-claro` | #e8eaf3 | Fondos suaves, chips, filtros activos |
 | `pico-rojo` | #a90504 | Acentos y acción: botón "Agregar", precios destacados, badges de oferta, contador del carrito |
 | `pico-rojo-oscuro` | #850403 | Hover de elementos rojos |
@@ -14,7 +14,9 @@
 | `gris-texto` | #5b6070 | Texto secundario (marca, código, descripciones) |
 | `texto` | #1a1d29 | Texto principal |
 
-Regla de proporción: el azul domina (estructura), el rojo se reserva para lo que invita a actuar. Si todo es rojo, nada destaca.
+Regla de proporción: el azul domina la estructura (barra de categorías y footer), el blanco del header deja respirar el logo rojo, y el rojo se reserva para lo que invita a actuar. Si todo es rojo, nada destaca.
+
+Logo: `components/layout/Logo.tsx` con `public/logo-el-pico.webp`. Sobre blanco va directo (`placa={false}`); sobre azul, en placa blanca (por defecto).
 
 ## Tokens en Tailwind (app/globals.css, Tailwind v4)
 ```css
@@ -59,8 +61,8 @@ Regla de proporción: el azul domina (estructura), el rojo se reserva para lo qu
 - Banners: radio `banner`, sin borde, imagen a sangre (cubre todo el recuadro).
 
 ## Distribución de la página principal (de arriba a abajo)
-1. Header (azul): logo a la izquierda, buscador ancho al centro (fondo blanco, radio completo), "Mi cuenta" y carrito con contador rojo a la derecha. En móvil el buscador baja a una segunda fila.
-2. Barra de categorías (azul oscuro): las categorías en una fila; en móvil, desplazable horizontalmente.
+1. Header (blanco): logo oficial sin placa a la izquierda, buscador ancho al centro (fondo blanco, borde de 2px `pico-azul`, radio completo, botón azul "Buscar"), "Mi cuenta" y "Carrito" en azul con su texto (desde 1024px) y contador rojo a la derecha. En móvil el buscador baja a una segunda fila.
+2. Barra de categorías (`pico-azul`): las categorías en una fila; en móvil, desplazable horizontalmente.
 3. Bloque de banners principal: un banner grande (carrusel) a la izquierda que ocupa ~2/3, y dos banners apilados a la derecha (~1/3). En móvil: uno debajo del otro.
 4. Sección de productos "Te puede interesar": TituloSeccion + carrusel horizontal de ProductCard.
 5. Fila de dos banners promocionales del mismo tamaño (cada uno lleva a una categoría).

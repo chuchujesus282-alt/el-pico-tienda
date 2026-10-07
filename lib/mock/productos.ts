@@ -52,26 +52,33 @@ export const productosMock: Producto[] = [
     ["00605066", "CABILLA 3/8\" X 6MTS", "ACEROVEN", 4.2, "Acero"],
     ["00605083", "ESCALERA ALUMINIO EXTENSIBLE 24 PELDAÑOS", "ALTURA", 289.0, "Escaleras"],
   ]),
-  ...crear("tornilleria", [
+  ...crear("ferreteria", [
     ["00706008", "TORNILLO DRYWALL 6X1\" CAJA 100 UNIDADES", "FIJATEC", 3.4, "Tornillos"],
     ["00706024", 'CLAVO DE ACERO 2" CAJA 1KG', "FIJATEC", 4.15, "Clavos"],
     ["00706049", 'TARUGO PLASTICO 1/4" BOLSA 50 UNIDADES', "ANCLAPLUS", 1.8, "Anclajes"],
     ["00706063", 'PERNO HEXAGONAL GALVANIZADO 3/8" X 2"', "FIJATEC", 0.55, "Pernos"],
     ["00706087", "SILICON TRANSPARENTE CARTUCHO 280ML", "SELLAMAX", 4.95, "Selladores"],
   ]),
-  ...crear("jardin", [
+  ...crear("hogar-y-jardin", [
     ["00807012", 'TIJERA PODAR 22" MANGO TUBULAR', "VERDEPRO", 17.24, "Herramientas de jardín"],
     ["00807035", 'MANGUERA JARDIN 1/2" X 20MTS', "VERDEPRO", 18.6, "Riego"],
     ["00807050", "PALA PUNTA REDONDA MANGO MADERA", "FORJAMAX", 14.3, "Herramientas de jardín"],
     ["00807074", "ASPERSOR CIRCULAR METALICO", "VERDEPRO", 7.45, "Riego"],
     ["00807091", "CARRETILLA 5 PIES CUBICOS RUEDA NEUMATICA", "ALTURA", 96.8, "Carretillas"],
   ]),
-  ...crear("seguridad", [
+  ...crear("seguridad-industrial", [
     ["00908003", "GUANTES DE CARNAZA REFORZADOS PAR", "SEGURPRO", 3.7, "Guantes"],
     ["00908026", "LENTES DE SEGURIDAD CLAROS ANTIEMPAÑANTE", "SEGURPRO", 2.9, "Protección visual"],
     ["00908042", "CASCO DE SEGURIDAD BLANCO CON RATCHET", "SEGURPRO", 8.4, "Protección de cabeza"],
     ["00908068", "BOTAS DE SEGURIDAD PUNTA DE ACERO TALLA 42", "PASOFIRME", 39.9, "Calzado"],
     ["00908085", "MASCARILLA N95 CAJA 10 UNIDADES", null, 12.5, "Protección respiratoria"],
+  ]),
+  ...crear("vehiculos", [
+    ["01009014", "GATO HIDRAULICO TIPO BOTELLA 4 TONELADAS", "ALZAPRO", 27.5, "Herramientas para vehículos"],
+    ["01009031", "CABLES PARA PASAR CORRIENTE 400A 3MTS", "VOLTIKA", 15.8, "Accesorios"],
+    ["01009057", "ACEITE MOTOR 20W50 MINERAL 1 LITRO", "MOTORVEN", 6.45, "Lubricantes"],
+    ["01009072", "LLAVE EN CRUZ PARA RUEDAS 17-19-21-23MM", "FORJAMAX", 9.9, "Herramientas para vehículos"],
+    ["01009098", "TRIANGULO DE SEGURIDAD REFLECTIVO", "SEGURPRO", 7.2, "Accesorios"],
   ]),
 ];
 

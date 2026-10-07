@@ -2,7 +2,7 @@ import { getCategorias } from "@/lib/catalogo";
 import type { Categoria } from "@/types/catalogo";
 import EnlacesCategorias from "./EnlacesCategorias";
 
-/** Barra azul oscuro con las categorías; en móvil se desliza horizontalmente. */
+/** Barra azul con las categorías, bajo el header blanco; en móvil se desliza horizontalmente. */
 export default async function NavCategorias() {
   let categorias: Categoria[] = [];
   try {
@@ -12,7 +12,7 @@ export default async function NavCategorias() {
   }
 
   return (
-    <nav aria-label="Categorías" className="bg-pico-azul-oscuro">
+    <nav aria-label="Categorías" className="bg-pico-azul">
       <EnlacesCategorias categorias={categorias} />
     </nav>
   );

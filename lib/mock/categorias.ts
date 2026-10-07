@@ -1,12 +1,13 @@
 import type { Categoria } from "@/types/catalogo";
 
 export const categoriasMock: Categoria[] = [
-  { slug: "plomeria", nombre: "Plomería y grifería", banner: null },
   { slug: "herramientas", nombre: "Herramientas", banner: null },
+  { slug: "construccion", nombre: "Construcción", banner: null },
+  { slug: "ferreteria", nombre: "Ferretería", banner: null },
   { slug: "electricidad", nombre: "Electricidad", banner: null },
+  { slug: "plomeria", nombre: "Plomería", banner: null },
   { slug: "pinturas", nombre: "Pinturas", banner: null },
-  { slug: "construccion", nombre: "Materiales de construcción", banner: null },
-  { slug: "tornilleria", nombre: "Tornillería", banner: null },
-  { slug: "jardin", nombre: "Jardín", banner: null },
-  { slug: "seguridad", nombre: "Seguridad industrial", banner: null },
+  { slug: "hogar-y-jardin", nombre: "Hogar y jardín", banner: null },
+  { slug: "seguridad-industrial", nombre: "Seguridad industrial", banner: null },
+  { slug: "vehiculos", nombre: "Vehículos", banner: null },
 ];
