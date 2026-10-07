@@ -83,6 +83,7 @@ Next.js 16 (APIs distintas a las que conoces; consulta `node_modules/next/dist/d
 
 ## Registro de cambios
 Lo más reciente arriba. Formato: fecha · rama · quién · qué cambió y qué debe saber el compañero.
+- 2026-10-06 · `producto` · persona B · Une lo de persona A (`tituloProducto()` en `lib/formato.ts`) y le pasa la corrección de "20W50" (viscosidad de aceite) que tenía la copia vieja; se borró `components/producto-detalle/tituloProducto.ts`. Todo import del título va a `@/lib/formato`.
 - 2026-10-06 · `finalizar-pedido` · persona B · Chakra Petch en todo el texto de `/finalizar-pedido` (`fuentePaginas`); el error también pasa al rebranding.
 - 2026-10-06 · `producto` · persona B · Chakra Petch en todo el texto de la página de producto (no solo títulos) con `fuentePaginas`; error y "no encontrado" pasan al rebranding. No toca archivos compartidos.
 - 2026-10-06 · `finalizar-pedido` · persona B · `/finalizar-pedido` con el rebranding (colores del logo, Chakra Petch): indicador de pasos Retiro → Pago → Enviar, secciones que se marcan ✓ al completarse, opciones con animación, resumen con miniaturas y lo elegido, botón de WhatsApp con brillo. Trae el rebranding de `producto`; "Comprar ahora" (azul) lleva a `/finalizar-pedido`. No toca archivos compartidos nuevos.

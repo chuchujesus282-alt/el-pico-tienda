@@ -28,6 +28,7 @@ function esMedida(palabra: string): boolean {
 function formatearPalabra(palabra: string): string {
   if (SIGLAS.has(palabra)) return palabra;
   if (/^[A-Z]\d+$/.test(palabra)) return palabra; // E27, N95
+  if (/^\d+W\d+$/.test(palabra)) return palabra; // viscosidad de aceite: 20W50
   const minuscula = palabra.toLowerCase();
   return /\d/.test(palabra) ? minuscula.replace(UNIDAD_MAYUSCULA, (_, d: string, u: string) => d + u.toUpperCase()) : minuscula;
 }
