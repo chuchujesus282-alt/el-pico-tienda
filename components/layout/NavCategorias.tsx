@@ -3,7 +3,7 @@ import type { Categoria } from "@/types/catalogo";
 import EnlacesCategorias from "./EnlacesCategorias";
 import OcultarEnRutas from "./OcultarEnRutas";
 
-/** Barra azul oscuro con las categorías; en móvil se desliza horizontalmente. */
+/** Barra azul con las categorías, bajo el header blanco; en móvil se desliza horizontalmente. */
 export default async function NavCategorias() {
   let categorias: Categoria[] = [];
   try {
@@ -15,7 +15,7 @@ export default async function NavCategorias() {
   // La página de producto no muestra la barra (decisión de persona B, ver CLAUDE.md).
   return (
     <OcultarEnRutas prefijos={["/producto/"]}>
-      <nav aria-label="Categorías" className="bg-pico-azul-oscuro">
+      <nav aria-label="Categorías" className="bg-pico-azul">
         <EnlacesCategorias categorias={categorias} />
       </nav>
     </OcultarEnRutas>

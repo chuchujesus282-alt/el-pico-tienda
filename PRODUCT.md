@@ -39,7 +39,8 @@ El Pico es la ferretería de la zona con surtido amplio (todo en un solo lugar),
 - La distribución se inspira en tienda.campienlinea.com (capturas en `docs/referencia/`), pero nunca se copia su logo, imágenes, banners, textos ni nombre.
 
 ## Evidence on Hand
-- **Existen, aún no están en el repo:** logo oficial (hoy se usa un logo provisional de texto en `components/layout/Logo.tsx`), fotos de productos, y dirección, horario y teléfono reales de la tienda.
+- **Logo oficial:** `public/logo-el-pico.webp` (rojo, texto calado; RIF J-30440607-0 en el borde). Sobre fondos azules va en placa blanca (`components/layout/Logo.tsx`); el favicon usa solo las montañas (`app/icon.png`).
+- **Existen, aún no están en el repo:** fotos de productos, y dirección, horario y teléfono reales de la tienda.
 - **No existen:** fotos de la tienda o del equipo, testimonios, reseñas, cifras de clientes ni años de trayectoria concretos. No inventarlos.
 - Las marcas de los datos de prueba (`lib/mock/`) son ficticias.
 

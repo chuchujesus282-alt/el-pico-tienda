@@ -8,8 +8,11 @@ type Props = {
   banner: DatosBanner;
   /** Atributo sizes de next/image según el ancho que ocupa el banner. */
   sizes: string;
-  /** "grande" para el carrusel principal; "normal" para los demás. */
-  tamano?: "grande" | "normal";
+  /**
+   * "grande" para el carrusel principal; "lateral" para los de al lado (compactos en móvil:
+   * solo título, para que el primer producto suba); "normal" para los demás.
+   */
+  tamano?: "grande" | "lateral" | "normal";
   /** Carga la imagen de inmediato (solo el primer banner visible de la página). */
   prioritario?: boolean;
   className?: string;
@@ -66,6 +69,7 @@ export default function BannerInicio({ banner, sizes, tamano = "normal", priorit
   const estilo = variantes[banner.variante ?? "azul"];
   const Icono = banner.icono;
   const grande = tamano === "grande";
+  const lateral = tamano === "lateral";
 
   return (
     <Destino
@@ -85,11 +89,13 @@ export default function BannerInicio({ banner, sizes, tamano = "normal", priorit
           className="object-cover transition-transform duration-300 group-hover:scale-[1.02]"
         />
       ) : (
-        <div className={`relative flex h-full flex-col justify-center gap-2 p-5 ${grande ? "md:gap-3 md:px-16 md:py-10" : "md:p-6"}`}>
+        <div className={`relative flex h-full flex-col justify-center gap-2 ${
+          grande ? "p-5 md:gap-3 md:px-16 md:py-10" : lateral ? "p-4 sm:p-5 md:p-6" : "p-5 md:p-6"
+        }`}>
           {Icono && (
             <Icono
               className={`absolute -right-4 -bottom-6 transition-transform duration-300 group-hover:-rotate-6 ${estilo.icono} ${
-                grande ? "size-40 md:size-72" : "size-32 md:size-40"
+                grande ? "size-40 md:size-72" : lateral ? "size-20 sm:size-32 md:size-40" : "size-32 md:size-40"
               }`}
               strokeWidth={1.25}
               aria-hidden
@@ -97,16 +103,21 @@ export default function BannerInicio({ banner, sizes, tamano = "normal", priorit
           )}
           <p
             className={`relative max-w-[80%] font-extrabold tracking-tight text-balance ${estilo.titulo} ${
-              grande ? "text-2xl leading-tight md:text-4xl" : "text-xl leading-tight"
+              grande
+                ? "text-2xl leading-tight md:text-4xl"
+                : lateral
+                  ? "text-base leading-tight sm:text-xl"
+                  : "text-xl leading-tight"
             }`}
           >
             {banner.titulo}
+            {lateral && <ChevronRight className="ml-0.5 inline size-4 align-[-2px] sm:hidden" aria-hidden />}
           </p>
           {banner.texto && (
             // En el banner grande y en móvil se omite el texto: no cabe con el título y el botón.
             <p
               className={`relative max-w-[75%] text-sm ${estilo.texto} ${
-                grande ? "hidden sm:line-clamp-2 md:text-base" : "line-clamp-2"
+                grande ? "hidden sm:line-clamp-2 md:text-base" : lateral ? "hidden sm:line-clamp-2" : "line-clamp-2"
               }`}
             >
               {banner.texto}
@@ -115,8 +126,8 @@ export default function BannerInicio({ banner, sizes, tamano = "normal", priorit
           {banner.textoBoton && (
             // Es un span y no <Boton>: todo el banner ya es un enlace. Misma forma que Boton.
             <span
-              className={`relative mt-1 inline-flex h-10 w-fit items-center gap-1 rounded-boton px-4 text-sm font-semibold transition-colors ${estilo.boton} ${
-                grande ? "md:mt-2" : ""
+              className={`relative mt-1 h-10 w-fit items-center gap-1 rounded-boton px-4 text-sm font-semibold transition-colors ${estilo.boton} ${
+                grande ? "inline-flex md:mt-2" : lateral ? "hidden sm:inline-flex" : "inline-flex"
               }`}
             >
               {banner.textoBoton}
