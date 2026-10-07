@@ -4,6 +4,7 @@ import { createContext, useCallback, useContext, useMemo, useState, useSyncExter
 import type { ReactNode } from "react";
 import type { Producto } from "@/types/catalogo";
 import type { ItemCarrito } from "@/types/carrito";
+import { registrarSenal } from "@/lib/recomendaciones/almacenPerfil";
 import { totalCarrito } from "@/lib/whatsapp";
 import { guardarItems, obtenerItems, obtenerItemsServidor, suscribir } from "./almacenCarrito";
 import PanelCarrito from "./PanelCarrito";
@@ -42,6 +43,7 @@ export default function ProveedorCarrito({ children }: { children: ReactNode }) 
         : [...actuales, { producto, cantidad }],
     );
     // No abre el panel: el cliente sigue comprando; "¡Agregado!" y el contador que late le confirman.
+    registrarSenal({ tipo: "carrito", id: producto.id }); // perfil de "Te puede interesar"
   }, []);
 
   const quitar = useCallback((id: string) => {

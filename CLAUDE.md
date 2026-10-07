@@ -5,6 +5,7 @@ Dos personas trabajan en paralelo, cada una con su propia sesión de Claude Code
 
 Guía visual completa: @docs/guia-de-estilo.md
 Contrato de datos de productos: @docs/datos.md
+Búsqueda inteligente, relacionados y "Te puede interesar": @docs/recomendaciones.md
 Next.js 16 (APIs distintas a las que conoces; consulta `node_modules/next/dist/docs/`): @AGENTS.md
 
 ## Fase actual del proyecto
@@ -15,7 +16,8 @@ Next.js 16 (APIs distintas a las que conoces; consulta `node_modules/next/dist/d
 - `npm run dev` — servidor local en http://localhost:3000
 - `npm run build` — debe pasar sin errores antes de cada commit
 - `npm run lint` — debe pasar sin errores antes de cada commit
-- No hay pruebas automatizadas; `lint` + `build` (que también chequea tipos) son la verificación.
+- `npm test` — pruebas de `lib/` con Vitest (búsqueda, relacionados, perfil, velocidad con 2000 productos); deben pasar antes de cada commit
+- Verificación completa: `lint` + `test` + `build` (que también chequea tipos). La UI no tiene pruebas automáticas.
 
 ## Estructura
 - `app/page.tsx` — página principal (responsable: persona A)
@@ -31,6 +33,11 @@ Next.js 16 (APIs distintas a las que conoces; consulta `node_modules/next/dist/d
 - `types/` — tipos compartidos (Producto, Categoria, Banner)
 - `public/banners/`, `public/marcas/` — imágenes propias
 - `components/carrito/` — carrito (COMPARTIDO); `lib/whatsapp.ts` arma el mensaje del pedido, `lib/formato.ts` formatea precios
+- `lib/recomendaciones/` — búsqueda inteligente, relacionados y "Te puede interesar" (lógica pura, sin React; ver docs/recomendaciones.md)
+- `datos/` — diccionarios EDITABLES sin programar: `sinonimos.json`, `complementarios.json`, `consumibles.json`
+- `components/busqueda/` — `BuscadorConSugerencias` (va en el Header), `SinResultados` (COMPARTIDOS)
+- `components/recomendaciones/` — `ProductosRelacionados`, `TePuedeInteresar`, `RegistrarSenal` (COMPARTIDOS)
+- `app/buscar/page.tsx` — resultados de búsqueda (responsable: persona A); `app/api/indice-busqueda/route.ts` entrega el catálogo al navegador
 - `app/muestra/` — vitrina TEMPORAL de los componentes compartidos (`/muestra`); útil para revisarlos
 
 ## Arquitectura
@@ -40,6 +47,9 @@ Next.js 16 (APIs distintas a las que conoces; consulta `node_modules/next/dist/d
 - Carrito: `ProveedorCarrito` envuelve todo en `app/layout.tsx` y renderiza `PanelCarrito`. El estado vive en `localStorage` (clave `el-pico:carrito`) vía `useSyncExternalStore` en `almacenCarrito.ts`, sincronizado entre pestañas. Desde componentes cliente usa el hook `useCarrito()`.
 - Precios en USD como `number`; para mostrarlos, `Precio` (o `formatearPrecio` en texto plano, ej. el mensaje de WhatsApp).
 - Nombre de producto para mostrar: `tituloProducto()` en `lib/formato.ts` ("TALADRO PERCUTOR 1/2\" 650W" + PROTEK → "Taladro percutor Protek 1/2\" 650W"). Lo usan `ProductCard`, el carrito y la página de producto; nunca muestres `producto.nombre` en MAYÚSCULAS. El mensaje de WhatsApp sí usa el nombre tal como viene del sistema.
+- Búsqueda y recomendaciones (`lib/recomendaciones/`): los algoritmos RECIBEN la lista de productos (nunca importan `lib/catalogo.ts`) y funcionan igual en servidor y navegador. Los datos llegan por `getIndiceProductos()`, `getMasVendidos()` y `getCompradosJuntos()` de `lib/catalogo.ts`; al conectar el SQL solo cambia ese archivo. Todo texto se compara con `palabrasClave()` (sin acentos, singular, medidas y sinónimos unificados); no compares nombres de producto a mano. Sinónimos, complementarios y consumibles se editan en `datos/*.json`, nunca en el código. Para buscar en el navegador usa `cargarIndice()` de `components/busqueda/indiceCliente.ts` (descarga el catálogo una sola vez).
+- `Producto.ventas?` (opcional) ordena los "más vendidos"; la API debe enviarlo. "Te puede interesar" del inicio ya no usa `getProductosDestacados("te-puede-interesar")`: el servidor manda `getMasVendidos(10)` y `TePuedeInteresar` lo personaliza en el navegador.
+- Perfil del cliente: `localStorage` clave `el-pico:perfil` (`lib/recomendaciones/almacenPerfil.ts`, siempre con try/catch). Solo IDs de producto, términos de búsqueda y fechas; NUNCA datos personales. Señales: `whatsapp` (8), `carrito` (4), `visto` (2), `busqueda` (1), `compra` (8, para el historial del SQL). Ya se anotan solas en `agregar()`, en el botón de WhatsApp de `PanelCarrito` y en `/buscar`. Si creas otro punto de envío a WhatsApp (ej. `/finalizar-pedido`), anota `registrarSenales(items.map((i) => ({ tipo: "whatsapp", id: i.producto.id })))`. En la página de producto van `<RegistrarSenal senales={[{ tipo: "visto", id }]} />` y `<ProductosRelacionados producto={producto} />` (reemplaza el carrusel de "misma categoría").
 - Imágenes remotas: cuando la API entregue URLs, agrega el dominio a `images.remotePatterns` en `next.config.ts`.
 - Rebranding en TODA la tienda (acordado por persona A y persona B): los tokens `pico-*` de `app/globals.css` tienen los colores del logo nuevo (azul marino #0c2d4e, rojo #c4161c); los `logo-*` son los mismos colores con otro nombre (los usan las páginas de persona B). Para piezas nuevas compartidas, prefiere `pico-*`. Detalle en `docs/guia-de-estilo.md`.
 - Logo: `components/layout/Logo.tsx` es solo el isotipo de las dos montañas en SVG (`Montanas`); header en rojo (`placa={false}`), footer en cuadro rojo con montañas blancas + "CENTRO FERRETERO / EL PICO" en texto. `public/logo-el-pico.webp` ya no se usa en el sitio.
@@ -72,6 +82,7 @@ Next.js 16 (APIs distintas a las que conoces; consulta `node_modules/next/dist/d
 
 ## Registro de cambios
 Lo más reciente arriba. Formato: fecha · rama · quién · qué cambió y qué debe saber el compañero.
+- 2026-10-07 · `recomendaciones` · persona A · **Compartido — búsqueda inteligente, relacionados y "Te puede interesar" personalizado.** Nuevo módulo `lib/recomendaciones/` + diccionarios editables en `datos/` + pruebas con Vitest (`npm test`, nueva dependencia de desarrollo) + `minisearch` (dependencia). Cambios que afectan a persona B: (1) **contrato**: `Producto.ventas?` y tipo `CompradoJunto` en `types/catalogo.ts`; funciones nuevas `getIndiceProductos`, `getMasVendidos`, `getCompradosJuntos` en `lib/catalogo.ts` y 3 endpoints nuevos en `docs/datos.md`; (2) `lib/mock/productos.ts`: ~25 productos nuevos y `ventas` en todos; `destacadosMock["te-puede-interesar"]` se eliminó; (3) **Header**: la caja de búsqueda ahora es `BuscadorConSugerencias` (mismo diseño, con sugerencias en vivo); (4) `ProveedorCarrito.agregar()` y el botón de WhatsApp de `PanelCarrito` anotan señales del perfil; (5) página `/buscar` nueva. **Pendiente en las ramas con página de producto** (`producto`, `categorias`, `opiniones`, `finalizar-pedido`): poner `ProductosRelacionados` + `RegistrarSenal` (ver docs/recomendaciones.md) y, en `finalizar-pedido`, anotar la señal `whatsapp` en `FormularioPedido`.
 - 2026-10-07 · `inicio` · persona A · **Compartido:** `agregar()` de `ProveedorCarrito` ya NO abre el panel del carrito; la confirmación es el "¡Agregado!" de `BotonAgregar` y el contador que late. El panel solo se abre con el carrito del header o el flotante (este ahora con `cursor-pointer`).
 - 2026-10-07 · `inicio` · persona A · **Compartido:** `BotonCarritoFlotante` ahora es blanco con borde e ícono rojos (`pico-rojo`), y aparece cayendo desde arriba con un pequeño rebote. Con "reducir movimiento" activo en el sistema solo aparece y desaparece (sin desplazarse).
 - 2026-10-07 · `inicio` · persona A · **Compartido:** carrito flotante. Nuevo `components/carrito/BotonCarritoFlotante.tsx`: `BotonCarrito` (header) lo muestra abajo a la derecha cuando el carrito del header sale de la pantalla, y se esconde con el panel abierto. En `/producto/` (móvil) queda más arriba para no tapar la barra fija de compra. Aplicado en todas las ramas (menos `main`).
