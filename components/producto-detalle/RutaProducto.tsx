@@ -1,4 +1,4 @@
-﻿import Link from "next/link";
+import Link from "next/link";
 import { ChevronRight, House } from "lucide-react";
 import type { Categoria } from "@/types/catalogo";
 
@@ -7,7 +7,7 @@ type Props = {
   actual: string;
 };
 
-/** Inicio â€º CategorÃ­a â€º Producto. */
+/** Inicio › Categoría › Producto. */
 export default function RutaProducto({ categoria, actual }: Props) {
   const separador = (
     <li aria-hidden>
@@ -16,7 +16,7 @@ export default function RutaProducto({ categoria, actual }: Props) {
   );
 
   return (
-    <nav aria-label="Ruta de navegaciÃ³n" className="text-[13px] text-gris-texto">
+    <nav aria-label="Ruta de navegación" className="text-[13px] text-gris-texto">
       <ol className="flex flex-wrap items-center gap-1">
         <li>
           <Link href="/" className="inline-flex items-center gap-1 hover:text-logo-marino hover:underline">
