@@ -84,6 +84,7 @@ Next.js 16 (APIs distintas a las que conoces; consulta `node_modules/next/dist/d
 
 ## Registro de cambios
 Lo más reciente arriba. Formato: fecha · rama · quién · qué cambió y qué debe saber el compañero.
+- 2026-10-07 · `finalizar-pedido` · persona A · **Compartido:** carrito flotante. Nuevo `components/carrito/BotonCarritoFlotante.tsx`: `BotonCarrito` (header) lo muestra abajo a la derecha cuando el carrito del header sale de la pantalla, y se esconde con el panel abierto. En `/producto/` (móvil) queda más arriba para no tapar la barra fija de compra. Aplicado en todas las ramas (menos `main`).
 - 2026-10-07 · `finalizar-pedido` · persona B (acordado con persona A) · **Rebranding en toda la tienda**, aplicado en todas las ramas (menos `main`) con el mismo estilo: colores `pico-*` = colores del logo; Chakra Petch en todo el sitio; logo nuevo (montañas en SVG); `Header`, barra de categorías (subrayado rojo animado), `Footer`, `BotonCarrito`, `Boton`, `TituloSeccion`, `ProductCard`/`BotonAgregar`, carruseles, banners y secciones de inicio con animaciones (`Revelar`). `docs/guia-de-estilo.md` actualizada.
 - 2026-10-06 · `producto` · persona B · Une lo de persona A (`tituloProducto()` en `lib/formato.ts`) y le pasa la corrección de "20W50" (viscosidad de aceite) que tenía la copia vieja; se borró `components/producto-detalle/tituloProducto.ts`. Todo import del título va a `@/lib/formato`.
 - 2026-10-06 · `finalizar-pedido` · persona B · Chakra Petch en todo el texto de `/finalizar-pedido` (`fuentePaginas`); el error también pasa al rebranding.
