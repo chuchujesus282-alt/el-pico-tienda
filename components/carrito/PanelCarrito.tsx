@@ -5,7 +5,6 @@ import { MessageCircle, Minus, Plus, ShoppingCart, Trash2, X } from "lucide-reac
 import Boton from "@/components/ui/Boton";
 import Precio from "@/components/ui/Precio";
 import ImagenProducto from "@/components/producto/ImagenProducto";
-import { armarMensajePedido, enlaceWhatsApp } from "@/lib/whatsapp";
 import { useCarrito } from "./ProveedorCarrito";
 
 /** Panel lateral del carrito. No cobra: arma el pedido y lo envía por WhatsApp. */
@@ -124,14 +123,10 @@ export default function PanelCarrito() {
               <p className="text-[13px] text-gris-texto">
                 No cobramos en la web: te confirmamos disponibilidad y forma de pago por WhatsApp.
               </p>
-              <Boton
-                href={enlaceWhatsApp(armarMensajePedido(items))}
-                target="_blank"
-                rel="noopener noreferrer"
-                anchoCompleto
-              >
+              {/* El pedido se cierra en /finalizar-pedido (retiro + pago) y de ahí sale a WhatsApp. */}
+              <Boton href="/finalizar-pedido" onClick={cerrar} anchoCompleto>
                 <MessageCircle className="size-5" aria-hidden />
-                Enviar pedido por WhatsApp
+                Finalizar pedido
               </Boton>
               <div className="flex gap-3">
                 <Boton variante="secundario" onClick={cerrar} className="flex-1">

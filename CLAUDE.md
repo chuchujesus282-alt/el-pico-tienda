@@ -22,6 +22,9 @@ Next.js 16 (APIs distintas a las que conoces; consulta `node_modules/next/dist/d
 - `app/categoria/[slug]/page.tsx` — página de categoría (responsable: persona B)
 - `app/producto/[id]/page.tsx` — página de producto (responsable: persona B, rama `producto`)
 - `components/producto-detalle/` — piezas exclusivas de la página de producto
+- `app/finalizar-pedido/page.tsx` — cierre del pedido: forma de retiro + método de pago → WhatsApp (responsable: persona B, rama `finalizar-pedido`)
+- `components/finalizar-pedido/` — piezas exclusivas de finalizar pedido (`pedido.ts` tiene las opciones y arma el mensaje)
+- `lib/cliente.ts` — ÚNICA puerta de entrada a los datos del cliente (direcciones); hoy devuelve `lib/mock/direcciones.ts`
 - `components/layout/` — Header, NavCategorias, Footer (COMPARTIDOS)
 - `components/ui/` — piezas base: Boton, Badge, Precio, Contenedor, TituloSeccion (COMPARTIDOS)
 - `components/producto/` — ProductCard, CarruselProductos, GrillaProductos (COMPARTIDOS)
@@ -43,7 +46,10 @@ Next.js 16 (APIs distintas a las que conoces; consulta `node_modules/next/dist/d
 - Imágenes remotas: cuando la API entregue URLs, agrega el dominio a `images.remotePatterns` en `next.config.ts`.
 - `Producto.descripcion` es opcional (`string | null`): llegará de la base de datos en una fase futura. Las páginas la muestran solo si viene; no inventes descripciones en `lib/mock/`.
 - Título legible de un producto: `tituloProducto()` en `components/producto-detalle/tituloProducto.ts` ("TALADRO PERCUTOR 1/2\" 650W" + PROTEK → "Taladro percutor Protek 1/2\" 650W"). Las tarjetas (`ProductCard`) siguen mostrando el nombre en MAYÚSCULAS tal como viene del sistema.
-- "Comprar ahora" (página de producto) no usa el carrito: abre WhatsApp con `armarMensajePedido([{ producto, cantidad }])`.
+- Flujo de compra: todo pedido pasa por `/finalizar-pedido` antes de WhatsApp. El cliente elige "¿Cómo retiras?" (Pick-up / Delivery / Flete; con Delivery o Flete elige una de sus direcciones) y "Método de pago" (Divisas, Pago móvil, Transferencia bancaria, Cashea, Zelle, Binance o Pago combinado, que pide marcar al menos dos). El botón de WhatsApp se activa solo con todo elegido y el mensaje lo arma `armarMensajeFinal()` en `components/finalizar-pedido/pedido.ts`.
+  - Desde el carrito (`PanelCarrito` → "Finalizar pedido"): `/finalizar-pedido`, usa los productos del carrito. El carrito NO se vacía al enviar.
+  - "Comprar ahora" (página de producto): `/finalizar-pedido?producto=ID&cantidad=N`, solo ese producto; no toca el carrito.
+- No hay cuentas de cliente todavía: las direcciones "del perfil" son de prueba (`lib/mock/direcciones.ts`, tipo `Direccion` en `types/cliente.ts`). Cuando existan cuentas, solo cambia `getDireccionesCliente()` en `lib/cliente.ts`.
 
 ## Reglas de diseño (obligatorias)
 - Colores: usa SOLO los tokens de `app/globals.css` (`bg-pico-azul`, `text-pico-rojo`, etc.). Nunca escribas un color hex dentro de un componente.
@@ -63,7 +69,7 @@ Next.js 16 (APIs distintas a las que conoces; consulta `node_modules/next/dist/d
 ## Reglas de trabajo en equipo
 - No modifiques componentes COMPARTIDOS sin que la tarea lo pida explícitamente. Si hace falta cambiar uno, avisa al usuario antes, porque afecta la página del compañero.
 - Si un componente compartido necesita una variante, agrégala con una prop opcional; no cambies su comportamiento por defecto.
-- Cada persona trabaja en su rama (`inicio`, `categorias`, `producto`), nunca directo en `main`.
+- Cada persona trabaja en su rama (`inicio`, `categorias`, `producto`, `finalizar-pedido`), nunca directo en `main`.
 - Datos de productos: siempre a través de `lib/catalogo.ts`. Nunca hagas `fetch` al servidor desde un componente.
 - Variables secretas solo en `.env.local` (no se sube). Documenta cualquier variable nueva en `.env.example`.
 - Antes de hacer commit: `npm run lint` y `npm run build` sin errores.
@@ -72,6 +78,7 @@ Next.js 16 (APIs distintas a las que conoces; consulta `node_modules/next/dist/d
 
 ## Registro de cambios
 Lo más reciente arriba. Formato: fecha · rama · quién · qué cambió y qué debe saber el compañero.
+- 2026-10-06 · `finalizar-pedido` (sale de `producto`) · persona B · Nueva página `/finalizar-pedido` (retiro + dirección + método de pago → WhatsApp). Nuevos: `types/cliente.ts`, `lib/cliente.ts`, `lib/mock/direcciones.ts`. **Compartido:** en `PanelCarrito` el botón "Enviar pedido por WhatsApp" pasa a ser "Finalizar pedido" y lleva a `/finalizar-pedido`. "Comprar ahora" ya no abre WhatsApp directo. `armarMensajePedido()` de `lib/whatsapp.ts` sigue existiendo pero ya no lo usa el carrito. Subida a GitHub en la rama `finalizar-pedido`; conviene unir antes `producto` a `main`.
 - 2026-10-06 · `producto` · persona B · Página de producto simplificada: se quitó el bloque "¿Cómo lo recibes?" (Delivery/Fletes/Pick-up; se borró `OpcionesEntrega.tsx`) y la nota bajo los botones. **Compartido:** la barra de categorías ya no se muestra en `/producto/*`. `NavCategorias` ahora envuelve el `<nav>` en el nuevo `components/layout/OcultarEnRutas.tsx` con `prefijos={["/producto/"]}`; en inicio y categorías se ve igual que antes. Para ocultarla en otra ruta, agrega el prefijo ahí.
 - 2026-10-06 · `producto` · persona B · Nueva página `/producto/[id]` (imagen, título, precio, cantidad, "Agregar al carrito", "Comprar ahora" por WhatsApp, bloque Delivery/Fletes/Pick-up, relacionados) con loading/error/not-found. Piezas en `components/producto-detalle/`. Archivos compartidos tocados: `types/catalogo.ts` y `docs/datos.md` (campo opcional `descripcion`, no rompe nada). Subida a GitHub en la rama `producto`, pendiente de pull request a `main`.
 - 2026-10-06 · `producto` · persona B · Rama `producto` creada desde `main`.

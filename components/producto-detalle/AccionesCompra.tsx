@@ -1,15 +1,14 @@
 "use client";
 
 import { useState } from "react";
-import { MessageCircle, Minus, Plus, ShoppingCart } from "lucide-react";
+import { Minus, Plus, ShoppingBag, ShoppingCart } from "lucide-react";
 import { useCarrito } from "@/components/carrito/ProveedorCarrito";
 import Boton from "@/components/ui/Boton";
-import { armarMensajePedido, enlaceWhatsApp } from "@/lib/whatsapp";
 import type { Producto } from "@/types/catalogo";
 
 const CANTIDAD_MAXIMA = 999;
 
-/** Cantidad + "Agregar al carrito" (abre el panel del carrito) + "Comprar ahora" (pedido directo por WhatsApp). */
+/** Cantidad + "Agregar al carrito" (abre el panel del carrito) + "Comprar ahora" (va a finalizar pedido solo con este producto). */
 export default function AccionesCompra({ producto }: { producto: Producto }) {
   const { agregar } = useCarrito();
   const [cantidad, setCantidad] = useState(1);
@@ -61,12 +60,10 @@ export default function AccionesCompra({ producto }: { producto: Producto }) {
         </Boton>
         <Boton
           variante="secundario"
-          href={enlaceWhatsApp(armarMensajePedido([{ producto, cantidad }]))}
-          target="_blank"
-          rel="noopener noreferrer"
+          href={`/finalizar-pedido?producto=${encodeURIComponent(producto.id)}&cantidad=${cantidad}`}
           className="h-12 text-base"
         >
-          <MessageCircle className="size-5" aria-hidden />
+          <ShoppingBag className="size-5" aria-hidden />
           Comprar ahora
         </Boton>
       </div>
