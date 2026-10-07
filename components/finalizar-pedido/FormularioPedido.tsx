@@ -20,7 +20,7 @@ import {
   Truck,
 } from "lucide-react";
 import { useCarrito } from "@/components/carrito/ProveedorCarrito";
-import { tituloProducto } from "@/components/producto-detalle/tituloProducto";
+import { tituloProducto } from "@/lib/formato";
 import ImagenProducto from "@/components/producto/ImagenProducto";
 import Precio from "@/components/ui/Precio";
 import { enlaceWhatsApp, totalCarrito } from "@/lib/whatsapp";
