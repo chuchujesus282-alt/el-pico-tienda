@@ -13,6 +13,13 @@ export type Producto = {
   categoriaSlug: string;
   subcategoria: string | null;
   descripcion?: string | null; // opcional; la página de producto la muestra solo si viene
+  ventas?: number;       // unidades vendidas (últimos 90 días); ordena los "más vendidos". Opcional
+};
+
+// Producto que suele ir en la misma factura que otro (sale de las facturas del SQL).
+export type CompradoJunto = {
+  id: string;
+  puntaje: number;       // 0 a 1
 };
 
 export type Categoria = {
@@ -41,10 +48,15 @@ getProductosPorCategoria(slug: string, opciones: {
   orden?: "relevancia" | "precio-asc" | "precio-desc" | "nombre";
 }): Promise<ResultadoCategoria>
 getProducto(id: string): Promise<Producto | null>
+
+// Búsqueda y recomendaciones (lib/recomendaciones/)
+getIndiceProductos(): Promise<Producto[]>                       // todo el catálogo, para buscar y recomendar
+getMasVendidos(limite?: number, categoria?: string): Promise<Producto[]>
+getCompradosJuntos(id: string, limite?: number): Promise<CompradoJunto[]>  // [] mientras no haya facturas
 ```
 
 ## De dónde salen los datos
-- Si `CATALOGO_API_URL` NO está definida → `lib/catalogo.ts` devuelve datos de `lib/mock/` (unos 40 productos de prueba repartidos en varias categorías). Así ambos pueden trabajar sin el servidor.
+- Si `CATALOGO_API_URL` NO está definida → `lib/catalogo.ts` devuelve datos de `lib/mock/` (unos 70 productos de prueba repartidos en varias categorías, con `ventas` inventadas). Así ambos pueden trabajar sin el servidor.
 - Si está definida → consulta la API del servidor de la ferretería a través del túnel de Cloudflare.
 
 ## Reglas de la conexión con el servidor
@@ -56,8 +68,11 @@ getProducto(id: string): Promise<Producto | null>
 
 ## Endpoints esperados de la API (para cuando se construya)
 - `GET /categorias`
-- `GET /productos/destacados?seccion=te-puede-interesar&limite=10`
+- `GET /productos/destacados?seccion=recomendados&limite=10`
 - `GET /categorias/:slug/productos?pagina=1&porPagina=24&marca=&subcategoria=&orden=`
 - `GET /productos/:id`
+- `GET /productos/indice` — todos los productos (con `ventas`), para la búsqueda y las recomendaciones
+- `GET /productos/mas-vendidos?limite=10&categoria=`
+- `GET /productos/:id/comprados-juntos?limite=8` — calculado con las facturas: veces juntos / √(facturas de A × facturas de B). La función `compradosJuntos()` de `lib/recomendaciones/relacionados.ts` hace ese cálculo y sirve de referencia
 
 Las respuestas devuelven JSON con la misma forma que los tipos de arriba.
