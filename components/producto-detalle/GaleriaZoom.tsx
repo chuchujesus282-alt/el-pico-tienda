@@ -4,6 +4,7 @@ import { type PointerEvent, useEffect, useRef, useState, useSyncExternalStore } 
 import { createPortal } from "react-dom";
 import { Maximize2, X, ZoomIn, ZoomOut } from "lucide-react";
 import ImagenProducto from "@/components/producto/ImagenProducto";
+import { fuentePaginas } from "./fuentes";
 
 type Props = {
   src: string | null;
@@ -80,7 +81,7 @@ export default function GaleriaZoom({ src, alt }: Props) {
       {/* Portal al <body>: la animación de entrada de la columna haría que "fixed" quede encerrado en ella. */}
       {montado && createPortal(
       <div
-        className={`fixed inset-0 z-50 flex items-center justify-center p-4 transition-opacity duration-200 ${
+        className={`${fuentePaginas} fixed inset-0 z-50 flex items-center justify-center p-4 transition-opacity duration-200 ${
           abierta ? "opacity-100" : "pointer-events-none opacity-0"
         }`}
         inert={!abierta}

@@ -3,7 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 import PanelOpiniones from "@/components/opiniones/PanelOpiniones";
-import { chakra } from "@/components/producto-detalle/fuentes";
+import { fuentePaginas } from "@/components/producto-detalle/fuentes";
 import RutaProducto from "@/components/producto-detalle/RutaProducto";
 import { tituloProducto } from "@/components/producto-detalle/tituloProducto";
 import ImagenProducto from "@/components/producto/ImagenProducto";
@@ -40,7 +40,7 @@ export default async function PaginaOpiniones({ params }: PageProps<"/producto/[
   const hrefProducto = `/producto/${encodeURIComponent(producto.id)}`;
 
   return (
-    <div className={chakra.variable}>
+    <div className={fuentePaginas}>
       <Contenedor className="py-6 md:py-8">
         <RutaProducto categoria={categoria} producto={{ titulo, href: hrefProducto }} actual="Opiniones" />
 
