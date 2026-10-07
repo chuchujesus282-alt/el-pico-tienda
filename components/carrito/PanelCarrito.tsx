@@ -5,6 +5,7 @@ import { MessageCircle, Minus, Plus, ShoppingCart, Trash2, X } from "lucide-reac
 import Boton from "@/components/ui/Boton";
 import Precio from "@/components/ui/Precio";
 import ImagenProducto from "@/components/producto/ImagenProducto";
+import { tituloProducto } from "@/lib/formato";
 import { armarMensajePedido, enlaceWhatsApp } from "@/lib/whatsapp";
 import { useCarrito } from "./ProveedorCarrito";
 
@@ -77,7 +78,7 @@ export default function PanelCarrito() {
                     className="size-16 shrink-0 rounded-boton border border-gris-borde"
                   />
                   <div className="flex min-w-0 flex-1 flex-col gap-1">
-                    <p className="line-clamp-2 text-sm font-medium">{producto.nombre}</p>
+                    <p className="line-clamp-2 text-sm font-medium">{tituloProducto(producto)}</p>
                     <p className="text-[13px] text-gris-texto">Cód. {producto.id}</p>
                     <div className="mt-1 flex items-center justify-between gap-2">
                       <div className="flex items-center rounded-boton border border-gris-borde">
