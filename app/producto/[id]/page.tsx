@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { ArrowLeft, House } from "lucide-react";
 import AccionesCompra from "@/components/producto-detalle/AccionesCompra";
-import OpcionesEntrega from "@/components/producto-detalle/OpcionesEntrega";
 import RutaProducto from "@/components/producto-detalle/RutaProducto";
 import { tituloProducto } from "@/components/producto-detalle/tituloProducto";
 import CarruselProductos from "@/components/producto/CarruselProductos";
@@ -91,8 +90,6 @@ export default async function PaginaProducto({ params }: PageProps<"/producto/[i
           </div>
 
           <AccionesCompra producto={producto} />
-
-          <OpcionesEntrega />
 
           <div className="flex flex-wrap gap-3">
             <Boton href="/" variante="secundario">

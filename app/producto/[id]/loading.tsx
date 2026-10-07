@@ -17,7 +17,6 @@ export default function CargandoProducto() {
               <div className="h-12 rounded-boton bg-gris-borde" />
               <div className="h-12 rounded-boton bg-gris-borde" />
             </div>
-            <div className="h-36 rounded-banner bg-gris-borde" />
           </div>
         </div>
       </div>

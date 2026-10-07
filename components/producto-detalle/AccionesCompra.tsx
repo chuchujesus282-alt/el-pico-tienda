@@ -70,9 +70,6 @@ export default function AccionesCompra({ producto }: { producto: Producto }) {
           Comprar ahora
         </Boton>
       </div>
-      <p className="text-[13px] text-gris-texto">
-        &quot;Comprar ahora&quot; te lleva a WhatsApp con este pedido listo. Ahí te confirmamos disponibilidad y forma de pago.
-      </p>
     </div>
   );
 }
