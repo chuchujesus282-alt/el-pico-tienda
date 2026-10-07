@@ -7,7 +7,7 @@ export default function CargandoProducto() {
       <div className="animate-pulse" aria-hidden>
         <div className="h-4 w-56 rounded bg-gris-borde" />
         <div className="mt-4 grid gap-6 md:mt-6 md:grid-cols-2 md:gap-8 lg:gap-12">
-          <div className="aspect-square rounded-tarjeta bg-gris-borde" />
+          <div className="aspect-square rounded-banner bg-gris-borde" />
           <div className="flex flex-col gap-4">
             <div className="h-3 w-40 rounded bg-gris-borde" />
             <div className="h-8 w-full rounded bg-gris-borde" />

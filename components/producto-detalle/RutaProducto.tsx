@@ -19,7 +19,7 @@ export default function RutaProducto({ categoria, actual }: Props) {
     <nav aria-label="Ruta de navegación" className="text-[13px] text-gris-texto">
       <ol className="flex flex-wrap items-center gap-1">
         <li>
-          <Link href="/" className="inline-flex items-center gap-1 hover:text-pico-azul hover:underline">
+          <Link href="/" className="inline-flex items-center gap-1 hover:text-logo-marino hover:underline">
             <House className="size-3.5" aria-hidden />
             Inicio
           </Link>
@@ -28,7 +28,7 @@ export default function RutaProducto({ categoria, actual }: Props) {
           <>
             {separador}
             <li>
-              <Link href={`/categoria/${categoria.slug}`} className="hover:text-pico-azul hover:underline">
+              <Link href={`/categoria/${categoria.slug}`} className="hover:text-logo-marino hover:underline">
                 {categoria.nombre}
               </Link>
             </li>
