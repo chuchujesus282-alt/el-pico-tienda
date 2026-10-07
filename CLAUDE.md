@@ -40,9 +40,9 @@ Next.js 16 (APIs distintas a las que conoces; consulta `node_modules/next/dist/d
 - Next 16: `params` es una `Promise` (`const { slug } = await params`) y las páginas se tipan con los helpers globales `PageProps<"/ruta">` / `LayoutProps<"/">`.
 - Carrito: `ProveedorCarrito` envuelve todo en `app/layout.tsx` y renderiza `PanelCarrito`. El estado vive en `localStorage` (clave `el-pico:carrito`) vía `useSyncExternalStore` en `almacenCarrito.ts`, sincronizado entre pestañas. Desde componentes cliente usa el hook `useCarrito()`.
 - Precios en USD como `number`; para mostrarlos, `Precio` (o `formatearPrecio` en texto plano, ej. el mensaje de WhatsApp).
+- Nombre de producto para mostrar: `tituloProducto()` en `lib/formato.ts` ("TALADRO PERCUTOR 1/2\" 650W" + PROTEK → "Taladro percutor Protek 1/2\" 650W"). Lo usan `ProductCard`, el carrito y la página de producto; nunca muestres `producto.nombre` en MAYÚSCULAS. El mensaje de WhatsApp sí usa el nombre tal como viene del sistema.
 - Imágenes remotas: cuando la API entregue URLs, agrega el dominio a `images.remotePatterns` en `next.config.ts`.
 - `Producto.descripcion` es opcional (`string | null`): llegará de la base de datos en una fase futura. Las páginas la muestran solo si viene; no inventes descripciones en `lib/mock/`.
-- Título legible de un producto: `tituloProducto()` en `components/producto-detalle/tituloProducto.ts` ("TALADRO PERCUTOR 1/2\" 650W" + PROTEK → "Taladro percutor Protek 1/2\" 650W"). Las tarjetas (`ProductCard`) siguen mostrando el nombre en MAYÚSCULAS tal como viene del sistema.
 - "Comprar ahora" (página de producto) no usa el carrito: abre WhatsApp con `armarMensajePedido([{ producto, cantidad }])`.
 
 ## Reglas de diseño (obligatorias)
@@ -72,6 +72,8 @@ Next.js 16 (APIs distintas a las que conoces; consulta `node_modules/next/dist/d
 
 ## Registro de cambios
 Lo más reciente arriba. Formato: fecha · rama · quién · qué cambió y qué debe saber el compañero.
+- 2026-10-06 · `inicio` · persona A · **Compartido:** `tituloProducto()` se movió de `components/producto-detalle/` a `lib/formato.ts`. `ProductCard` y `PanelCarrito` ahora muestran ese título (formato oración, con la marca); la tarjeta ya no tiene la línea aparte de la marca ni `uppercase`.
+- 2026-10-06 · `inicio` · persona A · **Compartido:** categorías nuevas en `lib/mock/categorias.ts`: herramientas, construccion, ferreteria, electricidad, plomeria, pinturas, hogar-y-jardin, seguridad-industrial, vehiculos. Desaparecen `tornilleria`, `jardin` y `seguridad` (sus productos de prueba pasaron a ferreteria, hogar-y-jardin y seguridad-industrial). La API debe usar estos mismos slugs.
 - 2026-10-06 · `producto` · persona B · Página de producto simplificada: se quitó el bloque "¿Cómo lo recibes?" (Delivery/Fletes/Pick-up; se borró `OpcionesEntrega.tsx`) y la nota bajo los botones. **Compartido:** la barra de categorías ya no se muestra en `/producto/*`. `NavCategorias` ahora envuelve el `<nav>` en el nuevo `components/layout/OcultarEnRutas.tsx` con `prefijos={["/producto/"]}`; en inicio y categorías se ve igual que antes. Para ocultarla en otra ruta, agrega el prefijo ahí.
 - 2026-10-06 · `producto` · persona B · Nueva página `/producto/[id]` (imagen, título, precio, cantidad, "Agregar al carrito", "Comprar ahora" por WhatsApp, bloque Delivery/Fletes/Pick-up, relacionados) con loading/error/not-found. Piezas en `components/producto-detalle/`. Archivos compartidos tocados: `types/catalogo.ts` y `docs/datos.md` (campo opcional `descripcion`, no rompe nada). Subida a GitHub en la rama `producto`, pendiente de pull request a `main`.
 - 2026-10-06 · `producto` · persona B · Rama `producto` creada desde `main`.

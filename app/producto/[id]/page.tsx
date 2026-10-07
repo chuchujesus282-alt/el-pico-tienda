@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 import { ArrowLeft, House } from "lucide-react";
 import AccionesCompra from "@/components/producto-detalle/AccionesCompra";
 import RutaProducto from "@/components/producto-detalle/RutaProducto";
-import { tituloProducto } from "@/components/producto-detalle/tituloProducto";
+import { tituloProducto } from "@/lib/formato";
 import CarruselProductos from "@/components/producto/CarruselProductos";
 import ImagenProducto from "@/components/producto/ImagenProducto";
 import Boton from "@/components/ui/Boton";
