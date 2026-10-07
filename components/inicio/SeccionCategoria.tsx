@@ -1,33 +1,34 @@
+import Image from "next/image";
+import Link from "next/link";
 import CarruselProductos from "@/components/producto/CarruselProductos";
 import type { Categoria, Producto } from "@/types/catalogo";
-import BannerInicio from "./BannerInicio";
-import type { SeccionCategoriaInicio } from "./contenidoInicio";
 
 type Props = {
   categoria: Categoria;
   productos: Producto[];
-  banner: SeccionCategoriaInicio["banner"];
+  /** Banner configurado en contenidoInicio; el de la API tiene prioridad. */
+  imagen: string | null;
 };
 
-/** Banner de la categoría + carrusel de sus productos. Si la API trae banner propio, se usa ese. */
-export default function SeccionCategoria({ categoria, productos, banner }: Props) {
+/**
+ * Carrusel de los productos de una categoría. El banner solo aparece si hay una imagen real:
+ * sin ella, repetiría el nombre que ya dice el título del carrusel.
+ */
+export default function SeccionCategoria({ categoria, productos, imagen }: Props) {
   if (productos.length === 0) return null;
   const href = `/categoria/${categoria.slug}`;
+  const banner = categoria.banner ?? imagen;
 
   return (
     <div className="space-y-4 md:space-y-6">
-      <BannerInicio
-        banner={{
-          ...banner,
-          id: categoria.slug,
-          href,
-          titulo: categoria.nombre,
-          alt: categoria.nombre,
-          imagen: categoria.banner ?? banner.imagen,
-        }}
-        sizes="(min-width: 1280px) 1232px, 100vw"
-        className="aspect-[2/1] md:aspect-[4/1] lg:aspect-[5/1]"
-      />
+      {banner && (
+        <Link
+          href={href}
+          className="relative block aspect-[3/1] overflow-hidden rounded-banner bg-gris-borde focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-pico-azul md:aspect-[5/1]"
+        >
+          <Image src={banner} alt={categoria.nombre} fill sizes="(min-width: 1280px) 1232px, 100vw" className="object-cover" />
+        </Link>
+      )}
       <CarruselProductos titulo={categoria.nombre} productos={productos} href={href} />
     </div>
   );

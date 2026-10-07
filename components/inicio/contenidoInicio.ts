@@ -1,9 +1,8 @@
-import { Bolt, BrickWall, Drill, Droplets, HardHat, MessageCircle, PaintRoller, Sprout } from "lucide-react";
+import { Bolt, BrickWall, Drill, Droplets, HardHat, PaintRoller, Zap } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
-import { enlaceWhatsApp } from "@/lib/whatsapp";
 import type { Banner, Producto } from "@/types/catalogo";
 
-// Contenido editable de la página principal: banners, pasos de compra, logos de marcas y
+// Contenido editable de la página principal: banners, asesoría, logos de marcas y
 // secciones por categoría. Mientras no haya imágenes en public/banners/ y public/marcas/,
 // se muestran versiones hechas con los colores de marca; al poner `imagen`/`logo`, se usa la imagen.
 
@@ -25,7 +24,8 @@ export type Marca = {
 
 export type SeccionCategoriaInicio = {
   slug: string;
-  banner: Omit<BannerInicio, "id" | "href" | "titulo" | "alt">;
+  /** Banner de la categoría. Sin imagen (ni de la API) no se muestra: el título del carrusel basta. */
+  imagen: string | null;
 };
 
 export const bannersPrincipales: BannerInicio[] = [
@@ -77,30 +77,27 @@ export const bannersLaterales: BannerInicio[] = [
     icono: Droplets,
   },
   {
-    id: "asesoria",
+    id: "electricidad",
     imagen: null,
-    alt: "Asesoría por WhatsApp",
-    href: enlaceWhatsApp("¡Hola, El Pico! Necesito asesoría para saber qué comprar."),
-    titulo: "¿No sabes qué necesitas?",
-    texto: "Cuéntanos tu trabajo y te decimos qué llevar.",
-    textoBoton: "Pregúntanos",
+    alt: "Electricidad en El Pico",
+    href: "/categoria/electricidad",
+    titulo: "Electricidad",
+    texto: "Cables, breakers y tomacorrientes.",
+    textoBoton: "Ver electricidad",
     variante: "oscuro",
-    icono: MessageCircle,
+    icono: Zap,
   },
 ];
 
-export const pasosCompra = [
-  { titulo: "Arma tu pedido", texto: "Agrega al carrito lo que necesitas." },
-  { titulo: "Envíalo por WhatsApp", texto: "El mensaje sale listo, con códigos y cantidades." },
-  { titulo: "Te confirmamos", texto: "Disponibilidad y forma de pago, directo con la tienda." },
-];
+/** Mensaje con el que se abre WhatsApp desde "¿No sabes qué necesitas?". */
+export const mensajeAsesoria = "¡Hola, El Pico! Necesito asesoría para saber qué comprar.";
 
 export const bannersPromocionales: BannerInicio[] = [
   {
     id: "seguridad",
     imagen: null,
     alt: "Seguridad industrial en El Pico",
-    href: "/categoria/seguridad",
+    href: "/categoria/seguridad-industrial",
     titulo: "Trabaja protegido",
     texto: "Cascos, guantes, botas y mascarillas de seguridad industrial.",
     textoBoton: "Ver seguridad",
@@ -111,7 +108,7 @@ export const bannersPromocionales: BannerInicio[] = [
     id: "tornilleria",
     imagen: null,
     alt: "Tornillería en El Pico",
-    href: "/categoria/tornilleria",
+    href: "/categoria/ferreteria",
     titulo: "Tornillería de todas las medidas",
     texto: "Tornillos, tuercas, anclajes y fijaciones.",
     textoBoton: "Ver tornillería",
@@ -133,24 +130,6 @@ export function marcasDeProductos(productos: Producto[], limite = 12): Marca[] {
 }
 
 export const seccionesCategoria: SeccionCategoriaInicio[] = [
-  {
-    slug: "construccion",
-    banner: {
-      imagen: null,
-      texto: "Cemento, bloques y todo lo que tu obra necesita.",
-      textoBoton: "Ver categoría",
-      variante: "oscuro",
-      icono: BrickWall,
-    },
-  },
-  {
-    slug: "jardin",
-    banner: {
-      imagen: null,
-      texto: "Palas, carretillas, mangueras y aspersores para tu jardín.",
-      textoBoton: "Ver categoría",
-      variante: "claro",
-      icono: Sprout,
-    },
-  },
+  { slug: "construccion", imagen: null },
+  { slug: "hogar-y-jardin", imagen: null },
 ];

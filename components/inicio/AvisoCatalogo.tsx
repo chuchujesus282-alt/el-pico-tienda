@@ -1,8 +1,11 @@
-import { MessageCircle, PackageSearch, RotateCw } from "lucide-react";
+import { MessageCircle, PackageSearch } from "lucide-react";
 import Boton from "@/components/ui/Boton";
 import { enlaceWhatsApp } from "@/lib/whatsapp";
 
-/** Se muestra cuando no llegó ningún producto (catálogo caído o vacío): la venta sigue por WhatsApp. */
+/**
+ * Se muestra cuando no llegó ningún producto (catálogo caído o vacío): la venta sigue por WhatsApp.
+ * Sin botón de "reintentar": la portada se guarda unos minutos en caché y recargar mostraría lo mismo.
+ */
 export default function AvisoCatalogo() {
   return (
     <section
@@ -12,22 +15,18 @@ export default function AvisoCatalogo() {
       <PackageSearch className="size-12 text-gris-borde" strokeWidth={1.5} aria-hidden />
       <h2 className="text-xl font-bold text-pico-azul">No pudimos cargar los productos</h2>
       <p className="max-w-md text-sm text-gris-texto">
-        Estamos actualizando el catálogo. Mientras tanto, escríbenos por WhatsApp y armamos tu pedido contigo.
+        El catálogo no está disponible en este momento; vuelve en unos minutos. Si lo necesitas ya, escríbenos por
+        WhatsApp y armamos tu pedido contigo.
       </p>
-      <div className="mt-2 flex flex-wrap justify-center gap-3">
-        <Boton
-          href={enlaceWhatsApp("¡Hola, El Pico! Quiero hacer un pedido.")}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <MessageCircle className="size-5" aria-hidden />
-          Pedir por WhatsApp
-        </Boton>
-        <Boton href="/" variante="secundario">
-          <RotateCw className="size-4" aria-hidden />
-          Volver a intentar
-        </Boton>
-      </div>
+      <Boton
+        href={enlaceWhatsApp("¡Hola, El Pico! Quiero hacer un pedido.")}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="mt-2"
+      >
+        <MessageCircle className="size-5" aria-hidden />
+        Pedir por WhatsApp
+      </Boton>
     </section>
   );
 }

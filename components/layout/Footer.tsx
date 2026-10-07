@@ -36,7 +36,7 @@ export default async function Footer() {
     <footer className="mt-12 bg-pico-azul text-pico-blanco md:mt-16">
       <Contenedor className="grid gap-8 py-10 md:grid-cols-2 lg:grid-cols-[1.2fr_2fr_1fr_1fr] lg:py-12">
         <div className="space-y-4">
-          <Logo />
+          <Logo tamano="grande" />
           <p className="max-w-xs text-sm leading-relaxed text-pico-blanco/80">
             Tu ferretería de confianza en Caracas. Todo para construir, reparar y mejorar tu espacio.
           </p>
