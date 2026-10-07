@@ -20,6 +20,7 @@ import {
 import { useCarrito } from "@/components/carrito/ProveedorCarrito";
 import Boton from "@/components/ui/Boton";
 import Precio from "@/components/ui/Precio";
+import { tituloProducto } from "@/lib/formato";
 import { enlaceWhatsApp, totalCarrito } from "@/lib/whatsapp";
 import type { ItemCarrito } from "@/types/carrito";
 import type { Direccion } from "@/types/cliente";
@@ -210,7 +211,7 @@ export default function FormularioPedido({ itemsDirectos, direcciones }: Props) 
           {items.map(({ producto, cantidad }) => (
             <li key={producto.id} className="flex items-start justify-between gap-3 py-3">
               <div className="min-w-0">
-                <p className="line-clamp-2 text-sm font-medium uppercase">{producto.nombre}</p>
+                <p className="line-clamp-2 text-sm font-medium">{tituloProducto(producto)}</p>
                 <p className="text-[13px] text-gris-texto">
                   {cantidad} x Cód. {producto.id}
                 </p>

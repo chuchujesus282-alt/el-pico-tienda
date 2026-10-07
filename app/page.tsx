@@ -3,7 +3,7 @@ import AvisoCatalogo from "@/components/inicio/AvisoCatalogo";
 import BannersPromocionales from "@/components/inicio/BannersPromocionales";
 import BloqueBanners from "@/components/inicio/BloqueBanners";
 import CarruselMarcas from "@/components/inicio/CarruselMarcas";
-import ComoComprar from "@/components/inicio/ComoComprar";
+import NotaPedido from "@/components/inicio/NotaPedido";
 import SeccionCategoria from "@/components/inicio/SeccionCategoria";
 import {
   bannersLaterales,
@@ -67,7 +67,7 @@ export default async function Inicio() {
 
       <div className="space-y-3 md:space-y-4">
         <BloqueBanners principales={principales} laterales={laterales} />
-        <ComoComprar />
+        <NotaPedido />
       </div>
 
       {todos.length === 0 ? (
@@ -90,7 +90,7 @@ export default async function Inicio() {
                 key={seccion.slug}
                 categoria={categoria}
                 productos={productosPorSeccion[i]}
-                banner={seccion.banner}
+                imagen={seccion.imagen}
               />
             );
           })}
