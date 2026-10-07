@@ -5,6 +5,7 @@ import { createPortal } from "react-dom";
 import { ArrowRight, Check, MessageCircle, Minus, Plus, ShoppingCart } from "lucide-react";
 import { useCarrito } from "@/components/carrito/ProveedorCarrito";
 import Precio from "@/components/ui/Precio";
+import { registrarSenal } from "@/lib/recomendaciones/almacenPerfil";
 import { armarMensajePedido, enlaceWhatsApp } from "@/lib/whatsapp";
 import type { Producto } from "@/types/catalogo";
 import { fuentePaginas } from "./fuentes";
@@ -137,6 +138,7 @@ export default function AccionesCompra({ producto }: { producto: Producto }) {
           href={enlaceWhatsApp(armarMensajePedido([{ producto, cantidad }]))}
           target="_blank"
           rel="noopener noreferrer"
+          onClick={() => registrarSenal({ tipo: "whatsapp", id: producto.id })} // perfil de "Te puede interesar"
           className={`${baseBoton} bg-logo-marino text-pico-blanco hover:bg-logo-marino-oscuro hover:shadow-boton-hover`}
         >
           <Brillo />
