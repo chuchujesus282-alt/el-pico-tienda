@@ -7,8 +7,12 @@ import { enlaceWhatsApp } from "@/lib/whatsapp";
 import type { Categoria } from "@/types/catalogo";
 import Logo, { Montanas } from "./Logo";
 
-// Páginas informativas pendientes: los enlaces se activan cuando existan.
-const conocenos = ["Quiénes somos", "Ubícanos", "Horario"];
+// Páginas informativas: las que aún no existen quedan con "#" hasta que se construyan.
+const conocenos = [
+  { texto: "Quiénes somos", href: "#" },
+  { texto: "Ubícanos", href: "/ubicanos" },
+  { texto: "Horario", href: "#" },
+];
 const ayuda = ["Cómo comprar", "Contacto", "Políticas de privacidad"];
 
 function TituloColumna({ children }: { children: string }) {
@@ -82,9 +86,9 @@ export default async function Footer() {
         <div>
           <TituloColumna>Conócenos</TituloColumna>
           <ul className="grid gap-2.5">
-            {conocenos.map((texto) => (
+            {conocenos.map(({ texto, href }) => (
               <li key={texto}>
-                <Enlace href="#">{texto}</Enlace>
+                <Enlace href={href}>{texto}</Enlace>
               </li>
             ))}
           </ul>
