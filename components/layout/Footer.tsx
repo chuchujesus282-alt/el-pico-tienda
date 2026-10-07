@@ -13,7 +13,11 @@ const conocenos = [
   { texto: "Ubícanos", href: "/ubicanos" },
   { texto: "Horario", href: "#" },
 ];
-const ayuda = ["Cómo comprar", "Contacto", "Políticas de privacidad"];
+const ayuda = [
+  { texto: "Cómo comprar", href: "#" },
+  { texto: "Contacto", href: "#" },
+  { texto: "Políticas de privacidad", href: "/politicas-de-privacidad" },
+];
 
 function TituloColumna({ children }: { children: string }) {
   return (
@@ -97,9 +101,9 @@ export default async function Footer() {
         <div>
           <TituloColumna>Ayuda</TituloColumna>
           <ul className="grid gap-2.5">
-            {ayuda.map((texto) => (
+            {ayuda.map(({ texto, href }) => (
               <li key={texto}>
-                <Enlace href="#">{texto}</Enlace>
+                <Enlace href={href}>{texto}</Enlace>
               </li>
             ))}
           </ul>

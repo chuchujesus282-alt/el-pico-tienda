@@ -4,6 +4,9 @@
 
 export const TIENDA = {
   nombre: "Centro Ferretero El Pico",
+  /** Responsable legal (confirmado por persona A el 2026-10-07). */
+  razonSocial: "Centro Ferretero El Pico, C.A.",
+  rif: "J-30440607-0",
   /** Dirección en líneas, como se muestra en la página. */
   direccion: ["Carretera Petare–Santa Lucía, km 6", "Sector El Limoncito, Fila de Mariches"],
   ciudad: "Caracas 1073, estado Miranda",
