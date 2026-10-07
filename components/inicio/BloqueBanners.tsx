@@ -7,9 +7,9 @@ type Props = {
   laterales: DatosBanner[];
 };
 
-const sizesLateral = "(min-width: 1280px) 400px, (min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw";
+const sizesLateral = "(min-width: 1280px) 400px, (min-width: 1024px) 33vw, 50vw";
 
-/** Carrusel grande (~2/3) y dos banners apilados a la derecha (~1/3). En móvil, uno debajo del otro. */
+/** Carrusel grande (~2/3) y dos banners apilados a la derecha (~1/3). En móvil, el carrusel y debajo los dos laterales en fila compacta. */
 export default function BloqueBanners({ principales, laterales }: Props) {
   if (principales.length === 0 && laterales.length === 0) return null;
 
@@ -41,13 +41,15 @@ export default function BloqueBanners({ principales, laterales }: Props) {
         ))}
       />
       {laterales.length > 0 && (
-        <div className="grid gap-3 sm:grid-cols-2 md:gap-4 lg:grid-cols-1 lg:grid-rows-2">
+        // En móvil, fila compacta de dos (solo título) para que el primer producto suba.
+        <div className="grid grid-cols-2 gap-3 md:gap-4 lg:grid-cols-1 lg:grid-rows-2">
           {laterales.map((banner) => (
             <BannerInicio
               key={banner.id}
               banner={banner}
+              tamano="lateral"
               sizes={sizesLateral}
-              className="aspect-[2/1] sm:aspect-[16/10] lg:aspect-auto"
+              className="h-24 sm:h-auto sm:aspect-[16/10] lg:aspect-auto"
             />
           ))}
         </div>
