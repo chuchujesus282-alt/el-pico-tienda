@@ -1,31 +1,94 @@
 @import "tailwindcss";
 
-/* Tokens de marca: ver docs/guia-de-estilo.md. Nunca escribas un hex dentro de un componente. */
+/* Tokens de marca: ver docs/guia-de-estilo.md. Nunca escribas un hex dentro de un componente.
+   Rebranding: toda la tienda usa los colores del logo nuevo (rojo del logo + azul marino de "CENTRO FERRETERO"). */
 @theme {
-  --color-pico-azul: #17225a;
-  --color-pico-azul-oscuro: #0f1740;
-  --color-pico-azul-claro: #e8eaf3;
-  --color-pico-rojo: #a90504;
-  --color-pico-rojo-oscuro: #850403;
+  --color-pico-azul: #0c2d4e;
+  --color-pico-azul-oscuro: #071d33;
+  --color-pico-azul-claro: #e7eef5;
+  --color-pico-rojo: #c4161c;
+  --color-pico-rojo-oscuro: #9e1117;
   --color-pico-blanco: #ffffff;
-  --color-gris-fondo: #f4f5f8;
-  --color-gris-borde: #e2e4ea;
-  --color-gris-texto: #5b6070;
-  --color-texto: #1a1d29;
+  --color-gris-fondo: #f3f5f8;
+  --color-gris-borde: #e1e6ec;
+  --color-gris-texto: #586272;
+  --color-texto: #14202e;
 
-  --font-sans: var(--font-inter), system-ui, sans-serif;
+  /* Mismos colores con el nombre que usan las páginas de persona B (son equivalentes a pico-*). */
+  --color-logo-rojo: #c4161c;
+  --color-logo-rojo-oscuro: #9e1117;
+  --color-logo-marino: #0c2d4e;
+  --color-logo-marino-oscuro: #071d33;
+  --color-logo-marino-claro: #e7eef5;
+  --color-estrella: #f2a516;
 
   --radius-tarjeta: 12px;
   --radius-boton: 8px;
   --radius-banner: 16px;
   --radius-chip: 9999px;
 
-  --shadow-tarjeta: 0 1px 3px rgb(23 34 90 / 0.08);
-  --shadow-tarjeta-hover: 0 8px 24px rgb(23 34 90 / 0.14);
+  --shadow-tarjeta: 0 1px 3px rgb(12 45 78 / 0.08);
+  --shadow-tarjeta-hover: 0 12px 28px -8px rgb(12 45 78 / 0.22);
+  --shadow-boton-hover: 0 10px 20px -6px rgb(12 45 78 / 0.35);
+
+  --animate-aparecer: aparecer 0.5s ease-out both;
+  --animate-latido: latido 0.4s ease-out;
+  --animate-flotar: flotar 6s ease-in-out infinite;
+  --animate-sacudir: sacudir 0.5s ease-in-out;
+
+  @keyframes aparecer {
+    from {
+      opacity: 0;
+      transform: translateY(12px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+  @keyframes latido {
+    50% {
+      transform: scale(1.06);
+    }
+  }
+  /* Vaivén suave para íconos decorativos (banners). */
+  @keyframes flotar {
+    0%,
+    100% {
+      transform: translateY(0) rotate(0deg);
+    }
+    50% {
+      transform: translateY(-8px) rotate(-3deg);
+    }
+  }
+  /* Pequeña sacudida para íconos al pasar el mouse (carrito, WhatsApp). */
+  @keyframes sacudir {
+    0%,
+    100% {
+      transform: rotate(0deg);
+    }
+    25% {
+      transform: rotate(-12deg);
+    }
+    75% {
+      transform: rotate(10deg);
+    }
+  }
+}
+
+/* Letra de toda la tienda: Chakra Petch (esquinas cortadas, como el logo), cargada en app/layout.tsx.
+   "inline" hace que la variable se lea en cada elemento. Si no cargara, cae a Inter. */
+@theme inline {
+  --font-sans: var(--font-chakra, var(--font-inter)), system-ui, sans-serif;
+  --font-titulo: var(--font-chakra, var(--font-inter)), system-ui, sans-serif;
 }
 
 body {
   @apply bg-gris-fondo text-texto font-sans antialiased;
+}
+
+::selection {
+  @apply bg-pico-rojo text-pico-blanco;
 }
 
 /* Filas con desplazamiento horizontal (carruseles, barra de categorías) sin barra visible. */
