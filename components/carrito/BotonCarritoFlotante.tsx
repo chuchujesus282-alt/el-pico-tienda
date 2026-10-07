@@ -29,9 +29,9 @@ export default function BotonCarritoFlotante({ visible }: { visible: boolean }) 
       onClick={abrir}
       inert={!mostrar}
       aria-label={`Abrir carrito (${cantidadTotal} ${cantidadTotal === 1 ? "producto" : "productos"})`}
-      // Blanco con borde rojo; al pasar el mouse gana sombra y el ícono se sacude.
+      // Rojo del logo con ícono blanco (color de acción, como "Agregar"); al pasar el mouse se oscurece, gana sombra y el ícono se sacude.
       // Aparece cayendo desde arriba con un pequeño rebote (curva que se pasa y vuelve).
-      className={`group fixed right-4 z-40 flex size-14 items-center justify-center rounded-chip border-2 border-pico-rojo bg-pico-blanco text-pico-rojo shadow-tarjeta-hover transition duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] hover:shadow-boton-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-pico-rojo md:right-6 md:bottom-[calc(1.5rem+env(safe-area-inset-bottom))] ${
+      className={`group fixed right-4 z-40 flex size-14 items-center justify-center rounded-chip bg-pico-rojo text-pico-blanco ring-2 ring-pico-blanco shadow-tarjeta-hover transition duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] hover:bg-pico-rojo-oscuro hover:shadow-boton-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-pico-rojo md:right-6 md:bottom-[calc(1.5rem+env(safe-area-inset-bottom))] ${
         sobreBarra ? "bottom-[calc(6rem+env(safe-area-inset-bottom))]" : "bottom-[calc(1rem+env(safe-area-inset-bottom))]"
       } ${
         mostrar
@@ -44,7 +44,7 @@ export default function BotonCarritoFlotante({ visible }: { visible: boolean }) 
         // key: cada vez que cambia la cantidad, el contador vuelve a montarse y "late".
         <span
           key={cantidadTotal}
-          className="absolute -top-1 -right-1 flex min-w-6 items-center justify-center rounded-chip bg-pico-rojo px-1 text-xs leading-6 font-bold text-pico-blanco tabular-nums ring-2 ring-pico-blanco motion-safe:animate-latido"
+          className="absolute -top-1 -right-1 flex min-w-6 items-center justify-center rounded-chip bg-pico-azul px-1 text-xs leading-6 font-bold text-pico-blanco tabular-nums ring-2 ring-pico-blanco motion-safe:animate-latido"
         >
           {cantidadTotal > 99 ? "99+" : cantidadTotal}
         </span>
