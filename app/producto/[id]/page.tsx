@@ -4,7 +4,7 @@ import { notFound } from "next/navigation";
 import { ArrowLeft, House } from "lucide-react";
 import AccionesCompra from "@/components/producto-detalle/AccionesCompra";
 import CodigoCompartir from "@/components/producto-detalle/CodigoCompartir";
-import { chakra } from "@/components/producto-detalle/fuentes";
+import { fuentePaginas } from "@/components/producto-detalle/fuentes";
 import GaleriaZoom from "@/components/producto-detalle/GaleriaZoom";
 import ResumenEstrellas from "@/components/producto-detalle/ResumenEstrellas";
 import RutaProducto from "@/components/producto-detalle/RutaProducto";
@@ -65,7 +65,7 @@ export default async function PaginaProducto({ params }: PageProps<"/producto/[i
     "group inline-flex items-center gap-1.5 rounded-boton text-sm font-semibold text-logo-marino hover:underline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-logo-marino";
 
   return (
-    <div className={chakra.variable}>
+    <div className={fuentePaginas}>
       <Contenedor className="py-6 md:py-8">
         <RutaProducto categoria={categoria} actual={titulo} />
 
