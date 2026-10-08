@@ -7,7 +7,6 @@ import CarruselMarcas from "@/components/inicio/CarruselMarcas";
 import NotaPedido from "@/components/inicio/NotaPedido";
 import SeccionCategoria from "@/components/inicio/SeccionCategoria";
 import {
-  bannersLaterales,
   bannersPrincipales,
   bannersPromocionales,
   marcasDeProductos,
@@ -60,7 +59,6 @@ export default async function Inicio() {
 
   const todos = [...interesar, ...recomendados, ...productosPorSeccion.flat()];
   const principales = soloCategoriasExistentes(bannersPrincipales, categorias);
-  const laterales = soloCategoriasExistentes(bannersLaterales, categorias);
   const promocionales = soloCategoriasExistentes(bannersPromocionales, categorias);
 
   return (
@@ -68,7 +66,7 @@ export default async function Inicio() {
       <h1 className="sr-only">Centro Ferretero El Pico</h1>
 
       <div className="space-y-3 motion-safe:animate-aparecer md:space-y-4">
-        <BloqueBanners principales={principales} laterales={laterales} />
+        <BloqueBanners principales={principales} />
         <NotaPedido />
       </div>
 
