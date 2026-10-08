@@ -35,6 +35,8 @@
   --animate-latido: latido 0.4s ease-out;
   --animate-flotar: flotar 6s ease-in-out infinite;
   --animate-sacudir: sacudir 0.5s ease-in-out;
+  --animate-destello: destello 4s ease-in-out infinite;
+  --animate-deriva: flotar 14s ease-in-out infinite;
 
   @keyframes aparecer {
     from {
@@ -59,6 +61,16 @@
     }
     50% {
       transform: translateY(-8px) rotate(-3deg);
+    }
+  }
+  /* Brillo que recorre una franja (filete rojo del footer) de izquierda a derecha. */
+  @keyframes destello {
+    0% {
+      transform: translateX(-100%);
+    }
+    60%,
+    100% {
+      transform: translateX(400%);
     }
   }
   /* Pequeña sacudida para íconos al pasar el mouse (carrito, WhatsApp). */
