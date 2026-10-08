@@ -6,7 +6,7 @@ import Link from "next/link";
 import {
   Banknote,
   Bike,
-  Bitcoin,
+  CircleDollarSign,
   CalendarClock,
   Check,
   Landmark,
@@ -55,7 +55,7 @@ const iconosPago: Record<MetodoPago, ReactNode> = {
   transferencia: <Landmark className="size-4" aria-hidden />,
   cashea: <CalendarClock className="size-4" aria-hidden />,
   zelle: <Send className="size-4" aria-hidden />,
-  binance: <Bitcoin className="size-4" aria-hidden />,
+  usdt: <CircleDollarSign className="size-4" aria-hidden />,
   combinado: <Layers className="size-4" aria-hidden />,
 };
 
@@ -196,7 +196,7 @@ export default function FormularioPedido({ itemsDirectos, direcciones }: Props) 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,1fr)_23rem] lg:items-start">
         <div className="flex min-w-0 flex-col gap-5">
           <Seccion numero={1} titulo="¿Cómo retiras?" completo={retiroListo}>
-            <div className="grid gap-3 sm:grid-cols-3">
+            <div className="grid gap-3 sm:auto-rows-fr sm:grid-cols-3">
               {FORMAS_RETIRO.map((forma) => (
                 <Opcion
                   key={forma.valor}
@@ -218,7 +218,7 @@ export default function FormularioPedido({ itemsDirectos, direcciones }: Props) 
                   <MapPin className="size-4" aria-hidden />
                   ¿A cuál de tus direcciones?
                 </p>
-                <div className="grid gap-3 md:grid-cols-2">
+                <div className="grid gap-3 md:auto-rows-fr md:grid-cols-2">
                   {direcciones.map((d) => (
                     <Opcion
                       key={d.id}
@@ -242,7 +242,8 @@ export default function FormularioPedido({ itemsDirectos, direcciones }: Props) 
           </Seccion>
 
           <Seccion numero={2} titulo="Método de pago" completo={pagoListo}>
-            <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+            {/* Seis métodos en filas parejas (2 o 3 por fila) y "Pago combinado" a lo ancho debajo. */}
+            <div className="grid grid-cols-2 gap-2.5 sm:auto-rows-fr sm:gap-3 lg:grid-cols-3">
               {METODOS_PAGO.map((metodo) => (
                 <Opcion
                   key={metodo.valor}
@@ -253,6 +254,8 @@ export default function FormularioPedido({ itemsDirectos, direcciones }: Props) 
                   alCambiar={() => setPago(metodo.valor)}
                   icono={iconosPago[metodo.valor]}
                   titulo={metodo.etiqueta}
+                  detalle={metodo.valor === "combinado" ? "Divide el total entre dos o más métodos." : undefined}
+                  className={metodo.valor === "combinado" ? "col-span-full" : ""}
                 />
               ))}
             </div>
@@ -264,7 +267,7 @@ export default function FormularioPedido({ itemsDirectos, direcciones }: Props) 
                   ¿Cuáles vas a combinar?
                   <span className="font-normal text-gris-texto">(mínimo dos)</span>
                 </p>
-                <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+                <div className="grid grid-cols-2 gap-2.5 sm:auto-rows-fr sm:gap-3 lg:grid-cols-3">
                   {METODOS_COMBINABLES.map((metodo) => (
                     <Opcion
                       key={metodo.valor}
@@ -296,9 +299,19 @@ export default function FormularioPedido({ itemsDirectos, direcciones }: Props) 
           </div>
 
           <div className="p-5">
-            <ul className="max-h-72 divide-y divide-gris-borde overflow-y-auto">
-              {items.map(({ producto, cantidad }) => (
-                <li key={producto.id} className="flex items-center gap-3 py-3 first:pt-0">
+            {/* pt-2 deja espacio al globito de cantidad del primer producto (el scroll lo recortaba).
+                Con más de 4 productos, la lista se desplaza y se desvanece abajo para indicar que hay más. */}
+            <ul
+              className={`-mx-1 max-h-[22rem] divide-y divide-gris-borde overflow-y-auto px-1 pt-2 ${
+                items.length > 4 ? "pb-6 [mask-image:linear-gradient(to_bottom,black_85%,transparent)]" : ""
+              }`}
+            >
+              {items.map(({ producto, cantidad }, i) => (
+                <li
+                  key={producto.id}
+                  className="flex items-center gap-3 py-3 first:pt-1 motion-safe:animate-aparecer"
+                  style={{ animationDelay: `${300 + Math.min(i, 6) * 60}ms` }}
+                >
                   <span className="relative shrink-0">
                     <ImagenProducto src={producto.imagen} alt={producto.nombre} sizes="56px" className="size-14 rounded-tarjeta border border-gris-borde" />
                     <span className="absolute -top-1.5 -right-1.5 flex min-w-5 items-center justify-center rounded-chip bg-logo-marino px-1 text-[11px] leading-5 font-bold text-pico-blanco tabular-nums">

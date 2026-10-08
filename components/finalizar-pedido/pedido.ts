@@ -4,7 +4,7 @@ import type { ItemCarrito } from "@/types/carrito";
 import type { Direccion } from "@/types/cliente";
 
 export type FormaRetiro = "pickup" | "delivery" | "flete";
-export type MetodoPago = "divisas" | "pago-movil" | "transferencia" | "cashea" | "zelle" | "binance" | "combinado";
+export type MetodoPago = "divisas" | "pago-movil" | "transferencia" | "cashea" | "zelle" | "usdt" | "combinado";
 
 export const FORMAS_RETIRO: { valor: FormaRetiro; etiqueta: string; detalle: string }[] = [
   { valor: "pickup", etiqueta: "Pick-up", detalle: "Lo retiras en la tienda." },
@@ -18,7 +18,7 @@ export const METODOS_PAGO: { valor: MetodoPago; etiqueta: string }[] = [
   { valor: "transferencia", etiqueta: "Transferencia bancaria" },
   { valor: "cashea", etiqueta: "Cashea" },
   { valor: "zelle", etiqueta: "Zelle" },
-  { valor: "binance", etiqueta: "Binance" },
+  { valor: "usdt", etiqueta: "USDT" },
   { valor: "combinado", etiqueta: "Pago combinado" },
 ];
 
