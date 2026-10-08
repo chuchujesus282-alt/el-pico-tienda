@@ -168,6 +168,24 @@ export function sugerir(indice: IndiceBusqueda, consulta: string, limite = 6): P
   return buscarCrudo(indice, palabras).productos.slice(0, limite);
 }
 
+/**
+ * Sugerencias en vivo que toleran errores de ortografía: si lo escrito no encuentra nada,
+ * se corrige con "¿Quisiste decir…?" (ej. "martiyo" → "martillo") y se sugiere con la corrección.
+ * `correccion` trae el texto corregido para avisarle al cliente; es null si no hizo falta.
+ */
+export function sugerirCorrigiendo(
+  indice: IndiceBusqueda,
+  consulta: string,
+  limite = 6,
+): { productos: Producto[]; correccion: string | null } {
+  const directos = sugerir(indice, consulta, limite);
+  if (directos.length) return { productos: directos, correccion: null };
+  const correccion = quisoDecir(indice, consulta);
+  if (!correccion) return { productos: [], correccion: null };
+  const productos = sugerir(indice, correccion, limite);
+  return productos.length ? { productos, correccion } : { productos: [], correccion: null };
+}
+
 /** Búsqueda completa (página de resultados). Nunca deja al cliente sin nada que ver. */
 export function buscar(indice: IndiceBusqueda, consulta: string, limite = 60): ResultadoBusqueda {
   const palabras = palabrasClave(consulta);

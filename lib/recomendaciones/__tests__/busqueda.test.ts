@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { productosMock } from "@/lib/mock/productos";
 import type { Producto } from "@/types/catalogo";
-import { buscar, crearIndice, sugerir } from "../busqueda";
+import { buscar, crearIndice, sugerir, sugerirCorrigiendo } from "../busqueda";
 import { palabrasClave } from "../normalizar";
 
 const indice = crearIndice(productosMock);
@@ -9,6 +9,18 @@ const nombres = (productos: Producto[]) => productos.map((p) => p.nombre);
 const ids = (productos: Producto[]) => productos.map((p) => p.id);
 
 describe("búsqueda inteligente", () => {
+  it('sugerencias en vivo: "martiyo" se corrige a martillo y lo avisa', () => {
+    const r = sugerirCorrigiendo(indice, "martiyo");
+    expect(r.correccion).toBe("martillo");
+    expect(nombres(r.productos)[0]).toMatch(/^MARTILLO/);
+  });
+
+  it("sugerencias en vivo: si lo escrito ya encuentra algo, no se corrige", () => {
+    const r = sugerirCorrigiendo(indice, "taladro");
+    expect(r.correccion).toBeNull();
+    expect(ids(r.productos)).toEqual(ids(sugerir(indice, "taladro")));
+  });
+
   it('"tornilo" (con error) encuentra tornillos', () => {
     const r = buscar(indice, "tornilo");
     expect(r.productos.length).toBeGreaterThan(0);
