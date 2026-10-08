@@ -7,7 +7,7 @@ import { ArrowRight, Search } from "lucide-react";
 import ImagenProducto from "@/components/producto/ImagenProducto";
 import Precio from "@/components/ui/Precio";
 import { tituloProducto } from "@/lib/formato";
-import { sugerir } from "@/lib/recomendaciones/busqueda";
+import { sugerirCorrigiendo } from "@/lib/recomendaciones/busqueda";
 import type { IndiceBusqueda } from "@/lib/recomendaciones/busqueda";
 import type { Producto } from "@/types/catalogo";
 import { cargarIndice } from "./indiceCliente";
@@ -25,6 +25,7 @@ export default function BuscadorConSugerencias({ className = "" }: { className?:
   const [texto, setTexto] = useState("");
   const [indice, setIndice] = useState<IndiceBusqueda | null>(null);
   const [sugerencias, setSugerencias] = useState<Producto[]>([]);
+  const [correccion, setCorreccion] = useState<string | null>(null);
   const [abierto, setAbierto] = useState(false);
   const [activo, setActivo] = useState(-1);
   const contenedor = useRef<HTMLFormElement>(null);
@@ -33,7 +34,10 @@ export default function BuscadorConSugerencias({ className = "" }: { className?:
 
   useEffect(() => {
     const espera = setTimeout(() => {
-      setSugerencias(indice && consulta.length >= 2 ? sugerir(indice, consulta, MAXIMO) : []);
+      const resultado =
+        indice && consulta.length >= 2 ? sugerirCorrigiendo(indice, consulta, MAXIMO) : { productos: [], correccion: null };
+      setSugerencias(resultado.productos);
+      setCorreccion(resultado.correccion);
       setActivo(-1);
     }, ESPERA_MS);
     return () => clearTimeout(espera);
@@ -130,6 +134,11 @@ export default function BuscadorConSugerencias({ className = "" }: { className?:
       {mostrarLista && (
         <div className="absolute inset-x-0 top-full z-30 mt-2 overflow-hidden rounded-tarjeta border border-gris-borde bg-pico-blanco shadow-tarjeta-hover motion-safe:animate-aparecer">
           <ul id={idLista} role="listbox" aria-label="Sugerencias" className="max-h-[70vh] overflow-y-auto py-1">
+            {correccion && (
+              <li className="px-4 pt-2.5 pb-1 text-[13px] text-gris-texto" role="presentation">
+                Mostrando resultados para <strong className="font-semibold text-pico-azul">{correccion}</strong>
+              </li>
+            )}
             {sugerencias.length === 0 && (
               <li className="px-4 py-3 text-[13px] text-gris-texto">
                 No vemos coincidencias exactas. Presiona Enter para ver opciones parecidas.

@@ -90,14 +90,14 @@ export default function BannerInicio({ banner, sizes, tamano = "normal", priorit
         />
       ) : (
         <div className={`relative flex h-full flex-col justify-center gap-2 ${
-          grande ? "p-5 md:gap-3 md:px-16 md:py-10" : lateral ? "p-4 sm:p-5 md:p-6" : "p-5 md:p-6"
+          grande ? "p-5 md:gap-3 md:px-16 md:py-10 lg:gap-4 lg:px-24 2xl:px-28" : lateral ? "p-4 sm:p-5 md:p-6" : "p-5 md:p-6"
         }`}>
           {Icono && (
             // El span se mece solo (flotar); el ícono, además, gira y crece al pasar el mouse.
-            <span className="absolute -right-4 -bottom-6 motion-safe:animate-flotar" aria-hidden>
+            <span className={`absolute motion-safe:animate-flotar ${grande ? "-right-4 -bottom-6 lg:right-20 lg:-bottom-12 2xl:right-28" : "-right-4 -bottom-6"}`} aria-hidden>
               <Icono
                 className={`transition-transform duration-500 ease-out group-hover:scale-110 group-hover:-rotate-12 ${estilo.icono} ${
-                  grande ? "size-40 md:size-72" : lateral ? "size-20 sm:size-32 md:size-40" : "size-32 md:size-40"
+                  grande ? "size-40 md:size-72 lg:size-[22rem]" : lateral ? "size-20 sm:size-32 md:size-40" : "size-32 md:size-40"
                 }`}
                 strokeWidth={1.25}
               />
@@ -105,14 +105,14 @@ export default function BannerInicio({ banner, sizes, tamano = "normal", priorit
           )}
           <span
             className={`relative h-1 -skew-x-12 rounded-sm bg-pico-rojo transition-all duration-300 group-hover:w-14 ${
-              grande ? "w-10" : lateral ? "hidden w-8 sm:block" : "w-8"
+              grande ? "w-10 lg:w-14 lg:group-hover:w-20" : lateral ? "hidden w-8 sm:block" : "w-8"
             }`}
             aria-hidden
           />
           <p
             className={`relative max-w-[80%] font-bold text-balance ${estilo.titulo} ${
               grande
-                ? "text-2xl leading-tight md:text-4xl"
+                ? "text-2xl leading-tight md:text-4xl lg:max-w-[55%] lg:text-5xl"
                 : lateral
                   ? "text-base leading-tight sm:text-xl"
                   : "text-xl leading-tight"
@@ -125,7 +125,7 @@ export default function BannerInicio({ banner, sizes, tamano = "normal", priorit
             // En el banner grande y en móvil se omite el texto: no cabe con el título y el botón.
             <p
               className={`relative max-w-[75%] text-sm ${estilo.texto} ${
-                grande ? "hidden sm:line-clamp-2 md:text-base" : lateral ? "hidden sm:line-clamp-2" : "line-clamp-2"
+                grande ? "hidden sm:line-clamp-2 md:text-base lg:max-w-[50%] lg:text-lg" : lateral ? "hidden sm:line-clamp-2" : "line-clamp-2"
               }`}
             >
               {banner.texto}
@@ -135,7 +135,7 @@ export default function BannerInicio({ banner, sizes, tamano = "normal", priorit
             // Es un span y no <Boton>: todo el banner ya es un enlace. Misma forma que Boton.
             <span
               className={`relative mt-1 h-10 w-fit items-center gap-1 rounded-boton px-4 text-sm font-semibold shadow-tarjeta transition duration-200 group-hover:shadow-boton-hover motion-safe:group-hover:-translate-y-0.5 ${estilo.boton} ${
-                grande ? "inline-flex md:mt-2" : lateral ? "hidden sm:inline-flex" : "inline-flex"
+                grande ? "inline-flex md:mt-2 lg:h-12 lg:px-6 lg:text-base" : lateral ? "hidden sm:inline-flex" : "inline-flex"
               }`}
             >
               {banner.textoBoton}
