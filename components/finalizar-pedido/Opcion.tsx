@@ -37,18 +37,38 @@ export default function Opcion({ tipo, nombre, valor, marcada, alCambiar, icono,
         className="size-4 shrink-0 cursor-pointer accent-logo-marino focus-visible:outline-none max-sm:sr-only"
       />
       {icono && (
+        // Placa del ícono: azul claro con degradado; al elegir, azul marino con brillo, un filete rojo
+        // abajo (como los títulos) y un pequeño salto. Al pasar el mouse se inclina y el ícono se sacude.
         <span
-          className={`flex size-9 shrink-0 items-center justify-center rounded-boton transition duration-300 ${
+          className={`relative flex size-9 shrink-0 items-center justify-center sm:size-11 overflow-hidden rounded-tarjeta ring-1 transition duration-300 ease-out ${
             marcada
-              ? "bg-logo-marino text-pico-blanco motion-safe:scale-105"
-              : "bg-logo-marino-claro text-logo-marino group-hover:bg-logo-marino/10 motion-safe:group-hover:-rotate-6"
+              ? "bg-gradient-to-br from-logo-marino to-logo-marino-oscuro text-pico-blanco shadow-boton-hover ring-logo-marino motion-safe:scale-105"
+              : "bg-gradient-to-br from-logo-marino-claro to-pico-blanco text-logo-marino ring-logo-marino/15 group-hover:ring-logo-marino/30 motion-safe:group-hover:-translate-y-0.5 motion-safe:group-hover:-rotate-6"
           }`}
         >
-          {icono}
+          {/* Reflejo suave en la mitad de arriba de la placa. */}
+          <span
+            className={`pointer-events-none absolute inset-x-0 top-0 h-1/2 bg-gradient-to-b ${
+              marcada ? "from-pico-blanco/20" : "from-pico-blanco/70"
+            } to-transparent`}
+            aria-hidden
+          />
+          <span
+            key={marcada ? "si" : "no"}
+            className={`relative ${marcada ? "motion-safe:animate-latido" : "motion-safe:group-hover:animate-sacudir"}`}
+          >
+            {icono}
+          </span>
+          <span
+            className={`absolute bottom-1 left-1/2 h-0.5 -translate-x-1/2 -skew-x-12 rounded-sm bg-logo-rojo transition-all duration-300 ${
+              marcada ? "w-4 opacity-100" : "w-0 opacity-0 group-hover:w-3 group-hover:opacity-100"
+            }`}
+            aria-hidden
+          />
         </span>
       )}
       <span className="min-w-0 flex-1">
-        <span className="block text-sm leading-tight font-semibold text-balance break-words text-logo-marino">{titulo}</span>
+        <span className="block text-[13px] leading-tight font-semibold text-balance hyphens-auto text-logo-marino sm:text-sm">{titulo}</span>
         {detalle && <span className="mt-0.5 block text-[13px] leading-snug text-gris-texto">{detalle}</span>}
       </span>
       {marcada && (

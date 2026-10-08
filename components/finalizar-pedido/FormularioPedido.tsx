@@ -5,7 +5,6 @@ import type { ReactNode } from "react";
 import Link from "next/link";
 import {
   Banknote,
-  Bike,
   CircleDollarSign,
   CalendarClock,
   Check,
@@ -13,11 +12,13 @@ import {
   Layers,
   MapPin,
   MessageCircle,
-  Send,
+  Motorbike,
   ShoppingCart,
-  Smartphone,
+  SmartphoneNfc,
+  Split,
   Store,
   Truck,
+  Zap,
 } from "lucide-react";
 import { useCarrito } from "@/components/carrito/ProveedorCarrito";
 import { tituloProducto } from "@/lib/formato";
@@ -43,20 +44,21 @@ type Props = {
   direcciones: Direccion[];
 };
 
+// Íconos de las opciones: Opcion los pone en una placa con degradado que se anima al elegir.
 const iconosRetiro: Record<FormaRetiro, ReactNode> = {
-  pickup: <Store className="size-4" aria-hidden />,
-  delivery: <Bike className="size-4" aria-hidden />,
-  flete: <Truck className="size-4" aria-hidden />,
+  pickup: <Store className="size-5" strokeWidth={1.75} aria-hidden />,
+  delivery: <Motorbike className="size-5" strokeWidth={1.75} aria-hidden />,
+  flete: <Truck className="size-5" strokeWidth={1.75} aria-hidden />,
 };
 
 const iconosPago: Record<MetodoPago, ReactNode> = {
-  divisas: <Banknote className="size-4" aria-hidden />,
-  "pago-movil": <Smartphone className="size-4" aria-hidden />,
-  transferencia: <Landmark className="size-4" aria-hidden />,
-  cashea: <CalendarClock className="size-4" aria-hidden />,
-  zelle: <Send className="size-4" aria-hidden />,
-  usdt: <CircleDollarSign className="size-4" aria-hidden />,
-  combinado: <Layers className="size-4" aria-hidden />,
+  divisas: <Banknote className="size-5" strokeWidth={1.75} aria-hidden />,
+  "pago-movil": <SmartphoneNfc className="size-5" strokeWidth={1.75} aria-hidden />,
+  transferencia: <Landmark className="size-5" strokeWidth={1.75} aria-hidden />,
+  cashea: <CalendarClock className="size-5" strokeWidth={1.75} aria-hidden />,
+  zelle: <Zap className="size-5" strokeWidth={1.75} aria-hidden />,
+  usdt: <CircleDollarSign className="size-5" strokeWidth={1.75} aria-hidden />,
+  combinado: <Split className="size-5" strokeWidth={1.75} aria-hidden />,
 };
 
 const sinSuscripcion = () => () => {};
