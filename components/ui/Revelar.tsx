@@ -5,6 +5,8 @@ import { type ReactNode, useEffect, useRef, useState } from "react";
 type Props = {
   children: ReactNode;
   className?: string;
+  /** Retraso de la animación en ms (opcional), para que varias piezas aparezcan en cascada. */
+  retraso?: number;
 };
 
 type Estado = "visible" | "oculto" | "revelado";
@@ -16,7 +18,7 @@ type Estado = "visible" | "oculto" | "revelado";
  * - Con "reducir movimiento" del sistema, no anima.
  * Ojo: no envuelvas aquí elementos `fixed` (modales, barras): la animación los encerraría.
  */
-export default function Revelar({ children, className = "" }: Props) {
+export default function Revelar({ children, className = "", retraso = 0 }: Props) {
   const ref = useRef<HTMLDivElement>(null);
   const [estado, setEstado] = useState<Estado>("visible");
 
@@ -46,6 +48,7 @@ export default function Revelar({ children, className = "" }: Props) {
   return (
     <div
       ref={ref}
+      style={estado === "revelado" && retraso ? { transitionDelay: `${retraso}ms` } : undefined}
       className={`${estado === "oculto" ? "translate-y-6 opacity-0" : "translate-y-0 opacity-100"} ${
         estado === "visible" ? "" : "transition duration-700 ease-out"
       } ${className}`}
