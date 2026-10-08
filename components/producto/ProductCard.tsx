@@ -30,7 +30,7 @@ export default function ProductCard({ producto, className = "" }: Props) {
           <ImagenProducto
             src={producto.imagen}
             alt={titulo}
-            sizes="(min-width: 1280px) 240px, (min-width: 768px) 30vw, 45vw"
+            sizes="(min-width: 1536px) 240px, (min-width: 1024px) 20vw, (min-width: 768px) 30vw, 45vw"
             className="transition-transform duration-500 ease-out motion-safe:group-hover:scale-105"
           />
         </div>

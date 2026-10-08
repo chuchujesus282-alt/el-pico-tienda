@@ -52,7 +52,7 @@ export default function CarruselProductos({ titulo, productos, href, className =
         {productos.map((producto) => (
           <li
             key={producto.id}
-            className="shrink-0 basis-[46%] snap-start md:basis-[calc((100%-2*1rem)/3)] lg:basis-[calc((100%-4*1rem)/5)]"
+            className="shrink-0 basis-[46%] snap-start md:basis-[calc((100%-2*1rem)/3)] lg:basis-[calc((100%-4*1rem)/5)] 2xl:basis-[calc((100%-5*1rem)/6)]"
           >
             <ProductCard producto={producto} />
           </li>

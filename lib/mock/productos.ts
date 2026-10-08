@@ -1,7 +1,8 @@
 import type { Producto } from "@/types/catalogo";
 
 // Datos de prueba mientras CATALOGO_API_URL no esté definida.
-// Marcas ficticias; imagen en null para usar el placeholder de ProductCard.
+// Marcas ficticias. Imágenes DE PRUEBA en public/productos/{id}.webp (fotos libres de Wikimedia Commons,
+// créditos en public/productos/CREDITOS.md); con la API, las imágenes vienen del sistema.
 // `ventas`: unidades inventadas de los últimos 90 días (ordenan los "más vendidos").
 type FilaMock = [
   id: string,
@@ -18,7 +19,7 @@ function crear(categoriaSlug: string, filas: FilaMock[]): Producto[] {
     nombre,
     marca,
     precio,
-    imagen: null,
+    imagen: `/productos/${id}.webp`,
     categoriaSlug,
     subcategoria,
     ventas,
