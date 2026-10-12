@@ -1,0 +1,23 @@
+{
+  "_instrucciones": "Cada grupo es una lista de palabras que significan lo mismo. La PRIMERA es la principal. Para agregar un grupo, copia una línea y cámbiala; separa las palabras con comas y no olvides la coma al final de la línea anterior. Da igual escribir con o sin acentos, en mayúsculas o en plural.",
+  "grupos": [
+    ["broca", "mecha"],
+    ["cinta aislante", "teipe", "tape"],
+    ["cinta de papel", "tirro", "cinta de enmascarar", "masking"],
+    ["pegamento", "pega", "cola blanca"],
+    ["cabilla", "varilla"],
+    ["bombillo", "foco", "bombilla"],
+    ["llave ajustable", "llave inglesa", "perico"],
+    ["ramplug", "taco", "tarugo"],
+    ["segueta", "sierra de arco", "arco de sierra"],
+    ["destornillador", "desarmador", "atornillador"],
+    ["balde", "tobo", "cubo", "cubeta"],
+    ["cuchara de albanil", "palustre"],
+    ["esmeril", "amoladora", "pulidora"],
+    ["silicon", "silicona"],
+    ["breaker", "braker", "interruptor termico"],
+    ["tomacorriente", "enchufe hembra"],
+    ["lentes de seguridad", "gafas de seguridad", "lentes de proteccion"],
+    ["cinta metrica", "metro", "flexometro"]
+  ]
+}

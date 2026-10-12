@@ -1,4 +1,4 @@
-import { Bolt, BrickWall, Drill, Droplets, HardHat, PaintRoller, Zap } from "lucide-react";
+import { Bolt, BrickWall, Drill, HardHat, PaintRoller } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import type { Banner, Producto } from "@/types/catalogo";
 
@@ -61,31 +61,6 @@ export const bannersPrincipales: BannerInicio[] = [
     textoBoton: "Ver pinturas",
     variante: "azul",
     icono: PaintRoller,
-  },
-];
-
-export const bannersLaterales: BannerInicio[] = [
-  {
-    id: "plomeria",
-    imagen: null,
-    alt: "Plomería y grifería en El Pico",
-    href: "/categoria/plomeria",
-    titulo: "Plomería y grifería",
-    texto: "Tuberías, conexiones y grifos.",
-    textoBoton: "Ver plomería",
-    variante: "claro",
-    icono: Droplets,
-  },
-  {
-    id: "electricidad",
-    imagen: null,
-    alt: "Electricidad en El Pico",
-    href: "/categoria/electricidad",
-    titulo: "Electricidad",
-    texto: "Cables, breakers y tomacorrientes.",
-    textoBoton: "Ver electricidad",
-    variante: "oscuro",
-    icono: Zap,
   },
 ];
 

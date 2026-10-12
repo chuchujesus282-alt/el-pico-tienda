@@ -3,59 +3,47 @@
 ## Colores de marca
 | Token | Valor | Uso |
 |---|---|---|
-| `pico-azul` | #17225a | Color principal: barra de categorías, footer, títulos, botón de buscar, iconos del header, botones secundarios |
-| `pico-azul-oscuro` | #0f1740 | Hover de elementos azules |
-| `pico-azul-claro` | #e8eaf3 | Fondos suaves, chips, filtros activos |
-| `pico-rojo` | #a90504 | Acentos y acción: botón "Agregar", precios destacados, badges de oferta, contador del carrito |
-| `pico-rojo-oscuro` | #850403 | Hover de elementos rojos |
-| `pico-blanco` | #ffffff | Fondo de tarjetas y de la página |
-| `gris-fondo` | #f4f5f8 | Fondo general detrás de las secciones |
-| `gris-borde` | #e2e4ea | Bordes de tarjetas, divisores, inputs |
-| `gris-texto` | #5b6070 | Texto secundario (marca, código, descripciones) |
-| `texto` | #1a1d29 | Texto principal |
+Rebranding (logo nuevo): rojo del logo y azul marino de "CENTRO FERRETERO". Aplicado a toda la tienda.
 
-Regla de proporción: el azul domina la estructura (barra de categorías y footer), el blanco del header deja respirar el logo rojo, y el rojo se reserva para lo que invita a actuar. Si todo es rojo, nada destaca.
+| Token | Valor | Uso |
+|---|---|---|
+| `pico-azul` | #0c2d4e | Azul marino del logo. Estructura: barra de categorías, footer, títulos, botón de buscar, iconos del header, botones secundarios |
+| `pico-azul-oscuro` | #071d33 | Hover de elementos azules, degradados |
+| `pico-azul-claro` | #e7eef5 | Fondos suaves, chips, filtros activos |
+| `pico-rojo` | #c4161c | Rojo del logo. Acción y acentos: "Agregar", precios, contador del carrito, filetes de títulos |
+| `pico-rojo-oscuro` | #9e1117 | Hover de elementos rojos |
+| `pico-blanco` | #ffffff | Fondo de tarjetas y del header |
+| `gris-fondo` | #f3f5f8 | Fondo general detrás de las secciones |
+| `gris-borde` | #e1e6ec | Bordes de tarjetas, divisores, inputs |
+| `gris-texto` | #586272 | Texto secundario (marca, código, descripciones) |
+| `texto` | #14202e | Texto principal |
+| `estrella` | #f2a516 | Estrellas de calificación |
 
-Logo: `components/layout/Logo.tsx` con `public/logo-el-pico.webp`. Sobre blanco va directo (`placa={false}`); sobre azul, en placa blanca (por defecto).
+Los tokens `logo-*` (`logo-rojo`, `logo-marino`, `logo-marino-oscuro`, `logo-marino-claro`, `logo-rojo-oscuro`) son los mismos colores con otro nombre; los usan las páginas de persona B.
+
+Regla de proporción: el azul marino domina la estructura (barra de categorías y footer), el blanco del header deja respirar el logo rojo, y el rojo se reserva para lo que invita a actuar y para pequeños acentos (filete de los títulos, subrayado de la categoría activa). Si todo es rojo, nada destaca.
+
+Logo: `components/layout/Logo.tsx` dibuja en SVG solo las dos montañas del logo nuevo (`Montanas`, exportado). Sobre blanco (header) van rojas (`placa={false}`); sobre azul (footer), en un cuadro rojo con montañas blancas (por defecto). En el footer va acompañado de "CENTRO FERRETERO / EL PICO" en texto.
 
 ## Tokens en Tailwind (app/globals.css, Tailwind v4)
-```css
-@import "tailwindcss";
+Ver `app/globals.css`: colores de arriba, radios (`tarjeta` 12px, `boton` 8px, `banner` 16px, `chip`), sombras (`tarjeta`, `tarjeta-hover`, `boton-hover`) y animaciones.
 
-@theme {
-  --color-pico-azul: #17225a;
-  --color-pico-azul-oscuro: #0f1740;
-  --color-pico-azul-claro: #e8eaf3;
-  --color-pico-rojo: #a90504;
-  --color-pico-rojo-oscuro: #850403;
-  --color-pico-blanco: #ffffff;
-  --color-gris-fondo: #f4f5f8;
-  --color-gris-borde: #e2e4ea;
-  --color-gris-texto: #5b6070;
-  --color-texto: #1a1d29;
-
-  --font-sans: var(--font-inter), system-ui, sans-serif;
-
-  --radius-tarjeta: 12px;
-  --radius-boton: 8px;
-  --radius-banner: 16px;
-  --radius-chip: 9999px;
-
-  --shadow-tarjeta: 0 1px 3px rgb(23 34 90 / 0.08);
-  --shadow-tarjeta-hover: 0 8px 24px rgb(23 34 90 / 0.14);
-}
-```
+## Animaciones (siempre con `motion-safe:`)
+- `animate-aparecer`: entrada (sube y se aclara). `animate-latido`: pequeño pulso (confirmaciones, contador del carrito). `animate-flotar`: vaivén lento de íconos decorativos de banners. `animate-sacudir`: sacudida de íconos al pasar el mouse (carrito, WhatsApp). `animate-destello`: brillo que recorre el filete rojo del footer. `animate-deriva`: vaivén muy lento (montañas de fondo del footer).
+- `Boton` ya trae: sube 2px y sombra al pasar el mouse, brillo que cruza el primario, y se encoge al presionar.
+- `components/ui/Revelar.tsx`: envuelve una sección para que aparezca al bajar. No envuelvas modales ni barras `fixed`.
+- Tarjetas: suben 4px, sombra, filete rojo arriba e imagen que se acerca un poco.
 
 ## Tipografía
-- Fuente: Inter (vía `next/font/google`), variable `--font-inter`.
-- Título de sección: 20px móvil / 24px escritorio, peso 700, color `pico-azul`.
-- Nombre de producto: 14px, peso 500, máximo 2 líneas (`line-clamp-2`), MAYÚSCULAS tal como vienen del sistema.
+- Fuente de toda la tienda: Chakra Petch (esquinas cortadas, como el logo), cargada en `app/layout.tsx` (variable `--font-chakra`). Inter queda solo de respaldo.
+- Título de sección: 20px móvil / 24px escritorio, peso 700, color `pico-azul`, con un filete rojo inclinado a la izquierda (`TituloSeccion`).
+- Nombre de producto: 14px, peso 500, máximo 2 líneas (`line-clamp-2`), en formato oración con `tituloProducto()`.
 - Precio: 18px, peso 700, color `pico-rojo`.
 - Texto secundario: 13px, color `gris-texto`.
 
 ## Formas y espaciado
 - Espaciado en múltiplos de 4px. Separación entre secciones: 32px móvil / 48px escritorio.
-- Contenedor: ancho máximo 1280px, márgenes laterales 16px móvil / 24px escritorio.
+- Contenedor: ancho máximo 1536px (`max-w-screen-2xl`), márgenes laterales 16px móvil / 24px tableta / 32px desde 1280px. Los carruseles de productos muestran 6 tarjetas desde 1536px (5 en escritorio) y las grillas 5 columnas.
 - Tarjetas: fondo blanco, borde `gris-borde`, radio `tarjeta`, sombra `tarjeta`; al pasar el mouse sube a `tarjeta-hover` y se eleva 2px.
 - Botones: radio `boton`, altura 40px, peso 600. Primario rojo con texto blanco; secundario contorno azul.
 - Banners: radio `banner`, sin borde, imagen a sangre (cubre todo el recuadro).
@@ -63,13 +51,13 @@ Logo: `components/layout/Logo.tsx` con `public/logo-el-pico.webp`. Sobre blanco 
 ## Distribución de la página principal (de arriba a abajo)
 1. Header (blanco): logo oficial sin placa a la izquierda, buscador ancho al centro (fondo blanco, borde de 2px `pico-azul`, radio completo, botón azul "Buscar"), "Mi cuenta" y "Carrito" en azul con su texto (desde 1024px) y contador rojo a la derecha. En móvil el buscador baja a una segunda fila.
 2. Barra de categorías (`pico-azul`): las categorías en una fila; en móvil, desplazable horizontalmente.
-3. Bloque de banners principal: un banner grande (carrusel) a la izquierda que ocupa ~2/3, y dos banners apilados a la derecha (~1/3). En móvil: uno debajo del otro.
+3. Banner principal: un carrusel a todo el ancho del Contenedor (16:10 móvil, 2:1 tableta, 3:1 escritorio). Ya no lleva banners laterales.
 4. Sección de productos "Te puede interesar": TituloSeccion + carrusel horizontal de ProductCard.
 5. Fila de dos banners promocionales del mismo tamaño (cada uno lleva a una categoría).
 6. Sección "Nuestros recomendados": carrusel de productos.
 7. "Busca por marcas": carrusel de logos en recuadros blancos redondeados.
 8. Secciones por categoría (ej. "Materiales de construcción", "Jardín"): banner de la categoría + carrusel de sus productos.
-9. Footer (azul): logo y frase, columnas Categorías / Conócenos / Ayuda, botón de WhatsApp, línea de derechos.
+9. Footer (azul): filete rojo con brillo; franja de 4 ventajas (retiro, WhatsApp, formas de pago, precios en dólares) con íconos en cuadros rojos; logo y frase con botón de WhatsApp; columnas Categorías / Conócenos / Ayuda (aparecen en cascada con `Revelar retraso`); línea de derechos con "Volver arriba".
 
 ## Página de categoría
 - Breadcrumb: Inicio › Nombre de categoría.

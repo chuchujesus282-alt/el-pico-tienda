@@ -37,11 +37,11 @@ export default function EnlacesCategorias({ categorias }: { categorias: Categori
   })`;
 
   return (
-    // px-1 / md:px-3 + px-3 del enlace = 16px / 24px: el texto alinea con el logo y el Contenedor.
+    // px-1 / md:px-3 / xl:px-5 + px-3 del enlace = 16px / 24px / 32px: el texto alinea con el logo y el Contenedor.
     <ul
       ref={lista}
       style={{ maskImage: mascara, WebkitMaskImage: mascara }}
-      className={`sin-scrollbar mx-auto flex max-w-7xl overflow-x-auto px-1 md:px-3 ${
+      className={`sin-scrollbar mx-auto flex max-w-screen-2xl overflow-x-auto px-1 md:px-3 xl:px-5 ${
         categorias.length >= 6 ? "xl:justify-between" : "gap-2"
       }`}
     >
@@ -53,13 +53,18 @@ export default function EnlacesCategorias({ categorias }: { categorias: Categori
             <Link
               href={href}
               aria-current={activa ? "page" : undefined}
-              className={`block border-b-2 px-3 py-3 text-sm leading-5 font-semibold tracking-[0.01em] whitespace-nowrap transition-colors focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-pico-blanco xl:text-[15px] ${
-                activa
-                  ? "border-pico-blanco text-pico-blanco"
-                  : "border-transparent text-pico-blanco/80 hover:border-pico-blanco/40 hover:text-pico-blanco"
+              className={`group relative block px-3 py-3 text-sm leading-5 font-semibold tracking-[0.02em] whitespace-nowrap transition-colors focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-pico-blanco xl:text-[15px] ${
+                activa ? "text-pico-blanco" : "text-pico-blanco/80 hover:text-pico-blanco"
               }`}
             >
               {categoria.nombre}
+              {/* Subrayado rojo que crece desde la izquierda (lleno en la categoría actual). */}
+              <span
+                className={`absolute inset-x-3 bottom-0 h-[3px] origin-left rounded-t-sm bg-pico-rojo transition-transform duration-300 ease-out ${
+                  activa ? "scale-x-100" : "scale-x-0 group-hover:scale-x-100"
+                }`}
+                aria-hidden
+              />
             </Link>
           </li>
         );

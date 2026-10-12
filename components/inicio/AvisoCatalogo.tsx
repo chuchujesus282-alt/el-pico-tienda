@@ -10,9 +10,11 @@ export default function AvisoCatalogo() {
   return (
     <section
       role="status"
-      className="flex flex-col items-center gap-3 rounded-tarjeta border border-gris-borde bg-pico-blanco px-6 py-10 text-center"
+      className="flex flex-col items-center gap-3 rounded-banner border border-gris-borde bg-pico-blanco px-6 py-12 text-center shadow-tarjeta motion-safe:animate-aparecer"
     >
-      <PackageSearch className="size-12 text-gris-borde" strokeWidth={1.5} aria-hidden />
+      <span className="flex size-20 items-center justify-center rounded-chip bg-pico-azul-claro">
+        <PackageSearch className="size-10 text-pico-azul" strokeWidth={1.5} aria-hidden />
+      </span>
       <h2 className="text-xl font-bold text-pico-azul">No pudimos cargar los productos</h2>
       <p className="max-w-md text-sm text-gris-texto">
         El catálogo no está disponible en este momento; vuelve en unos minutos. Si lo necesitas ya, escríbenos por

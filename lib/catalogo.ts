@@ -2,12 +2,14 @@ import "server-only";
 
 import type {
   Categoria,
+  CompradoJunto,
   OpcionesCategoria,
   Producto,
   ResultadoCategoria,
 } from "@/types/catalogo";
 import { categoriasMock } from "@/lib/mock/categorias";
 import { destacadosMock, productosMock } from "@/lib/mock/productos";
+import { masVendidos } from "@/lib/recomendaciones/productos";
 
 // ÚNICA puerta de entrada a los datos de productos (ver docs/datos.md).
 // Sin CATALOGO_API_URL usa los datos de lib/mock/; con ella, consulta la API
@@ -111,5 +113,35 @@ export async function getProducto(id: string): Promise<Producto | null> {
   } catch (error) {
     if (error instanceof ErrorCatalogo && error.estado === 404) return null;
     throw error;
+  }
+}
+
+// --- Búsqueda y recomendaciones (lib/recomendaciones/) ---
+// Los algoritmos reciben los productos de estas funciones: al conectar el SQL solo cambia este archivo.
+
+/** Todos los productos del catálogo, para buscar y recomendar (en la API: GET /productos/indice). */
+export async function getIndiceProductos(): Promise<Producto[]> {
+  if (!API_URL) return productosMock;
+  return pedirApi<Producto[]>("/productos/indice");
+}
+
+/** Los más vendidos, de toda la tienda o de una categoría. */
+export async function getMasVendidos(limite = 10, categoria?: string): Promise<Producto[]> {
+  if (!API_URL) {
+    return masVendidos(productosMock, limite, { categoria });
+  }
+  return pedirApi<Producto[]>(`/productos/mas-vendidos${query({ limite, categoria })}`);
+}
+
+/**
+ * Productos que suelen ir en la misma factura (de las facturas del SQL). Mientras no haya datos devuelve [].
+ * Si falla, también []: es un extra y no debe romper la página de producto.
+ */
+export async function getCompradosJuntos(id: string, limite = 8): Promise<CompradoJunto[]> {
+  if (!API_URL) return [];
+  try {
+    return await pedirApi<CompradoJunto[]>(`/productos/${encodeURIComponent(id)}/comprados-juntos${query({ limite })}`);
+  } catch {
+    return [];
   }
 }

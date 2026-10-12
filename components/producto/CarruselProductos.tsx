@@ -15,7 +15,7 @@ type Props = {
 };
 
 const claseFlecha =
-  "hidden size-9 items-center justify-center rounded-chip border border-gris-borde bg-pico-blanco text-pico-azul shadow-tarjeta transition-colors hover:bg-pico-azul hover:text-pico-blanco md:flex";
+  "hidden size-9 items-center justify-center rounded-chip border border-gris-borde bg-pico-blanco text-pico-azul shadow-tarjeta transition duration-200 hover:bg-pico-azul hover:text-pico-blanco motion-safe:hover:scale-110 motion-safe:active:scale-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-pico-azul md:flex";
 
 /** Fila horizontal de ProductCard con título, "Ver todo" y flechas (en móvil se desliza con el dedo). */
 export default function CarruselProductos({ titulo, productos, href, className = "" }: Props) {
@@ -52,7 +52,7 @@ export default function CarruselProductos({ titulo, productos, href, className =
         {productos.map((producto) => (
           <li
             key={producto.id}
-            className="shrink-0 basis-[46%] snap-start md:basis-[calc((100%-2*1rem)/3)] lg:basis-[calc((100%-4*1rem)/5)]"
+            className="shrink-0 basis-[46%] snap-start md:basis-[calc((100%-2*1rem)/3)] lg:basis-[calc((100%-4*1rem)/5)] 2xl:basis-[calc((100%-5*1rem)/6)]"
           >
             <ProductCard producto={producto} />
           </li>

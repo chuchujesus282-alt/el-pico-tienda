@@ -26,7 +26,7 @@ export default function SeccionCategoria({ categoria, productos, imagen }: Props
           href={href}
           className="relative block aspect-[3/1] overflow-hidden rounded-banner bg-gris-borde focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-pico-azul md:aspect-[5/1]"
         >
-          <Image src={banner} alt={categoria.nombre} fill sizes="(min-width: 1280px) 1232px, 100vw" className="object-cover" />
+          <Image src={banner} alt={categoria.nombre} fill sizes="(min-width: 1536px) 1472px, 100vw" className="object-cover" />
         </Link>
       )}
       <CarruselProductos titulo={categoria.nombre} productos={productos} href={href} />

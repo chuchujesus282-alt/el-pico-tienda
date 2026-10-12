@@ -6,7 +6,7 @@ type Props = {
   children: ReactNode;
 };
 
-/** Ancho máximo 1280px y márgenes laterales 16px móvil / 24px escritorio. */
+/** Ancho máximo 1536px y márgenes laterales 16px móvil / 24px tableta / 32px escritorio grande. */
 export default function Contenedor({ as: Etiqueta = "div", className = "", children }: Props) {
-  return <Etiqueta className={`mx-auto w-full max-w-7xl px-4 md:px-6 ${className}`}>{children}</Etiqueta>;
+  return <Etiqueta className={`mx-auto w-full max-w-screen-2xl px-4 md:px-6 xl:px-8 ${className}`}>{children}</Etiqueta>;
 }

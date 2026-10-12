@@ -4,56 +4,29 @@ import type { BannerInicio as DatosBanner } from "./contenidoInicio";
 
 type Props = {
   principales: DatosBanner[];
-  laterales: DatosBanner[];
 };
 
-const sizesLateral = "(min-width: 1280px) 400px, (min-width: 1024px) 33vw, 50vw";
-
-/** Carrusel grande (~2/3) y dos banners apilados a la derecha (~1/3). En móvil, el carrusel y debajo los dos laterales en fila compacta. */
-export default function BloqueBanners({ principales, laterales }: Props) {
-  if (principales.length === 0 && laterales.length === 0) return null;
-
-  // Sin carrusel, los laterales ocupan todo el ancho en una fila.
-  if (principales.length === 0) {
-    return (
-      <div className="grid gap-3 sm:grid-cols-2 md:gap-4">
-        {laterales.map((banner) => (
-          <BannerInicio key={banner.id} banner={banner} sizes={sizesLateral} className="aspect-[2/1] lg:aspect-[5/2]" />
-        ))}
-      </div>
-    );
-  }
+/**
+ * Carrusel principal a todo el ancho del Contenedor (ya no lleva banners laterales).
+ * Alto: proporción 16:10 en móvil, 2:1 en tableta y 3:1 en escritorio, para que no crezca de más.
+ */
+export default function BloqueBanners({ principales }: Props) {
+  if (principales.length === 0) return null;
 
   return (
-    <div className={`grid gap-3 md:gap-4 ${laterales.length > 0 ? "lg:grid-cols-3" : ""}`}>
-      <CarruselBanners
-        className={`aspect-[16/10] md:aspect-[2/1] ${laterales.length > 0 ? "lg:col-span-2" : "lg:aspect-[3/1]"}`}
-        etiquetas={principales.map((b) => b.titulo)}
-        diapositivas={principales.map((banner, i) => (
-          <BannerInicio
-            key={banner.id}
-            banner={banner}
-            tamano="grande"
-            prioritario={i === 0}
-            sizes="(min-width: 1280px) 820px, (min-width: 1024px) 66vw, 100vw"
-            className="h-full"
-          />
-        ))}
-      />
-      {laterales.length > 0 && (
-        // En móvil, fila compacta de dos (solo título) para que el primer producto suba.
-        <div className="grid grid-cols-2 gap-3 md:gap-4 lg:grid-cols-1 lg:grid-rows-2">
-          {laterales.map((banner) => (
-            <BannerInicio
-              key={banner.id}
-              banner={banner}
-              tamano="lateral"
-              sizes={sizesLateral}
-              className="h-24 sm:h-auto sm:aspect-[16/10] lg:aspect-auto"
-            />
-          ))}
-        </div>
-      )}
-    </div>
+    <CarruselBanners
+      className="aspect-[16/10] shadow-tarjeta md:aspect-[2/1] lg:aspect-[3/1] 2xl:aspect-[10/3]"
+      etiquetas={principales.map((b) => b.titulo)}
+      diapositivas={principales.map((banner, i) => (
+        <BannerInicio
+          key={banner.id}
+          banner={banner}
+          tamano="grande"
+          prioritario={i === 0}
+          sizes="(min-width: 1536px) 1472px, 100vw"
+          className="h-full"
+        />
+      ))}
+    />
   );
 }

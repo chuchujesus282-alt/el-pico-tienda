@@ -11,7 +11,7 @@ export default function BannersPromocionales({ banners }: { banners: DatosBanner
         <BannerInicio
           key={banner.id}
           banner={banner}
-          sizes="(min-width: 1280px) 620px, (min-width: 768px) 50vw, 100vw"
+          sizes="(min-width: 1536px) 740px, (min-width: 768px) 50vw, 100vw"
           className="aspect-[2/1] lg:aspect-[5/2]"
         />
       ))}

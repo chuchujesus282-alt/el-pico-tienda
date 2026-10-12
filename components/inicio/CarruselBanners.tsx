@@ -16,7 +16,7 @@ const INTERVALO_MS = 6000;
 
 const claseFoco = "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-pico-blanco";
 
-const claseFlecha = `absolute top-1/2 hidden size-9 -translate-y-1/2 items-center justify-center rounded-chip bg-pico-blanco/90 text-pico-azul shadow-tarjeta transition-colors hover:bg-pico-blanco md:flex ${claseFoco}`;
+const claseFlecha = `absolute top-1/2 hidden size-10 -translate-y-1/2 items-center justify-center rounded-chip bg-pico-blanco/90 text-pico-azul shadow-tarjeta transition duration-200 hover:bg-pico-rojo hover:text-pico-blanco motion-safe:hover:scale-110 md:flex ${claseFoco}`;
 
 /**
  * Carrusel del banner principal. Pasa solo, salvo que el usuario lo pause, lo navegue a mano
@@ -112,7 +112,7 @@ export default function CarruselBanners({ diapositivas, etiquetas, className = "
               >
                 <span
                   className={`h-2 rounded-chip transition-all ${
-                    i === indice ? "w-6 bg-pico-blanco" : "w-2 bg-pico-blanco/50 group-hover/punto:bg-pico-blanco/80"
+                    i === indice ? "w-6 bg-pico-rojo" : "w-2 bg-pico-blanco/50 group-hover/punto:bg-pico-blanco/80"
                   }`}
                 />
               </button>

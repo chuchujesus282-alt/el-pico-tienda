@@ -19,9 +19,11 @@ export default function NotaPedido() {
         rel="noopener noreferrer"
         className="group -mx-2 inline-flex w-fit shrink-0 items-center gap-2 rounded-boton px-2 py-1.5 text-sm font-semibold text-pico-azul transition-colors hover:bg-pico-azul-claro focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-pico-azul sm:mx-0"
       >
-        <MessageCircle className="size-4" aria-hidden />
+        <span className="flex size-7 items-center justify-center rounded-chip bg-pico-rojo text-pico-blanco transition-transform motion-safe:group-hover:scale-110">
+          <MessageCircle className="size-4 motion-safe:group-hover:animate-sacudir" aria-hidden />
+        </span>
         ¿No sabes qué necesitas? Pregúntanos
-        <ChevronRight className="size-4 transition-transform group-hover:translate-x-0.5" aria-hidden />
+        <ChevronRight className="size-4 transition-transform duration-300 group-hover:translate-x-1" aria-hidden />
         <span className="sr-only"> (se abre WhatsApp en una pestaña nueva)</span>
       </a>
     </div>

@@ -1,4 +1,5 @@
 import CarruselProductos from "@/components/producto/CarruselProductos";
+import TePuedeInteresar from "@/components/recomendaciones/TePuedeInteresar";
 import AvisoCatalogo from "@/components/inicio/AvisoCatalogo";
 import BannersPromocionales from "@/components/inicio/BannersPromocionales";
 import BloqueBanners from "@/components/inicio/BloqueBanners";
@@ -6,7 +7,6 @@ import CarruselMarcas from "@/components/inicio/CarruselMarcas";
 import NotaPedido from "@/components/inicio/NotaPedido";
 import SeccionCategoria from "@/components/inicio/SeccionCategoria";
 import {
-  bannersLaterales,
   bannersPrincipales,
   bannersPromocionales,
   marcasDeProductos,
@@ -14,7 +14,8 @@ import {
 } from "@/components/inicio/contenidoInicio";
 import type { BannerInicio } from "@/components/inicio/contenidoInicio";
 import Contenedor from "@/components/ui/Contenedor";
-import { getCategorias, getProductosDestacados, getProductosPorCategoria } from "@/lib/catalogo";
+import Revelar from "@/components/ui/Revelar";
+import { getCategorias, getMasVendidos, getProductosDestacados, getProductosPorCategoria } from "@/lib/catalogo";
 import type { Categoria, Producto } from "@/types/catalogo";
 
 // Página principal — responsable: persona A. Ver la distribución en docs/guia-de-estilo.md.
@@ -44,7 +45,7 @@ const sinProductos: Producto[] = [];
 export default async function Inicio() {
   const [categorias, interesar, recomendados, productosPorSeccion] = await Promise.all([
     seguro(getCategorias(), []),
-    seguro(getProductosDestacados("te-puede-interesar"), sinProductos),
+    seguro(getMasVendidos(10), sinProductos), // cliente nuevo; en el navegador se personaliza
     seguro(getProductosDestacados("recomendados"), sinProductos),
     Promise.all(
       seccionesCategoria.map((s) =>
@@ -58,15 +59,14 @@ export default async function Inicio() {
 
   const todos = [...interesar, ...recomendados, ...productosPorSeccion.flat()];
   const principales = soloCategoriasExistentes(bannersPrincipales, categorias);
-  const laterales = soloCategoriasExistentes(bannersLaterales, categorias);
   const promocionales = soloCategoriasExistentes(bannersPromocionales, categorias);
 
   return (
     <Contenedor className="space-y-8 pt-4 md:space-y-12 md:pt-6">
       <h1 className="sr-only">Centro Ferretero El Pico</h1>
 
-      <div className="space-y-3 md:space-y-4">
-        <BloqueBanners principales={principales} laterales={laterales} />
+      <div className="space-y-3 motion-safe:animate-aparecer md:space-y-4">
+        <BloqueBanners principales={principales} />
         <NotaPedido />
       </div>
 
@@ -74,24 +74,29 @@ export default async function Inicio() {
         <AvisoCatalogo />
       ) : (
         <>
-          <CarruselProductos titulo="Te puede interesar" productos={interesar} />
+          <Revelar>
+            <TePuedeInteresar inicial={interesar} />
+          </Revelar>
 
-          <BannersPromocionales banners={promocionales} />
+          <Revelar>
+            <BannersPromocionales banners={promocionales} />
+          </Revelar>
 
-          <CarruselProductos titulo="Nuestros recomendados" productos={recomendados} />
+          <Revelar>
+            <CarruselProductos titulo="Nuestros recomendados" productos={recomendados} />
+          </Revelar>
 
-          <CarruselMarcas titulo="Marcas que encuentras aquí" marcas={marcasDeProductos(todos)} />
+          <Revelar>
+            <CarruselMarcas titulo="Marcas que encuentras aquí" marcas={marcasDeProductos(todos)} />
+          </Revelar>
 
           {seccionesCategoria.map((seccion, i) => {
             const categoria = categorias.find((c) => c.slug === seccion.slug);
             if (!categoria) return null;
             return (
-              <SeccionCategoria
-                key={seccion.slug}
-                categoria={categoria}
-                productos={productosPorSeccion[i]}
-                imagen={seccion.imagen}
-              />
+              <Revelar key={seccion.slug}>
+                <SeccionCategoria categoria={categoria} productos={productosPorSeccion[i]} imagen={seccion.imagen} />
+              </Revelar>
             );
           })}
         </>
