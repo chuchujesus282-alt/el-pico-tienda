@@ -8,6 +8,7 @@ export type Producto = {
   imagen: string | null; // URL absoluta o null
   categoriaSlug: string;
   subcategoria: string | null;
+  descripcion?: string | null; // texto largo para la página de producto; llegará de la base de datos
   ventas?: number; // unidades vendidas en los últimos 90 días; ordena los "más vendidos" (opcional)
 };
 

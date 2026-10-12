@@ -12,6 +12,7 @@ export type Producto = {
   imagen: string | null; // URL absoluta o null
   categoriaSlug: string;
   subcategoria: string | null;
+  descripcion?: string | null; // opcional; la página de producto la muestra solo si viene
   ventas?: number;       // unidades vendidas (últimos 90 días); ordena los "más vendidos". Opcional
 };
 
