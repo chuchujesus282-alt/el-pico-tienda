@@ -2,11 +2,10 @@
 
 import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { createPortal } from "react-dom";
-import { ArrowRight, Check, MessageCircle, Minus, Plus, ShoppingCart } from "lucide-react";
+import Link from "next/link";
+import { ArrowRight, Check, Minus, Plus, ShoppingBag, ShoppingCart } from "lucide-react";
 import { useCarrito } from "@/components/carrito/ProveedorCarrito";
 import Precio from "@/components/ui/Precio";
-import { registrarSenal } from "@/lib/recomendaciones/almacenPerfil";
-import { armarMensajePedido, enlaceWhatsApp } from "@/lib/whatsapp";
 import type { Producto } from "@/types/catalogo";
 import { fuentePaginas } from "./fuentes";
 
@@ -29,7 +28,7 @@ function Brillo() {
   );
 }
 
-/** Cantidad + "Agregar al carrito" (abre el panel del carrito) + "Comprar ahora" (pedido directo por WhatsApp). */
+/** Cantidad + "Agregar al carrito" (abre el panel del carrito) + "Comprar ahora" (va a finalizar pedido solo con este producto). */
 export default function AccionesCompra({ producto }: { producto: Producto }) {
   const { agregar } = useCarrito();
   const [cantidad, setCantidad] = useState(1);
@@ -134,21 +133,18 @@ export default function AccionesCompra({ producto }: { producto: Producto }) {
 
       <div ref={botones} className="grid gap-3 sm:grid-cols-2 md:grid-cols-1 lg:grid-cols-2">
         {botonAgregar()}
-        <a
-          href={enlaceWhatsApp(armarMensajePedido([{ producto, cantidad }]))}
-          target="_blank"
-          rel="noopener noreferrer"
-          onClick={() => registrarSenal({ tipo: "whatsapp", id: producto.id })} // perfil de "Te puede interesar"
+        <Link
+          href={`/finalizar-pedido?producto=${encodeURIComponent(producto.id)}&cantidad=${cantidad}`}
           className={`${baseBoton} bg-logo-marino text-pico-blanco hover:bg-logo-marino-oscuro hover:shadow-boton-hover`}
         >
           <Brillo />
-          <MessageCircle className="size-5" aria-hidden />
+          <ShoppingBag className="size-5" aria-hidden />
           Comprar ahora
           <ArrowRight
             className="size-4 transition-transform duration-300 motion-safe:group-hover:translate-x-1"
             aria-hidden
           />
-        </a>
+        </Link>
       </div>
 
       {/* Barra fija en móvil. Portal al <body>: la animación de entrada de la columna haría que "fixed" quede encerrado en ella. */}

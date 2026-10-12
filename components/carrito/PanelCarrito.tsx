@@ -6,8 +6,6 @@ import Boton from "@/components/ui/Boton";
 import Precio from "@/components/ui/Precio";
 import ImagenProducto from "@/components/producto/ImagenProducto";
 import { tituloProducto } from "@/lib/formato";
-import { registrarSenales } from "@/lib/recomendaciones/almacenPerfil";
-import { armarMensajePedido, enlaceWhatsApp } from "@/lib/whatsapp";
 import { useCarrito } from "./ProveedorCarrito";
 
 const claseFoco = "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-pico-azul";
@@ -167,15 +165,8 @@ export default function PanelCarrito() {
               <p className="text-xs leading-relaxed text-gris-texto">
                 No cobramos en la web: te confirmamos disponibilidad y forma de pago por WhatsApp.
               </p>
-              <Boton
-                href={enlaceWhatsApp(armarMensajePedido(items))}
-                target="_blank"
-                rel="noopener noreferrer"
-                // Señal más fuerte del perfil de "Te puede interesar": lo que el cliente pidió.
-                onClick={() => registrarSenales(items.map((i) => ({ tipo: "whatsapp", id: i.producto.id })))}
-                anchoCompleto
-                className="h-12 text-base"
-              >
+              {/* El pedido se cierra en /finalizar-pedido (retiro + pago) y de ahí sale a WhatsApp. */}
+              <Boton href="/finalizar-pedido" onClick={cerrar} anchoCompleto className="h-12 text-base">
                 <ShoppingBag className="size-5" aria-hidden />
                 Finalizar compra
                 <ArrowRight className="size-4 transition-transform duration-300 motion-safe:group-hover/boton:translate-x-1" aria-hidden />
