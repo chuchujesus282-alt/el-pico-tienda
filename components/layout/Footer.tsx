@@ -13,13 +13,13 @@ import VolverArriba from "./VolverArriba";
 // Páginas informativas: las que aún no existen quedan con "#" hasta que se construyan.
 const conocenos = [
   { texto: "Quiénes somos", href: "#" },
-  { texto: "Ubícanos", href: "#" },
+  { texto: "Ubícanos", href: "/ubicanos" },
   { texto: "Horario", href: "#" },
 ];
 const ayuda = [
   { texto: "Cómo comprar", href: "#" },
   { texto: "Contacto", href: "#" },
-  { texto: "Políticas de privacidad", href: "#" },
+  { texto: "Políticas de privacidad", href: "/politicas-de-privacidad" },
 ];
 
 /** Lo que el cliente gana comprando en El Pico (franja superior del footer). */
