@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { User } from "lucide-react";
 import BuscadorConSugerencias from "@/components/busqueda/BuscadorConSugerencias";
 import Contenedor from "@/components/ui/Contenedor";
@@ -19,14 +20,13 @@ export default function Header() {
         <BuscadorConSugerencias className="order-last w-full md:order-none md:max-w-2xl md:flex-1" />
 
         <div className="ml-auto flex items-center gap-1 md:gap-2">
-          {/* Fase 1: aún no hay cuentas de cliente; solo visual. */}
-          <span
-            className="group flex cursor-default items-center gap-2 rounded-boton p-2 text-sm font-semibold text-pico-azul transition-colors hover:bg-pico-azul-claro"
-            title="Muy pronto"
+          <Link
+            href="/iniciar-sesion"
+            className="group flex items-center gap-2 rounded-boton p-2 text-sm font-semibold text-pico-azul transition-colors hover:bg-pico-azul-claro focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-pico-azul"
           >
             <User className="size-6 transition-transform duration-300 motion-safe:group-hover:-translate-y-0.5" aria-hidden />
-            <span className="hidden lg:inline">Mi cuenta</span>
-          </span>
+            <span className="sr-only lg:not-sr-only">Mi cuenta</span>
+          </Link>
           <BotonCarrito />
         </div>
       </Contenedor>
