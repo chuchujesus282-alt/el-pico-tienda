@@ -4,7 +4,7 @@ import { mensajeAsesoria } from "./contenidoInicio";
 
 /**
  * Franja bajo los banners: aclara que los precios son referenciales y que el pedido se cierra
- * por WhatsApp (no se cobra en la web), y ofrece asesoría. Va en una tarjeta blanca para que no se pierda sobre el fondo decorativo.
+ * por WhatsApp (no se cobra en la web), y ofrece asesoría. Va en una tarjeta blanca, como el resto del contenido.
  */
 export default function NotaPedido() {
   return (

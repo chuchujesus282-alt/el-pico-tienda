@@ -43,7 +43,6 @@ Ver `app/globals.css`: colores de arriba, radios (`tarjeta` 12px, `boton` 8px, `
 
 ## Formas y espaciado
 - Espaciado en múltiplos de 4px. Separación entre secciones: 32px móvil / 48px escritorio.
-- Fondo de la página: `gris-fondo` con una capa decorativa fija (cuadrícula tipo plano de construcción en azul marino al ~8% con puntos en los cruces, atenuada detrás del contenido; manchas de luz azul ~11% y roja ~7% que se mueven muy despacio; franja azul que se desvanece bajo la barra de categorías; sin íconos de herramientas). Solo colores de marca con opacidad; se ajusta con las variables `--fondo-*` de `app/globals.css`. El contenido va en tarjetas blancas con `shadow-tarjeta` para que flote sobre el fondo.
 - Contenedor: ancho máximo 1536px (`max-w-screen-2xl`), márgenes laterales 16px móvil / 24px tableta / 32px desde 1280px. Los carruseles de productos muestran 6 tarjetas desde 1536px (5 en escritorio) y las grillas 5 columnas.
 - Tarjetas: fondo blanco, borde `gris-borde`, radio `tarjeta`, sombra `tarjeta`; al pasar el mouse sube a `tarjeta-hover` y se eleva 2px.
 - Botones: radio `boton`, altura 40px, peso 600. Primario rojo con texto blanco; secundario contorno azul.

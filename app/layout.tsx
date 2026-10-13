@@ -27,11 +27,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         <ProveedorCarrito>
           <Header />
           <NavCategorias />
-          <main className="relative flex-1">
-            {/* Franja azul que baja desde la barra de categorías y se desvanece (ver globals.css). */}
-            <div className="fondo-franja pointer-events-none absolute inset-x-0 top-0 -z-10 h-40 md:h-64 lg:h-80" aria-hidden />
-            {children}
-          </main>
+          <main className="flex-1">{children}</main>
           <Footer />
         </ProveedorCarrito>
       </body>
