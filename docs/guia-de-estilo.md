@@ -18,6 +18,7 @@ Rebranding (logo nuevo): rojo del logo y azul marino de "CENTRO FERRETERO". Apli
 | `gris-texto` | #586272 | Texto secundario (marca, código, descripciones) |
 | `texto` | #14202e | Texto principal |
 | `estrella` | #f2a516 | Estrellas de calificación |
+| `estado-abierto` | #15803d | Verde SOLO para estados "abierto" (horario de la tienda). Cerrado usa `pico-rojo`. No usarlo como color de marca |
 
 Los tokens `logo-*` (`logo-rojo`, `logo-marino`, `logo-marino-oscuro`, `logo-marino-claro`, `logo-rojo-oscuro`) son los mismos colores con otro nombre; los usan las páginas de persona B.
 

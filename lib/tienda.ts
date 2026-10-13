@@ -1,6 +1,6 @@
 // Datos de la tienda física (página /ubicanos). ÚNICO lugar donde se cambian.
 // Dirección y coordenadas confirmadas por persona A el 2026-10-07 (fichas de Google Maps/Waze, código Plus F6FG+PWH).
-// Horario y teléfono: aún sin confirmar, por eso no se muestran.
+// Horario: en lib/horario.ts (página /horario). Teléfono: aún sin confirmar, por eso no se muestra.
 
 export const TIENDA = {
   nombre: "Centro Ferretero El Pico",
