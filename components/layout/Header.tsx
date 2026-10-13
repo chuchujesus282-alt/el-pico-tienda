@@ -4,6 +4,7 @@ import BuscadorConSugerencias from "@/components/busqueda/BuscadorConSugerencias
 import Contenedor from "@/components/ui/Contenedor";
 import BotonCarrito from "./BotonCarrito";
 import Logo from "./Logo";
+import TasaBCV from "./TasaBCV";
 
 /**
  * Header blanco: el logo (las montañas del rebranding) a la izquierda, el buscador como pieza
@@ -13,13 +14,16 @@ import Logo from "./Logo";
 export default function Header() {
   return (
     <header className="relative z-10 border-b border-gris-borde bg-pico-blanco">
-      <Contenedor className="flex flex-wrap items-center gap-x-6 gap-y-3 py-3 md:flex-nowrap md:gap-x-10 md:py-4">
+      <Contenedor className="flex flex-wrap items-center gap-x-3 gap-y-3 py-3 md:flex-nowrap md:gap-x-6 md:py-4 lg:gap-x-8">
         <Logo placa={false} />
 
         {/* Búsqueda inteligente con sugerencias en vivo (lib/recomendaciones/); Enter lleva a /buscar. */}
-        <BuscadorConSugerencias className="order-last w-full md:order-none md:max-w-2xl md:flex-1" />
+        <BuscadorConSugerencias className="order-last w-full md:order-none md:max-w-[45rem] md:min-w-0 md:flex-1" />
 
-        <div className="ml-auto flex items-center gap-1 md:gap-2">
+        {/* Tasa BCV: píldora que crece con la cifra. En móvil va compacta, en la fila del logo. */}
+        <TasaBCV className="ml-auto md:ml-0" />
+
+        <div className="flex items-center gap-1 md:ml-auto md:gap-2">
           <Link
             href="/iniciar-sesion"
             className="group flex items-center gap-2 rounded-boton p-2 text-sm font-semibold text-pico-azul transition-colors hover:bg-pico-azul-claro focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-pico-azul"

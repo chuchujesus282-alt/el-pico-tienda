@@ -94,7 +94,7 @@ export default function BuscadorConSugerencias({ className = "" }: { className?:
       <label htmlFor="buscador" className="sr-only">
         Buscar productos
       </label>
-      <div className="group flex h-12 items-center rounded-chip border-2 border-pico-azul bg-pico-blanco pr-1 pl-5 transition-shadow focus-within:shadow-tarjeta-hover focus-within:ring-4 focus-within:ring-pico-azul-claro">
+      <div className="group flex h-12 items-center rounded-chip border-2 border-pico-azul bg-pico-blanco pr-1 pl-5 transition-shadow duration-200 focus-within:shadow-tarjeta-hover focus-within:ring-4 focus-within:ring-pico-azul/20">
         <Search
           className="mr-2 size-4 shrink-0 text-gris-texto transition-colors group-focus-within:text-pico-azul"
           aria-hidden

@@ -4,11 +4,11 @@ import { mensajeAsesoria } from "./contenidoInicio";
 
 /**
  * Franja bajo los banners: aclara que los precios son referenciales y que el pedido se cierra
- * por WhatsApp (no se cobra en la web), y ofrece asesoría. Sin tarjeta: solo filetes arriba y abajo.
+ * por WhatsApp (no se cobra en la web), y ofrece asesoría. Va en una tarjeta blanca para que no se pierda sobre el fondo decorativo.
  */
 export default function NotaPedido() {
   return (
-    <div className="flex flex-col gap-2 border-y border-gris-borde py-3 sm:flex-row sm:items-center sm:justify-between sm:gap-6">
+    <div className="flex flex-col gap-2 rounded-tarjeta border border-gris-borde bg-pico-blanco px-4 py-3 shadow-tarjeta sm:flex-row sm:items-center sm:justify-between sm:gap-6 md:px-5">
       <p className="text-[13px] leading-snug text-gris-texto md:text-sm">
         <strong className="font-semibold text-pico-azul">Precios referenciales en dólares.</strong> Envías tu pedido por
         WhatsApp y te confirmamos disponibilidad y forma de pago.

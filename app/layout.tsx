@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import ProveedorCarrito from "@/components/carrito/ProveedorCarrito";
+import FondoHerramientas from "@/components/layout/FondoHerramientas";
 import Footer from "@/components/layout/Footer";
 import Header from "@/components/layout/Header";
 import NavCategorias from "@/components/layout/NavCategorias";
@@ -27,7 +28,12 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         <ProveedorCarrito>
           <Header />
           <NavCategorias />
-          <main className="flex-1">{children}</main>
+          <FondoHerramientas />
+          <main className="relative flex-1">
+            {/* Franja azul que baja desde la barra de categorías y se desvanece (ver globals.css). */}
+            <div className="fondo-franja pointer-events-none absolute inset-x-0 top-0 -z-10 h-40 md:h-64 lg:h-80" aria-hidden />
+            {children}
+          </main>
           <Footer />
         </ProveedorCarrito>
       </body>

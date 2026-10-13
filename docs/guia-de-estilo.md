@@ -43,13 +43,14 @@ Ver `app/globals.css`: colores de arriba, radios (`tarjeta` 12px, `boton` 8px, `
 
 ## Formas y espaciado
 - Espaciado en múltiplos de 4px. Separación entre secciones: 32px móvil / 48px escritorio.
+- Fondo de la página: `gris-fondo` con una capa decorativa fija (cuadrícula tipo plano de construcción en azul marino al ~8% con puntos en los cruces, atenuada detrás del contenido; manchas de luz azul ~11% y roja ~7% que se mueven muy despacio; franja azul que se desvanece bajo la barra de categorías; herramientas en trazo fino en los márgenes desde 1800px). Solo colores de marca con opacidad; se ajusta con las variables `--fondo-*` de `app/globals.css`. El contenido va en tarjetas blancas con `shadow-tarjeta` para que flote sobre el fondo.
 - Contenedor: ancho máximo 1536px (`max-w-screen-2xl`), márgenes laterales 16px móvil / 24px tableta / 32px desde 1280px. Los carruseles de productos muestran 6 tarjetas desde 1536px (5 en escritorio) y las grillas 5 columnas.
 - Tarjetas: fondo blanco, borde `gris-borde`, radio `tarjeta`, sombra `tarjeta`; al pasar el mouse sube a `tarjeta-hover` y se eleva 2px.
 - Botones: radio `boton`, altura 40px, peso 600. Primario rojo con texto blanco; secundario contorno azul.
 - Banners: radio `banner`, sin borde, imagen a sangre (cubre todo el recuadro).
 
 ## Distribución de la página principal (de arriba a abajo)
-1. Header (blanco): logo oficial sin placa a la izquierda, buscador ancho al centro (fondo blanco, borde de 2px `pico-azul`, radio completo, botón azul "Buscar"), "Mi cuenta" y "Carrito" en azul con su texto (desde 1024px) y contador rojo a la derecha. En móvil el buscador baja a una segunda fila.
+1. Header (blanco): logo oficial sin placa a la izquierda, píldora "Tasa BCV" (círculo rojo "Bs" + cifra, a la derecha del buscador; compacta en móvil), buscador ancho al centro (fondo blanco, borde de 2px `pico-azul`, radio completo, botón azul "Buscar"), "Mi cuenta" y "Carrito" en azul con su texto (desde 1024px) y contador rojo a la derecha. En móvil el buscador baja a una segunda fila.
 2. Barra de categorías (`pico-azul`): las categorías en una fila; en móvil, desplazable horizontalmente.
 3. Banner principal: un carrusel a todo el ancho del Contenedor (16:10 móvil, 2:1 tableta, 3:1 escritorio). Ya no lleva banners laterales.
 4. Sección de productos "Te puede interesar": TituloSeccion + carrusel horizontal de ProductCard.

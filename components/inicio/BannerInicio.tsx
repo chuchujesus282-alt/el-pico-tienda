@@ -74,7 +74,10 @@ export default function BannerInicio({ banner, sizes, tamano = "normal", priorit
   return (
     <Destino
       href={banner.href}
-      className={`group relative block overflow-hidden rounded-banner focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-pico-azul ${
+      className={`group relative block overflow-hidden rounded-banner ${
+        // Los banners sueltos flotan y se elevan al pasar el mouse; el del carrusel ya lleva su sombra.
+        grande ? "" : "shadow-tarjeta transition duration-200 hover:shadow-tarjeta-hover motion-safe:hover:-translate-y-1"
+      } focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-pico-azul ${
         banner.imagen ? "bg-gris-borde" : estilo.fondo
       } ${className}`}
     >
