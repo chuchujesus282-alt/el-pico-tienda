@@ -1,5 +1,6 @@
 import CarruselProductos from "@/components/producto/CarruselProductos";
 import TePuedeInteresar from "@/components/recomendaciones/TePuedeInteresar";
+import BannerCalculadoras from "@/components/calculadoras/BannerCalculadoras";
 import AvisoCatalogo from "@/components/inicio/AvisoCatalogo";
 import BannersPromocionales from "@/components/inicio/BannersPromocionales";
 import BloqueBanners from "@/components/inicio/BloqueBanners";
@@ -80,6 +81,10 @@ export default async function Inicio() {
 
           <Revelar>
             <BannersPromocionales banners={promocionales} />
+          </Revelar>
+
+          <Revelar>
+            <BannerCalculadoras />
           </Revelar>
 
           <Revelar>

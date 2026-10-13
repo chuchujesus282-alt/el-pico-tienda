@@ -103,6 +103,15 @@ body {
   @apply bg-pico-rojo text-pico-blanco;
 }
 
+/* Al imprimir (ej. el resumen de una calculadora) no salen el header, la barra de categorías ni el footer. */
+@media print {
+  body > header,
+  body > nav,
+  body > footer {
+    display: none;
+  }
+}
+
 /* Filas con desplazamiento horizontal (carruseles, barra de categorías) sin barra visible. */
 @utility sin-scrollbar {
   scrollbar-width: none;

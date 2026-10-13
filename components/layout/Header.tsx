@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { User } from "lucide-react";
+import { Calculator, User } from "lucide-react";
 import BuscadorConSugerencias from "@/components/busqueda/BuscadorConSugerencias";
 import Contenedor from "@/components/ui/Contenedor";
 import BotonCarrito from "./BotonCarrito";
@@ -24,6 +24,14 @@ export default function Header() {
         <TasaBCV className="ml-auto md:ml-0" />
 
         <div className="flex items-center gap-1 md:ml-auto md:gap-2">
+          {/* Calculadoras de proyectos: acceso discreto (en gris y más pequeño que "Mi cuenta" y el carrito). En móvil se llega por el inicio y el footer. */}
+          <Link
+            href="/calculadoras"
+            className="group hidden items-center gap-1.5 rounded-boton p-2 text-[13px] font-medium text-gris-texto transition-colors hover:bg-pico-azul-claro hover:text-pico-azul focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-pico-azul md:flex"
+          >
+            <Calculator className="size-5 transition-transform duration-300 motion-safe:group-hover:-translate-y-0.5" aria-hidden />
+            <span className="sr-only xl:not-sr-only">Calculadoras</span>
+          </Link>
           <Link
             href="/iniciar-sesion"
             className="group flex items-center gap-2 rounded-boton p-2 text-sm font-semibold text-pico-azul transition-colors hover:bg-pico-azul-claro focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-pico-azul"
