@@ -1,10 +1,11 @@
 import type { Metadata } from "next";
+import { Search } from "lucide-react";
 import Link from "next/link";
 import SinResultados from "@/components/busqueda/SinResultados";
 import GrillaProductos from "@/components/producto/GrillaProductos";
 import RegistrarSenal from "@/components/recomendaciones/RegistrarSenal";
 import Contenedor from "@/components/ui/Contenedor";
-import TituloSeccion from "@/components/ui/TituloSeccion";
+import EncabezadoPagina from "@/components/ui/EncabezadoPagina";
 import { getCategorias, getIndiceProductos } from "@/lib/catalogo";
 import { buscar, crearIndice } from "@/lib/recomendaciones/busqueda";
 import type { Categoria, Producto } from "@/types/catalogo";
@@ -30,12 +31,14 @@ export default async function PaginaBuscar({ searchParams }: PageProps<"/buscar"
     [productos, categorias] = await Promise.all([getIndiceProductos(), getCategorias().catch(() => [])]);
   } catch {
     return (
-      <Contenedor className="py-8 md:py-12">
-        <TituloSeccion titulo="Buscar productos" nivel="h1" />
+      <>
+        <EncabezadoPagina titulo="Buscar productos" ruta={[{ texto: "Buscar" }]} icono={Search} />
+        <Contenedor className="py-8 md:py-12">
         <p className="rounded-tarjeta border border-gris-borde bg-pico-blanco p-6 text-center text-sm text-gris-texto">
           No pudimos conectar con el catálogo en este momento. Intenta de nuevo en unos minutos.
         </p>
-      </Contenedor>
+        </Contenedor>
+      </>
     );
   }
 
@@ -44,17 +47,15 @@ export default async function PaginaBuscar({ searchParams }: PageProps<"/buscar"
   const cantidad = resultado.productos.length;
 
   return (
+    <>
+      <EncabezadoPagina
+        titulo={consulta ? `Resultados para “${consulta}”` : "Buscar productos"}
+        ruta={[{ texto: "Buscar" }]}
+        icono={Search}
+        descripcion={cantidad > 0 ? `${cantidad} ${cantidad === 1 ? "producto" : "productos"}` : undefined}
+      />
     <Contenedor className="space-y-6 py-6 md:py-10">
       {consulta && <RegistrarSenal senales={[{ tipo: "busqueda", termino: consulta }]} />}
-
-      <div>
-        <TituloSeccion titulo={consulta ? `Resultados para “${consulta}”` : "Buscar productos"} nivel="h1" className="mb-1" />
-        {cantidad > 0 && (
-          <p className="text-[13px] text-gris-texto">
-            {cantidad} {cantidad === 1 ? "producto" : "productos"}
-          </p>
-        )}
-      </div>
 
       {resultado.tipo === "parcial" && (
         <p className="rounded-boton bg-pico-azul-claro px-4 py-3 text-sm text-texto">
@@ -86,5 +87,6 @@ export default async function PaginaBuscar({ searchParams }: PageProps<"/buscar"
         />
       )}
     </Contenedor>
+    </>
   );
 }

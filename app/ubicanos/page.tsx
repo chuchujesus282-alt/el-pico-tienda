@@ -5,7 +5,7 @@ import { ArrowRight, MapPin, Route, Store } from "lucide-react";
 import AccionesUbicacion from "@/components/ubicanos/AccionesUbicacion";
 import MapaTienda from "@/components/ubicanos/MapaTienda";
 import Contenedor from "@/components/ui/Contenedor";
-import TituloSeccion from "@/components/ui/TituloSeccion";
+import EncabezadoPagina from "@/components/ui/EncabezadoPagina";
 import { TIENDA } from "@/lib/tienda";
 
 // Ubícanos — responsable: persona A (rama `ubicanos`). Los datos de la tienda están en lib/tienda.ts.
@@ -46,19 +46,18 @@ function Tarjeta({ icono, titulo, children }: { icono: ReactNode; titulo: string
 
 export default function PaginaUbicanos() {
   return (
+    <>
+      <EncabezadoPagina
+        titulo="Ubícanos"
+        descripcion="Estamos en Fila de Mariches, en la carretera Petare–Santa Lucía. Toca el mapa para abrir la ruta en Google Maps, Waze o Apple Maps."
+        ruta={[{ texto: "Ubícanos" }]}
+        icono={MapPin}
+      />
     <Contenedor className="space-y-6 py-6 md:space-y-8 md:py-10">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(datosEstructurados).replace(/</g, "\\u003c") }}
       />
-
-      <div className="motion-safe:animate-aparecer">
-        <TituloSeccion titulo="Ubícanos" nivel="h1" className="mb-2" />
-        <p className="max-w-2xl text-sm text-gris-texto md:text-base">
-          Estamos en Fila de Mariches, en la carretera Petare–Santa Lucía. Toca el mapa para abrir la ruta en Google Maps,
-          Waze o Apple Maps.
-        </p>
-      </div>
 
       <MapaTienda />
 
@@ -108,5 +107,6 @@ export default function PaginaUbicanos() {
         </Tarjeta>
       </div>
     </Contenedor>
+    </>
   );
 }

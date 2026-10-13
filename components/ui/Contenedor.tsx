@@ -6,7 +6,10 @@ type Props = {
   children: ReactNode;
 };
 
-/** Ancho máximo 1536px y márgenes laterales 16px móvil / 24px tableta / 32px escritorio grande. */
+/**
+ * Contenedor de TODO el sitio. El ancho máximo (`max-w-pagina`, 1760px con el margen incluido) y el margen lateral fluido
+ * (`px-pagina`, entre 16 y 48px) se definen en un solo lugar: app/globals.css.
+ */
 export default function Contenedor({ as: Etiqueta = "div", className = "", children }: Props) {
-  return <Etiqueta className={`mx-auto w-full max-w-screen-2xl px-4 md:px-6 xl:px-8 ${className}`}>{children}</Etiqueta>;
+  return <Etiqueta className={`mx-auto w-full max-w-pagina px-pagina ${className}`}>{children}</Etiqueta>;
 }

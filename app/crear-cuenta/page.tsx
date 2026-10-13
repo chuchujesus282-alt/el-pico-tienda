@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, UserPlus } from "lucide-react";
 import FormularioCrearCuenta from "@/components/cuenta/FormularioCrearCuenta";
 import Contenedor from "@/components/ui/Contenedor";
-import TituloSeccion from "@/components/ui/TituloSeccion";
+import EncabezadoPagina from "@/components/ui/EncabezadoPagina";
 
 // Crear cuenta con los datos fiscales para la factura — responsable: persona A (rama `inicio-sesion`).
 
@@ -11,7 +11,14 @@ export const metadata: Metadata = { title: "Crear cuenta", robots: { index: fals
 
 export default function PaginaCrearCuenta() {
   return (
-    <Contenedor className="py-6 md:py-8">
+    <>
+      <EncabezadoPagina
+        titulo="Crea tu cuenta"
+        descripcion="Con estos datos te facturamos y armamos tus pedidos más rápido."
+        ruta={[{ texto: "Iniciar sesión", href: "/iniciar-sesion" }, { texto: "Crear cuenta" }]}
+        icono={UserPlus}
+      />
+    <Contenedor className="py-6 md:py-10">
       <div className="mx-auto w-full max-w-3xl">
         <Link
           href="/iniciar-sesion"
@@ -20,10 +27,9 @@ export default function PaginaCrearCuenta() {
           <ArrowLeft className="size-3.5" aria-hidden />
           Volver a iniciar sesión
         </Link>
-        <TituloSeccion titulo="Crea tu cuenta" nivel="h1" className="mb-1" />
-        <p className="mb-6 text-sm text-gris-texto">Con estos datos te facturamos y armamos tus pedidos más rápido.</p>
         <FormularioCrearCuenta />
       </div>
     </Contenedor>
+    </>
   );
 }

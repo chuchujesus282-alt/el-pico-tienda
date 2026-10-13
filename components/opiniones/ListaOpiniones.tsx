@@ -74,7 +74,7 @@ export default function ListaOpiniones({ opiniones, propias, resaltada }: Props)
       </h2>
 
       <div className="mb-4 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
-        <div className="sin-scrollbar -mx-4 flex gap-2 overflow-x-auto px-4 md:mx-0 md:px-0" role="group" aria-label="Filtrar por estrellas">
+        <div className="sin-scrollbar -mx-[var(--margen-pagina)] flex gap-2 overflow-x-auto px-[var(--margen-pagina)] md:mx-0 md:px-0" role="group" aria-label="Filtrar por estrellas">
           <button type="button" onClick={() => { setFiltro(null); setVisibles(POR_PAGINA); }} className={chip(filtro === null)} aria-pressed={filtro === null}>
             Todas ({opiniones.length})
           </button>

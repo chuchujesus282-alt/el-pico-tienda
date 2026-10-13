@@ -5,6 +5,7 @@ import type { ReactNode } from "react";
 import Link from "next/link";
 import {
   Banknote,
+  Calculator,
   CircleDollarSign,
   CalendarClock,
   Check,
@@ -20,6 +21,7 @@ import {
   Truck,
   Zap,
 } from "lucide-react";
+import { RUTA_CALCULADORAS } from "@/components/calculadoras/rutas";
 import { useCarrito } from "@/components/carrito/ProveedorCarrito";
 import { tituloProducto } from "@/lib/formato";
 import ImagenProducto from "@/components/producto/ImagenProducto";
@@ -186,6 +188,13 @@ export default function FormularioPedido({ itemsDirectos, direcciones }: Props) 
         >
           <Brillo />
           Ver productos
+        </Link>
+        <Link
+          href={RUTA_CALCULADORAS}
+          className="group mt-1 inline-flex items-center gap-1.5 rounded-boton px-2 py-1 text-[13px] font-semibold text-logo-marino transition-colors hover:text-logo-rojo focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-logo-marino"
+        >
+          <Calculator className="size-4 motion-safe:group-hover:animate-sacudir" aria-hidden />
+          ¿No sabes cuánto material necesitas? Calcúlalo
         </Link>
       </div>
     );

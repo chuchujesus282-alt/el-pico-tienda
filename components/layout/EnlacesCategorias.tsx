@@ -37,11 +37,11 @@ export default function EnlacesCategorias({ categorias }: { categorias: Categori
   })`;
 
   return (
-    // px-1 / md:px-3 / xl:px-5 + px-3 del enlace = 16px / 24px / 32px: el texto alinea con el logo y el Contenedor.
+    // Margen de la página menos el px-3 del enlace: el texto alinea con el logo y el Contenedor.
     <ul
       ref={lista}
       style={{ maskImage: mascara, WebkitMaskImage: mascara }}
-      className={`sin-scrollbar mx-auto flex max-w-screen-2xl overflow-x-auto px-1 md:px-3 xl:px-5 ${
+      className={`sin-scrollbar mx-auto flex max-w-pagina overflow-x-auto px-[calc(var(--margen-pagina)-0.75rem)] ${
         categorias.length >= 6 ? "xl:justify-between" : "gap-2"
       }`}
     >

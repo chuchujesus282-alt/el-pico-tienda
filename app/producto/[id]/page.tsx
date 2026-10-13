@@ -7,10 +7,10 @@ import AccionesCompra from "@/components/producto-detalle/AccionesCompra";
 import CodigoCompartir from "@/components/producto-detalle/CodigoCompartir";
 import { fuentePaginas } from "@/components/producto-detalle/fuentes";
 import GaleriaZoom from "@/components/producto-detalle/GaleriaZoom";
-import RutaProducto from "@/components/producto-detalle/RutaProducto";
 import ProductosRelacionados from "@/components/recomendaciones/ProductosRelacionados";
 import RegistrarSenal from "@/components/recomendaciones/RegistrarSenal";
 import Contenedor from "@/components/ui/Contenedor";
+import EncabezadoPagina from "@/components/ui/EncabezadoPagina";
 import Precio from "@/components/ui/Precio";
 import { getCategorias, getProducto } from "@/lib/catalogo";
 import { tituloProducto } from "@/lib/formato";
@@ -54,10 +54,11 @@ export default async function PaginaProducto({ params }: PageProps<"/producto/[i
 
   return (
     <div className={fuentePaginas}>
+      <EncabezadoPagina
+        ruta={[...(categoria ? [{ texto: categoria.nombre, href: `/categoria/${categoria.slug}` }] : []), { texto: titulo }]}
+      />
       <Contenedor className="py-6 md:py-8">
-        <RutaProducto categoria={categoria} actual={titulo} />
-
-        <article className="mt-4 grid gap-6 md:mt-6 md:grid-cols-2 md:gap-8 lg:gap-12">
+        <article className="grid gap-6 md:grid-cols-2 md:gap-8 lg:gap-12">
           <div className="motion-safe:animate-aparecer md:sticky md:top-6 md:self-start">
             <GaleriaZoom src={producto.imagen} alt={titulo} />
           </div>
