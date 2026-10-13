@@ -4,10 +4,10 @@ import { notFound } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 import PanelOpiniones from "@/components/opiniones/PanelOpiniones";
 import { fuentePaginas } from "@/components/producto-detalle/fuentes";
-import RutaProducto from "@/components/producto-detalle/RutaProducto";
 import { tituloProducto } from "@/lib/formato";
 import ImagenProducto from "@/components/producto/ImagenProducto";
 import Contenedor from "@/components/ui/Contenedor";
+import EncabezadoPagina from "@/components/ui/EncabezadoPagina";
 import Precio from "@/components/ui/Precio";
 import { getCategorias, getProducto } from "@/lib/catalogo";
 import { getOpiniones } from "@/lib/opiniones";
@@ -41,13 +41,19 @@ export default async function PaginaOpiniones({ params }: PageProps<"/producto/[
 
   return (
     <div className={fuentePaginas}>
+      <EncabezadoPagina
+        ruta={[
+          ...(categoria ? [{ texto: categoria.nombre, href: `/categoria/${categoria.slug}` }] : []),
+          { texto: titulo, href: hrefProducto },
+          { texto: "Opiniones" },
+        ]}
+      />
       <Contenedor className="py-6 md:py-8">
-        <RutaProducto categoria={categoria} producto={{ titulo, href: hrefProducto }} actual="Opiniones" />
 
         {/* Producto al que pertenecen las opiniones */}
         <Link
           href={hrefProducto}
-          className="group mt-4 flex items-center gap-4 rounded-banner border border-gris-borde bg-pico-blanco p-3 shadow-tarjeta transition duration-200 hover:shadow-tarjeta-hover motion-safe:animate-aparecer motion-safe:hover:-translate-y-0.5 md:mt-6 md:p-4"
+          className="group flex items-center gap-4 rounded-banner border border-gris-borde bg-pico-blanco p-3 shadow-tarjeta transition duration-200 hover:shadow-tarjeta-hover motion-safe:animate-aparecer motion-safe:hover:-translate-y-0.5 md:p-4"
         >
           <ImagenProducto src={producto.imagen} alt={titulo} sizes="96px" className="size-20 shrink-0 rounded-tarjeta md:size-24" />
           <div className="min-w-0 flex-1">

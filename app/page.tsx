@@ -1,11 +1,13 @@
 import CarruselProductos from "@/components/producto/CarruselProductos";
 import TePuedeInteresar from "@/components/recomendaciones/TePuedeInteresar";
+import BannerCalculadoras from "@/components/calculadoras/BannerCalculadoras";
 import AvisoCatalogo from "@/components/inicio/AvisoCatalogo";
 import BannersPromocionales from "@/components/inicio/BannersPromocionales";
 import BloqueBanners from "@/components/inicio/BloqueBanners";
 import CarruselMarcas from "@/components/inicio/CarruselMarcas";
 import NotaPedido from "@/components/inicio/NotaPedido";
 import SeccionCategoria from "@/components/inicio/SeccionCategoria";
+import { SECCIONES_DESTACADAS } from "@/components/inicio/seccionesDestacadas";
 import {
   bannersPrincipales,
   bannersPromocionales,
@@ -13,7 +15,9 @@ import {
   seccionesCategoria,
 } from "@/components/inicio/contenidoInicio";
 import type { BannerInicio } from "@/components/inicio/contenidoInicio";
+import CirculosSecciones from "@/components/ui/CirculosSecciones";
 import Contenedor from "@/components/ui/Contenedor";
+import Franja from "@/components/ui/Franja";
 import Revelar from "@/components/ui/Revelar";
 import { getCategorias, getMasVendidos, getProductosDestacados, getProductosPorCategoria } from "@/lib/catalogo";
 import type { Categoria, Producto } from "@/types/catalogo";
@@ -61,46 +65,74 @@ export default async function Inicio() {
   const principales = soloCategoriasExistentes(bannersPrincipales, categorias);
   const promocionales = soloCategoriasExistentes(bannersPromocionales, categorias);
 
+  // Secciones por categoría que sí tienen productos, para alternar bien el color de sus franjas.
+  const seccionesVisibles = seccionesCategoria.flatMap((seccion, i) => {
+    const categoria = categorias.find((c) => c.slug === seccion.slug);
+    return categoria && productosPorSeccion[i].length > 0 ? [{ seccion, categoria, productos: productosPorSeccion[i] }] : [];
+  });
+
+  // La página se arma con franjas a todo el ancho que alternan gris y blanco (ver components/ui/Franja.tsx).
   return (
-    <Contenedor className="space-y-8 pt-4 md:space-y-12 md:pt-6">
+    <>
       <h1 className="sr-only">Centro Ferretero El Pico</h1>
 
-      <div className="space-y-3 motion-safe:animate-aparecer md:space-y-4">
-        <BloqueBanners principales={principales} />
-        <NotaPedido />
+      {/* Franja azul que continúa la barra de categorías hasta media altura del banner: el banner queda montado sobre el borde. */}
+      <div className="relative">
+        <div className="absolute inset-x-0 top-0 h-[55%] bg-pico-azul-oscuro" aria-hidden />
+        <Contenedor className="relative pt-4 motion-safe:animate-aparecer md:pt-6">
+          <BloqueBanners principales={principales} />
+        </Contenedor>
       </div>
 
+      <Contenedor className="pt-3 pb-6 md:pt-4 md:pb-8">
+        <NotaPedido />
+      </Contenedor>
+
+      <Franja tono="blanco" compacta>
+        <CirculosSecciones titulo="Lo más buscado" secciones={SECCIONES_DESTACADAS} />
+      </Franja>
+
       {todos.length === 0 ? (
-        <AvisoCatalogo />
+        <Franja>
+          <AvisoCatalogo />
+        </Franja>
       ) : (
         <>
-          <Revelar>
-            <TePuedeInteresar inicial={interesar} />
-          </Revelar>
+          <Franja>
+            <Revelar>
+              <TePuedeInteresar inicial={interesar} />
+            </Revelar>
+          </Franja>
 
-          <Revelar>
-            <BannersPromocionales banners={promocionales} />
-          </Revelar>
+          <BannerCalculadoras />
 
-          <Revelar>
-            <CarruselProductos titulo="Nuestros recomendados" productos={recomendados} />
-          </Revelar>
+          <Franja tono="blanco">
+            <Revelar>
+              <BannersPromocionales banners={promocionales} />
+            </Revelar>
+          </Franja>
 
-          <Revelar>
-            <CarruselMarcas titulo="Marcas que encuentras aquí" marcas={marcasDeProductos(todos)} />
-          </Revelar>
+          <Franja>
+            <Revelar>
+              <CarruselProductos titulo="Nuestros recomendados" productos={recomendados} />
+            </Revelar>
+          </Franja>
 
-          {seccionesCategoria.map((seccion, i) => {
-            const categoria = categorias.find((c) => c.slug === seccion.slug);
-            if (!categoria) return null;
-            return (
-              <Revelar key={seccion.slug}>
-                <SeccionCategoria categoria={categoria} productos={productosPorSeccion[i]} imagen={seccion.imagen} />
+          <Franja tono="blanco">
+            <Revelar>
+              <CarruselMarcas titulo="Marcas que encuentras aquí" marcas={marcasDeProductos(todos)} />
+            </Revelar>
+          </Franja>
+
+          {seccionesVisibles.map(({ seccion, categoria, productos }, i) => (
+            <Franja key={seccion.slug} tono={i % 2 === 0 ? "gris" : "blanco"}>
+              <Revelar>
+                <SeccionCategoria categoria={categoria} productos={productos} imagen={seccion.imagen} />
               </Revelar>
-            );
-          })}
+            </Franja>
+          ))}
         </>
       )}
-    </Contenedor>
+    </>
   );
 }

@@ -19,8 +19,8 @@ export default function BotonCarritoFlotante({ visible }: { visible: boolean }) 
   if (!montado) return null;
 
   const mostrar = visible && !abierto;
-  // En móvil la página de producto tiene su propia barra fija abajo: la bola sube para no taparla.
-  const sobreBarra = ruta.startsWith("/producto/");
+  // En móvil la página de producto y las calculadoras tienen su propia barra fija abajo: la bola sube para no taparla.
+  const sobreBarra = ruta.startsWith("/producto/") || ruta.startsWith("/calculadoras/");
 
   // Portal al <body>: así "fixed" no queda encerrado en un contenedor con animación.
   return createPortal(

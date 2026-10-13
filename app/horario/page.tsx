@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ArrowRight, MapPin } from "lucide-react";
+import { ArrowRight, Clock, MapPin } from "lucide-react";
 import HorarioEnVivo from "@/components/horario/HorarioEnVivo";
 import Contenedor from "@/components/ui/Contenedor";
-import TituloSeccion from "@/components/ui/TituloSeccion";
+import EncabezadoPagina from "@/components/ui/EncabezadoPagina";
 import { HORARIO, formatearFranja } from "@/lib/horario";
 import { TIENDA } from "@/lib/tienda";
 
@@ -37,6 +37,13 @@ const datosEstructurados = {
 
 export default function PaginaHorario() {
   return (
+    <>
+      <EncabezadoPagina
+        titulo="Horario"
+        descripcion="Abrimos todos los días. En feriado, el horario es el mismo de los sábados."
+        ruta={[{ texto: "Horario" }]}
+        icono={Clock}
+      />
     <Contenedor className="py-6 md:py-10">
       <script
         type="application/ld+json"
@@ -44,11 +51,6 @@ export default function PaginaHorario() {
       />
 
       <div className="mx-auto max-w-2xl space-y-6">
-        <div className="motion-safe:animate-aparecer">
-          <TituloSeccion titulo="Horario" nivel="h1" className="mb-2" />
-          <p className="text-sm text-gris-texto md:text-base">Abrimos todos los días. En feriado, el horario es el mismo de los sábados.</p>
-        </div>
-
         <HorarioEnVivo />
 
         <Link href="/ubicanos" className="group inline-flex items-center gap-1.5 text-sm font-semibold text-pico-rojo hover:underline">
@@ -58,5 +60,6 @@ export default function PaginaHorario() {
         </Link>
       </div>
     </Contenedor>
+    </>
   );
 }

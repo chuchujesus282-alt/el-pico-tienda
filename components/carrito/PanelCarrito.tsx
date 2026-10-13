@@ -1,7 +1,9 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { ArrowLeft, ArrowRight, Minus, Plus, ShoppingBag, ShoppingCart, Trash2, X } from "lucide-react";
+import { ArrowLeft, ArrowRight, Calculator, Minus, Plus, ShoppingBag, ShoppingCart, Trash2, X } from "lucide-react";
+import Link from "next/link";
+import { RUTA_CALCULADORAS } from "@/components/calculadoras/rutas";
 import Boton from "@/components/ui/Boton";
 import Precio from "@/components/ui/Precio";
 import ImagenProducto from "@/components/producto/ImagenProducto";
@@ -90,6 +92,14 @@ export default function PanelCarrito() {
               <ArrowLeft className="size-4 transition-transform motion-safe:group-hover/boton:-translate-x-1" aria-hidden />
               Seguir comprando
             </Boton>
+            <Link
+              href={RUTA_CALCULADORAS}
+              onClick={cerrar}
+              className="group mt-3 inline-flex items-center gap-1.5 rounded-boton px-2 py-1 text-[13px] font-semibold text-pico-azul transition-colors hover:text-pico-rojo focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-pico-azul"
+            >
+              <Calculator className="size-4 motion-safe:group-hover:animate-sacudir" aria-hidden />
+              ¿No sabes cuánto material necesitas? Calcúlalo
+            </Link>
           </div>
         ) : (
           <>

@@ -50,6 +50,9 @@ export const productosMock: Producto[] = [
     ["00302276", 'DESTORNILLADOR DE PALA 1/4" X 4"', "FORJAMAX", 2.4, "Manuales", 110],
     ["00302290", 'LLAVE AJUSTABLE 10" CROMADA', "FORJAMAX", 8.75, "Manuales", 66],
     ["00302314", 'ARCO DE SEGUETA 12" CON HOJA', "FORJAMAX", 6.2, "Manuales", 41],
+    // Materiales de las calculadoras de proyectos (precios de prueba, referenciales del mercado venezolano).
+    ["00302338", 'NIVEL DE ALUMINIO 24"', "MEDIPRO", 9.4, "Medición", 44],
+    ["00302354", 'ESPATULA DE ACERO 4" MANGO MADERA', "FORJAMAX", 3.1, "Manuales", 61],
   ]),
   ...crear("electricidad", [
     ["00403002", "BOMBILLO LED 12W LUZ BLANCA E27", "LUMEN", 2.35, "Iluminación", 380],
@@ -68,6 +71,10 @@ export const productosMock: Producto[] = [
     ["00504115", 'BANDEJA PARA RODILLO 9" PLASTICA', "PINTAFACIL", 2.9, "Accesorios", 80],
     ["00504131", 'CINTA DE PAPEL 1" X 40MTS', "ADHEMAX", 1.6, "Accesorios", 230],
     ["00504157", "PINTURA CAUCHO BLANCA 1 GALON", "COLORVEN", 11.5, "Caucho", 260],
+    // Materiales de las calculadoras de proyectos (precios de prueba, referenciales del mercado venezolano).
+    ["00504173", "SELLADOR ANTIALCALINO BLANCO 1 GALON", "COLORVEN", 13.5, "Fondos", 72],
+    ["00504199", "MANTO ASFALTICO 3MM ROLLO 10M2", "SELLAMAX", 34, "Impermeabilizantes", 48],
+    ["00504214", "PRIMER ASFALTICO 1 GALON", "SELLAMAX", 11.8, "Impermeabilizantes", 36],
   ]),
   ...crear("construccion", [
     ["00605004", "CEMENTO GRIS SACO 42.5KG", "CEMENVEN", 9.75, "Cementos", 520],
@@ -79,6 +86,27 @@ export const productosMock: Producto[] = [
     ["00605125", 'CUCHARA DE ALBAÑIL 8"', "FORJAMAX", 4.6, "Herramientas de albañilería", 70],
     ["00605141", "BALDE PLASTICO DE ALBAÑIL 12 LITROS", "ALTURA", 3.3, "Herramientas de albañilería", 115],
     ["00605167", "CEMENTO BLANCO BOLSA 1KG", "CEMENVEN", 1.9, "Cementos", 90],
+    // Materiales de las calculadoras de proyectos (precios de prueba, referenciales del mercado venezolano).
+    ["00605183", "ARENA LAVADA METRO CUBICO", null, 32, "Agregados", 95],
+    ["00605209", 'PIEDRA PICADA 3/4" METRO CUBICO', null, 38, "Agregados", 70],
+    ["00605225", "BLOQUE DE ARCILLA 10X20X30", null, 0.52, "Bloques", 640],
+    ["00605241", "BLOQUE DE ARCILLA 20X20X30", null, 0.85, "Bloques", 310],
+    ["00605267", "BLOQUE DE CONCRETO 10X20X40", null, 0.75, "Bloques", 420],
+    ["00605283", "BLOQUE DE CONCRETO 15X20X40", null, 0.95, "Bloques", 560],
+    ["00605308", "BLOQUE DE CONCRETO 20X20X40", null, 1.2, "Bloques", 280],
+    ["00605324", 'CABILLA 1/2" X 6MTS', "ACEROVEN", 7.4, "Acero", 260],
+    ["00605340", 'CABILLA 5/8" X 6MTS', "ACEROVEN", 11.6, "Acero", 120],
+    ["00605366", "ALAMBRE DULCE CALIBRE 18 ROLLO 1KG", "ACEROVEN", 2.6, "Acero", 150],
+    ["00605382", "CERAMICA PARA PISO 45X45 CAJA 2.03M2", "PISOVEN", 13.9, "Revestimientos", 88],
+    ["00605407", "PORCELANATO 60X60 CAJA 1.44M2", "PISOVEN", 24.5, "Revestimientos", 54],
+    ["00605423", "CARATO BLANCO BOLSA 2KG", "ADHEMAX", 3.2, "Revestimientos", 76],
+    ["00605449", "LAMINA DE ZINC ONDULADA 3.66M X 0.80M", "TECHOVEN", 12.8, "Techos", 110],
+    ["00605465", "LAMINA ACEROLIT 3.66M X 0.80M", "TECHOVEN", 27.5, "Techos", 62],
+    ["00605481", 'LAMINA DRYWALL 1/2" 1.22 X 2.44M', "PANELVEN", 9.8, "Drywall", 135],
+    ["00605506", 'PARAL METALICO DRYWALL 2 1/2" X 3.05M', "PANELVEN", 3.4, "Drywall", 190],
+    ["00605522", 'RIEL METALICO DRYWALL 2 1/2" X 3.05M', "PANELVEN", 3.1, "Drywall", 120],
+    ["00605548", "MASILLA PARA DRYWALL GALON 5KG", "PANELVEN", 6.9, "Drywall", 84],
+    ["00605564", "CINTA DE PAPEL PARA JUNTAS DRYWALL 75MTS", "PANELVEN", 3.3, "Drywall", 66],
   ]),
   ...crear("ferreteria", [
     ["00706008", "TORNILLO DRYWALL 6X1\" CAJA 100 UNIDADES", "FIJATEC", 3.4, "Tornillos", 240],
@@ -90,6 +118,8 @@ export const productosMock: Producto[] = [
     ["00706128", 'TORNILLOS PARA MADERA 1/4" X 1 1/2" CAJA 100 UNIDADES', "FIJATEC", 4.1, "Tornillos", 190],
     ["00706144", 'TORNILLO HEXAGONAL 3/8" X 3" GALVANIZADO', "FIJATEC", 0.7, "Tornillos", 145],
     ["00706160", 'RAMPLUG PLASTICO 3/8" BOLSA 25 UNIDADES', "ANCLAPLUS", 1.5, "Anclajes", 165],
+    // Materiales de las calculadoras de proyectos (precios de prueba, referenciales del mercado venezolano).
+    ["00706186", 'TORNILLO AUTOPERFORANTE PARA TECHO 2 1/2" CON ARANDELA BOLSA 100 UNIDADES', "FIJATEC", 9.5, "Tornillos", 58],
   ]),
   ...crear("hogar-y-jardin", [
     ["00807012", 'TIJERA PODAR 22" MANGO TUBULAR', "VERDEPRO", 17.24, "Herramientas de jardín", 23],

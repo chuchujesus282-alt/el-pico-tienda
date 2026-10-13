@@ -28,6 +28,9 @@
   --radius-banner: 16px;
   --radius-chip: 9999px;
 
+  /* Ancho máximo del contenido de TODO el sitio (lo usa Contenedor con `max-w-pagina`). */
+  --container-pagina: 110rem; /* 1760px: 1664px de contenido más el margen lateral */
+
   --shadow-tarjeta: 0 1px 3px rgb(12 45 78 / 0.08);
   --shadow-tarjeta-hover: 0 12px 28px -8px rgb(12 45 78 / 0.22);
   --shadow-boton-hover: 0 10px 20px -6px rgb(12 45 78 / 0.35);
@@ -96,12 +99,31 @@
   --font-titulo: var(--font-chakra, var(--font-inter)), system-ui, sans-serif;
 }
 
+/* Margen lateral fluido de todo el sitio: 16px en móvil, crece con la pantalla y se detiene en 48px.
+   Se usa con `px-pagina` (Contenedor) o como `var(--margen-pagina)` en filas que se salen hasta el borde. */
+:root {
+  --margen-pagina: clamp(1rem, 4vw, 3rem);
+}
+
+@utility px-pagina {
+  padding-inline: var(--margen-pagina);
+}
+
 body {
   @apply bg-gris-fondo text-texto font-sans antialiased;
 }
 
 ::selection {
   @apply bg-pico-rojo text-pico-blanco;
+}
+
+/* Al imprimir (ej. el resumen de una calculadora) no salen el header, la barra de categorías ni el footer. */
+@media print {
+  body > header,
+  body > nav,
+  body > footer {
+    display: none;
+  }
 }
 
 /* Filas con desplazamiento horizontal (carruseles, barra de categorías) sin barra visible. */

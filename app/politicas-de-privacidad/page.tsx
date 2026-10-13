@@ -3,7 +3,7 @@ import Link from "next/link";
 import type { ReactNode } from "react";
 import { Ban, Lock, ShieldCheck, Smartphone } from "lucide-react";
 import Contenedor from "@/components/ui/Contenedor";
-import TituloSeccion from "@/components/ui/TituloSeccion";
+import EncabezadoPagina from "@/components/ui/EncabezadoPagina";
 import { TIENDA } from "@/lib/tienda";
 
 // Políticas de privacidad — responsable: persona A (rama `politicas-privacidad`).
@@ -73,11 +73,14 @@ function Subtitulo({ children }: { children: ReactNode }) {
 
 export default function PaginaPoliticasPrivacidad() {
   return (
+    <>
+      <EncabezadoPagina
+        titulo="Políticas de privacidad"
+        descripcion={`Última actualización: ${ACTUALIZACION}`}
+        ruta={[{ texto: "Políticas de privacidad" }]}
+        icono={ShieldCheck}
+      />
     <Contenedor className="space-y-6 py-6 md:space-y-8 md:py-10">
-      <div className="motion-safe:animate-aparecer">
-        <TituloSeccion titulo="Políticas de privacidad" nivel="h1" className="mb-2" />
-        <p className="text-[13px] text-gris-texto">Última actualización: {ACTUALIZACION}</p>
-      </div>
 
       {/* Resumen en lenguaje sencillo. */}
       <ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
@@ -328,5 +331,6 @@ export default function PaginaPoliticasPrivacidad() {
         </article>
       </div>
     </Contenedor>
+    </>
   );
 }

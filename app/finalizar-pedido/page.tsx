@@ -1,10 +1,11 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, ClipboardCheck } from "lucide-react";
 import FormularioPedido from "@/components/finalizar-pedido/FormularioPedido";
 import { fuentePaginas } from "@/components/producto-detalle/fuentes";
 import Contenedor from "@/components/ui/Contenedor";
+import EncabezadoPagina from "@/components/ui/EncabezadoPagina";
 import { getProducto } from "@/lib/catalogo";
 import { getDireccionesCliente } from "@/lib/cliente";
 import type { ItemCarrito } from "@/types/carrito";
@@ -35,7 +36,13 @@ export default async function PaginaFinalizarPedido({ searchParams }: PageProps<
 
   return (
     <div className={fuentePaginas}>
-      <Contenedor className="py-6 md:py-8">
+      <EncabezadoPagina
+        titulo="Finalizar pedido"
+        descripcion="Elige cómo lo recibes y cómo pagas. Te llevamos a WhatsApp con todo listo."
+        ruta={[{ texto: "Finalizar pedido" }]}
+        icono={ClipboardCheck}
+      />
+      <Contenedor className="py-6 md:py-10">
         <Link
           href={id ? `/producto/${encodeURIComponent(id)}` : "/"}
           className="group mb-4 inline-flex items-center gap-1.5 text-[13px] font-medium text-gris-texto hover:text-logo-marino"
@@ -43,12 +50,6 @@ export default async function PaginaFinalizarPedido({ searchParams }: PageProps<
           <ArrowLeft className="size-3.5 transition-transform motion-safe:group-hover:-translate-x-1" aria-hidden />
           {id ? "Volver al producto" : "Seguir comprando"}
         </Link>
-        <div className="mb-5 motion-safe:animate-aparecer">
-          <h1 className="font-titulo text-3xl leading-tight font-bold text-logo-marino md:text-4xl">Finalizar pedido</h1>
-          <p className="mt-1 text-sm text-gris-texto">
-            Elige cómo lo recibes y cómo pagas. Te llevamos a WhatsApp con todo listo.
-          </p>
-        </div>
         <FormularioPedido itemsDirectos={itemsDirectos} direcciones={direcciones} />
       </Contenedor>
     </div>
