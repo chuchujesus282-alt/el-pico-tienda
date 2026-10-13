@@ -18,7 +18,7 @@ const conocenos = [
 ];
 const ayuda = [
   { texto: "Calculadoras de proyectos", href: "/calculadoras" },
-  { texto: "Cómo comprar", href: "#" },
+  { texto: "Cómo comprar", href: "/como-comprar" },
   { texto: "Contacto", href: "#" },
   { texto: "Políticas de privacidad", href: "/politicas-de-privacidad" },
 ];
