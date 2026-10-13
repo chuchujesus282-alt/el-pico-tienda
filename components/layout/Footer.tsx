@@ -14,7 +14,7 @@ import VolverArriba from "./VolverArriba";
 const conocenos = [
   { texto: "Quiénes somos", href: "#" },
   { texto: "Ubícanos", href: "/ubicanos" },
-  { texto: "Horario", href: "#" },
+  { texto: "Horario", href: "/horario" },
 ];
 const ayuda = [
   { texto: "Cómo comprar", href: "#" },
