@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import type { ReactNode } from "react";
-import { Ban, Lock, ShieldCheck, Smartphone } from "lucide-react";
+import { ShieldCheck } from "lucide-react";
 import Contenedor from "@/components/ui/Contenedor";
 import EncabezadoPagina from "@/components/ui/EncabezadoPagina";
 import { TIENDA } from "@/lib/tienda";
@@ -16,16 +16,6 @@ export const metadata: Metadata = {
   title: "Políticas de privacidad",
   description: `Cómo ${TIENDA.razonSocial} recopila, usa y protege tu información personal en la tienda web.`,
 };
-
-const resumen: { icono: ReactNode; texto: string }[] = [
-  { icono: <Ban className="size-5" aria-hidden />, texto: "No vendemos ni alquilamos tu información personal." },
-  { icono: <Lock className="size-5" aria-hidden />, texto: "En la web no cobramos ni pedimos datos de tarjetas o claves bancarias." },
-  {
-    icono: <Smartphone className="size-5" aria-hidden />,
-    texto: "Tu carrito y tus preferencias se guardan solo en tu navegador, no en nuestros servidores.",
-  },
-  { icono: <ShieldCheck className="size-5" aria-hidden />, texto: "Puedes ver, corregir o borrar tus datos cuando quieras." },
-];
 
 const secciones = [
   { id: "quienes-somos", titulo: "Quiénes somos" },
@@ -81,21 +71,6 @@ export default function PaginaPoliticasPrivacidad() {
         icono={ShieldCheck}
       />
     <Contenedor className="space-y-6 py-6 md:space-y-8 md:py-10">
-
-      {/* Resumen en lenguaje sencillo. */}
-      <ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-        {resumen.map(({ icono, texto }) => (
-          <li
-            key={texto}
-            className="flex items-start gap-3 rounded-tarjeta border border-gris-borde bg-pico-blanco p-4 text-sm text-texto shadow-tarjeta"
-          >
-            <span className="flex size-9 shrink-0 items-center justify-center rounded-chip bg-pico-azul-claro text-pico-rojo">
-              {icono}
-            </span>
-            {texto}
-          </li>
-        ))}
-      </ul>
 
       <div className="grid gap-6 lg:grid-cols-[260px_1fr] lg:gap-10">
         {/* Índice: arriba en móvil, fijo a la izquierda en escritorio. */}
