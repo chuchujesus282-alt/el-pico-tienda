@@ -23,8 +23,8 @@ export default function HorarioEnVivo() {
       <div className="flex min-h-14 items-center border-b border-gris-borde px-5 py-3 md:px-6" role="status">
         {estado && (
           <p className="flex flex-wrap items-center gap-x-3 gap-y-1 motion-safe:animate-aparecer">
-            <span className={`flex items-center gap-2 text-lg font-bold ${estado.abierta ? "text-pico-azul" : "text-pico-rojo"}`}>
-              <span className={`size-2.5 rounded-chip ${estado.abierta ? "bg-pico-azul" : "bg-pico-rojo"}`} aria-hidden />
+            <span className={`flex items-center gap-2 text-lg font-bold ${estado.abierta ? "text-estado-abierto" : "text-pico-rojo"}`}>
+              <span className={`size-2.5 rounded-chip ${estado.abierta ? "bg-estado-abierto" : "bg-pico-rojo"}`} aria-hidden />
               {estado.abierta ? "Abierto ahora" : "Cerrado ahora"}
             </span>
             <span className="text-sm text-gris-texto">{estado.detalle}</span>
