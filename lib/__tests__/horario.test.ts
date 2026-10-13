@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { estadoTienda, feriadosDelAnio, formatearHora, proximosFeriados, tipoDeDia } from "@/lib/horario";
+import { estadoTienda, feriadosDelAnio, formatearHora, tipoDeDia } from "@/lib/horario";
 
 // Caracas está en UTC-4 todo el año: 10:00 en Caracas = 14:00Z.
 const caracas = (fecha: string, hora: string) => new Date(`${fecha}T${hora}:00-04:00`);
@@ -24,11 +24,6 @@ describe("feriados", () => {
   it("un feriado entre semana usa el horario de sábado; uno en domingo, el de domingo", () => {
     expect(tipoDeDia({ anio: 2026, mes: 10, dia: 12, diaSemana: 1 })).toBe("sabado-feriado");
     expect(tipoDeDia({ anio: 2026, mes: 7, dia: 5, diaSemana: 0 })).toBe("domingo");
-  });
-
-  it("lista los próximos feriados desde hoy", () => {
-    const nombres = proximosFeriados(caracas("2026-10-13", "10:00")).map((f) => f.nombre);
-    expect(nombres).toEqual(["Nochebuena", "Navidad", "Fin de Año"]);
   });
 });
 

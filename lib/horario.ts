@@ -138,11 +138,3 @@ export function estadoTienda(ahora: Date): EstadoTienda {
   return { ...base, abierta: false, detalle: `Abre mañana a las ${formatearHora(HORARIO[tipoDeDia(manana)].franja.abre)}` };
 }
 
-/** Los próximos feriados desde hoy (incluido), para avisar con tiempo. */
-export function proximosFeriados(ahora: Date, cantidad = 3): { dia: Dia; nombre: string }[] {
-  const hoy = ahoraEnCaracas(ahora);
-  const clave = (d: Dia) => d.anio * 10000 + d.mes * 100 + d.dia;
-  return [...feriadosDelAnio(hoy.anio), ...feriadosDelAnio(hoy.anio + 1)]
-    .filter((f) => clave(f.dia) >= clave(hoy))
-    .slice(0, cantidad);
-}
