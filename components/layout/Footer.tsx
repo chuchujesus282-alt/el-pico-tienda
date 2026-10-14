@@ -1,6 +1,5 @@
 import Link from "next/link";
-import { ChevronRight, MapPin, MessageCircle, Tag, Truck, Wallet } from "lucide-react";
-import type { LucideIcon } from "lucide-react";
+import { ChevronRight, MapPin, MessageCircle } from "lucide-react";
 import Boton from "@/components/ui/Boton";
 import Contenedor from "@/components/ui/Contenedor";
 import Revelar from "@/components/ui/Revelar";
@@ -21,14 +20,6 @@ const ayuda = [
   { texto: "Cómo comprar", href: "/como-comprar" },
   { texto: "Contacto", href: "#" },
   { texto: "Políticas de privacidad", href: "/politicas-de-privacidad" },
-];
-
-/** Lo que el cliente gana comprando en El Pico (franja superior del footer). */
-const ventajas: { icono: LucideIcon; titulo: string; texto: string }[] = [
-  { icono: Truck, titulo: "Pick-up, delivery o flete", texto: "Retiras en la tienda o te lo llevamos." },
-  { icono: MessageCircle, titulo: "Pedidos por WhatsApp", texto: "Te confirmamos disponibilidad y total." },
-  { icono: Wallet, titulo: "Paga como prefieras", texto: "Divisas, pago móvil, Zelle, USDT y más." },
-  { icono: Tag, titulo: "Precios en dólares", texto: "Referenciales, visibles en cada producto." },
 ];
 
 function TituloColumna({ children }: { children: string }) {
@@ -79,26 +70,6 @@ export default async function Footer() {
       {/* Filete rojo con un brillo que lo recorre. */}
       <div className="relative h-1 overflow-hidden bg-pico-rojo" aria-hidden>
         <span className="absolute inset-y-0 left-0 w-1/4 bg-gradient-to-r from-transparent via-pico-blanco/60 to-transparent motion-safe:animate-destello" />
-      </div>
-
-      {/* Ventajas de comprar en El Pico. */}
-      <div className="border-b border-pico-blanco/10">
-        <Contenedor as="section" className="grid grid-cols-1 gap-4 py-8 sm:grid-cols-2 lg:grid-cols-4 lg:gap-6 lg:py-10">
-          <h2 className="sr-only">Por qué comprar en El Pico</h2>
-          {ventajas.map(({ icono: Icono, titulo, texto }, i) => (
-            <Revelar key={titulo} retraso={i * 90}>
-              <div className="group flex items-center gap-4 rounded-tarjeta p-2 transition-colors duration-300 hover:bg-pico-blanco/5">
-                <span className="flex size-12 shrink-0 items-center justify-center rounded-tarjeta bg-pico-rojo text-pico-blanco shadow-boton-hover transition-transform duration-300 motion-safe:group-hover:-translate-y-1 motion-safe:group-hover:-rotate-6">
-                  <Icono className="size-6 motion-safe:group-hover:animate-sacudir" strokeWidth={1.75} aria-hidden />
-                </span>
-                <span>
-                  <span className="block font-bold leading-tight text-pico-blanco">{titulo}</span>
-                  <span className="mt-0.5 block text-sm leading-snug text-pico-blanco/70">{texto}</span>
-                </span>
-              </div>
-            </Revelar>
-          ))}
-        </Contenedor>
       </div>
 
       <Contenedor className="grid grid-cols-2 gap-x-6 gap-y-10 py-12 lg:grid-cols-[1.3fr_2fr_1fr_1fr] lg:gap-12 lg:py-16">

@@ -68,7 +68,7 @@ export default async function Inicio() {
     return categoria && productosPorSeccion[i].length > 0 ? [{ seccion, categoria, productos: productosPorSeccion[i] }] : [];
   });
 
-  // La página se arma con franjas a todo el ancho que alternan gris y blanco (ver components/ui/Franja.tsx).
+  // La página se arma con franjas a todo el ancho: gris, azul marino ("Lo más buscado", calculadoras y marcas) y blanco (ver components/ui/Franja.tsx).
   return (
     <>
       <h1 className="sr-only">Centro Ferretero El Pico</h1>
@@ -81,8 +81,8 @@ export default async function Inicio() {
         <NotaPedido />
       </Contenedor>
 
-      <Franja tono="blanco" compacta>
-        <CirculosSecciones titulo="Lo más buscado" secciones={SECCIONES_DESTACADAS} />
+      <Franja tono="azul" compacta>
+        <CirculosSecciones titulo="Lo más buscado" secciones={SECCIONES_DESTACADAS} sobreAzul />
       </Franja>
 
       {todos.length === 0 ? (
@@ -105,9 +105,9 @@ export default async function Inicio() {
             </Revelar>
           </Franja>
 
-          <Franja tono="blanco">
+          <Franja tono="azul">
             <Revelar>
-              <CarruselMarcas titulo="Marcas que encuentras aquí" marcas={marcasDeProductos(todos)} />
+              <CarruselMarcas titulo="Marcas que encuentras aquí" marcas={marcasDeProductos(todos)} sobreAzul />
             </Revelar>
           </Franja>
 

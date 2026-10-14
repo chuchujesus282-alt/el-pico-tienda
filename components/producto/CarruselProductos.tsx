@@ -11,6 +11,8 @@ type Props = {
   productos: Producto[];
   /** Destino del enlace "Ver todo". */
   href?: string;
+  /** Va sobre una franja azul marino: el título pasa a blanco. */
+  sobreAzul?: boolean;
   className?: string;
 };
 
@@ -18,7 +20,7 @@ const claseFlecha =
   "hidden size-9 items-center justify-center rounded-chip border border-gris-borde bg-pico-blanco text-pico-azul shadow-tarjeta transition duration-200 hover:bg-pico-azul hover:text-pico-blanco motion-safe:hover:scale-110 motion-safe:active:scale-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-pico-azul md:flex";
 
 /** Fila horizontal de ProductCard con título, "Ver todo" y flechas (en móvil se desliza con el dedo). */
-export default function CarruselProductos({ titulo, productos, href, className = "" }: Props) {
+export default function CarruselProductos({ titulo, productos, href, sobreAzul = false, className = "" }: Props) {
   const fila = useRef<HTMLUListElement>(null);
 
   const desplazar = (direccion: 1 | -1) => {
@@ -33,6 +35,7 @@ export default function CarruselProductos({ titulo, productos, href, className =
     <section className={className} aria-label={titulo}>
       <TituloSeccion
         titulo={titulo}
+        sobreAzul={sobreAzul}
         href={href}
         acciones={
           <>
