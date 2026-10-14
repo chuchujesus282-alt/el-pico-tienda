@@ -23,7 +23,7 @@ export default function BloqueBanners({ principales }: Props) {
           banner={banner}
           tamano="grande"
           prioritario={i === 0}
-          sizes="(min-width: 1760px) 1664px, 100vw"
+          sizes="(min-width: 1536px) 1472px, 100vw"
           className="h-full"
         />
       ))}

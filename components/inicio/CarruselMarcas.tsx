@@ -45,7 +45,7 @@ export default function CarruselMarcas({ titulo, marcas, className = "" }: Props
       />
       <ul
         ref={fila}
-        className="sin-scrollbar -mx-[var(--margen-pagina)] flex snap-x snap-mandatory scroll-px-[var(--margen-pagina)] gap-3 overflow-x-auto px-[var(--margen-pagina)] pt-1 pb-3 md:mx-0 md:scroll-px-0 md:gap-4 md:px-0"
+        className="sin-scrollbar -mx-4 flex snap-x snap-mandatory scroll-px-4 gap-3 overflow-x-auto px-4 pt-1 pb-3 md:mx-0 md:scroll-px-0 md:gap-4 md:px-0"
       >
         {marcas.map((marca) => (
           <li key={marca.nombre} className="w-32 shrink-0 snap-start md:w-40">
