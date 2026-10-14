@@ -25,6 +25,7 @@ export function calcularFriso(entrada: Entrada): Resultado {
 
 export const friso: Calculadora = {
   slug: "friso",
+  imagen: "/proyectos/friso.webp",
   titulo: "Friso de paredes",
   descripcion: "Cemento y arena para frisar paredes por dentro o por fuera.",
   icono: PaintbrushVertical,

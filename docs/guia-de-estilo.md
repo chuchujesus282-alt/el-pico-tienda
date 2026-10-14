@@ -52,12 +52,11 @@ Ver `app/globals.css`: colores de arriba, radios (`tarjeta` 12px, `boton` 8px, `
 ## Distribución de la página principal (de arriba a abajo)
 1. Header (blanco): logo oficial sin placa a la izquierda, píldora "Tasa BCV" (círculo rojo "Bs" + cifra, a la derecha del buscador; compacta en móvil), buscador ancho al centro (fondo blanco, borde de 2px `pico-azul`, radio completo, botón azul "Buscar"), "Mi cuenta" y "Carrito" en azul con su texto (desde 1024px) y contador rojo a la derecha. En móvil el buscador baja a una segunda fila.
 2. Barra de categorías (`pico-azul`): las categorías en una fila; en móvil, desplazable horizontalmente.
-3. Banner principal: un carrusel a todo el ancho del Contenedor (16:10 móvil, 2:1 tableta, 3:1 escritorio), montado sobre una franja `pico-azul-oscuro` de borde a borde que baja desde la barra de categorías hasta media altura del banner.
+3. Banner principal: un carrusel a todo el ancho del Contenedor (16:10 móvil, 2:1 tableta, 3:1 escritorio), sobre el fondo gris (sin franja azul detrás).
 3b. Nota de precios referenciales y, debajo, franja blanca "Lo más buscado": círculos con secciones específicas (`CirculosSecciones`).
-3c. Después de "Te puede interesar": banner de calculadoras, franja azul de borde a borde (`BannerCalculadoras`).
+3c. Después de "Te puede interesar": banner de calculadoras, franja blanca de borde a borde con botón azul (`BannerCalculadoras`).
 3d. El resto de secciones va en franjas de borde a borde que alternan `gris-fondo` y blanco (`Franja`).
 4. Sección de productos "Te puede interesar": TituloSeccion + carrusel horizontal de ProductCard.
-5. Fila de dos banners promocionales del mismo tamaño (cada uno lleva a una categoría).
 6. Sección "Nuestros recomendados": carrusel de productos.
 7. "Busca por marcas": carrusel de logos en recuadros blancos redondeados.
 8. Secciones por categoría (ej. "Materiales de construcción", "Jardín"): banner de la categoría + carrusel de sus productos.

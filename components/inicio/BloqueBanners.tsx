@@ -15,7 +15,7 @@ export default function BloqueBanners({ principales }: Props) {
 
   return (
     <CarruselBanners
-      className="aspect-[16/10] shadow-tarjeta-hover ring-1 ring-pico-blanco/15 md:aspect-[2/1] lg:aspect-[3/1] 2xl:aspect-[10/3]"
+      className="aspect-[16/10] shadow-tarjeta-hover md:aspect-[2/1] lg:aspect-[3/1] 2xl:aspect-[10/3]"
       etiquetas={principales.map((b) => b.titulo)}
       diapositivas={principales.map((banner, i) => (
         <BannerInicio

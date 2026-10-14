@@ -47,6 +47,7 @@ export function calcularTecho(entrada: Entrada): Resultado {
 
 export const techo: Calculadora = {
   slug: "techo",
+  imagen: "/proyectos/techo.webp",
   titulo: "Techo con láminas",
   descripcion: "Láminas de zinc o acerolit y los tornillos para fijarlas.",
   icono: House,

@@ -43,6 +43,7 @@ export function calcularBloques(entrada: Entrada): Resultado {
 
 export const bloques: Calculadora = {
   slug: "bloques",
+  imagen: "/proyectos/bloques.webp",
   titulo: "Bloques para paredes",
   descripcion: "Bloques de arcilla o de concreto y el mortero para pegarlos.",
   icono: BrickWall,

@@ -72,6 +72,7 @@ export function calcularDrywall(entrada: Entrada): Resultado {
 
 export const drywall: Calculadora = {
   slug: "drywall",
+  imagen: "/proyectos/drywall.webp",
   titulo: "Drywall",
   descripcion: "Láminas, parales, rieles, tornillos, cinta y masilla para tu pared.",
   icono: Columns3,

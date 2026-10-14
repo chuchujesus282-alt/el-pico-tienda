@@ -9,17 +9,10 @@ import PanelFiltrosMovil from "@/components/categoria/PanelFiltrosMovil";
 import SelectorOrden from "@/components/categoria/SelectorOrden";
 import SinResultados from "@/components/categoria/SinResultados";
 import { hrefCategoria, leerEstado, OPCIONES_ORDEN } from "@/components/categoria/rutas";
-import {
-  ICONO_SUBCATEGORIA_GENERICO,
-  ICONOS_SUBCATEGORIA,
-  IMAGENES_SUBCATEGORIA,
-} from "@/components/inicio/seccionesDestacadas";
 import { chakra } from "@/components/producto-detalle/fuentes";
 import GrillaProductos from "@/components/producto/GrillaProductos";
-import CirculosSecciones from "@/components/ui/CirculosSecciones";
 import Contenedor from "@/components/ui/Contenedor";
 import EncabezadoPagina from "@/components/ui/EncabezadoPagina";
-import Franja from "@/components/ui/Franja";
 import { getCategorias, getProductosPorCategoria } from "@/lib/catalogo";
 
 // Página de categoría — responsable: persona B. Ver la sección "Página de categoría" en docs/guia-de-estilo.md.
@@ -75,16 +68,6 @@ export default async function PaginaCategoria({ params, searchParams }: PageProp
   // Cambia con cada filtro/orden/página: la grilla se vuelve a montar y repite su animación de entrada.
   const claveVista = hrefCategoria(slug, estado, { pagina: estado.pagina });
 
-  // Círculos con las subcategorías de esta categoría; la que se está viendo va resaltada
-  // (tocarla de nuevo quita el filtro).
-  const circulos = resultado.subcategorias.map((nombre) => ({
-    nombre,
-    href: hrefCategoria(slug, estado, { subcategoria: estado.subcategoria === nombre ? undefined : nombre }),
-    icono: ICONOS_SUBCATEGORIA[nombre] ?? ICONO_SUBCATEGORIA_GENERICO,
-    imagen: IMAGENES_SUBCATEGORIA[nombre] ?? null,
-    activa: estado.subcategoria === nombre,
-  }));
-
   return (
     <div className={chakra.variable}>
       <EncabezadoPagina etiqueta="Categoría" titulo={categoria.nombre} ruta={[{ texto: categoria.nombre }]} imagen={categoria.banner} icono={Package}>
@@ -93,12 +76,6 @@ export default async function PaginaCategoria({ params, searchParams }: PageProp
           {resultado.total} {resultado.total === 1 ? "producto" : "productos"}
         </span>
       </EncabezadoPagina>
-
-      {circulos.length > 1 && (
-        <Franja tono="blanco" compacta>
-          <CirculosSecciones secciones={circulos} distribucion="izquierda" />
-        </Franja>
-      )}
 
       <Contenedor className="py-6 md:py-10">
         <div className="lg:grid lg:grid-cols-[15rem_minmax(0,1fr)] lg:gap-8">

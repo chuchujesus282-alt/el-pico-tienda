@@ -7,7 +7,6 @@ import {
   Drill,
   Grid3x3,
   HardHat,
-  House,
   Package,
   PaintBucket,
   PaintRoller,
@@ -15,10 +14,9 @@ import {
   Sprout,
   Zap,
 } from "lucide-react";
-import type { LucideIcon } from "lucide-react";
 import type { SeccionCirculo } from "@/components/ui/CirculosSecciones";
 
-// Círculos de "Lo más buscado" (inicio) e íconos de las subcategorías (páginas de categoría).
+// Círculos de "Lo más buscado" del inicio.
 // ESTE ES EL ÚNICO ARCHIVO QUE HAY QUE EDITAR para cambiar qué círculos aparecen, su orden,
 // su enlace o su imagen. No hace falta tocar ningún componente.
 
@@ -53,34 +51,3 @@ export const SECCIONES_DESTACADAS: SeccionCirculo[] = [
   { nombre: "Guantes y cascos", href: "/categoria/seguridad-industrial", icono: HardHat, imagen: null },
   { nombre: "Mangueras y riego", href: hrefSubcategoria("hogar-y-jardin", "Riego"), icono: Sprout, imagen: null },
 ];
-
-/**
- * Ícono de cada subcategoría en las páginas de categoría (clave: el nombre tal como viene del sistema).
- * Una subcategoría que no esté aquí usa el ícono genérico. Para ponerle foto, agrégala en IMAGENES_SUBCATEGORIA.
- */
-export const ICONOS_SUBCATEGORIA: Record<string, LucideIcon> = {
-  Cementos: Package,
-  Bloques: BrickWall,
-  Acero: Grid3x3,
-  Techos: House,
-  Drywall: Columns3,
-  Caucho: PaintBucket,
-  Esmaltes: PaintBucket,
-  Fondos: PaintBucket,
-  Accesorios: PaintRoller,
-  Tuberías: Cylinder,
-  Grifería: ShowerHead,
-  Cables: Cable,
-  Protección: Zap,
-  Tornillos: Bolt,
-  Pernos: Bolt,
-  Eléctricas: Drill,
-  Guantes: HardHat,
-  "Protección de cabeza": HardHat,
-  Riego: Sprout,
-  "Herramientas de jardín": Sprout,
-};
-export const ICONO_SUBCATEGORIA_GENERICO: LucideIcon = Package;
-
-/** Foto recortada de una subcategoría (opcional), ej. { Bloques: "/secciones/bloques.png" }. */
-export const IMAGENES_SUBCATEGORIA: Record<string, string> = {};

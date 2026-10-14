@@ -62,6 +62,8 @@ export type Calculadora = {
   /** Una línea para la tarjeta del listado. */
   descripcion: string;
   icono: LucideIcon;
+  /** Foto de alguien haciendo ese trabajo, para la tarjeta del listado (en public/proyectos/). null: fondo azul con el ícono. */
+  imagen: string | null;
   diagrama: TipoDiagrama;
   /** Texto corto bajo el diagrama de "cómo medir". */
   comoMedir: string;

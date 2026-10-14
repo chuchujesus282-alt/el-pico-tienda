@@ -1,4 +1,4 @@
-import { Bolt, BrickWall, Drill, HardHat, PaintRoller } from "lucide-react";
+import { BrickWall, Drill, PaintRoller } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import type { Banner, Producto } from "@/types/catalogo";
 
@@ -66,31 +66,6 @@ export const bannersPrincipales: BannerInicio[] = [
 
 /** Mensaje con el que se abre WhatsApp desde "¿No sabes qué necesitas?". */
 export const mensajeAsesoria = "¡Hola, El Pico! Necesito asesoría para saber qué comprar.";
-
-export const bannersPromocionales: BannerInicio[] = [
-  {
-    id: "seguridad",
-    imagen: null,
-    alt: "Seguridad industrial en El Pico",
-    href: "/categoria/seguridad-industrial",
-    titulo: "Trabaja protegido",
-    texto: "Cascos, guantes, botas y mascarillas de seguridad industrial.",
-    textoBoton: "Ver seguridad",
-    variante: "azul",
-    icono: HardHat,
-  },
-  {
-    id: "tornilleria",
-    imagen: null,
-    alt: "Tornillería en El Pico",
-    href: "/categoria/ferreteria",
-    titulo: "Tornillería de todas las medidas",
-    texto: "Tornillos, tuercas, anclajes y fijaciones.",
-    textoBoton: "Ver tornillería",
-    variante: "claro",
-    icono: Bolt,
-  },
-];
 
 /** Logos por nombre de marca (tal como viene del sistema). Ej.: { AQUAFLEX: "/marcas/aquaflex.png" } */
 export const logosMarcas: Record<string, string> = {};

@@ -73,6 +73,7 @@ export function calcularCabillas(entrada: Entrada): Resultado {
 
 export const cabillas: Calculadora = {
   slug: "cabillas",
+  imagen: "/proyectos/cabillas.webp",
   titulo: "Cabillas para losas",
   descripcion: "Barras de acero y alambre de amarre para la malla de una losa o placa.",
   icono: Grid3x3,

@@ -2,7 +2,6 @@ import CarruselProductos from "@/components/producto/CarruselProductos";
 import TePuedeInteresar from "@/components/recomendaciones/TePuedeInteresar";
 import BannerCalculadoras from "@/components/calculadoras/BannerCalculadoras";
 import AvisoCatalogo from "@/components/inicio/AvisoCatalogo";
-import BannersPromocionales from "@/components/inicio/BannersPromocionales";
 import BloqueBanners from "@/components/inicio/BloqueBanners";
 import CarruselMarcas from "@/components/inicio/CarruselMarcas";
 import NotaPedido from "@/components/inicio/NotaPedido";
@@ -10,7 +9,6 @@ import SeccionCategoria from "@/components/inicio/SeccionCategoria";
 import { SECCIONES_DESTACADAS } from "@/components/inicio/seccionesDestacadas";
 import {
   bannersPrincipales,
-  bannersPromocionales,
   marcasDeProductos,
   seccionesCategoria,
 } from "@/components/inicio/contenidoInicio";
@@ -63,7 +61,6 @@ export default async function Inicio() {
 
   const todos = [...interesar, ...recomendados, ...productosPorSeccion.flat()];
   const principales = soloCategoriasExistentes(bannersPrincipales, categorias);
-  const promocionales = soloCategoriasExistentes(bannersPromocionales, categorias);
 
   // Secciones por categoría que sí tienen productos, para alternar bien el color de sus franjas.
   const seccionesVisibles = seccionesCategoria.flatMap((seccion, i) => {
@@ -76,13 +73,9 @@ export default async function Inicio() {
     <>
       <h1 className="sr-only">Centro Ferretero El Pico</h1>
 
-      {/* Franja azul que continúa la barra de categorías hasta media altura del banner: el banner queda montado sobre el borde. */}
-      <div className="relative">
-        <div className="absolute inset-x-0 top-0 h-[55%] bg-pico-azul-oscuro" aria-hidden />
-        <Contenedor className="relative pt-4 motion-safe:animate-aparecer md:pt-6">
-          <BloqueBanners principales={principales} />
-        </Contenedor>
-      </div>
+      <Contenedor className="pt-4 motion-safe:animate-aparecer md:pt-6">
+        <BloqueBanners principales={principales} />
+      </Contenedor>
 
       <Contenedor className="pt-3 pb-6 md:pt-4 md:pb-8">
         <NotaPedido />
@@ -105,12 +98,6 @@ export default async function Inicio() {
           </Franja>
 
           <BannerCalculadoras />
-
-          <Franja tono="blanco">
-            <Revelar>
-              <BannersPromocionales banners={promocionales} />
-            </Revelar>
-          </Franja>
 
           <Franja>
             <Revelar>
