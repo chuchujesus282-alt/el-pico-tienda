@@ -1,11 +1,10 @@
 import CarruselProductos from "@/components/producto/CarruselProductos";
 import TePuedeInteresar from "@/components/recomendaciones/TePuedeInteresar";
 import BannerCalculadoras from "@/components/calculadoras/BannerCalculadoras";
-import AccesosAyuda from "@/components/inicio/AccesosAyuda";
 import AvisoCatalogo from "@/components/inicio/AvisoCatalogo";
 import BloqueBanners from "@/components/inicio/BloqueBanners";
 import CarruselMarcas from "@/components/inicio/CarruselMarcas";
-import CategoriasInicio from "@/components/inicio/CategoriasInicio";
+import Promociones from "@/components/inicio/Promociones";
 import NotaPedido from "@/components/inicio/NotaPedido";
 import SeccionCategoria from "@/components/inicio/SeccionCategoria";
 import { SECCIONES_DESTACADAS } from "@/components/inicio/seccionesDestacadas";
@@ -110,8 +109,8 @@ export default async function Inicio() {
             </Revelar>
           </Franja>
 
-          <Franja tono="blanco" decorada="derecha">
-            <CategoriasInicio categorias={categorias} />
+          <Franja tono="blanco">
+            <Promociones />
           </Franja>
 
           {primera && (
@@ -137,10 +136,6 @@ export default async function Inicio() {
           ))}
         </>
       )}
-
-      <Franja tono="blanco" decorada="izquierda">
-        <AccesosAyuda />
-      </Franja>
     </>
   );
 }
