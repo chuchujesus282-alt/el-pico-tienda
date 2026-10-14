@@ -54,8 +54,8 @@ Ver `app/globals.css`: colores de arriba, radios (`tarjeta` 12px, `boton` 8px, `
 2. Barra de categorías (`pico-azul`): las categorías en una fila; en móvil, desplazable horizontalmente.
 3. Banner principal: un carrusel a todo el ancho del Contenedor (16:10 móvil, 2:1 tableta, 3:1 escritorio), sobre el fondo gris (sin franja azul detrás).
 3b. Nota de precios referenciales y, debajo, franja blanca "Lo más buscado": círculos con secciones específicas (`CirculosSecciones`).
-3c. Después de "Te puede interesar": banner de calculadoras, franja azul marino de borde a borde con botón blanco (`BannerCalculadoras`).
-3d. El resto de secciones va en franjas de borde a borde (`Franja`): "Lo más buscado" y "Marcas que encuentras aquí" en azul marino con texto blanco; las demás alternan `gris-fondo` y blanco.
+3c. Después de "Te puede interesar": banner de calculadoras, franja blanca de borde a borde con botón azul y tres fotos de las calculadoras (`BannerCalculadoras`).
+3d. Todas las secciones van en franjas de borde a borde (`Franja`) que alternan `gris-fondo` y blanco; no hay franjas azules en el inicio. Después de los recomendados va "Compra por categoría" (tarjetas con ícono en placa azul marino) y, al final, "Estamos para ayudarte" (tarjetas a calculadoras, cómo comprar, ubícanos y horario). Estas dos franjas usan `Franja decorada` (velo azul claro y montañas del logo al 5 %). Los títulos de sección pueden llevar `subtitulo` en gris.
 4. Sección de productos "Te puede interesar": TituloSeccion + carrusel horizontal de ProductCard.
 6. Sección "Nuestros recomendados": carrusel de productos.
 7. "Busca por marcas": carrusel de logos en recuadros blancos redondeados.

@@ -1,9 +1,11 @@
 import CarruselProductos from "@/components/producto/CarruselProductos";
 import TePuedeInteresar from "@/components/recomendaciones/TePuedeInteresar";
 import BannerCalculadoras from "@/components/calculadoras/BannerCalculadoras";
+import AccesosAyuda from "@/components/inicio/AccesosAyuda";
 import AvisoCatalogo from "@/components/inicio/AvisoCatalogo";
 import BloqueBanners from "@/components/inicio/BloqueBanners";
 import CarruselMarcas from "@/components/inicio/CarruselMarcas";
+import CategoriasInicio from "@/components/inicio/CategoriasInicio";
 import NotaPedido from "@/components/inicio/NotaPedido";
 import SeccionCategoria from "@/components/inicio/SeccionCategoria";
 import { SECCIONES_DESTACADAS } from "@/components/inicio/seccionesDestacadas";
@@ -62,13 +64,16 @@ export default async function Inicio() {
   const todos = [...interesar, ...recomendados, ...productosPorSeccion.flat()];
   const principales = soloCategoriasExistentes(bannersPrincipales, categorias);
 
-  // Secciones por categoría que sí tienen productos, para alternar bien el color de sus franjas.
+  // Secciones por categoría que sí tienen productos.
   const seccionesVisibles = seccionesCategoria.flatMap((seccion, i) => {
     const categoria = categorias.find((c) => c.slug === seccion.slug);
     return categoria && productosPorSeccion[i].length > 0 ? [{ seccion, categoria, productos: productosPorSeccion[i] }] : [];
   });
 
-  // La página se arma con franjas a todo el ancho: gris, azul marino ("Lo más buscado", calculadoras y marcas) y blanco (ver components/ui/Franja.tsx).
+  // Las secciones por categoría se intercalan con otras franjas para que siempre alternen gris y blanco.
+  const [primera, ...demas] = seccionesVisibles;
+
+  // La página se arma con franjas a todo el ancho que alternan gris y blanco (ver components/ui/Franja.tsx).
   return (
     <>
       <h1 className="sr-only">Centro Ferretero El Pico</h1>
@@ -81,8 +86,8 @@ export default async function Inicio() {
         <NotaPedido />
       </Contenedor>
 
-      <Franja tono="azul" compacta>
-        <CirculosSecciones titulo="Lo más buscado" secciones={SECCIONES_DESTACADAS} sobreAzul />
+      <Franja tono="blanco" compacta>
+        <CirculosSecciones titulo="Lo más buscado" subtitulo="Las secciones que más visitan nuestros clientes." secciones={SECCIONES_DESTACADAS} />
       </Franja>
 
       {todos.length === 0 ? (
@@ -105,14 +110,26 @@ export default async function Inicio() {
             </Revelar>
           </Franja>
 
-          <Franja tono="azul">
+          <Franja tono="blanco" decorada="derecha">
+            <CategoriasInicio categorias={categorias} />
+          </Franja>
+
+          {primera && (
+            <Franja>
+              <Revelar>
+                <SeccionCategoria categoria={primera.categoria} productos={primera.productos} imagen={primera.seccion.imagen} />
+              </Revelar>
+            </Franja>
+          )}
+
+          <Franja tono="blanco">
             <Revelar>
-              <CarruselMarcas titulo="Marcas que encuentras aquí" marcas={marcasDeProductos(todos)} sobreAzul />
+              <CarruselMarcas titulo="Marcas que encuentras aquí" marcas={marcasDeProductos(todos)} />
             </Revelar>
           </Franja>
 
-          {seccionesVisibles.map(({ seccion, categoria, productos }, i) => (
-            <Franja key={seccion.slug} tono={i % 2 === 0 ? "gris" : "blanco"}>
+          {demas.map(({ seccion, categoria, productos }) => (
+            <Franja key={seccion.slug}>
               <Revelar>
                 <SeccionCategoria categoria={categoria} productos={productos} imagen={seccion.imagen} />
               </Revelar>
@@ -120,6 +137,10 @@ export default async function Inicio() {
           ))}
         </>
       )}
+
+      <Franja tono="blanco" decorada="izquierda">
+        <AccesosAyuda />
+      </Franja>
     </>
   );
 }
