@@ -12,7 +12,8 @@ export default function BannersPromocionales({ banners }: { banners: DatosBanner
           key={banner.id}
           banner={banner}
           sizes="(min-width: 1536px) 740px, (min-width: 768px) 50vw, 100vw"
-          className="aspect-[2/1] lg:aspect-[5/2]"
+          // Alto mínimo y no proporción fija: si el texto no cabe, el banner crece en vez de cortarlo.
+          className="min-h-48 md:min-h-60"
         />
       ))}
     </div>

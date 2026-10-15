@@ -128,7 +128,7 @@ export default function BannerInicio({ banner, sizes, tamano = "normal", priorit
             // En el banner grande y en móvil se omite el texto: no cabe con el título y el botón.
             <p
               className={`relative max-w-[75%] text-sm ${estilo.texto} ${
-                grande ? "hidden sm:line-clamp-2 md:text-base lg:max-w-[50%] lg:text-lg" : lateral ? "hidden sm:line-clamp-2" : "line-clamp-2 md:text-base lg:text-lg"
+                grande ? "hidden sm:line-clamp-2 md:text-base lg:max-w-[50%] lg:text-lg" : lateral ? "hidden sm:line-clamp-2" : "line-clamp-3 md:text-base lg:text-lg"
               }`}
             >
               {banner.texto}
