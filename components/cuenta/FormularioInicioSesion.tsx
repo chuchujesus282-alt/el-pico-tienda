@@ -44,10 +44,7 @@ export default function FormularioInicioSesion() {
   };
 
   return (
-    <div className="flex flex-col gap-5">
-      <BotonGoogle onClick={conGoogle} disabled={enviando} />
-      <Separador texto="o con tu correo" />
-
+    <div className="flex flex-col gap-6">
       <form onSubmit={enviar} noValidate className="flex flex-col gap-4">
         <Campo
           id="correo"
@@ -67,10 +64,15 @@ export default function FormularioInicioSesion() {
 
         {mensaje && <Aviso tipo="info">{mensaje}</Aviso>}
 
-        <Boton type="submit" anchoCompleto disabled={enviando} className="h-11">
+        <Boton type="submit" anchoCompleto disabled={enviando} className="mt-1 h-12 text-base">
           {enviando ? "Entrando…" : "Iniciar sesión"}
         </Boton>
       </form>
+
+      <Separador texto="o" />
+      <div className="flex justify-center">
+        <BotonGoogle onClick={conGoogle} disabled={enviando} />
+      </div>
     </div>
   );
 }

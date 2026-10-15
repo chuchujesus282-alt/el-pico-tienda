@@ -7,17 +7,18 @@ type Props = {
   disabled?: boolean;
 };
 
-/** Botón "Continuar con Google": blanco con el logo de Google, como lo pide su guía de marca. */
+/** "Continuar con Google": el logo de Google en un círculo blanco con borde, como en la guía de marca de Google. */
 export default function BotonGoogle({ onClick, disabled }: Props) {
   return (
     <button
       type="button"
       onClick={onClick}
       disabled={disabled}
-      className="inline-flex h-11 w-full items-center justify-center gap-3 rounded-boton border border-gris-borde bg-pico-blanco px-4 text-sm font-semibold text-texto transition-colors hover:border-pico-azul/40 hover:bg-gris-fondo focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-pico-azul disabled:cursor-not-allowed disabled:opacity-50"
+      aria-label="Continuar con Google"
+      title="Continuar con Google"
+      className="flex size-14 items-center justify-center rounded-chip border-2 border-gris-borde bg-pico-blanco transition hover:border-pico-azul hover:shadow-tarjeta-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-pico-azul disabled:cursor-not-allowed disabled:opacity-50"
     >
-      <Image src="/google.svg" alt="" width={20} height={20} />
-      Continuar con Google
+      <Image src="/google.svg" alt="" width={26} height={26} />
     </button>
   );
 }
