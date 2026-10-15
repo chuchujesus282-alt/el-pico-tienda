@@ -198,7 +198,7 @@ function Proyecto({ calculadora, productos }: { calculadora: Calculadora; produc
           </div>
 
           <details className="group rounded-banner border border-gris-borde bg-pico-blanco shadow-tarjeta print:hidden">
-            <summary className="flex cursor-pointer list-none items-center gap-3 rounded-banner px-4 py-4 font-titulo text-lg font-bold text-pico-azul transition-colors hover:bg-gris-fondo focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-pico-azul md:px-6 [&::-webkit-details-marker]:hidden">
+            <summary className="flex cursor-pointer list-none items-center gap-3 rounded-banner px-4 py-4 text-lg font-bold text-pico-azul transition-colors hover:bg-gris-fondo focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-pico-azul md:px-6 [&::-webkit-details-marker]:hidden">
               <CircleHelp className="size-5 shrink-0 text-pico-rojo" aria-hidden />
               ¿Cómo calculamos esto?
               <ChevronDown className="ml-auto size-5 shrink-0 transition-transform duration-300 group-open:rotate-180" aria-hidden />
@@ -279,7 +279,7 @@ function Proyecto({ calculadora, productos }: { calculadora: Calculadora; produc
                       <span className="block text-xs font-semibold text-gris-texto">
                         Ver resumen · {articulos} {articulos === 1 ? "artículo" : "artículos"}
                       </span>
-                      <Precio valor={totalUsd} className="font-titulo" />
+                      <Precio valor={totalUsd} />
                     </span>
                   </button>
                   <button

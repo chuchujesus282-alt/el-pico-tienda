@@ -18,11 +18,11 @@ export function Paso({ numero, titulo, detalle, children }: { numero: number; ti
       aria-labelledby={`paso-${numero}`}
     >
       <div className="mb-5 flex items-center gap-3">
-        <span className="flex size-9 shrink-0 items-center justify-center rounded-chip bg-pico-azul font-titulo text-sm font-bold text-pico-blanco" aria-hidden>
+        <span className="flex size-9 shrink-0 items-center justify-center rounded-chip bg-pico-azul text-sm font-bold text-pico-blanco" aria-hidden>
           {numero}
         </span>
         <div>
-          <h2 id={`paso-${numero}`} className="font-titulo text-xl leading-tight font-bold text-pico-azul">
+          <h2 id={`paso-${numero}`} className="text-xl leading-tight font-bold text-pico-azul">
             {titulo}
           </h2>
           {detalle && <p className="text-[13px] text-gris-texto">{detalle}</p>}

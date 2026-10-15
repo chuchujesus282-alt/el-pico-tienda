@@ -55,7 +55,7 @@ export default function ConfirmacionCarrito({ datos, alCerrar, alVerCarrito }: P
           <span className="flex size-16 items-center justify-center rounded-chip bg-pico-azul text-pico-blanco motion-safe:animate-latido">
             <Check className="size-8" strokeWidth={2.5} aria-hidden />
           </span>
-          <h2 id="titulo-confirmacion" className="mt-1 font-titulo text-2xl font-bold text-pico-azul">
+          <h2 id="titulo-confirmacion" className="mt-1 text-2xl font-bold text-pico-azul">
             ¡Listo! Ya está en tu carrito
           </h2>
           <p className="text-sm text-gris-texto">

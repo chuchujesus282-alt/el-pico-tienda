@@ -33,7 +33,7 @@ export default function TarjetaCalculadora({ calculadora, prioritaria = false }:
         <span className="absolute -top-6 left-5 flex size-12 items-center justify-center rounded-tarjeta bg-gradient-to-br from-pico-azul to-pico-azul-oscuro text-pico-blanco shadow-tarjeta ring-2 ring-pico-blanco transition-transform duration-300 motion-safe:group-hover:-translate-y-0.5 motion-safe:group-hover:-rotate-6">
           <Icono className="size-6 motion-safe:group-hover:animate-sacudir" strokeWidth={1.75} aria-hidden />
         </span>
-        <h2 className="font-titulo text-lg leading-tight font-bold text-pico-azul">{calculadora.titulo}</h2>
+        <h2 className="text-lg leading-tight font-bold text-pico-azul">{calculadora.titulo}</h2>
         <p className="mt-1.5 flex-1 text-sm leading-snug text-gris-texto">{calculadora.descripcion}</p>
         {/* Es un span y no <Boton>: toda la tarjeta ya es un enlace. Misma forma que Boton. */}
         <span className="mt-4 inline-flex h-10 w-fit items-center gap-1.5 rounded-boton bg-pico-rojo px-4 text-sm font-semibold text-pico-blanco transition duration-200 group-hover:bg-pico-rojo-oscuro group-hover:shadow-boton-hover">

@@ -18,7 +18,7 @@ export default function PaginaIniciarSesion() {
       <Contenedor className="pt-5 pb-8 md:pb-12">
         <Link
           href="/"
-          className="inline-flex items-center gap-1 text-[15px] font-semibold text-pico-azul underline-offset-4 hover:underline"
+          className="area-tactil inline-flex items-center gap-1 text-[15px] font-semibold text-pico-azul underline-offset-4 hover:underline"
         >
           <ChevronLeft className="size-5" aria-hidden />
           Volver a la tienda
@@ -26,7 +26,7 @@ export default function PaginaIniciarSesion() {
 
         <div className="mx-auto mt-10 w-full max-w-lg text-center motion-safe:animate-aparecer md:mt-14">
           <Montanas className="mx-auto h-16 w-auto fill-pico-rojo md:h-20" />
-          <h1 className="mt-7 font-titulo text-4xl font-bold text-pico-azul md:text-5xl">Bienvenido</h1>
+          <h1 className="mt-7 text-4xl font-bold text-pico-azul md:text-5xl">Bienvenido</h1>
           <p className="mt-4 text-base text-gris-texto">
             ¿No tienes cuenta?{" "}
             <Link href="/crear-cuenta" className="font-semibold text-pico-rojo underline underline-offset-4 hover:text-pico-rojo-oscuro">

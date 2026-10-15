@@ -37,12 +37,12 @@ export default function PaginaCalculadoras() {
           <li key={titulo} className="flex flex-col items-center gap-2.5 px-2 py-4 text-center sm:flex-row sm:justify-center sm:gap-4 sm:px-5 sm:py-5 sm:text-left md:py-6">
             <span className="relative flex size-11 shrink-0 items-center justify-center rounded-boton bg-pico-azul-claro text-pico-azul md:size-14">
               <Icono className="size-5 md:size-7" strokeWidth={1.75} aria-hidden />
-              <span className="absolute -top-2 -right-2 flex size-6 items-center justify-center rounded-chip bg-pico-rojo font-titulo text-xs font-bold text-pico-blanco ring-2 ring-pico-blanco">
+              <span className="absolute -top-2 -right-2 flex size-6 items-center justify-center rounded-chip bg-pico-rojo text-xs font-bold text-pico-blanco ring-2 ring-pico-blanco" aria-hidden>
                 {i + 1}
               </span>
             </span>
             <span>
-              <span className="block font-titulo text-sm leading-tight font-bold text-pico-azul sm:text-base md:text-lg">{titulo}</span>
+              <span className="block text-sm leading-tight font-bold text-pico-azul sm:text-base md:text-lg">{titulo}</span>
               <span className="mt-0.5 hidden text-[13px] leading-snug text-gris-texto sm:block md:text-sm">{texto}</span>
             </span>
           </li>
