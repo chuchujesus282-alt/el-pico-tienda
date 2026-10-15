@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import ProveedorCarrito from "@/components/carrito/ProveedorCarrito";
-import BotonSubir from "@/components/layout/BotonSubir";
 import Footer from "@/components/layout/Footer";
 import Header from "@/components/layout/Header";
 import NavCategorias from "@/components/layout/NavCategorias";
@@ -30,7 +29,6 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           <NavCategorias />
           <main className="flex-1">{children}</main>
           <Footer />
-          <BotonSubir />
         </ProveedorCarrito>
       </body>
     </html>
