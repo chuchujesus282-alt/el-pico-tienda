@@ -4,13 +4,14 @@ import { useEffect, useRef, useState } from "react";
 import { ShoppingCart } from "lucide-react";
 import BotonCarritoFlotante from "@/components/carrito/BotonCarritoFlotante";
 import { useCarrito } from "@/components/carrito/ProveedorCarrito";
+import BotonSubir from "./BotonSubir";
 
 export default function BotonCarrito() {
   const { cantidadTotal, abrir } = useCarrito();
   const boton = useRef<HTMLButtonElement>(null);
   const [enVista, setEnVista] = useState(true);
 
-  // Cuando este botón sale de la pantalla (el cliente bajó), aparece el carrito flotante.
+  // Cuando este botón sale de la pantalla (el cliente bajó), aparecen juntos el carrito flotante y la flecha para subir.
   useEffect(() => {
     const el = boton.current;
     if (!el) return;
@@ -42,6 +43,7 @@ export default function BotonCarrito() {
         </span>
         <span className="hidden lg:inline">Carrito</span>
       </button>
+      <BotonSubir visible={!enVista} />
       <BotonCarritoFlotante visible={!enVista} />
     </>
   );
