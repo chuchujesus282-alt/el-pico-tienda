@@ -104,7 +104,7 @@ export default function BuscadorConSugerencias({ className = "" }: { className?:
           name="q"
           type="search"
           autoComplete="off"
-          placeholder="¿Qué estás buscando? Ej. cemento, taladro…"
+          placeholder="¿Qué buscas? Ej. cemento, taladro…"
           value={texto}
           onChange={(e) => {
             setTexto(e.target.value);
@@ -117,7 +117,7 @@ export default function BuscadorConSugerencias({ className = "" }: { className?:
           aria-expanded={mostrarLista}
           aria-controls={idLista}
           aria-activedescendant={mostrarLista && activo >= 0 ? `${idLista}-${activo}` : undefined}
-          className="h-full min-w-0 flex-1 bg-transparent text-[15px] text-texto outline-none placeholder:text-gris-texto"
+          className="h-full min-w-0 flex-1 bg-transparent text-sm text-texto outline-none placeholder:text-gris-texto sm:text-[15px]"
         />
         <button
           type="submit"

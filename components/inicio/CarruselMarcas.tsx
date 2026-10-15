@@ -9,8 +9,6 @@ import type { Marca } from "./contenidoInicio";
 type Props = {
   titulo: string;
   marcas: Marca[];
-  /** Va sobre una franja azul marino: el título pasa a blanco. */
-  sobreAzul?: boolean;
   className?: string;
 };
 
@@ -19,7 +17,7 @@ const claseFlecha =
   "hidden size-9 items-center justify-center rounded-chip border border-gris-borde bg-pico-blanco text-pico-azul shadow-tarjeta transition duration-200 hover:bg-pico-azul hover:text-pico-blanco motion-safe:hover:scale-110 motion-safe:active:scale-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-pico-azul md:flex";
 
 /** Fila de marcas en recuadros planos (informativos, no enlaces). Sin logo, muestra el nombre. */
-export default function CarruselMarcas({ titulo, marcas, sobreAzul = false, className = "" }: Props) {
+export default function CarruselMarcas({ titulo, marcas, className = "" }: Props) {
   const fila = useRef<HTMLUListElement>(null);
 
   const desplazar = (direccion: 1 | -1) => {
@@ -34,7 +32,6 @@ export default function CarruselMarcas({ titulo, marcas, sobreAzul = false, clas
     <section className={className}>
       <TituloSeccion
         titulo={titulo}
-        sobreAzul={sobreAzul}
         acciones={
           <>
             <button type="button" onClick={() => desplazar(-1)} className={claseFlecha} aria-label="Marcas anteriores">
@@ -48,7 +45,7 @@ export default function CarruselMarcas({ titulo, marcas, sobreAzul = false, clas
       />
       <ul
         ref={fila}
-        className="sin-scrollbar -mx-[var(--margen-pagina)] flex snap-x snap-mandatory scroll-px-[var(--margen-pagina)] gap-3 overflow-x-auto px-[var(--margen-pagina)] pt-1 pb-3 md:mx-0 md:scroll-px-0 md:gap-4 md:px-0"
+        className="sin-scrollbar -mx-4 flex snap-x snap-mandatory scroll-px-4 gap-3 overflow-x-auto px-4 pt-1 pb-3 md:mx-0 md:scroll-px-0 md:gap-4 md:px-0"
       >
         {marcas.map((marca) => (
           <li key={marca.nombre} className="w-32 shrink-0 snap-start md:w-40">

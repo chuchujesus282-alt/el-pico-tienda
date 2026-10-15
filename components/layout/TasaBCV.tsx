@@ -66,13 +66,13 @@ type PropsPildora = {
 /**
  * Píldora de la tasa BCV: círculo rojo "Bs" (el mismo rojo del círculo de "Pregúntanos") + la cifra.
  * Crece con la cifra y nunca la corta (`whitespace-nowrap`, sin ancho fijo); dígitos de ancho parejo
- * (`tabular-nums`) para que no salte al actualizarse. La fecha sale al pasar el mouse o enfocar.
+ * (`tabular-nums`) para que no salte al actualizarse. La fecha sale al pasar el mouse o enfocar. Mide lo mismo que el buscador (alto, borde y redondeo).
  */
 export function PildoraTasa({ tasa, cargando = false, className = "" }: PropsPildora) {
   if (cargando) {
     return (
       <span
-        className={`flex h-10 w-28 shrink-0 animate-pulse items-center rounded-chip border border-gris-borde bg-gris-fondo lg:w-36 ${className}`}
+        className={`flex h-12 w-32 shrink-0 animate-pulse items-center rounded-chip border-2 border-gris-borde bg-gris-fondo lg:w-40 ${className}`}
         aria-label="Cargando la tasa BCV"
         role="status"
       />
@@ -85,11 +85,11 @@ export function PildoraTasa({ tasa, cargando = false, className = "" }: PropsPil
   return (
     <span
       tabIndex={0}
-      className={`group/tasa relative flex h-10 w-auto shrink-0 cursor-default items-center gap-2 rounded-chip border border-gris-borde bg-pico-blanco py-1 pr-3.5 pl-1 whitespace-nowrap shadow-tarjeta transition duration-200 hover:border-pico-azul/25 hover:shadow-tarjeta-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-pico-azul ${className}`}
+      className={`group/tasa relative flex h-12 w-auto shrink-0 cursor-default items-center gap-2.5 rounded-chip border-2 border-gris-borde bg-pico-blanco py-1 pr-5 pl-1.5 whitespace-nowrap shadow-tarjeta transition duration-200 hover:border-pico-azul/25 hover:shadow-tarjeta-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-pico-azul ${className}`}
       aria-label={`Tasa BCV: ${cifra}. ${detalle}`}
     >
       <span
-        className="flex size-8 shrink-0 items-center justify-center rounded-chip bg-pico-rojo text-xs font-bold text-pico-blanco transition-transform duration-300 motion-safe:group-hover/tasa:scale-110"
+        className="flex size-9 shrink-0 items-center justify-center rounded-chip bg-pico-rojo text-xs font-bold text-pico-blanco transition-transform duration-300 motion-safe:group-hover/tasa:scale-110"
         aria-hidden
       >
         Bs

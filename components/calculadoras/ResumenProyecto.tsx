@@ -107,14 +107,23 @@ export default function ResumenProyecto({ lineas, datos, tasa, sinCalculo, recie
               </p>
             )}
             {datos.length > 0 && (
-              <dl className="mt-4 space-y-1.5 rounded-tarjeta bg-pico-azul-claro p-3 text-[13px]">
-                {datos.map((d) => (
-                  <div key={d.etiqueta} className="flex justify-between gap-3">
-                    <dt className="text-gris-texto">{d.etiqueta}</dt>
-                    <dd className="text-right font-semibold text-pico-azul tabular-nums">{d.valor}</dd>
-                  </div>
-                ))}
-              </dl>
+              // Lo que se calculó con las medidas del cliente: va destacado, con las cifras grandes y en negrita.
+              <div className="mt-4 overflow-hidden rounded-tarjeta border border-pico-azul/15 bg-pico-azul-claro motion-safe:animate-aparecer">
+                <p className="flex items-center gap-2 border-b border-pico-azul/10 px-4 py-2 text-[11px] font-bold tracking-[0.18em] text-pico-azul uppercase">
+                  <span className="h-3 w-1 -skew-x-12 rounded-sm bg-pico-rojo" aria-hidden />
+                  Tu cálculo
+                </p>
+                <dl className="divide-y divide-pico-azul/10 px-4">
+                  {datos.map((d) => (
+                    <div key={d.etiqueta} className="flex items-baseline justify-between gap-3 py-2.5">
+                      <dt className="text-sm font-semibold text-pico-azul/80">{d.etiqueta}</dt>
+                      <dd key={d.valor} className="text-right font-titulo text-lg leading-none font-bold text-pico-azul tabular-nums motion-safe:animate-latido">
+                        {d.valor}
+                      </dd>
+                    </div>
+                  ))}
+                </dl>
+              </div>
             )}
             <ul className="divide-y divide-gris-borde">
               {lineas.map((linea) => (
