@@ -27,16 +27,16 @@ function Linea({ linea, alCambiar }: { linea: LineaResumen; alCambiar: (cantidad
   const { producto, info, cantidad, recomendada } = linea;
   const nombre = producto ? tituloProducto(producto) : info.nombre;
   return (
-    <li className="flex gap-3 py-3.5 motion-safe:animate-aparecer">
+    <li className="flex gap-3 px-4 py-3.5 motion-safe:animate-aparecer">
       <ImagenProducto src={producto?.imagen ?? null} alt="" sizes="64px" className="size-16 shrink-0 rounded-boton border border-gris-borde" />
       <div className="min-w-0 flex-1">
-        <p className="line-clamp-2 text-sm leading-snug font-semibold text-texto">{nombre}</p>
+        <p className="line-clamp-2 text-sm leading-snug font-semibold text-pico-azul">{nombre}</p>
         <p className="mt-0.5 text-xs text-gris-texto">
           {info.presentacion}
           {producto && <> · {formatearPrecio(producto.precio)} c/u</>}
         </p>
         {recomendada !== null && (
-          <p className="mt-1 text-xs font-semibold text-pico-azul" title={linea.nota}>
+          <p className="mt-1 text-xs font-semibold text-pico-azul/80" title={linea.nota}>
             Cantidad recomendada: {recomendada}
           </p>
         )}
@@ -51,7 +51,7 @@ function Linea({ linea, alCambiar }: { linea: LineaResumen; alCambiar: (cantidad
             >
               <Minus className="size-3.5" />
             </button>
-            <span key={cantidad} className="min-w-9 px-1 text-center font-titulo text-sm font-bold text-pico-azul tabular-nums motion-safe:animate-latido" aria-live="polite">
+            <span key={cantidad} className="min-w-9 px-1 text-center font-titulo text-[15px] leading-tight font-bold text-pico-azul tabular-nums motion-safe:animate-latido" aria-live="polite">
               {cantidad}
             </span>
             <button
@@ -65,7 +65,7 @@ function Linea({ linea, alCambiar }: { linea: LineaResumen; alCambiar: (cantidad
             </button>
           </div>
           {producto ? (
-            <Precio valor={producto.precio * cantidad} tamano="pequeno" className="font-titulo" />
+            <Precio valor={producto.precio * cantidad} tamano="pequeno" className="font-titulo text-[15px]! leading-tight tabular-nums" />
           ) : (
             <span className="rounded-chip bg-pico-azul-claro px-2.5 py-1 text-[11px] font-semibold text-pico-azul">Consultar disponibilidad</span>
           )}
@@ -117,7 +117,7 @@ export default function ResumenProyecto({ lineas, datos, tasa, sinCalculo, recie
                   {datos.map((d) => (
                     <div key={d.etiqueta} className="flex items-baseline justify-between gap-3 py-2.5">
                       <dt className="text-sm font-semibold text-pico-azul/80">{d.etiqueta}</dt>
-                      <dd key={d.valor} className="text-right font-titulo text-lg leading-none font-bold text-pico-azul tabular-nums motion-safe:animate-latido">
+                      <dd key={d.valor} className="text-right font-titulo text-[15px] leading-tight font-bold text-pico-azul tabular-nums motion-safe:animate-latido">
                         {d.valor}
                       </dd>
                     </div>
