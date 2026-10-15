@@ -17,7 +17,7 @@ type Props = {
 /** Fila de botones redondos para entrar con Google, Facebook o Apple (cada logo con sus colores oficiales). */
 export default function BotonesSociales({ onElegir, disabled }: Props) {
   return (
-    <ul className="flex justify-center gap-4">
+    <ul className="flex justify-center gap-5">
       {PROVEEDORES.map(({ id, nombre, logo }) => (
         <li key={id}>
           <button
@@ -26,9 +26,9 @@ export default function BotonesSociales({ onElegir, disabled }: Props) {
             disabled={disabled}
             aria-label={`Continuar con ${nombre}`}
             title={`Continuar con ${nombre}`}
-            className="flex size-14 items-center justify-center rounded-chip border-2 border-gris-borde bg-pico-blanco transition hover:border-pico-azul hover:shadow-tarjeta-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-pico-azul disabled:cursor-not-allowed disabled:opacity-50"
+            className="flex size-16 cursor-pointer items-center justify-center rounded-chip border-2 border-gris-borde bg-pico-blanco transition hover:border-pico-azul hover:shadow-tarjeta-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-pico-azul disabled:cursor-not-allowed disabled:opacity-50"
           >
-            <Image src={logo} alt="" width={26} height={26} />
+            <Image src={logo} alt="" width={30} height={30} />
           </button>
         </li>
       ))}
