@@ -2,6 +2,9 @@
 
 export type TipoPersona = "natural" | "juridica";
 
+/** Cuentas de otros servicios con las que se puede entrar. */
+export type ProveedorSocial = "google" | "facebook" | "apple";
+
 /** V venezolano, E extranjero, P pasaporte (personas); J jurídico, G gobierno (empresas). */
 export type PrefijoDocumento = "V" | "E" | "P" | "J" | "G";
 

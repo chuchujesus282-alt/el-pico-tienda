@@ -3,9 +3,10 @@
 import { useState, useTransition } from "react";
 import type { FormEvent } from "react";
 import { useRouter } from "next/navigation";
-import { accionIniciarSesion, accionIniciarSesionConGoogle } from "@/app/iniciar-sesion/acciones";
+import { accionIniciarSesion, accionIniciarSesionCon } from "@/app/iniciar-sesion/acciones";
 import Boton from "@/components/ui/Boton";
-import BotonGoogle from "./BotonGoogle";
+import type { ProveedorSocial } from "@/types/cuenta";
+import BotonesSociales from "./BotonesSociales";
 import { Aviso, Campo, CampoContrasena, Separador } from "./Campos";
 import { correoValido } from "./datosFiscales";
 
@@ -38,9 +39,9 @@ export default function FormularioInicioSesion() {
     iniciar(async () => responder(await accionIniciarSesion(correo, contrasena)));
   };
 
-  const conGoogle = () => {
+  const conProveedor = (proveedor: ProveedorSocial) => {
     setMensaje(null);
-    iniciar(async () => responder(await accionIniciarSesionConGoogle()));
+    iniciar(async () => responder(await accionIniciarSesionCon(proveedor)));
   };
 
   return (
@@ -70,9 +71,7 @@ export default function FormularioInicioSesion() {
       </form>
 
       <Separador texto="o" />
-      <div className="flex justify-center">
-        <BotonGoogle onClick={conGoogle} disabled={enviando} />
-      </div>
+      <BotonesSociales onElegir={conProveedor} disabled={enviando} />
     </div>
   );
 }
