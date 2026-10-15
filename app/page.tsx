@@ -62,8 +62,21 @@ export default async function Inicio() {
   const principales = soloCategoriasExistentes(bannersPrincipales, categorias);
   const promocionales = soloCategoriasExistentes(bannersPromocionales, categorias);
 
+  const secciones = seccionesCategoria.flatMap((seccion, i) => {
+    const categoria = categorias.find((c) => c.slug === seccion.slug);
+    if (!categoria) return [];
+    return [
+      <Revelar key={seccion.slug}>
+        <SeccionCategoria categoria={categoria} productos={productosPorSeccion[i]} imagen={seccion.imagen} />
+      </Revelar>,
+    ];
+  });
+
+  // Ritmo: banner + nota van juntos (llegada); entre secciones, aire amplio. Los banners se
+  // intercalan con los productos en vez de apilarse, y el de calculadoras sigue a Construcción
+  // (la primera sección), donde están los materiales que calcula.
   return (
-    <Contenedor className="space-y-8 pt-4 md:space-y-12 md:pt-6">
+    <Contenedor className="space-y-10 pt-4 md:space-y-14 md:pt-6">
       <h1 className="sr-only">Centro Ferretero El Pico</h1>
 
       <div className="space-y-3 motion-safe:animate-aparecer md:space-y-4">
@@ -84,10 +97,6 @@ export default async function Inicio() {
           </Revelar>
 
           <Revelar>
-            <BannerCalculadoras />
-          </Revelar>
-
-          <Revelar>
             <CarruselProductos titulo="Nuestros recomendados" productos={recomendados} />
           </Revelar>
 
@@ -95,15 +104,13 @@ export default async function Inicio() {
             <CarruselMarcas titulo="Marcas que encuentras aquí" marcas={marcasDeProductos(todos)} />
           </Revelar>
 
-          {seccionesCategoria.map((seccion, i) => {
-            const categoria = categorias.find((c) => c.slug === seccion.slug);
-            if (!categoria) return null;
-            return (
-              <Revelar key={seccion.slug}>
-                <SeccionCategoria categoria={categoria} productos={productosPorSeccion[i]} imagen={seccion.imagen} />
-              </Revelar>
-            );
-          })}
+          {secciones[0]}
+
+          <Revelar>
+            <BannerCalculadoras />
+          </Revelar>
+
+          {secciones.slice(1)}
         </>
       )}
     </Contenedor>
