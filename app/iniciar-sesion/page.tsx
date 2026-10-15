@@ -13,26 +13,28 @@ export const metadata: Metadata = { title: "Iniciar sesión", robots: { index: f
 export default function PaginaIniciarSesion() {
   return (
     <div className="bg-pico-blanco">
-      <Contenedor className="pt-5 pb-16 md:pb-24">
+      {/* Fondo blanco detrás de toda la página: sin la franja gris entre el formulario y el pie. */}
+      <div className="fixed inset-0 -z-10 bg-pico-blanco" aria-hidden />
+      <Contenedor className="pt-5 pb-8 md:pb-12">
         <Link
           href="/"
-          className="inline-flex items-center gap-1 text-sm font-semibold text-pico-azul underline-offset-4 hover:underline"
+          className="inline-flex items-center gap-1 text-[15px] font-semibold text-pico-azul underline-offset-4 hover:underline"
         >
-          <ChevronLeft className="size-4" aria-hidden />
+          <ChevronLeft className="size-5" aria-hidden />
           Volver a la tienda
         </Link>
 
-        <div className="mx-auto mt-8 w-full max-w-md text-center motion-safe:animate-aparecer md:mt-12">
-          <Montanas className="mx-auto h-12 w-auto fill-pico-rojo" />
-          <h1 className="mt-6 text-3xl font-bold text-pico-azul">Bienvenido</h1>
-          <p className="mt-3 text-sm text-gris-texto">
+        <div className="mx-auto mt-10 w-full max-w-lg text-center motion-safe:animate-aparecer md:mt-14">
+          <Montanas className="mx-auto h-16 w-auto fill-pico-rojo md:h-20" />
+          <h1 className="mt-7 font-titulo text-4xl font-bold text-pico-azul md:text-5xl">Bienvenido</h1>
+          <p className="mt-4 text-base text-gris-texto">
             ¿No tienes cuenta?{" "}
             <Link href="/crear-cuenta" className="font-semibold text-pico-rojo underline underline-offset-4 hover:text-pico-rojo-oscuro">
               Crear cuenta
             </Link>
           </p>
 
-          <div className="mt-8 text-left">
+          <div className="mt-10 text-left">
             <FormularioInicioSesion />
           </div>
         </div>

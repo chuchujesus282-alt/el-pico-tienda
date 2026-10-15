@@ -45,8 +45,9 @@ export default function FormularioInicioSesion() {
   };
 
   return (
-    <div className="flex flex-col gap-6">
-      <form onSubmit={enviar} noValidate className="flex flex-col gap-4">
+    // Versión grande de los campos (solo aquí; crear cuenta usa el tamaño normal).
+    <div className="flex flex-col gap-7 [&_input]:h-14 [&_input]:px-4 [&_input]:text-base [&_label]:text-[15px]">
+      <form onSubmit={enviar} noValidate className="flex flex-col gap-5">
         <Campo
           id="correo"
           etiqueta="Correo electrónico"
@@ -65,12 +66,12 @@ export default function FormularioInicioSesion() {
 
         {mensaje && <Aviso tipo="info">{mensaje}</Aviso>}
 
-        <Boton type="submit" anchoCompleto disabled={enviando} className="mt-1 h-12 text-base">
+        <Boton type="submit" anchoCompleto disabled={enviando} className="mt-2 h-14! text-lg!">
           {enviando ? "Entrando…" : "Iniciar sesión"}
         </Boton>
       </form>
 
-      <Separador texto="o" />
+      <Separador texto="o continúa con" />
       <BotonesSociales onElegir={conProveedor} disabled={enviando} />
     </div>
   );

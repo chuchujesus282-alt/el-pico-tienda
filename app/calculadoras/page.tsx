@@ -14,10 +14,11 @@ export const metadata: Metadata = {
   description: "Calculadoras de materiales de construcción: bloques, concreto, friso, cabillas, pintura, cerámica, techos y más.",
 };
 
+// Cómo se usa, en tres pasos cortos (en móvil solo se ve el título).
 const pasos = [
-  { icono: Ruler, titulo: "Ingresa las medidas", texto: "Largo, alto o área de lo que vas a construir." },
-  { icono: ListChecks, titulo: "Revisa los materiales", texto: "Te decimos cuánto llevar de cada cosa." },
-  { icono: ShoppingCart, titulo: "Agrega todo al carrito", texto: "En un clic, y envías tu pedido por WhatsApp." },
+  { icono: Ruler, titulo: "Mide tu obra", texto: "Largo, alto o área" },
+  { icono: ListChecks, titulo: "Ve el material", texto: "Te decimos cuánto llevar" },
+  { icono: ShoppingCart, titulo: "Pide en un clic", texto: "Al carrito y por WhatsApp" },
 ];
 
 export default function PaginaCalculadoras() {
@@ -28,25 +29,25 @@ export default function PaginaCalculadoras() {
         descripcion="Descubre cuánto material necesitas y llévate todo en un solo pedido."
         ruta={[{ texto: "Calculadoras" }]}
         icono={Calculator}
-      >
-        <ol className="grid max-w-3xl gap-3 sm:grid-cols-3">
-          {pasos.map(({ icono: Icono, titulo, texto }, i) => (
-            <li key={titulo} className="flex items-start gap-3 rounded-tarjeta bg-pico-blanco/10 p-3 ring-1 ring-pico-blanco/10">
-              <span className="flex size-9 shrink-0 items-center justify-center rounded-boton bg-pico-rojo text-pico-blanco">
-                <Icono className="size-5" strokeWidth={1.75} aria-hidden />
-              </span>
-              <span>
-                <span className="block text-sm leading-tight font-bold text-pico-blanco">
-                  {i + 1}. {titulo}
-                </span>
-                <span className="mt-0.5 block text-[13px] leading-snug text-pico-blanco/75">{texto}</span>
-              </span>
-            </li>
-          ))}
-        </ol>
-      </EncabezadoPagina>
+      />
 
     <Contenedor className="space-y-8 py-8 md:space-y-10 md:py-12">
+      <ol aria-label="Cómo funciona" className="grid grid-cols-3 divide-x divide-gris-borde rounded-banner border border-gris-borde bg-pico-blanco shadow-tarjeta">
+        {pasos.map(({ icono: Icono, titulo, texto }, i) => (
+          <li key={titulo} className="flex flex-col items-center gap-2.5 px-2 py-4 text-center sm:flex-row sm:justify-center sm:gap-4 sm:px-5 sm:py-5 sm:text-left md:py-6">
+            <span className="relative flex size-11 shrink-0 items-center justify-center rounded-boton bg-pico-azul-claro text-pico-azul md:size-14">
+              <Icono className="size-5 md:size-7" strokeWidth={1.75} aria-hidden />
+              <span className="absolute -top-2 -right-2 flex size-6 items-center justify-center rounded-chip bg-pico-rojo font-titulo text-xs font-bold text-pico-blanco ring-2 ring-pico-blanco">
+                {i + 1}
+              </span>
+            </span>
+            <span>
+              <span className="block font-titulo text-sm leading-tight font-bold text-pico-azul sm:text-base md:text-lg">{titulo}</span>
+              <span className="mt-0.5 hidden text-[13px] leading-snug text-gris-texto sm:block md:text-sm">{texto}</span>
+            </span>
+          </li>
+        ))}
+      </ol>
 
       <ul className="grid gap-3 sm:grid-cols-2 md:gap-4 lg:grid-cols-3 xl:grid-cols-5">
         {CALCULADORAS.map((calculadora, i) => (
