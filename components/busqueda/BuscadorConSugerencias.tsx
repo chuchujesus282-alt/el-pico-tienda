@@ -121,7 +121,7 @@ export default function BuscadorConSugerencias({ className = "" }: { className?:
         />
         <button
           type="submit"
-          className="group/buscar flex h-9 cursor-pointer items-center justify-center gap-2 rounded-chip bg-pico-azul px-3 text-sm font-semibold text-pico-blanco transition duration-200 hover:bg-pico-rojo focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-pico-azul md:px-5"
+          className="group/buscar area-tactil flex h-9 cursor-pointer items-center justify-center gap-2 rounded-chip bg-pico-azul px-3 text-sm font-semibold text-pico-blanco transition duration-200 hover:bg-pico-rojo focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-pico-azul md:px-5"
         >
           <Search
             className="size-4 transition-transform duration-300 motion-safe:group-hover/buscar:scale-110 motion-safe:group-hover/buscar:-rotate-12"

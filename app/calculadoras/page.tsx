@@ -52,7 +52,7 @@ export default function PaginaCalculadoras() {
         {CALCULADORAS.map((calculadora, i) => (
           <li key={calculadora.slug}>
             <Revelar retraso={(i % 5) * 70} className="h-full">
-              <TarjetaCalculadora calculadora={calculadora} />
+              <TarjetaCalculadora calculadora={calculadora} prioritaria={i < 2} />
             </Revelar>
           </li>
         ))}

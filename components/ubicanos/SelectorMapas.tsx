@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useSyncExternalStore } from "react";
+import { useEffect, useId, useRef, useSyncExternalStore } from "react";
 import { createPortal } from "react-dom";
 import { ExternalLink, Map as IconoMapa, MapPinned, Navigation, X } from "lucide-react";
 import { APPS_MAPAS, TIENDA } from "@/lib/tienda";
@@ -20,6 +20,8 @@ type Props = { abierto: boolean; cerrar: () => void };
 export default function SelectorMapas({ abierto, cerrar }: Props) {
   const montado = useSyncExternalStore(sinSuscripcion, () => true, () => false);
   const botonCerrar = useRef<HTMLButtonElement>(null);
+  // Id propio por instancia: /ubicanos monta este selector dos veces (mapa y botones).
+  const idTitulo = useId();
 
   useEffect(() => {
     if (!abierto) return;
@@ -46,7 +48,7 @@ export default function SelectorMapas({ abierto, cerrar }: Props) {
       <div
         role="dialog"
         aria-modal="true"
-        aria-labelledby="titulo-selector-mapas"
+        aria-labelledby={idTitulo}
         className={`absolute inset-x-0 bottom-0 rounded-t-banner bg-pico-blanco p-5 pb-[calc(1.25rem+env(safe-area-inset-bottom))] shadow-tarjeta-hover transition duration-300 md:inset-x-auto md:top-1/2 md:bottom-auto md:left-1/2 md:w-full md:max-w-md md:-translate-x-1/2 md:rounded-banner md:p-6 ${
           abierto
             ? "translate-y-0 opacity-100 md:-translate-y-1/2"
@@ -56,7 +58,7 @@ export default function SelectorMapas({ abierto, cerrar }: Props) {
         <div className="mx-auto mb-4 h-1.5 w-12 rounded-chip bg-gris-borde md:hidden" aria-hidden />
         <div className="mb-4 flex items-start justify-between gap-4">
           <div>
-            <h2 id="titulo-selector-mapas" className="text-lg font-bold text-pico-azul">
+            <h2 id={idTitulo} className="text-lg font-bold text-pico-azul">
               ¿Con qué app quieres llegar?
             </h2>
             <p className="text-[13px] text-gris-texto">{TIENDA.nombre}</p>

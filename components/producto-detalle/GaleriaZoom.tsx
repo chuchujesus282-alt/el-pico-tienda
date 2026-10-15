@@ -4,7 +4,6 @@ import { type PointerEvent, useEffect, useRef, useState, useSyncExternalStore } 
 import { createPortal } from "react-dom";
 import { Maximize2, X, ZoomIn, ZoomOut } from "lucide-react";
 import ImagenProducto from "@/components/producto/ImagenProducto";
-import { fuentePaginas } from "./fuentes";
 
 type Props = {
   src: string | null;
@@ -29,6 +28,9 @@ function origen(e: { clientX: number; clientY: number; currentTarget: Element })
 export default function GaleriaZoom({ src, alt }: Props) {
   const [lupa, setLupa] = useState<string | null>(null); // transform-origin mientras el mouse está encima
   const [abierta, setAbierta] = useState(false);
+  // La imagen grande se monta la primera vez que se abre (y queda para la animación de cierre):
+  // así no se descarga si nadie la amplía, y Chrome no la toma por la imagen principal (LCP).
+  const [usada, setUsada] = useState(false);
   const [acercada, setAcercada] = useState(false);
   const [origenGrande, setOrigenGrande] = useState("50% 50%");
   const cerrarRef = useRef<HTMLButtonElement>(null);
@@ -51,6 +53,7 @@ export default function GaleriaZoom({ src, alt }: Props) {
     setAcercada(false);
     setOrigenGrande("50% 50%");
     setAbierta(true);
+    setUsada(true);
   };
 
   return (
@@ -68,7 +71,7 @@ export default function GaleriaZoom({ src, alt }: Props) {
             className="transition-transform duration-200 ease-out"
             style={lupa ? { transform: `scale(${ZOOM_LUPA})`, transformOrigin: lupa } : undefined}
           >
-            <ImagenProducto src={src} alt={alt} sizes="(min-width: 1280px) 600px, (min-width: 768px) 50vw, 100vw" />
+            <ImagenProducto src={src} alt={alt} sizes="(min-width: 1280px) 600px, (min-width: 768px) 50vw, 100vw" prioritario />
           </div>
         </button>
         <span className="pointer-events-none absolute right-3 bottom-3 inline-flex items-center gap-1.5 rounded-chip bg-logo-marino/90 px-3 py-1.5 text-xs font-semibold text-pico-blanco shadow-tarjeta transition-opacity duration-200 group-hover:opacity-0">
@@ -81,7 +84,7 @@ export default function GaleriaZoom({ src, alt }: Props) {
       {/* Portal al <body>: la animación de entrada de la columna haría que "fixed" quede encerrado en ella. */}
       {montado && createPortal(
       <div
-        className={`${fuentePaginas} fixed inset-0 z-50 flex items-center justify-center p-4 transition-opacity duration-200 ${
+        className={`fixed inset-0 z-50 flex items-center justify-center p-4 transition-opacity duration-200 ${
           abierta ? "opacity-100" : "pointer-events-none opacity-0"
         }`}
         inert={!abierta}
@@ -124,7 +127,7 @@ export default function GaleriaZoom({ src, alt }: Props) {
               className="transition-transform duration-300 ease-out"
               style={{ transform: `scale(${acercada ? ZOOM_PANTALLA : 1})`, transformOrigin: origenGrande }}
             >
-              <ImagenProducto src={src} alt={alt} sizes="(min-width: 768px) 768px, 100vw" />
+              {usada && <ImagenProducto src={src} alt={alt} sizes="(min-width: 768px) 768px, 100vw" />}
             </div>
           </div>
           <p className="mt-3 text-center text-[13px] text-pico-blanco/80">

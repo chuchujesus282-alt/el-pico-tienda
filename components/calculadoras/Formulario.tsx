@@ -68,7 +68,7 @@ export function CampoMedida({ campo, etiqueta, valor, error, alCambiar }: PropsC
           onChange={(e) => alCambiar(e.target.value)}
           aria-invalid={error ? true : undefined}
           aria-describedby={descripcion}
-          className="h-full min-w-0 flex-1 bg-transparent px-3 text-base font-semibold text-texto tabular-nums placeholder:font-normal placeholder:text-gris-texto/50 focus:outline-none"
+          className="h-full min-w-0 flex-1 bg-transparent px-3 text-base font-semibold text-texto tabular-nums placeholder:font-normal placeholder:text-gris-texto focus:outline-none"
         />
         <span className="flex h-full min-w-12 items-center justify-center border-l border-gris-borde bg-gris-fondo px-3 text-sm font-semibold text-gris-texto" aria-hidden>
           {campo.unidad}

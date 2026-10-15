@@ -7,24 +7,38 @@ type Props = {
   /** Muestra esqueletos en lugar de productos. */
   cargando?: boolean;
   cantidadEsqueletos?: number;
+  /** Encabezado solo para lectores de pantalla (h2): las tarjetas son h3 y no deben quedar bajo el h1 sin un h2. */
+  titulo?: string;
   className?: string;
 };
 
+/** Tarjetas que suelen verse sin bajar (2 filas en móvil, 1 en escritorio): su foto carga primero. */
+const PRIORITARIAS = 4;
+
 /** Grilla de productos: 2 columnas móvil, 3 tablet, 4 escritorio. */
-export default function GrillaProductos({ productos, cargando = false, cantidadEsqueletos = 8, className = "" }: Props) {
+export default function GrillaProductos({
+  productos,
+  cargando = false,
+  cantidadEsqueletos = 8,
+  titulo,
+  className = "",
+}: Props) {
   return (
-    <ul className={`grid grid-cols-2 gap-3 md:grid-cols-3 md:gap-4 lg:grid-cols-4 2xl:grid-cols-5 ${className}`}>
+    <>
+      {titulo && <h2 className="sr-only">{titulo}</h2>}
+      <ul className={`grid grid-cols-2 gap-3 md:grid-cols-3 md:gap-4 lg:grid-cols-4 2xl:grid-cols-5 ${className}`}>
       {cargando
         ? Array.from({ length: cantidadEsqueletos }, (_, i) => (
             <li key={i}>
               <ProductCardEsqueleto />
             </li>
           ))
-        : productos.map((producto) => (
+        : productos.map((producto, i) => (
             <li key={producto.id}>
-              <ProductCard producto={producto} />
+              <ProductCard producto={producto} prioritario={i < PRIORITARIAS} />
             </li>
           ))}
-    </ul>
+      </ul>
+    </>
   );
 }

@@ -77,7 +77,7 @@ export default async function PaginaBuscar({ searchParams }: PageProps<"/buscar"
       )}
 
       {cantidad > 0 ? (
-        <GrillaProductos productos={resultado.productos} />
+        <GrillaProductos productos={resultado.productos} titulo="Resultados" />
       ) : (
         <SinResultados
           consulta={consulta}

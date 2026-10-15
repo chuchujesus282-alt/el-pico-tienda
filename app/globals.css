@@ -93,10 +93,10 @@
 }
 
 /* Letra de toda la tienda: Chakra Petch (esquinas cortadas, como el logo), cargada en app/layout.tsx.
-   "inline" hace que la variable se lea en cada elemento. Si no cargara, cae a Inter. */
+   "inline" hace que la variable se lea en cada elemento. Si no cargara, cae a la letra del sistema. */
 @theme inline {
-  --font-sans: var(--font-chakra, var(--font-inter)), system-ui, sans-serif;
-  --font-titulo: var(--font-chakra, var(--font-inter)), system-ui, sans-serif;
+  --font-sans: var(--font-chakra), system-ui, sans-serif;
+  --font-titulo: var(--font-chakra), system-ui, sans-serif;
 }
 
 /* Margen lateral fluido de todo el sitio: 16px en móvil, crece con la pantalla y se detiene en 48px.
@@ -130,6 +130,29 @@ body {
    del contenido, así no tapan nada; en pantallas angostas quedan pegados al borde. */
 @utility derecha-flotante {
   right: max(0.5rem, calc((100vw - 104rem) / 4 - 1.75rem));
+}
+
+/* Área táctil de al menos 44×44px para controles que se ven más pequeños (migas, botones chicos):
+   un pseudo-elemento invisible amplía la zona que se puede tocar sin cambiar cómo se ve.
+   No la uses en elementos con position absolute/fixed (les pone relative). */
+@utility area-tactil {
+  position: relative;
+  &::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: max(100%, 44px);
+    height: max(100%, 44px);
+    transform: translate(-50%, -50%);
+  }
+}
+
+/* Los esqueletos de carga laten; con "reducir movimiento" quedan quietos (siguen viéndose como carga). */
+@media (prefers-reduced-motion: reduce) {
+  .animate-pulse {
+    animation: none;
+  }
 }
 
 /* Filas con desplazamiento horizontal (carruseles, barra de categorías) sin barra visible. */

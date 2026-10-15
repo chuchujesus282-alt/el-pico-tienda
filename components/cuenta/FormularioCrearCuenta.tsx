@@ -189,7 +189,7 @@ export default function FormularioCrearCuenta() {
               placeholder={empresa ? "12345678-9" : prefijo === "P" ? "Número de pasaporte" : "12345678"}
               aria-invalid={errores.numeroDocumento ? true : undefined}
               aria-describedby="numeroDocumento-nota"
-              className={`h-11 w-full min-w-0 rounded-boton border bg-pico-blanco px-3 text-[15px] text-texto outline-none transition-shadow placeholder:text-gris-texto/70 focus:ring-4 ${
+              className={`h-11 w-full min-w-0 rounded-boton border bg-pico-blanco px-3 text-[15px] text-texto outline-none transition-shadow placeholder:text-gris-texto focus:ring-4 ${
                 errores.numeroDocumento
                   ? "border-pico-rojo focus:border-pico-rojo focus:ring-pico-rojo/15"
                   : "border-gris-borde focus:border-pico-azul focus:ring-pico-azul-claro"

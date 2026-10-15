@@ -4,7 +4,7 @@ import { ArrowRight } from "lucide-react";
 import type { Calculadora } from "@/lib/calculadoras/tipos";
 
 /** Tarjeta del listado de calculadoras: foto del trabajo arriba y toda la tarjeta es el enlace. */
-export default function TarjetaCalculadora({ calculadora }: { calculadora: Calculadora }) {
+export default function TarjetaCalculadora({ calculadora, prioritaria = false }: { calculadora: Calculadora; prioritaria?: boolean }) {
   const Icono = calculadora.icono;
   return (
     <Link
@@ -18,6 +18,8 @@ export default function TarjetaCalculadora({ calculadora }: { calculadora: Calcu
             src={calculadora.imagen}
             alt=""
             fill
+            loading={prioritaria ? "eager" : undefined}
+            fetchPriority={prioritaria ? "high" : undefined}
             sizes="(min-width: 1280px) 330px, (min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
             className="object-cover transition-transform duration-500 ease-out motion-safe:group-hover:scale-105"
           />

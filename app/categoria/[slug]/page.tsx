@@ -9,7 +9,6 @@ import PanelFiltrosMovil from "@/components/categoria/PanelFiltrosMovil";
 import SelectorOrden from "@/components/categoria/SelectorOrden";
 import SinResultados from "@/components/categoria/SinResultados";
 import { hrefCategoria, leerEstado, OPCIONES_ORDEN } from "@/components/categoria/rutas";
-import { chakra } from "@/components/producto-detalle/fuentes";
 import GrillaProductos from "@/components/producto/GrillaProductos";
 import Contenedor from "@/components/ui/Contenedor";
 import EncabezadoPagina from "@/components/ui/EncabezadoPagina";
@@ -69,7 +68,7 @@ export default async function PaginaCategoria({ params, searchParams }: PageProp
   const claveVista = hrefCategoria(slug, estado, { pagina: estado.pagina });
 
   return (
-    <div className={chakra.variable}>
+    <div>
       <EncabezadoPagina etiqueta="Categoría" titulo={categoria.nombre} ruta={[{ texto: categoria.nombre }]} imagen={categoria.banner} icono={Package}>
         <span className="inline-flex w-fit items-center gap-1.5 rounded-chip bg-pico-blanco/15 px-3 py-1 text-xs font-semibold text-pico-blanco">
           <Package className="size-3.5" aria-hidden />
@@ -106,7 +105,7 @@ export default async function PaginaCategoria({ params, searchParams }: PageProp
 
             {resultado.productos.length > 0 ? (
               <div key={claveVista} className="motion-safe:animate-aparecer">
-                <GrillaProductos productos={resultado.productos} />
+                <GrillaProductos productos={resultado.productos} titulo={`Productos de ${categoria.nombre}`} />
                 <div className="mt-8">
                   <Paginacion slug={slug} estado={estado} totalPaginas={totalPaginas} />
                 </div>

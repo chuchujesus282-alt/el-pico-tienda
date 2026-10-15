@@ -3,7 +3,6 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 import PanelOpiniones from "@/components/opiniones/PanelOpiniones";
-import { fuentePaginas } from "@/components/producto-detalle/fuentes";
 import { tituloProducto } from "@/lib/formato";
 import ImagenProducto from "@/components/producto/ImagenProducto";
 import Contenedor from "@/components/ui/Contenedor";
@@ -40,7 +39,7 @@ export default async function PaginaOpiniones({ params }: PageProps<"/producto/[
   const hrefProducto = `/producto/${encodeURIComponent(producto.id)}`;
 
   return (
-    <div className={fuentePaginas}>
+    <div>
       <EncabezadoPagina
         ruta={[
           ...(categoria ? [{ texto: categoria.nombre, href: `/categoria/${categoria.slug}` }] : []),

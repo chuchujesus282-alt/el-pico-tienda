@@ -3,7 +3,6 @@
 import { useEffect } from "react";
 import Link from "next/link";
 import { RotateCw, WifiOff } from "lucide-react";
-import { fuentePaginas } from "@/components/producto-detalle/fuentes";
 import Contenedor from "@/components/ui/Contenedor";
 
 type Props = {
@@ -18,7 +17,7 @@ export default function ErrorFinalizarPedido({ error, retry }: Props) {
   }, [error]);
 
   return (
-    <div className={fuentePaginas}>
+    <div>
       <Contenedor className="py-12 md:py-16">
         <div className="mx-auto flex max-w-lg flex-col items-center gap-3 rounded-banner border border-gris-borde bg-pico-blanco px-6 py-12 text-center shadow-tarjeta motion-safe:animate-aparecer">
           <span className="flex size-20 items-center justify-center rounded-chip bg-logo-marino-claro">

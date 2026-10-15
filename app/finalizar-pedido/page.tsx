@@ -3,7 +3,6 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeft, ClipboardCheck } from "lucide-react";
 import FormularioPedido from "@/components/finalizar-pedido/FormularioPedido";
-import { fuentePaginas } from "@/components/producto-detalle/fuentes";
 import Contenedor from "@/components/ui/Contenedor";
 import EncabezadoPagina from "@/components/ui/EncabezadoPagina";
 import { getProducto } from "@/lib/catalogo";
@@ -35,7 +34,7 @@ export default async function PaginaFinalizarPedido({ searchParams }: PageProps<
   const direcciones = await getDireccionesCliente();
 
   return (
-    <div className={fuentePaginas}>
+    <div>
       <EncabezadoPagina
         titulo="Finalizar pedido"
         descripcion="Elige cómo lo recibes y cómo pagas. Te llevamos a WhatsApp con todo listo."

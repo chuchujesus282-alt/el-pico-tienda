@@ -51,7 +51,7 @@ export default function EncabezadoPagina({ titulo, etiqueta, descripcion, ruta, 
               <li>
                 <Link
                   href="/"
-                  className="inline-flex items-center gap-1 rounded-sm transition-colors hover:text-pico-blanco hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-pico-blanco"
+                  className="area-tactil inline-flex items-center gap-1 rounded-sm transition-colors hover:text-pico-blanco hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-pico-blanco"
                 >
                   <House className="size-3.5" aria-hidden />
                   Inicio
@@ -63,7 +63,7 @@ export default function EncabezadoPagina({ titulo, etiqueta, descripcion, ruta, 
                   {miga.href && i < ruta.length - 1 ? (
                     <Link
                       href={miga.href}
-                      className="rounded-sm transition-colors hover:text-pico-blanco hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-pico-blanco"
+                      className="area-tactil rounded-sm transition-colors hover:text-pico-blanco hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-pico-blanco"
                     >
                       {miga.texto}
                     </Link>

@@ -11,7 +11,7 @@ type Props = {
 type Aviso = "codigo" | "enlace" | null;
 
 const claseBoton =
-  "inline-flex items-center gap-1.5 rounded-chip border border-gris-borde bg-pico-blanco px-2.5 py-1 text-xs font-semibold text-logo-marino transition-colors hover:border-logo-marino hover:bg-logo-marino-claro focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-logo-marino";
+  "area-tactil inline-flex items-center gap-1.5 rounded-chip border border-gris-borde bg-pico-blanco px-2.5 py-1 text-xs font-semibold text-logo-marino transition-colors hover:border-logo-marino hover:bg-logo-marino-claro focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-logo-marino";
 
 /** Código del producto con botón para copiarlo (útil para pedir por WhatsApp) y botón para compartir. */
 export default function CodigoCompartir({ codigo, titulo }: Props) {

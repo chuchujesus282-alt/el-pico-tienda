@@ -7,11 +7,13 @@ import ImagenProducto from "./ImagenProducto";
 
 type Props = {
   producto: Producto;
+  /** Primeras tarjetas visibles de una grilla: su foto se descarga de inmediato. */
+  prioritario?: boolean;
   className?: string;
 };
 
 /** La única tarjeta de producto del sitio. Toda la tarjeta enlaza al producto, excepto el botón. */
-export default function ProductCard({ producto, className = "" }: Props) {
+export default function ProductCard({ producto, prioritario = false, className = "" }: Props) {
   const titulo = tituloProducto(producto);
   return (
     <article
@@ -30,6 +32,7 @@ export default function ProductCard({ producto, className = "" }: Props) {
           <ImagenProducto
             src={producto.imagen}
             alt={titulo}
+            prioritario={prioritario}
             sizes="(min-width: 1536px) 240px, (min-width: 1024px) 20vw, (min-width: 768px) 30vw, 45vw"
             className="transition-transform duration-500 ease-out motion-safe:group-hover:scale-105"
           />

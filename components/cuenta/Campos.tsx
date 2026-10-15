@@ -7,7 +7,7 @@ import { Eye, EyeOff } from "lucide-react";
 // Campos de los formularios de cuenta: etiqueta arriba, ayuda o error debajo.
 
 const BASE =
-  "h-11 w-full rounded-boton border bg-pico-blanco px-3 text-[15px] text-texto outline-none transition-shadow placeholder:text-gris-texto/70 focus:ring-4 disabled:opacity-50";
+  "h-11 w-full rounded-boton border bg-pico-blanco px-3 text-[15px] text-texto outline-none transition-shadow placeholder:text-gris-texto focus:ring-4 disabled:opacity-50";
 
 function bordes(error?: string) {
   return error

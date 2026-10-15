@@ -36,7 +36,7 @@ Ver `app/globals.css`: colores de arriba, radios (`tarjeta` 12px, `boton` 8px, `
 - Tarjetas: suben 4px, sombra, filete rojo arriba e imagen que se acerca un poco.
 
 ## Tipografía
-- Fuente de toda la tienda: Chakra Petch (esquinas cortadas, como el logo), cargada en `app/layout.tsx` (variable `--font-chakra`). Inter queda solo de respaldo.
+- Fuente de toda la tienda: Chakra Petch (esquinas cortadas, como el logo), cargada en `app/layout.tsx` (variable `--font-chakra`). Si no cargara, cae a la letra del sistema.
 - Título de sección: 20px móvil / 24px escritorio, peso 700, color `pico-azul`, con un filete rojo inclinado a la izquierda (`TituloSeccion`).
 - Nombre de producto: 14px, peso 500, máximo 2 líneas (`line-clamp-2`), en formato oración con `tituloProducto()`.
 - Precio: 18px, peso 700, color `pico-rojo`.

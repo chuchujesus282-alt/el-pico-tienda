@@ -5,7 +5,6 @@ import { ArrowLeft, House } from "lucide-react";
 import { CalificacionesProducto, EstrellasProducto } from "@/components/opiniones/CalificacionesVivas";
 import AccionesCompra from "@/components/producto-detalle/AccionesCompra";
 import CodigoCompartir from "@/components/producto-detalle/CodigoCompartir";
-import { fuentePaginas } from "@/components/producto-detalle/fuentes";
 import GaleriaZoom from "@/components/producto-detalle/GaleriaZoom";
 import ProductosRelacionados from "@/components/recomendaciones/ProductosRelacionados";
 import RegistrarSenal from "@/components/recomendaciones/RegistrarSenal";
@@ -53,7 +52,7 @@ export default async function PaginaProducto({ params }: PageProps<"/producto/[i
     "group inline-flex items-center gap-1.5 rounded-boton text-sm font-semibold text-logo-marino hover:underline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-logo-marino";
 
   return (
-    <div className={fuentePaginas}>
+    <div>
       <EncabezadoPagina
         ruta={[...(categoria ? [{ texto: categoria.nombre, href: `/categoria/${categoria.slug}` }] : []), { texto: titulo }]}
       />

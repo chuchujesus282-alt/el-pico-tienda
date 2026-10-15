@@ -35,7 +35,7 @@ export default function BotonSubir({ visible }: { visible: boolean }) {
       onClick={subir}
       inert={!mostrar}
       aria-label="Volver al principio de la página"
-      className={`group fixed derecha-flotante z-40 flex size-14 cursor-pointer items-center justify-center rounded-chip border-2 border-pico-rojo bg-pico-blanco text-pico-rojo shadow-tarjeta-hover transition duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] hover:shadow-boton-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-pico-rojo md:bottom-[calc(5.25rem+env(safe-area-inset-bottom))] ${
+      className={`group fixed derecha-flotante z-40 flex size-14 cursor-pointer items-center justify-center rounded-chip border-2 border-pico-rojo bg-pico-blanco text-pico-rojo shadow-tarjeta-hover transition duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] hover:shadow-boton-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-pico-rojo md:bottom-[calc(5.25rem+env(safe-area-inset-bottom))] ${
         sobreBarra ? "bottom-[calc(10.25rem+env(safe-area-inset-bottom))]" : "bottom-[calc(4.5rem+env(safe-area-inset-bottom))]"
       } ${
         mostrar

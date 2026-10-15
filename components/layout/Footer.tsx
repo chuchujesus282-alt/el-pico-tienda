@@ -9,7 +9,8 @@ import { enlaceWhatsApp } from "@/lib/whatsapp";
 import type { Categoria } from "@/types/catalogo";
 import Logo, { Montanas } from "./Logo";
 
-// Páginas informativas: las que aún no existen quedan con "#" hasta que se construyan.
+// Páginas informativas: las que aún no existen llevan "#" y NO se muestran (un enlace muerto confunde);
+// al construir la página, cambia el "#" por su ruta y aparece sola.
 const conocenos = [
   { texto: "Quiénes somos", href: "#" },
   { texto: "Ubícanos", href: "/ubicanos" },
@@ -118,7 +119,7 @@ export default async function Footer() {
           <nav aria-label="Conócenos">
             <TituloColumna>Conócenos</TituloColumna>
             <ul className="grid gap-3">
-              {conocenos.map(({ texto, href }) => (
+              {conocenos.filter(({ href }) => href !== "#").map(({ texto, href }) => (
                 <li key={texto}>
                   <Enlace href={href}>{texto}</Enlace>
                 </li>
