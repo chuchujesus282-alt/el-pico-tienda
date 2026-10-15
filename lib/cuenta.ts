@@ -1,6 +1,6 @@
 import "server-only";
 
-import type { NuevaCuenta, ResultadoCuenta } from "@/types/cuenta";
+import type { NuevaCuenta, ProveedorSocial, ResultadoCuenta } from "@/types/cuenta";
 
 // ÚNICA puerta de entrada a las cuentas de cliente (inicio de sesión y registro).
 // Aún no hay servidor de cuentas: las funciones responden que todavía no está disponible.
@@ -22,7 +22,8 @@ export async function crearCuenta(cuenta: NuevaCuenta): Promise<ResultadoCuenta>
   return NO_DISPONIBLE;
 }
 
-/** Inicio de sesión con Google: cuando exista, devolverá la URL de Google a la que hay que ir. */
-export async function iniciarSesionConGoogle(): Promise<ResultadoCuenta> {
+/** Entrar con Google, Facebook o Apple: cuando exista, devolverá la URL del servicio a la que hay que ir. */
+export async function iniciarSesionConProveedor(proveedor: ProveedorSocial): Promise<ResultadoCuenta> {
+  void proveedor;
   return NO_DISPONIBLE;
 }

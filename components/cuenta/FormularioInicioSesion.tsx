@@ -3,9 +3,10 @@
 import { useState, useTransition } from "react";
 import type { FormEvent } from "react";
 import { useRouter } from "next/navigation";
-import { accionIniciarSesion, accionIniciarSesionConGoogle } from "@/app/iniciar-sesion/acciones";
+import { accionIniciarSesion, accionIniciarSesionCon } from "@/app/iniciar-sesion/acciones";
 import Boton from "@/components/ui/Boton";
-import BotonGoogle from "./BotonGoogle";
+import type { ProveedorSocial } from "@/types/cuenta";
+import BotonesSociales from "./BotonesSociales";
 import { Aviso, Campo, CampoContrasena, Separador } from "./Campos";
 import { correoValido } from "./datosFiscales";
 
@@ -38,16 +39,13 @@ export default function FormularioInicioSesion() {
     iniciar(async () => responder(await accionIniciarSesion(correo, contrasena)));
   };
 
-  const conGoogle = () => {
+  const conProveedor = (proveedor: ProveedorSocial) => {
     setMensaje(null);
-    iniciar(async () => responder(await accionIniciarSesionConGoogle()));
+    iniciar(async () => responder(await accionIniciarSesionCon(proveedor)));
   };
 
   return (
-    <div className="flex flex-col gap-5">
-      <BotonGoogle onClick={conGoogle} disabled={enviando} />
-      <Separador texto="o con tu correo" />
-
+    <div className="flex flex-col gap-6">
       <form onSubmit={enviar} noValidate className="flex flex-col gap-4">
         <Campo
           id="correo"
@@ -67,10 +65,13 @@ export default function FormularioInicioSesion() {
 
         {mensaje && <Aviso tipo="info">{mensaje}</Aviso>}
 
-        <Boton type="submit" anchoCompleto disabled={enviando} className="h-11">
+        <Boton type="submit" anchoCompleto disabled={enviando} className="mt-1 h-12 text-base">
           {enviando ? "Entrando…" : "Iniciar sesión"}
         </Boton>
       </form>
+
+      <Separador texto="o" />
+      <BotonesSociales onElegir={conProveedor} disabled={enviando} />
     </div>
   );
 }
