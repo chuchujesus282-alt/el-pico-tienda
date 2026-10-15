@@ -4,10 +4,10 @@ import Boton from "@/components/ui/Boton";
 import Contenedor from "@/components/ui/Contenedor";
 import Revelar from "@/components/ui/Revelar";
 import { getCategorias } from "@/lib/catalogo";
+import { TIENDA } from "@/lib/tienda";
 import { enlaceWhatsApp } from "@/lib/whatsapp";
 import type { Categoria } from "@/types/catalogo";
 import Logo, { Montanas } from "./Logo";
-import VolverArriba from "./VolverArriba";
 
 // Páginas informativas: las que aún no existen quedan con "#" hasta que se construyan.
 const conocenos = [
@@ -81,6 +81,7 @@ export default async function Footer() {
                 Centro Ferretero
               </span>
               <span className="block text-4xl font-bold tracking-wide text-pico-blanco uppercase">El Pico</span>
+              <span className="mt-2 block text-xs font-semibold tracking-[0.18em] whitespace-nowrap text-pico-blanco/70">RIF {TIENDA.rif}</span>
             </p>
           </div>
           <p className="max-w-xs text-sm leading-relaxed text-pico-blanco/75">
@@ -141,9 +142,9 @@ export default async function Footer() {
       </Contenedor>
 
       <div className="border-t border-pico-blanco/10 bg-pico-azul-oscuro/40">
-        <Contenedor className="flex flex-col items-start gap-3 py-5 text-xs text-pico-blanco/60 sm:flex-row sm:items-center sm:justify-between">
-          <span>© {new Date().getFullYear()} Centro Ferretero El Pico. Todos los derechos reservados.</span>
-          <VolverArriba />
+        {/* Centrado: el botón para subir ahora es la flecha flotante (BotonSubir). */}
+        <Contenedor className="py-5 text-center text-xs text-pico-blanco/60">
+          <span>© {new Date().getFullYear()} Centro Ferretero El Pico · RIF {TIENDA.rif} · Todos los derechos reservados.</span>
         </Contenedor>
       </div>
     </footer>

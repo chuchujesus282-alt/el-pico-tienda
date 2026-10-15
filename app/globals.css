@@ -126,6 +126,12 @@ body {
   }
 }
 
+/* Botones flotantes (carrito y subir): en pantallas anchas van centrados en el margen libre a la derecha
+   del contenido, así no tapan nada; en pantallas angostas quedan pegados al borde. */
+@utility derecha-flotante {
+  right: max(0.5rem, calc((100vw - 104rem) / 4 - 1.75rem));
+}
+
 /* Filas con desplazamiento horizontal (carruseles, barra de categorías) sin barra visible. */
 @utility sin-scrollbar {
   scrollbar-width: none;

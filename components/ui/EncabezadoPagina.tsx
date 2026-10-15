@@ -24,12 +24,14 @@ type Props = {
 };
 
 /**
- * Encabezado de página: franja azul marino de borde a borde, con la ruta de navegación, el acento
+ * Encabezado de página: tarjeta azul marino redondeada (separada de la barra de categorías), con la ruta de navegación, el acento
  * rojo corto y el título. Lo usan todas las páginas interiores para que el sitio se vea parejo.
  */
 export default function EncabezadoPagina({ titulo, etiqueta, descripcion, ruta, icono: Icono, imagen, children }: Props) {
   return (
-    <header className="relative isolate overflow-hidden border-t border-pico-blanco/10 bg-gradient-to-br from-pico-azul via-pico-azul to-pico-azul-oscuro text-pico-blanco print:border-0 print:bg-none print:text-texto">
+    // Tarjeta redondeada sobre el fondo gris, con aire arriba: así no se pega a la barra azul de categorías.
+    <Contenedor className="pt-4 md:pt-6">
+    <header className="relative isolate overflow-hidden rounded-banner bg-gradient-to-br from-pico-azul via-pico-azul to-pico-azul-oscuro text-pico-blanco shadow-tarjeta-hover print:rounded-none print:bg-none print:text-texto print:shadow-none">
       {imagen && (
         <>
           <Image src={imagen} alt="" fill priority sizes="100vw" className="-z-10 object-cover" />
@@ -37,12 +39,12 @@ export default function EncabezadoPagina({ titulo, etiqueta, descripcion, ruta, 
         </>
       )}
       {Icono && !imagen && (
-        <span className="pointer-events-none absolute right-[max(1rem,6vw)] -bottom-10 -z-10 hidden motion-safe:animate-flotar sm:block print:hidden" aria-hidden>
+        <span className="pointer-events-none absolute right-6 -bottom-10 md:right-16 -z-10 hidden motion-safe:animate-flotar sm:block print:hidden" aria-hidden>
           <Icono className="size-44 text-pico-blanco/10 md:size-64" strokeWidth={1.25} />
         </span>
       )}
 
-      <Contenedor className={titulo ? "py-5 md:py-8" : "py-3"}>
+      <div className={titulo ? "px-5 py-6 md:px-10 md:py-9 lg:px-12" : "px-5 py-3 md:px-10 lg:px-12"}>
         {ruta && (
           <nav aria-label="Ruta de navegación" className="text-[13px] text-pico-blanco/70 print:hidden">
             <ol className="flex flex-wrap items-center gap-1">
@@ -83,7 +85,8 @@ export default function EncabezadoPagina({ titulo, etiqueta, descripcion, ruta, 
             {children && <div className="mt-4">{children}</div>}
           </div>
         )}
-      </Contenedor>
+      </div>
     </header>
+    </Contenedor>
   );
 }
