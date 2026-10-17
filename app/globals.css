@@ -31,11 +31,15 @@
   /* Ancho máximo del contenido de TODO el sitio (lo usa Contenedor con `max-w-pagina`). */
   --container-pagina: 110rem; /* 1760px: 1664px de contenido más el margen lateral */
 
-  --shadow-tarjeta: 0 1px 3px rgb(12 45 78 / 0.08);
-  --shadow-tarjeta-hover: 0 12px 28px -8px rgb(12 45 78 / 0.22);
+  /* Sombras en dos capas (contacto + ambiente), teñidas del azul marino: sobre el fondo gris azulado
+     las tarjetas blancas se ven apoyadas, no pegadas. */
+  --shadow-tarjeta: 0 1px 2px rgb(12 45 78 / 0.06), 0 6px 16px -6px rgb(12 45 78 / 0.14);
+  --shadow-tarjeta-hover: 0 2px 4px rgb(12 45 78 / 0.06), 0 18px 36px -12px rgb(12 45 78 / 0.3);
   --shadow-boton-hover: 0 10px 20px -6px rgb(12 45 78 / 0.35);
+  /* Header: brillo blanco en el borde de arriba y una sombra suave abajo que lo separa de la página. */
+  --shadow-header: inset 0 1px 0 rgb(255 255 255 / 0.7), 0 4px 14px -8px rgb(12 45 78 / 0.25);
 
-  --animate-aparecer: aparecer 0.5s ease-out both;
+  --animate-aparecer: aparecer 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
   --animate-latido: latido 0.4s ease-out;
   --animate-flotar: flotar 6s ease-in-out infinite;
   --animate-sacudir: sacudir 0.5s ease-in-out;
@@ -151,8 +155,38 @@
   padding-inline: var(--margen-pagina);
 }
 
+html {
+  /* Barra de desplazamiento fina en los colores de la tienda y toques sin el destello gris del teléfono. */
+  scrollbar-width: thin;
+  scrollbar-color: color-mix(in srgb, var(--color-pico-azul) 35%, transparent) transparent;
+  -webkit-tap-highlight-color: transparent;
+  /* Los saltos a un ancla (#…) no quedan tapados por el header. */
+  scroll-padding-top: 6rem;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
 body {
   @apply bg-gris-fondo text-texto font-sans antialiased;
+  text-rendering: optimizeLegibility;
+  /* Cursor de escritura rojo y casillas/radios en azul de la marca, en todos los formularios. */
+  caret-color: var(--color-pico-rojo);
+  accent-color: var(--color-pico-azul);
+}
+
+/* Títulos con las líneas equilibradas y párrafos sin una palabra sola al final. */
+h1,
+h2,
+h3 {
+  text-wrap: balance;
+}
+
+p {
+  text-wrap: pretty;
 }
 
 ::selection {

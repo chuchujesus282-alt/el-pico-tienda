@@ -15,7 +15,7 @@ import TasaBCV from "./TasaBCV";
  */
 export default function Header() {
   return (
-    <header className="relative z-10 border-b border-gris-borde bg-pico-azul-claro">
+    <header className="relative z-10 border-b border-pico-azul/10 bg-pico-azul-claro shadow-header">
       <Contenedor className="flex flex-wrap items-center gap-x-3 gap-y-3 py-3 md:flex-nowrap md:gap-x-6 md:py-4 lg:gap-x-8">
         <Logo placa={false} />
 

@@ -18,7 +18,7 @@ export default function ProductCard({ producto, prioritario = false, className =
   const titulo = tituloProducto(producto);
   return (
     <article
-      className={`group relative flex h-full flex-col rounded-tarjeta border border-gris-borde bg-pico-blanco p-3 shadow-tarjeta transition duration-300 hover:border-pico-azul/20 hover:shadow-tarjeta-hover motion-safe:hover:-translate-y-1 ${className}`}
+      className={`group relative flex h-full flex-col rounded-tarjeta border border-gris-borde bg-pico-blanco p-3 shadow-tarjeta transition duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] hover:border-pico-azul/20 hover:shadow-tarjeta-hover motion-safe:hover:-translate-y-1 ${className}`}
     >
       {/* Filete rojo que aparece arriba al pasar el mouse. */}
       <span

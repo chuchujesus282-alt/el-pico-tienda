@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ArrowLeft, House } from "lucide-react";
+import { ArrowLeft, House, Motorbike, Store, Truck } from "lucide-react";
 import BotonFavorito from "@/components/favoritos/BotonFavorito";
+import { FORMAS_RETIRO, type FormaRetiro } from "@/components/finalizar-pedido/pedido";
 import { CalificacionesProducto, EstrellasProducto } from "@/components/opiniones/CalificacionesVivas";
 import AccionesCompra from "@/components/producto-detalle/AccionesCompra";
 import CodigoCompartir from "@/components/producto-detalle/CodigoCompartir";
@@ -37,6 +38,8 @@ export async function generateMetadata({ params }: PageProps<"/producto/[id]">):
     return { title: "Producto" };
   }
 }
+
+const ICONOS_RETIRO: Record<FormaRetiro, typeof Store> = { pickup: Store, delivery: Motorbike, flete: Truck };
 
 export default async function PaginaProducto({ params }: PageProps<"/producto/[id]">) {
   const { id } = await params;
@@ -92,6 +95,27 @@ export default async function PaginaProducto({ params }: PageProps<"/producto/[i
             </div>
 
             <AccionesCompra producto={producto} />
+
+            {/* Cómo lo recibes: las mismas tres formas que se eligen al finalizar el pedido. */}
+            <ul className="grid grid-cols-3 gap-2 sm:gap-3" aria-label="Formas de recibir tu pedido">
+              {FORMAS_RETIRO.map(({ valor, etiqueta, detalle }) => {
+                const Icono = ICONOS_RETIRO[valor];
+                return (
+                  <li
+                    key={valor}
+                    className="group flex flex-col items-center gap-2 rounded-tarjeta border border-gris-borde bg-pico-blanco px-2 py-3 text-center shadow-tarjeta transition duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] hover:shadow-tarjeta-hover motion-safe:hover:-translate-y-0.5 sm:px-3"
+                  >
+                    <span className="flex size-10 items-center justify-center rounded-chip bg-pico-azul-claro text-pico-azul transition-colors duration-300 group-hover:bg-pico-azul group-hover:text-pico-blanco">
+                      <Icono className="size-5" strokeWidth={1.75} aria-hidden />
+                    </span>
+                    <span>
+                      <span className="block text-sm font-bold text-pico-azul">{etiqueta}</span>
+                      <span className="mt-0.5 hidden text-xs leading-snug text-gris-texto sm:block">{detalle}</span>
+                    </span>
+                  </li>
+                );
+              })}
+            </ul>
 
             <div className="flex flex-wrap items-center gap-x-6 gap-y-2 border-t border-gris-borde pt-4">
               {categoria && (
