@@ -1,4 +1,4 @@
-import { Bolt, BrickWall, Drill, HardHat, PaintRoller } from "lucide-react";
+import { Bolt, BrickWall, HardHat, PaintRoller } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import type { Banner, Producto } from "@/types/catalogo";
 
@@ -15,6 +15,8 @@ export type BannerInicio = Omit<Banner, "imagen"> & {
   textoBoton?: string;
   variante?: VarianteBanner;
   icono?: LucideIcon;
+  /** Chips cortos bajo el texto (solo en el carrusel principal, desde tableta). */
+  etiquetas?: string[];
 };
 
 export type Marca = {
@@ -49,7 +51,8 @@ export const bannersPrincipales: BannerInicio[] = [
     texto: "Taladros, esmeriles y herramientas manuales para cada trabajo.",
     textoBoton: "Ver herramientas",
     variante: "oscuro",
-    icono: Drill,
+    // Sin ícono: en su lugar flota un rotomartillo real (HerramientasAsomadas, PRUEBA).
+    etiquetas: ["Inalámbricas", "Eléctricas", "Manuales"],
   },
   {
     id: "pinturas",

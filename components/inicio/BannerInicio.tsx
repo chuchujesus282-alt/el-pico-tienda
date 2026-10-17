@@ -137,6 +137,19 @@ export default function BannerInicio({ banner, sizes, tamano = "normal", priorit
               {banner.texto}
             </p>
           )}
+          {grande && banner.etiquetas && banner.etiquetas.length > 0 && (
+            <ul className="relative hidden flex-wrap gap-2 sm:flex">
+              {banner.etiquetas.map((etiqueta) => (
+                <li
+                  key={etiqueta}
+                  className="flex items-center gap-1.5 rounded-chip border border-pico-blanco/20 bg-pico-blanco/10 px-3 py-1 text-xs font-semibold tracking-[0.04em] text-pico-blanco backdrop-blur-sm lg:text-[13px]"
+                >
+                  <span className="size-1.5 rounded-chip bg-pico-rojo" aria-hidden />
+                  {etiqueta}
+                </li>
+              ))}
+            </ul>
+          )}
           {banner.textoBoton && (
             // Es un span y no <Boton>: todo el banner ya es un enlace. Misma forma que Boton.
             <span
