@@ -1,15 +1,17 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import type { FormEvent, ReactNode } from "react";
+import type { FormEvent } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Building2, User } from "lucide-react";
+import { Building2, CircleCheck, LoaderCircle, User } from "lucide-react";
 import { accionCrearCuenta } from "@/app/crear-cuenta/acciones";
+import { accionIniciarSesionCon } from "@/app/iniciar-sesion/acciones";
 import Boton from "@/components/ui/Boton";
-import type { NuevaCuenta, PrefijoDocumento, TipoPersona } from "@/types/cuenta";
-import { Aviso, Campo, CampoContrasena, Selector } from "./Campos";
+import type { NuevaCuenta, PrefijoDocumento, ProveedorSocial, TipoPersona } from "@/types/cuenta";
+import BotonesSociales from "./BotonesSociales";
+import { Aviso, Campo, CampoContrasena, Separador } from "./Campos";
 import {
-  ESTADOS_VENEZUELA,
   LARGO_MINIMO_CONTRASENA,
   PREFIJOS,
   normalizarDocumento,
@@ -18,38 +20,27 @@ import {
   type ErroresCuenta,
 } from "./datosFiscales";
 
-function Seccion({ numero, titulo, descripcion, children }: { numero: number; titulo: string; descripcion?: string; children: ReactNode }) {
-  return (
-    <fieldset className="rounded-tarjeta border border-gris-borde bg-pico-blanco p-4 shadow-tarjeta md:p-6">
-      <legend className="sr-only">{titulo}</legend>
-      <div className="mb-4 flex items-start gap-3">
-        <span
-          className="flex size-7 shrink-0 items-center justify-center rounded-chip bg-pico-azul text-sm font-bold text-pico-blanco"
-          aria-hidden
-        >
-          {numero}
-        </span>
-        <div>
-          <h2 className="text-lg font-bold text-pico-azul" aria-hidden>
-            {titulo}
-          </h2>
-          {descripcion && <p className="text-[13px] text-gris-texto">{descripcion}</p>}
-        </div>
-      </div>
-      <div className="grid gap-4 md:grid-cols-2">{children}</div>
-    </fieldset>
-  );
-}
-
-const TIPOS: { valor: TipoPersona; titulo: string; detalle: string; icono: ReactNode }[] = [
-  { valor: "natural", titulo: "Persona natural", detalle: "Factura a tu nombre, con cédula o RIF.", icono: <User className="size-5" aria-hidden /> },
-  { valor: "juridica", titulo: "Empresa", detalle: "Factura a nombre de la empresa, con su RIF.", icono: <Building2 className="size-5" aria-hidden /> },
+const TIPOS: { valor: TipoPersona; titulo: string; detalle: string; Icono: typeof User }[] = [
+  { valor: "natural", titulo: "Persona", detalle: "La factura sale a tu nombre, con tu cédula o RIF.", Icono: User },
+  { valor: "juridica", titulo: "Empresa", detalle: "La factura sale a nombre de la empresa, con su RIF.", Icono: Building2 },
 ];
+
+/** Orden en que se revisan los campos: el primero con error recibe el foco. */
+const ORDEN: (keyof ErroresCuenta)[] = ["nombre", "numeroDocumento", "telefono", "correo", "contrasena", "confirmacion", "aceptaPoliticas"];
 
 function texto(datos: FormData, campo: string) {
   return String(datos.get(campo) ?? "").trim();
 }
 
+/** A dónde va el cliente con su cuenta nueva: a guardar sus direcciones, saludado por su nombre. */
+function rutaBienvenida(nombre: string) {
+  return `/mis-direcciones?bienvenida=${encodeURIComponent(nombre.trim().split(/\s+/)[0] ?? "")}`;
+}
+
+/**
+ * Registro en una sola columna, como una conversación: primero quién eres, luego cómo entras.
+ * Las direcciones de entrega no se piden aquí: al crear la cuenta se va a Mis direcciones a marcarlas en el mapa.
+ */
 export default function FormularioCrearCuenta() {
   const router = useRouter();
   const [tipo, setTipo] = useState<TipoPersona>("natural");
@@ -57,6 +48,9 @@ export default function FormularioCrearCuenta() {
   const [errores, setErrores] = useState<ErroresCuenta>({});
   const [mensaje, setMensaje] = useState<string | null>(null);
   const [enviando, iniciar] = useTransition();
+  // Para avisar en vivo cuando las dos contraseñas ya coinciden.
+  const [claves, setClaves] = useState({ contrasena: "", confirmacion: "" });
+  const coinciden = claves.contrasena.length >= LARGO_MINIMO_CONTRASENA && claves.contrasena === claves.confirmacion;
 
   const empresa = tipo === "juridica";
 
@@ -66,6 +60,15 @@ export default function FormularioCrearCuenta() {
     setErrores((e) => ({ ...e, nombre: undefined, numeroDocumento: undefined }));
   };
 
+  const conProveedor = (proveedor: ProveedorSocial) => {
+    setMensaje(null);
+    iniciar(async () => {
+      const resultado = await accionIniciarSesionCon(proveedor);
+      if (resultado.ok) router.push("/mis-direcciones");
+      else setMensaje(resultado.mensaje);
+    });
+  };
+
   const enviar = (evento: FormEvent<HTMLFormElement>) => {
     evento.preventDefault();
     const datos = new FormData(evento.currentTarget);
@@ -73,17 +76,13 @@ export default function FormularioCrearCuenta() {
     const cuenta: NuevaCuenta = {
       correo: texto(datos, "correo"),
       contrasena: String(datos.get("contrasena") ?? ""),
+      aceptaPoliticas: datos.get("aceptaPoliticas") === "si",
       fiscales: {
         tipoPersona: tipo,
         nombre: texto(datos, "nombre"),
         documento: normalizarDocumento(prefijo, texto(datos, "numeroDocumento")) ?? "",
         telefono: normalizarTelefono(texto(datos, "telefono")) ?? "",
         contribuyenteEspecial: empresa && datos.get("contribuyenteEspecial") === "si",
-        direccion: texto(datos, "direccion"),
-        zona: texto(datos, "zona"),
-        ciudad: texto(datos, "ciudad"),
-        estado: texto(datos, "estado"),
-        codigoPostal: texto(datos, "codigoPostal") || null,
       },
     };
 
@@ -91,7 +90,7 @@ export default function FormularioCrearCuenta() {
     setErrores(nuevos);
     setMensaje(null);
 
-    const primero = Object.keys(nuevos)[0];
+    const primero = ORDEN.find((campo) => nuevos[campo]);
     if (primero) {
       document.getElementById(primero)?.focus();
       return;
@@ -99,14 +98,146 @@ export default function FormularioCrearCuenta() {
 
     iniciar(async () => {
       const resultado = await accionCrearCuenta(cuenta);
-      if (resultado.ok) router.push("/");
+      if (resultado.ok) router.push(rutaBienvenida(cuenta.fiscales.nombre));
       else setMensaje(resultado.mensaje);
     });
   };
 
+  const actual = TIPOS.find((t) => t.valor === tipo)!;
+
   return (
-    <form onSubmit={enviar} noValidate className="flex flex-col gap-4">
-      <Seccion numero={1} titulo="Datos de acceso" descripcion="Con ellos inicias sesión.">
+    // Campos grandes, como en iniciar sesión (los de crear cuenta normal en otras pantallas no cambian).
+    <div className="flex flex-col gap-7 [&_input:not([type=checkbox])]:h-14 [&_input:not([type=checkbox])]:pl-4 [&_input:not([type=checkbox])]:text-base [&_label]:text-[15px]">
+      <BotonesSociales onElegir={conProveedor} disabled={enviando} cascada={250} />
+      <div className="motion-safe:animate-aparecer [animation-delay:420ms]">
+        <Separador texto="o con tu correo" />
+      </div>
+
+      <form
+        onSubmit={enviar}
+        onInput={(e) => {
+          const campo = e.target as HTMLInputElement;
+          if (campo.name === "contrasena" || campo.name === "confirmacion") setClaves((c) => ({ ...c, [campo.name]: campo.value }));
+        }}
+        noValidate
+        className="flex flex-col gap-5"
+      >
+        {/* Persona o empresa: dos mitades de un mismo control, la elegida en blanco. */}
+        <fieldset className="motion-safe:animate-aparecer [animation-delay:480ms]">
+          <legend className="sr-only">¿Para quién es la cuenta?</legend>
+          <div className="relative grid grid-cols-2 gap-1 rounded-tarjeta bg-gris-fondo p-1">
+            {/* La píldora blanca se desliza hacia la opción elegida. */}
+            <span
+              className={`absolute inset-y-1 left-1 w-[calc(50%-0.375rem)] rounded-boton bg-pico-blanco shadow-tarjeta transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${
+                empresa ? "translate-x-[calc(100%+0.25rem)]" : "translate-x-0"
+              }`}
+              aria-hidden
+            />
+            {TIPOS.map(({ valor, titulo, Icono }) => {
+              const marcado = tipo === valor;
+              return (
+                <label
+                  key={valor}
+                  className={`relative flex h-12 cursor-pointer items-center justify-center gap-2 rounded-boton text-[15px] font-semibold transition-colors duration-300 has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-pico-azul ${
+                    marcado ? "text-pico-azul" : "text-gris-texto hover:text-pico-azul"
+                  }`}
+                >
+                  <input
+                    type="radio"
+                    name="tipoPersona"
+                    value={valor}
+                    checked={marcado}
+                    onChange={() => cambiarTipo(valor)}
+                    className="sr-only"
+                  />
+                  <Icono
+                    key={marcado ? "si" : "no"}
+                    className={`size-5 ${marcado ? "motion-safe:animate-latido" : ""}`}
+                    strokeWidth={marcado ? 2.25 : 1.75}
+                    aria-hidden
+                  />
+                  {titulo}
+                </label>
+              );
+            })}
+          </div>
+          <p key={tipo} className="mt-2 text-center text-[13px] text-gris-texto motion-safe:animate-aparecer">
+            {actual.detalle}
+          </p>
+        </fieldset>
+
+        <Campo
+          id="nombre"
+          etiqueta={empresa ? "Razón social" : "Nombre y apellido"}
+          autoComplete={empresa ? "organization" : "name"}
+          placeholder={empresa ? "Ej. Construcciones Ávila, C.A." : "Ej. María Pérez"}
+          error={errores.nombre}
+          className="motion-safe:animate-aparecer [animation-delay:540ms]"
+        />
+
+        <div className="grid gap-5 sm:grid-cols-2 sm:gap-4 motion-safe:animate-aparecer [animation-delay:600ms]">
+          <div className="flex flex-col gap-1.5">
+            <label htmlFor="numeroDocumento" className="text-sm font-semibold text-pico-azul">
+              {empresa ? "RIF" : "Cédula o RIF"}
+            </label>
+            <div className="flex gap-2">
+              <label htmlFor="prefijo" className="sr-only">
+                Tipo de documento
+              </label>
+              <select
+                id="prefijo"
+                value={prefijo}
+                onChange={(e) => setPrefijo(e.target.value as PrefijoDocumento)}
+                className="h-14 w-16 shrink-0 cursor-pointer rounded-boton border border-gris-borde bg-pico-blanco px-2 text-base font-semibold text-pico-azul outline-none focus:border-pico-azul focus:ring-4 focus:ring-pico-azul-claro"
+              >
+                {PREFIJOS[tipo].map((p) => (
+                  <option key={p.valor} value={p.valor}>
+                    {p.etiqueta}
+                  </option>
+                ))}
+              </select>
+              <input
+                id="numeroDocumento"
+                name="numeroDocumento"
+                inputMode={prefijo === "P" ? "text" : "numeric"}
+                placeholder={empresa ? "12345678-9" : prefijo === "P" ? "Pasaporte" : "12345678"}
+                aria-invalid={errores.numeroDocumento ? true : undefined}
+                aria-describedby={errores.numeroDocumento ? "numeroDocumento-nota" : undefined}
+                className={`w-full min-w-0 rounded-boton border bg-pico-blanco text-texto outline-none transition-shadow placeholder:text-gris-texto focus:ring-4 ${
+                  errores.numeroDocumento
+                    ? "border-pico-rojo focus:border-pico-rojo focus:ring-pico-rojo/15"
+                    : "border-gris-borde focus:border-pico-azul focus:ring-pico-azul-claro"
+                }`}
+              />
+            </div>
+            {errores.numeroDocumento && (
+              <p id="numeroDocumento-nota" className="text-[13px] text-pico-rojo">
+                {errores.numeroDocumento}
+              </p>
+            )}
+          </div>
+
+          <Campo
+            id="telefono"
+            etiqueta="Teléfono"
+            type="tel"
+            autoComplete="tel-national"
+            inputMode="tel"
+            placeholder="0412-1234567"
+            error={errores.telefono}
+          />
+        </div>
+
+        {empresa && (
+          <label className="flex cursor-pointer items-start gap-3 rounded-tarjeta bg-gris-fondo px-4 py-3 motion-safe:animate-aparecer">
+            <input type="checkbox" name="contribuyenteEspecial" value="si" className="mt-1 size-4 shrink-0 cursor-pointer accent-pico-azul" />
+            <span>
+              <span className="block font-semibold text-pico-azul">Somos contribuyente especial</span>
+              <span className="block text-[13px] text-gris-texto">Si la empresa es agente de retención de IVA.</span>
+            </span>
+          </label>
+        )}
+
         <Campo
           id="correo"
           etiqueta="Correo electrónico"
@@ -115,161 +246,78 @@ export default function FormularioCrearCuenta() {
           inputMode="email"
           placeholder="nombre@correo.com"
           error={errores.correo}
-          className="md:col-span-2"
+          className="motion-safe:animate-aparecer [animation-delay:660ms]"
         />
-        <CampoContrasena
-          id="contrasena"
-          etiqueta="Contraseña"
-          autoComplete="new-password"
-          ayuda={`Mínimo ${LARGO_MINIMO_CONTRASENA} caracteres.`}
-          error={errores.contrasena}
-        />
-        <CampoContrasena id="confirmacion" etiqueta="Repite la contraseña" autoComplete="new-password" error={errores.confirmacion} />
-      </Seccion>
 
-      <Seccion numero={2} titulo="Datos de facturación" descripcion="Así saldrá tu factura. Revisa que coincidan con tu cédula o RIF.">
-        <div className="grid gap-2 sm:grid-cols-2 md:col-span-2" role="radiogroup" aria-label="Tipo de cliente">
-          {TIPOS.map((t) => (
-            <label
-              key={t.valor}
-              className={`flex cursor-pointer items-start gap-3 rounded-tarjeta border p-3 transition-colors has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-pico-azul ${
-                tipo === t.valor ? "border-pico-azul bg-pico-azul-claro" : "border-gris-borde bg-pico-blanco hover:border-pico-azul/40"
-              }`}
-            >
-              <input
-                type="radio"
-                name="tipoPersona"
-                value={t.valor}
-                checked={tipo === t.valor}
-                onChange={() => cambiarTipo(t.valor)}
-                className="mt-0.5 size-4 shrink-0 cursor-pointer accent-pico-azul focus-visible:outline-none"
-              />
-              <span className="mt-px shrink-0 text-pico-azul">{t.icono}</span>
-              <span className="min-w-0">
-                <span className="block text-sm font-semibold text-pico-azul">{t.titulo}</span>
-                <span className="block text-[13px] leading-snug text-gris-texto">{t.detalle}</span>
-              </span>
-            </label>
-          ))}
+        <div className="grid gap-5 sm:grid-cols-2 sm:gap-4 motion-safe:animate-aparecer [animation-delay:720ms]">
+          <CampoContrasena
+            id="contrasena"
+            etiqueta="Contraseña"
+            autoComplete="new-password"
+            placeholder={`Mínimo ${LARGO_MINIMO_CONTRASENA} caracteres`}
+            error={errores.contrasena}
+          />
+          <CampoContrasena
+            id="confirmacion"
+            etiqueta="Repítela"
+            autoComplete="new-password"
+            placeholder="La misma contraseña"
+            error={errores.confirmacion}
+          />
+          {coinciden && !errores.confirmacion && (
+            <p className="-mt-2 flex items-center gap-1.5 text-[13px] font-semibold text-estado-abierto motion-safe:animate-aparecer sm:col-span-2" role="status">
+              <CircleCheck className="size-4 motion-safe:animate-latido" aria-hidden />
+              Las contraseñas coinciden
+            </p>
+          )}
         </div>
 
-        <Campo
-          id="nombre"
-          etiqueta={empresa ? "Razón social" : "Nombre y apellido"}
-          autoComplete={empresa ? "organization" : "name"}
-          placeholder={empresa ? "Ej. Construcciones Ávila, C.A." : "Ej. María Pérez"}
-          error={errores.nombre}
-          className="md:col-span-2"
-        />
-
-        <div className="flex flex-col gap-1.5">
-          <label htmlFor="numeroDocumento" className="text-sm font-semibold text-pico-azul">
-            {empresa ? "RIF" : "Cédula o RIF"}
-          </label>
-          <div className="flex gap-2">
-            <label htmlFor="prefijo" className="sr-only">
-              Tipo de documento
-            </label>
-            <select
-              id="prefijo"
-              value={prefijo}
-              onChange={(e) => setPrefijo(e.target.value as PrefijoDocumento)}
-              className="h-11 w-16 shrink-0 rounded-boton border border-gris-borde bg-pico-blanco px-2 text-[15px] font-semibold text-pico-azul outline-none focus:border-pico-azul focus:ring-4 focus:ring-pico-azul-claro"
-            >
-              {PREFIJOS[tipo].map((p) => (
-                <option key={p.valor} value={p.valor}>
-                  {p.etiqueta}
-                </option>
-              ))}
-            </select>
+        <div className="motion-safe:animate-aparecer [animation-delay:780ms]">
+          <label className="flex cursor-pointer items-start gap-3">
             <input
-              id="numeroDocumento"
-              name="numeroDocumento"
-              inputMode={prefijo === "P" ? "text" : "numeric"}
-              placeholder={empresa ? "12345678-9" : prefijo === "P" ? "Número de pasaporte" : "12345678"}
-              aria-invalid={errores.numeroDocumento ? true : undefined}
-              aria-describedby="numeroDocumento-nota"
-              className={`h-11 w-full min-w-0 rounded-boton border bg-pico-blanco px-3 text-[15px] text-texto outline-none transition-shadow placeholder:text-gris-texto focus:ring-4 ${
-                errores.numeroDocumento
-                  ? "border-pico-rojo focus:border-pico-rojo focus:ring-pico-rojo/15"
-                  : "border-gris-borde focus:border-pico-azul focus:ring-pico-azul-claro"
-              }`}
-            />
-          </div>
-          <p id="numeroDocumento-nota" className={`text-[13px] ${errores.numeroDocumento ? "text-pico-rojo" : "text-gris-texto"}`}>
-            {errores.numeroDocumento ?? (empresa ? "J: empresa privada · G: ente del Estado." : "V: venezolano · E: extranjero · P: pasaporte.")}
-          </p>
-        </div>
-
-        <Campo
-          id="telefono"
-          etiqueta="Teléfono"
-          type="tel"
-          autoComplete="tel-national"
-          inputMode="tel"
-          placeholder="0412-1234567"
-          ayuda="Te escribimos por WhatsApp para coordinar tu pedido."
-          error={errores.telefono}
-        />
-
-        {empresa && (
-          <label className="flex cursor-pointer items-start gap-3 md:col-span-2">
-            <input
+              id="aceptaPoliticas"
               type="checkbox"
-              name="contribuyenteEspecial"
+              name="aceptaPoliticas"
               value="si"
-              className="mt-0.5 size-4 shrink-0 cursor-pointer accent-pico-azul"
+              aria-invalid={errores.aceptaPoliticas ? true : undefined}
+              aria-describedby={errores.aceptaPoliticas ? "aceptaPoliticas-nota" : undefined}
+              className="mt-1 size-4 shrink-0 cursor-pointer accent-pico-azul"
             />
-            <span className="text-sm">
-              <span className="font-semibold text-pico-azul">Somos contribuyente especial</span>
-              <span className="block text-[13px] text-gris-texto">Marca esta casilla si la empresa es agente de retención de IVA.</span>
+            <span className="text-sm leading-relaxed text-gris-texto">
+              Leí y acepto las{" "}
+              <Link href="/politicas-de-privacidad" target="_blank" className="font-semibold text-pico-azul underline underline-offset-4 hover:text-pico-rojo">
+                políticas de privacidad
+              </Link>
+              .
             </span>
           </label>
+          {errores.aceptaPoliticas && (
+            <p id="aceptaPoliticas-nota" className="mt-1.5 pl-7 text-[13px] text-pico-rojo">
+              {errores.aceptaPoliticas}
+            </p>
+          )}
+        </div>
+
+        {mensaje && (
+          <div className="motion-safe:animate-aparecer">
+            <Aviso tipo="info">{mensaje}</Aviso>
+          </div>
         )}
-      </Seccion>
 
-      <Seccion numero={3} titulo="Dirección fiscal" descripcion="La que aparece en tu RIF. Sale impresa en la factura.">
-        <Campo
-          id="direccion"
-          etiqueta="Dirección"
-          autoComplete="address-line1"
-          placeholder="Calle, edificio o casa, piso y número"
-          error={errores.direccion}
-          className="md:col-span-2"
-        />
-        <Campo id="zona" etiqueta="Urbanización o sector" autoComplete="address-line2" placeholder="Ej. Los Palos Grandes" error={errores.zona} />
-        <Campo id="ciudad" etiqueta="Ciudad" autoComplete="address-level2" placeholder="Ej. Caracas" error={errores.ciudad} />
-        <Selector
-          id="estado"
-          etiqueta="Estado"
-          opciones={ESTADOS_VENEZUELA}
-          textoVacio="Elige el estado"
-          defaultValue=""
-          autoComplete="address-level1"
-          error={errores.estado}
-        />
-        <Campo
-          id="codigoPostal"
-          etiqueta="Código postal"
-          opcional
-          inputMode="numeric"
-          autoComplete="postal-code"
-          placeholder="Ej. 1060"
-          maxLength={4}
-          error={errores.codigoPostal}
-        />
-      </Seccion>
-
-      {mensaje && <Aviso tipo="info">{mensaje}</Aviso>}
-
-      <div className="flex flex-col-reverse items-stretch gap-3 sm:flex-row sm:items-center sm:justify-end">
-        <Boton href="/iniciar-sesion" variante="secundario" className="h-11">
-          Ya tengo cuenta
-        </Boton>
-        <Boton type="submit" disabled={enviando} className="h-11 sm:min-w-48">
-          {enviando ? "Creando tu cuenta…" : "Crear cuenta"}
-        </Boton>
-      </div>
-    </form>
+        <div className="mt-1 flex flex-col gap-3 motion-safe:animate-aparecer [animation-delay:840ms]">
+          <Boton type="submit" anchoCompleto disabled={enviando} className="h-14! text-lg!">
+            {enviando ? (
+              <>
+                <LoaderCircle className="size-5 animate-spin" aria-hidden />
+                Creando tu cuenta…
+              </>
+            ) : (
+              "Crear cuenta"
+            )}
+          </Boton>
+          <p className="text-center text-[13px] text-gris-texto">Después marcas en el mapa dónde recibes tus pedidos.</p>
+        </div>
+      </form>
+    </div>
   );
 }

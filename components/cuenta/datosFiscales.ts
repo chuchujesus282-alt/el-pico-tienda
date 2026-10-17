@@ -3,13 +3,6 @@ import type { DatosFiscales, NuevaCuenta, PrefijoDocumento, TipoPersona } from "
 // Opciones y validaciones de los formularios de cuenta. Se usan en el navegador (para avisar al
 // momento) y en el servidor (para no confiar en lo que llega).
 
-export const ESTADOS_VENEZUELA = [
-  "Amazonas", "Anzoátegui", "Apure", "Aragua", "Barinas", "Bolívar", "Carabobo", "Cojedes",
-  "Delta Amacuro", "Distrito Capital", "Falcón", "Guárico", "La Guaira", "Lara", "Mérida",
-  "Miranda", "Monagas", "Nueva Esparta", "Portuguesa", "Sucre", "Táchira", "Trujillo",
-  "Yaracuy", "Zulia",
-] as const;
-
 export const PREFIJOS: Record<TipoPersona, { valor: PrefijoDocumento; etiqueta: string }[]> = {
   natural: [
     { valor: "V", etiqueta: "V" },
@@ -55,7 +48,7 @@ export function normalizarTelefono(telefono: string): string | null {
   return /^0[24]\d{9}$/.test(digitos) ? digitos : null;
 }
 
-export type ErroresCuenta = Partial<Record<keyof DatosFiscales | "correo" | "contrasena" | "confirmacion" | "numeroDocumento", string>>;
+export type ErroresCuenta = Partial<Record<keyof DatosFiscales | "correo" | "contrasena" | "confirmacion" | "numeroDocumento" | "aceptaPoliticas", string>>;
 
 /** Revisa la cuenta nueva completa. Sin errores, el objeto viene vacío. */
 export function validarNuevaCuenta(cuenta: NuevaCuenta, confirmacion?: string): ErroresCuenta {
@@ -73,11 +66,7 @@ export function validarNuevaCuenta(cuenta: NuevaCuenta, confirmacion?: string): 
     ? "El RIF lleva 9 dígitos, ej. 12345678-9."
     : "Revisa el número: la cédula lleva de 6 a 8 dígitos.";
   if (!f.telefono) errores.telefono = "Escribe un teléfono de 11 dígitos, ej. 0412-1234567.";
-  if (f.direccion.trim().length < 5) errores.direccion = "Escribe la calle, el edificio o la casa.";
-  if (!f.zona.trim()) errores.zona = "Escribe la urbanización o el sector.";
-  if (!f.ciudad.trim()) errores.ciudad = "Escribe la ciudad.";
-  if (!(ESTADOS_VENEZUELA as readonly string[]).includes(f.estado)) errores.estado = "Elige el estado.";
-  if (f.codigoPostal && !/^\d{4}$/.test(f.codigoPostal)) errores.codigoPostal = "El código postal lleva 4 dígitos.";
+  if (!cuenta.aceptaPoliticas) errores.aceptaPoliticas = "Marca la casilla para continuar.";
 
   return errores;
 }

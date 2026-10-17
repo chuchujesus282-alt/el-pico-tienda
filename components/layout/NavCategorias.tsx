@@ -19,6 +19,7 @@ const SIN_BARRA = [
   "/iniciar-sesion",
   "/crear-cuenta",
   "/finalizar-pedido",
+  "/mis-direcciones",
 ];
 
 export default async function NavCategorias() {

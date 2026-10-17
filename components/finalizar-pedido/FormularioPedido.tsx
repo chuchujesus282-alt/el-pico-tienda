@@ -12,6 +12,7 @@ import {
   Landmark,
   Layers,
   MapPin,
+  MapPinPlus,
   MessageCircle,
   Motorbike,
   ShoppingCart,
@@ -23,13 +24,13 @@ import {
 } from "lucide-react";
 import { RUTA_CALCULADORAS } from "@/components/calculadoras/rutas";
 import { useCarrito } from "@/components/carrito/ProveedorCarrito";
+import { useDirecciones } from "@/components/direcciones/almacenDirecciones";
 import { tituloProducto } from "@/lib/formato";
 import ImagenProducto from "@/components/producto/ImagenProducto";
 import Precio from "@/components/ui/Precio";
 import { registrarSenales } from "@/lib/recomendaciones/almacenPerfil";
 import { enlaceWhatsApp, totalCarrito } from "@/lib/whatsapp";
 import type { ItemCarrito } from "@/types/carrito";
-import type { Direccion } from "@/types/cliente";
 import Opcion from "./Opcion";
 import {
   armarMensajeFinal,
@@ -43,7 +44,6 @@ import {
 type Props = {
   /** "Comprar ahora": solo ese producto. Sin esto, el pedido es el carrito. */
   itemsDirectos: ItemCarrito[] | null;
-  direcciones: Direccion[];
 };
 
 // Íconos de las opciones: Opcion los pone en una placa con degradado que se anima al elegir.
@@ -133,8 +133,11 @@ function Brillo() {
 }
 
 /** Pantalla de cierre: forma de retiro + método de pago → mensaje armado por WhatsApp. */
-export default function FormularioPedido({ itemsDirectos, direcciones }: Props) {
+export default function FormularioPedido({ itemsDirectos }: Props) {
   const carrito = useCarrito();
+  // Direcciones guardadas por el cliente (Mis direcciones). La elegida en el header viene marcada;
+  // aquí se puede cambiar, y la de aquí es la que va en el mensaje de WhatsApp.
+  const { direcciones, elegida } = useDirecciones();
   // El carrito vive en el navegador: hasta montar no se sabe si está vacío.
   const montado = useSyncExternalStore(sinSuscripcion, () => true, () => false);
 
@@ -146,7 +149,12 @@ export default function FormularioPedido({ itemsDirectos, direcciones }: Props) 
   const items = itemsDirectos ?? carrito.items;
   const unidades = items.reduce((suma, i) => suma + i.cantidad, 0);
   const necesitaDireccion = retiro === "delivery" || retiro === "flete";
-  const direccion = direcciones.find((d) => d.id === direccionId) ?? null;
+  const direccion = direcciones.find((d) => d.id === (direccionId ?? elegida?.id)) ?? null;
+  // Al agregar una dirección desde aquí, se vuelve a este mismo pedido.
+  const volver = itemsDirectos
+    ? `/finalizar-pedido?producto=${encodeURIComponent(itemsDirectos[0].producto.id)}&cantidad=${itemsDirectos[0].cantidad}`
+    : "/finalizar-pedido";
+  const enlaceAgregar = `/mis-direcciones/nueva?volver=${encodeURIComponent(volver)}`;
 
   const retiroListo = !!retiro && (!necesitaDireccion || !!direccion);
   const pagoListo = !!pago && (pago !== "combinado" || combinados.length >= 2);
@@ -227,7 +235,7 @@ export default function FormularioPedido({ itemsDirectos, direcciones }: Props) 
               <div className="mt-5 rounded-tarjeta bg-gris-fondo p-3 motion-safe:animate-aparecer md:p-4">
                 <p className="mb-3 flex items-center gap-2 text-sm font-semibold text-logo-marino">
                   <MapPin className="size-4" aria-hidden />
-                  ¿A cuál de tus direcciones?
+                  {direcciones.length > 0 ? "¿A cuál de tus direcciones?" : "¿A dónde te lo llevamos?"}
                 </p>
                 <div className="grid gap-3 md:auto-rows-fr md:grid-cols-2">
                   {direcciones.map((d) => (
@@ -236,17 +244,20 @@ export default function FormularioPedido({ itemsDirectos, direcciones }: Props) 
                       tipo="radio"
                       nombre="direccion"
                       valor={d.id}
-                      marcada={direccionId === d.id}
+                      marcada={direccion?.id === d.id}
                       alCambiar={() => setDireccionId(d.id)}
-                      titulo={d.alias}
-                      detalle={
-                        <>
-                          {d.direccion}, {d.zona}
-                          {d.referencia && <span className="block">Ref.: {d.referencia}</span>}
-                        </>
-                      }
+                      titulo={d.nombre}
+                      detalle={<span className="line-clamp-2">{d.descripcion}</span>}
                     />
                   ))}
+                  {/* Otra dirección: lleva al mapa y, al guardarla, vuelve a este pedido. */}
+                  <Link
+                    href={enlaceAgregar}
+                    className="group flex min-h-16 items-center justify-center gap-2.5 rounded-tarjeta border-2 border-dashed border-logo-marino/25 bg-pico-blanco px-3 py-3 text-sm font-semibold text-logo-marino transition-colors hover:border-pico-rojo hover:text-pico-rojo focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-logo-marino"
+                  >
+                    <MapPinPlus className="size-5 transition-transform duration-300 motion-safe:group-hover:scale-110" aria-hidden />
+                    {direcciones.length > 0 ? "Agregar otra dirección" : "Agregar una dirección"}
+                  </Link>
                 </div>
               </div>
             )}
@@ -345,7 +356,7 @@ export default function FormularioPedido({ itemsDirectos, direcciones }: Props) 
                     <dt className="text-gris-texto">Retiro</dt>
                     <dd className="text-right font-semibold text-logo-marino">
                       {etiquetaRetiro}
-                      {direccion && ` · ${direccion.alias}`}
+                      {direccion && ` · ${direccion.nombre}`}
                     </dd>
                   </div>
                 )}

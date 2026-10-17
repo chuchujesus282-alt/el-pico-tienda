@@ -46,7 +46,7 @@ export default function FormularioInicioSesion() {
 
   return (
     // Versión grande de los campos (solo aquí; crear cuenta usa el tamaño normal).
-    <div className="flex flex-col gap-7 [&_input]:h-14 [&_input]:px-4 [&_input]:text-base [&_label]:text-[15px]">
+    <div className="flex flex-col gap-7 [&_input]:h-14 [&_input]:pl-4 [&_input]:text-base [&_label]:text-[15px]">
       <form onSubmit={enviar} noValidate className="flex flex-col gap-5">
         <Campo
           id="correo"

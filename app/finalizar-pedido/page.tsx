@@ -6,7 +6,6 @@ import FormularioPedido from "@/components/finalizar-pedido/FormularioPedido";
 import Contenedor from "@/components/ui/Contenedor";
 import EncabezadoPagina from "@/components/ui/EncabezadoPagina";
 import { getProducto } from "@/lib/catalogo";
-import { getDireccionesCliente } from "@/lib/cliente";
 import type { ItemCarrito } from "@/types/carrito";
 
 // Finalizar pedido — responsable: persona B (rama `finalizar-pedido`).
@@ -31,8 +30,6 @@ export default async function PaginaFinalizarPedido({ searchParams }: PageProps<
     itemsDirectos = [{ producto, cantidad: Number.isFinite(cantidad) ? Math.min(999, Math.max(1, cantidad)) : 1 }];
   }
 
-  const direcciones = await getDireccionesCliente();
-
   return (
     <div>
       <EncabezadoPagina
@@ -49,7 +46,7 @@ export default async function PaginaFinalizarPedido({ searchParams }: PageProps<
           <ArrowLeft className="size-3.5 transition-transform motion-safe:group-hover:-translate-x-1" aria-hidden />
           {id ? "Volver al producto" : "Seguir comprando"}
         </Link>
-        <FormularioPedido itemsDirectos={itemsDirectos} direcciones={direcciones} />
+        <FormularioPedido itemsDirectos={itemsDirectos} />
       </Contenedor>
     </div>
   );

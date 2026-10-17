@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Calculator, User } from "lucide-react";
 import BuscadorConSugerencias from "@/components/busqueda/BuscadorConSugerencias";
+import SelectorDireccion from "@/components/direcciones/SelectorDireccion";
 import EnlaceFavoritos from "@/components/favoritos/EnlaceFavoritos";
 import Contenedor from "@/components/ui/Contenedor";
 import BotonCarrito from "./BotonCarrito";
@@ -23,6 +24,9 @@ export default function Header() {
 
         {/* Tasa BCV: píldora que crece con la cifra. En móvil va compacta, en la fila del logo. */}
         <TasaBCV className="ml-auto md:ml-0" />
+
+        {/* "Entregar en": la dirección a la que va el pedido, gemela de la píldora de la tasa. */}
+        <SelectorDireccion />
 
         <div className="flex items-center gap-1 md:ml-auto md:gap-2">
           {/* Calculadoras de proyectos: mismo estilo y protagonismo que "Mi cuenta" y el carrito. */}

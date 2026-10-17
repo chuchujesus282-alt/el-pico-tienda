@@ -1,6 +1,7 @@
 import { formatearPrecio } from "@/lib/formato";
 import { totalCarrito } from "@/lib/whatsapp";
 import type { ItemCarrito } from "@/types/carrito";
+import { textoDireccion } from "@/lib/direcciones";
 import type { Direccion } from "@/types/cliente";
 
 export type FormaRetiro = "pickup" | "delivery" | "flete";
@@ -34,10 +35,6 @@ export type DatosPedido = {
 };
 
 const etiquetaPago = (valor: MetodoPago) => METODOS_PAGO.find((m) => m.valor === valor)?.etiqueta ?? valor;
-
-export function textoDireccion(d: Direccion): string {
-  return `${d.alias}: ${d.direccion}, ${d.zona}${d.referencia ? ` (Ref.: ${d.referencia})` : ""}`;
-}
 
 /** Mensaje de WhatsApp con productos, forma de retiro (y dirección si aplica) y método de pago. */
 export function armarMensajeFinal({ items, retiro, direccion, pago, combinados }: DatosPedido): string {

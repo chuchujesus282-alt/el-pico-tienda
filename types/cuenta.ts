@@ -14,17 +14,14 @@ export type DatosFiscales = {
   documento: string; // normalizado: "V-12345678", "J-12345678-9"
   telefono: string; // solo dígitos: "04121234567"
   contribuyenteEspecial: boolean; // solo empresas: agente de retención de IVA
-  direccion: string; // calle, edificio/casa, piso
-  zona: string; // urbanización o sector
-  ciudad: string;
-  estado: string;
-  codigoPostal: string | null;
 };
+// Las direcciones de entrega no van aquí: el cliente las guarda en el mapa (Mis direcciones, types/cliente.ts).
 
 export type NuevaCuenta = {
   correo: string;
   contrasena: string;
   fiscales: DatosFiscales;
+  aceptaPoliticas: boolean; // marcó que leyó las políticas de privacidad
 };
 
 /** Respuesta de las acciones de cuenta: o todo bien, o un mensaje para mostrarle al cliente. */
