@@ -4,6 +4,8 @@ import BarraInferior from "@/components/layout/BarraInferior";
 import Footer from "@/components/layout/Footer";
 import Header from "@/components/layout/Header";
 import NavCategorias from "@/components/layout/NavCategorias";
+import OcultarEnRutas from "@/components/layout/OcultarEnRutas";
+import { RUTAS_PANTALLA_COMPLETA } from "@/components/layout/pantallaCompleta";
 import { chakra } from "@/components/producto-detalle/fuentes";
 import "./globals.css";
 
@@ -18,14 +20,18 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="es-VE" className={chakra.variable}>
-      {/* Abajo deja libre el alto de la barra inferior del teléfono (0 desde 768px). */}
-      <body className="flex min-h-dvh flex-col pb-(--alto-barra-inferior)">
+      <body className="flex min-h-dvh flex-col">
         <ProveedorCarrito>
-          <Header />
+          <OcultarEnRutas prefijos={RUTAS_PANTALLA_COMPLETA}>
+            <Header />
+          </OcultarEnRutas>
           <NavCategorias />
           <main className="flex-1">{children}</main>
-          <Footer />
-          <BarraInferior />
+          {/* Páginas de pantalla completa (iniciar sesión): sin header, footer ni barra inferior. */}
+          <OcultarEnRutas prefijos={RUTAS_PANTALLA_COMPLETA}>
+            <Footer />
+            <BarraInferior />
+          </OcultarEnRutas>
         </ProveedorCarrito>
       </body>
     </html>

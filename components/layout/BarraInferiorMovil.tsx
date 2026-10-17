@@ -70,41 +70,59 @@ type PropsPestana = {
   rellenoActivo?: boolean;
 };
 
-/** Contenido de cada pestaña: ícono dentro de una píldora (roja si está activa) y su nombre debajo. */
+/** Nombre de la pestaña: mayúsculas en negrita, como las etiquetas de la tienda. */
+function Etiqueta({ texto, activa }: { texto: string; activa: boolean }) {
+  return (
+    <span
+      className={`text-[10px] leading-none font-bold tracking-[0.08em] uppercase transition-colors ${
+        activa ? "text-pico-blanco" : "text-pico-blanco/65 group-hover:text-pico-blanco"
+      }`}
+    >
+      {texto}
+    </span>
+  );
+}
+
+/**
+ * Contenido de cada pestaña: ícono dentro de una píldora y su nombre debajo. La activa lleva la píldora
+ * roja llena y, pegado al borde de arriba, el filete rojo inclinado de los títulos de la tienda.
+ */
 function Pestana({ icono: Icono, texto, activa, contador = 0, rellenoActivo = false }: PropsPestana) {
   return (
     <>
       <span
+        className={`absolute top-0 left-1/2 h-1 w-8 -translate-x-1/2 -skew-x-12 rounded-b-sm bg-pico-rojo transition duration-300 ease-out ${
+          activa ? "scale-x-100 opacity-100" : "scale-x-0 opacity-0"
+        }`}
+        aria-hidden
+      />
+      <span
         className={`relative flex h-8 w-14 items-center justify-center rounded-chip transition duration-300 ease-out ${
-          activa ? "bg-pico-rojo text-pico-blanco shadow-boton-hover" : "text-pico-blanco/75 group-hover:text-pico-blanco"
+          activa
+            ? "bg-pico-rojo text-pico-blanco shadow-lg shadow-pico-rojo/40"
+            : "text-pico-blanco/65 group-hover:bg-pico-blanco/10 group-hover:text-pico-blanco"
         }`}
       >
         <Icono
-          className={`size-[22px] transition-transform duration-300 motion-safe:group-active:scale-90 ${
+          className={`size-6 transition-transform duration-300 motion-safe:group-active:scale-90 ${
             activa && rellenoActivo ? "fill-pico-blanco" : ""
           }`}
-          strokeWidth={activa ? 2.25 : 1.9}
+          strokeWidth={2.25}
           aria-hidden
         />
         <Contador valor={contador} />
       </span>
-      <span
-        className={`text-[11px] leading-none tracking-[0.02em] transition-colors ${
-          activa ? "font-bold text-pico-blanco" : "font-semibold text-pico-blanco/75"
-        }`}
-      >
-        {texto}
-      </span>
+      <Etiqueta texto={texto} activa={activa} />
     </>
   );
 }
 
 const clasePestana =
-  "group flex h-full w-full cursor-pointer flex-col items-center justify-center gap-1 focus-visible:outline-2 focus-visible:-outline-offset-4 focus-visible:outline-pico-blanco rounded-tarjeta";
+  "group relative flex h-full w-full cursor-pointer flex-col items-center justify-center gap-1.5 focus-visible:outline-2 focus-visible:-outline-offset-4 focus-visible:outline-pico-blanco rounded-tarjeta";
 
 /**
- * Barra de navegación fija abajo, SOLO en el teléfono (debajo de 768px): Inicio, Categorías, Favoritos,
- * Carrito y Entrar. Reemplaza en móvil a la barra horizontal de categorías y a las bolas flotantes
+ * Barra de navegación fija abajo, SOLO en el teléfono (debajo de 768px): Inicio, Categorías, Carrito (al centro,
+ * grande y rojo), Favoritos y Entrar. Reemplaza en móvil a la barra horizontal de categorías y a las bolas flotantes
  * (subir y carrito). Su alto vive en `--alto-barra-inferior` (globals.css) para que el resto de la
  * página y las barras fijas de producto y calculadoras se acomoden encima.
  */
@@ -208,7 +226,7 @@ export default function BarraInferiorMovil({ categorias }: { categorias: Categor
             </button>
           </div>
 
-          <div className="overflow-y-auto overscroll-contain px-5 pb-5">
+          <div className="overflow-y-auto overscroll-contain px-5 pb-10">
             {categorias.length > 0 ? (
               <ul className="grid grid-cols-3 gap-2.5">
                 {categorias.map((categoria, i) => {
@@ -268,12 +286,13 @@ export default function BarraInferiorMovil({ categorias }: { categorias: Categor
         </div>
       </div>
 
+      {/* Reserva el alto de la barra al final de la página, así el footer no queda tapado. */}
+      <div className="h-(--alto-barra-inferior)" aria-hidden />
+
       <nav
         aria-label="Navegación principal"
-        className="fixed inset-x-0 bottom-0 z-42 bg-gradient-to-r from-pico-azul-oscuro via-pico-azul to-pico-azul-oscuro pb-[env(safe-area-inset-bottom)] shadow-[0_-8px_24px_-12px_rgb(12_45_78/0.45)]"
+        className="fixed inset-x-0 bottom-0 z-42 border-t border-pico-blanco/10 bg-gradient-to-r from-pico-azul-oscuro via-pico-azul to-pico-azul-oscuro pb-[env(safe-area-inset-bottom)] shadow-[0_-10px_30px_-12px_var(--color-pico-azul-oscuro)]"
       >
-        {/* Filete rojo fino arriba, como el de la barra de categorías y el footer. */}
-        <span className="pointer-events-none absolute inset-x-0 top-0 h-0.5 bg-gradient-to-r from-transparent via-pico-rojo to-transparent" aria-hidden />
         <ul className="grid h-16 grid-cols-5 px-1">
           <li>{enlace("/", <Pestana icono={House} texto="Inicio" activa={activa === "inicio"} />, ruta === "/")}</li>
           <li>
@@ -285,6 +304,30 @@ export default function BarraInferiorMovil({ categorias }: { categorias: Categor
               className={clasePestana}
             >
               <Pestana icono={LayoutGrid} texto="Categorías" activa={activa === "categorias"} />
+            </button>
+          </li>
+          {/* Carrito al centro, donde cae el pulgar: botón rojo grande que sobresale de la barra. El aro azul
+              lo funde con la barra, como si saliera de ella. */}
+          <li>
+            <button
+              type="button"
+              onClick={() => {
+                setHojaAbierta(false);
+                abrirCarrito();
+              }}
+              aria-label={`Carrito (${cantidadTotal} ${cantidadTotal === 1 ? "producto" : "productos"})`}
+              className={`${clasePestana} justify-end pb-2`}
+            >
+              <span className="absolute -top-6 left-1/2 flex size-[60px] -translate-x-1/2 items-center justify-center rounded-chip bg-gradient-to-b from-pico-rojo to-pico-rojo-oscuro text-pico-blanco shadow-lg ring-[5px] shadow-pico-rojo/40 ring-pico-azul transition duration-200 motion-safe:group-hover:-translate-y-0.5 motion-safe:group-active:scale-95">
+                {/* key: el carrito "late" cada vez que cambia la cantidad. */}
+                <ShoppingCart key={cantidadTotal} className="size-7 motion-safe:animate-latido" strokeWidth={2.25} aria-hidden />
+                {cantidadTotal > 0 && (
+                  <span className="absolute -top-1 -right-1 flex min-w-[22px] items-center justify-center rounded-chip bg-pico-blanco px-1 text-[11px] leading-[22px] font-bold text-pico-rojo tabular-nums ring-2 ring-pico-rojo">
+                    {cantidadTotal > 99 ? "99+" : cantidadTotal}
+                  </span>
+                )}
+              </span>
+              <Etiqueta texto="Carrito" activa={activa === "carrito"} />
             </button>
           </li>
           <li>
@@ -299,19 +342,6 @@ export default function BarraInferiorMovil({ categorias }: { categorias: Categor
               />,
               ruta === "/favoritos",
             )}
-          </li>
-          <li>
-            <button
-              type="button"
-              onClick={() => {
-                setHojaAbierta(false);
-                abrirCarrito();
-              }}
-              aria-label={`Carrito (${cantidadTotal} ${cantidadTotal === 1 ? "producto" : "productos"})`}
-              className={clasePestana}
-            >
-              <Pestana icono={ShoppingCart} texto="Carrito" activa={activa === "carrito"} contador={cantidadTotal} />
-            </button>
           </li>
           <li>{enlace("/iniciar-sesion", <Pestana icono={UserRound} texto="Entrar" activa={activa === "entrar"} />, enCuenta)}</li>
         </ul>
