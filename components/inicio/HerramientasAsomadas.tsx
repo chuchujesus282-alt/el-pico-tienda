@@ -1,0 +1,175 @@
+"use client";
+
+import Image from "next/image";
+import { useEffect, useRef, useState } from "react";
+import type { CSSProperties } from "react";
+
+// PRUEBA (rama `prueba/animacion-herramientas`): herramientas reales que asoman por los cuatro bordes del
+// banner "Herramientas que rinden" del carrusel. Solo la monta BannerInicio cuando banner.id === "herramientas".
+// Fotos generadas con Higgsfield (GPT Image 2.5), sin fondo, en public/herramientas/ (ver CREDITOS.md).
+//
+// - Escritorio: entran al pasar el cursor (group-hover del enlace del banner), una tras otra con un rebote
+//   suave; se mecen mientras el cursor sigue encima y vuelven a salir al quitarlo. El carrusel ya se pausa solo
+//   con el cursor encima.
+// - Celular (sin hover): entran UNA sola vez cuando el banner se ve en pantalla y se quedan asomadas; el toque
+//   sigue llevando a la categoría.
+// - Movimiento reducido: aparecen ya en su sitio, sin desplazarse ni mecerse.
+// - Las fotos no se descargan hasta que el banner se ve en pantalla.
+
+type Borde = "arriba" | "abajo" | "izquierda" | "derecha";
+
+/** Tamaño real de cada foto (para next/image): el lado mayor mide 600 px. */
+const FOTOS = {
+  taladro: [462, 600],
+  martillo: [600, 415],
+  "llave-ajustable": [600, 352],
+  destornillador: [600, 371],
+  serrucho: [600, 396],
+  "cinta-metrica": [600, 499],
+  alicate: [256, 600],
+  esmeril: [600, 308],
+  nivel: [600, 264],
+  rodillo: [600, 494],
+  brocha: [600, 469],
+  palustre: [600, 516],
+  cuter: [600, 347],
+  "llave-tubo": [600, 564],
+  "caja-herramientas": [600, 414],
+} as const;
+
+type Pieza = {
+  foto: keyof typeof FOTOS;
+  borde: Borde;
+  /** Posición a lo largo del borde, en % (de izquierda a derecha, o de arriba abajo). */
+  en: number;
+  /** Ancho en escritorio, en px (en tableta y celular se reduce con --escala). */
+  tam: number;
+  giro: number;
+  /** Fracción de la herramienta que queda dentro del banner (0–1). */
+  asoma: number;
+  /** Más pequeña, desenfocada y tenue para dar profundidad. No sale en el celular. */
+  fondo?: boolean;
+};
+
+// El texto va a la izquierda y al centro: las del frente se quedan arriba, abajo y a la derecha, y las del
+// borde izquierdo asoman poco, van al fondo y quedan bajo el velo que protege el texto.
+const PIEZAS: Pieza[] = [
+  { foto: "taladro", borde: "arriba", en: 62, tam: 170, giro: 168, asoma: 0.62 },
+  { foto: "esmeril", borde: "derecha", en: 26, tam: 180, giro: -18, asoma: 0.55 },
+  { foto: "caja-herramientas", borde: "abajo", en: 76, tam: 170, giro: -7, asoma: 0.5 },
+  { foto: "serrucho", borde: "arriba", en: 86, tam: 175, giro: -148, asoma: 0.5 },
+  { foto: "martillo", borde: "derecha", en: 74, tam: 160, giro: 205, asoma: 0.5 },
+  { foto: "llave-tubo", borde: "abajo", en: 55, tam: 150, giro: 24, asoma: 0.42 },
+  { foto: "cinta-metrica", borde: "abajo", en: 7, tam: 120, giro: 14, asoma: 0.42 },
+  { foto: "palustre", borde: "izquierda", en: 84, tam: 125, giro: -30, asoma: 0.36 },
+  { foto: "llave-ajustable", borde: "izquierda", en: 16, tam: 120, giro: 32, asoma: 0.34, fondo: true },
+  { foto: "rodillo", borde: "arriba", en: 36, tam: 115, giro: 150, asoma: 0.45, fondo: true },
+  { foto: "alicate", borde: "derecha", en: 50, tam: 105, giro: -78, asoma: 0.45, fondo: true },
+  { foto: "cuter", borde: "abajo", en: 32, tam: 115, giro: -24, asoma: 0.4, fondo: true },
+  { foto: "brocha", borde: "arriba", en: 12, tam: 110, giro: 140, asoma: 0.38, fondo: true },
+  { foto: "destornillador", borde: "arriba", en: 74, tam: 105, giro: 118, asoma: 0.4, fondo: true },
+  { foto: "nivel", borde: "izquierda", en: 50, tam: 120, giro: 84, asoma: 0.28, fondo: true },
+];
+
+const RETRASO_MS = 55;
+
+/** Transformación fuera del banner (escondida) y asomada, según el borde por el que entra. */
+function transformaciones({ borde, giro, asoma }: Pieza) {
+  const dentro = `${((1 - asoma) * 100).toFixed(1)}%`;
+  const r = `rotate(${giro}deg)`;
+  switch (borde) {
+    case "arriba":
+      return { fuera: `translate(-50%, -150%) ${r}`, asomada: `translate(-50%, -${dentro}) ${r}` };
+    case "abajo":
+      return { fuera: `translate(-50%, 150%) ${r}`, asomada: `translate(-50%, ${dentro}) ${r}` };
+    case "izquierda":
+      return { fuera: `translate(-150%, -50%) ${r}`, asomada: `translate(-${dentro}, -50%) ${r}` };
+    case "derecha":
+      return { fuera: `translate(150%, -50%) ${r}`, asomada: `translate(${dentro}, -50%) ${r}` };
+  }
+}
+
+function posicion({ borde, en }: Pieza): CSSProperties {
+  if (borde === "arriba") return { top: 0, left: `${en}%` };
+  if (borde === "abajo") return { bottom: 0, left: `${en}%` };
+  if (borde === "izquierda") return { left: 0, top: `${en}%` };
+  return { right: 0, top: `${en}%` };
+}
+
+export default function HerramientasAsomadas() {
+  const capa = useRef<HTMLDivElement>(null);
+  // visible: el banner ya se vio en pantalla (se descargan las fotos). asomadas: en celular, entran solas una vez.
+  const [visible, setVisible] = useState(false);
+  const [asomadas, setAsomadas] = useState(false);
+
+  useEffect(() => {
+    const el = capa.current;
+    if (!el) return;
+    // El carrusel recorta con overflow:hidden: un banner que no es el actual no cuenta como visible.
+    const observador = new IntersectionObserver(
+      ([entrada]) => {
+        if (!entrada.isIntersecting) return;
+        setVisible(true);
+        if (window.matchMedia("(hover: none)").matches) {
+          setAsomadas(true);
+          observador.disconnect();
+        }
+      },
+      { threshold: 0.6 },
+    );
+    observador.observe(el);
+    return () => observador.disconnect();
+  }, []);
+
+  return (
+    <div
+      ref={capa}
+      data-asomadas={asomadas ? "si" : undefined}
+      className="group/capa pointer-events-none absolute inset-0 [--escala:0.5] md:[--escala:0.72] lg:[--escala:0.88] xl:[--escala:1]"
+      aria-hidden
+    >
+      {visible &&
+        PIEZAS.map((pieza, i) => {
+          const [ancho, alto] = FOTOS[pieza.foto];
+          const { fuera, asomada } = transformaciones(pieza);
+          return (
+            <span
+              key={pieza.foto}
+              style={
+                {
+                  ...posicion(pieza),
+                  width: `calc(${pieza.tam}px * var(--escala))`,
+                  "--fuera": fuera,
+                  "--asomada": asomada,
+                  "--retraso": `${i * RETRASO_MS}ms`,
+                } as CSSProperties
+              }
+              // Escondida fuera del borde; al pasar el cursor (o en celular, al verse) entra con rebote suave y su retraso.
+              // Al salir, todas a la vez y sin rebote. Con movimiento reducido solo aparece, ya en su sitio.
+              className={`absolute block opacity-0 [transform:var(--fuera)] transition-[transform,opacity] duration-500 ease-in [transition-delay:0ms] group-hover:opacity-100 group-hover:[transform:var(--asomada)] group-hover:duration-700 group-hover:ease-[cubic-bezier(0.34,1.45,0.64,1)] group-hover:[transition-delay:var(--retraso)] group-data-[asomadas=si]/capa:opacity-100 group-data-[asomadas=si]/capa:[transform:var(--asomada)] group-data-[asomadas=si]/capa:duration-700 group-data-[asomadas=si]/capa:ease-[cubic-bezier(0.34,1.45,0.64,1)] group-data-[asomadas=si]/capa:[transition-delay:var(--retraso)] motion-reduce:[transform:var(--asomada)] motion-reduce:transition-opacity motion-reduce:duration-200 ${
+                pieza.fondo ? "hidden md:block" : ""
+              }`}
+            >
+              {/* Vaivén muy suave mientras están asomadas (pausado cuando están escondidas). */}
+              <span
+                className="block [animation-play-state:paused] group-hover:[animation-play-state:running] group-data-[asomadas=si]/capa:[animation-play-state:running] motion-safe:animate-flotar"
+                style={{ animationDelay: `-${(i * 0.7).toFixed(1)}s`, animationDuration: `${5 + (i % 4)}s` }}
+              >
+                <Image
+                  src={`/herramientas/${pieza.foto}.webp`}
+                  alt=""
+                  width={ancho}
+                  height={alto}
+                  sizes={`(min-width: 1280px) ${pieza.tam}px, (min-width: 1024px) ${Math.round(pieza.tam * 0.88)}px, (min-width: 768px) ${Math.round(pieza.tam * 0.72)}px, ${Math.round(pieza.tam * 0.5)}px`}
+                  className={`h-auto w-full drop-shadow-lg drop-shadow-pico-azul-oscuro/70 ${pieza.fondo ? "opacity-60 blur-[1.5px]" : ""}`}
+                />
+              </span>
+            </span>
+          );
+        })}
+
+      {/* Velo azul sobre las herramientas de la izquierda: el título, el texto y el botón siempre se leen. */}
+      <div className="absolute inset-y-0 left-0 w-[85%] bg-gradient-to-r from-pico-azul-oscuro/90 via-pico-azul-oscuro/55 to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100 group-data-[asomadas=si]/capa:opacity-100 md:w-[65%]" />
+    </div>
+  );
+}

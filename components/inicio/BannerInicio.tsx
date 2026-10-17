@@ -3,6 +3,7 @@ import Link from "next/link";
 import { ChevronRight } from "lucide-react";
 import type { ReactNode } from "react";
 import type { BannerInicio as DatosBanner, VarianteBanner } from "./contenidoInicio";
+import HerramientasAsomadas from "./HerramientasAsomadas";
 
 type Props = {
   banner: DatosBanner;
@@ -106,6 +107,8 @@ export default function BannerInicio({ banner, sizes, tamano = "normal", priorit
               />
             </span>
           )}
+          {/* PRUEBA: herramientas que asoman por los bordes, solo en el banner de herramientas del carrusel. */}
+          {grande && banner.id === "herramientas" && <HerramientasAsomadas />}
           <span
             className={`relative h-1 -skew-x-12 rounded-sm bg-pico-rojo transition-all duration-300 group-hover:w-14 ${
               grande ? "w-10 lg:w-14 lg:group-hover:w-20" : lateral ? "hidden w-8 sm:block" : "w-10 lg:w-12 lg:group-hover:w-16"
