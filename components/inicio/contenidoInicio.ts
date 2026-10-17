@@ -15,6 +15,11 @@ export type BannerInicio = Omit<Banner, "imagen"> & {
   textoBoton?: string;
   variante?: VarianteBanner;
   icono?: LucideIcon;
+  /**
+   * Título en dos tiempos (solo carrusel principal): la frase y la palabra clave, que va enorme sobre un bloque
+   * rojo. Debe decir lo mismo que `titulo`, que se sigue usando como nombre del banner.
+   */
+  tituloPartes?: [string, string];
   /** Chips cortos bajo el texto (solo en el carrusel principal, desde tableta). */
   etiquetas?: string[];
 };
@@ -48,6 +53,7 @@ export const bannersPrincipales: BannerInicio[] = [
     alt: "Herramientas en El Pico",
     href: "/categoria/herramientas",
     titulo: "Herramientas que rinden",
+    tituloPartes: ["Herramientas que", "rinden"],
     texto: "Taladros, esmeriles y herramientas manuales para cada trabajo.",
     textoBoton: "Ver herramientas",
     variante: "oscuro",

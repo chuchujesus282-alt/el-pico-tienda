@@ -79,6 +79,13 @@ const PIEZAS: Pieza[] = [
 
 const RETRASO_MS = 28;
 
+/** Partes del rotomartillo que se señalan al pasar el cursor (posición en % de su imagen). */
+const SENALES: { texto: string; x: number; y: number; lado: "izquierda" | "derecha" }[] = [
+  { texto: "Mandril SDS", x: 29, y: 15, lado: "izquierda" },
+  { texto: "Empuñadura auxiliar", x: 22, y: 62, lado: "izquierda" },
+  { texto: "Batería", x: 86, y: 74, lado: "derecha" },
+];
+
 /**
  * Transformación fuera del banner (escondida) y asomada, según el borde por el que entra. Afuera va más
  * pequeña y girada de más: al entrar "se clava" en su sitio con un giro corto, no solo se desliza.
@@ -256,6 +263,29 @@ export default function HerramientasAsomadas() {
             className={`h-auto w-full drop-shadow-2xl ${fondo === "corte" ? "drop-shadow-pico-azul/45" : "drop-shadow-pico-azul-oscuro"}`}
           />
         </span>
+        {/* Ficha técnica: al pasar el cursor, señaladores rojos nombran las partes del rotomartillo, como en un
+            catálogo. Solo desde 1024px (en pantallas chicas no caben). */}
+        {SENALES.map((s, i) => (
+          <span
+            key={s.texto}
+            className="absolute hidden lg:block"
+            style={{ left: `${s.x}%`, top: `${s.y}%`, "--retraso": `${380 + i * 90}ms` } as CSSProperties}
+          >
+            <span className="absolute -top-1.5 -left-1.5 size-3 scale-0 rounded-chip bg-pico-rojo ring-4 ring-pico-rojo/25 transition-transform duration-300 group-hover:scale-100 group-hover:[transition-delay:var(--retraso)] motion-reduce:transition-none" />
+            <span
+              className={`absolute top-0 h-px w-14 scale-x-0 bg-pico-rojo transition-transform duration-300 group-hover:scale-x-100 group-hover:[transition-delay:var(--retraso)] motion-reduce:transition-none ${
+                s.lado === "izquierda" ? "right-0 origin-right" : "left-0 origin-left"
+              }`}
+            />
+            <span
+              className={`absolute -top-3 rounded-chip bg-pico-azul px-2.5 py-1 text-[11px] leading-none font-bold tracking-[0.08em] whitespace-nowrap text-pico-blanco uppercase opacity-0 shadow-tarjeta-hover transition duration-300 group-hover:opacity-100 group-hover:[transition-delay:calc(var(--retraso)+120ms)] ${
+                s.lado === "izquierda" ? "right-15" : "left-15"
+              }`}
+            >
+              {s.texto}
+            </span>
+          </span>
+        ))}
         {/* Sombra en el "piso", para que se note que flota. */}
         <span className={`absolute -bottom-[8%] left-1/2 -z-10 h-[9%] w-[55%] -translate-x-1/2 rounded-chip blur-xl ${fondo === "corte" ? "bg-pico-azul/35" : "bg-pico-azul-oscuro/80"}`} />
       </div>

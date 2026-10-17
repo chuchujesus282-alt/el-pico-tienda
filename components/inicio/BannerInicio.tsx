@@ -109,6 +109,21 @@ export default function BannerInicio({ banner, sizes, tamano = "normal", priorit
           )}
           {/* PRUEBA: herramientas que asoman por los bordes, solo en el banner de herramientas del carrusel. */}
           {grande && banner.id === "herramientas" && <HerramientasAsomadas />}
+          {grande && banner.tituloPartes ? (
+            // Título en dos tiempos: la frase en una línea y la palabra clave enorme, en mayúsculas, sobre un
+            // bloque rojo inclinado (el filete de la marca hecho sello) que se estira al pasar el mouse.
+            <p className={`relative font-bold ${estilo.titulo}`}>
+              <span className="block text-lg leading-none md:text-3xl lg:text-4xl">{banner.tituloPartes[0]}</span>
+              <span className="relative isolate mt-2 inline-block px-2.5 pt-1 text-5xl leading-[0.92] tracking-[-0.02em] uppercase md:mt-3 md:px-4 md:text-7xl lg:text-8xl">
+                <span
+                  className="absolute inset-0 -z-10 origin-left -skew-x-12 rounded-sm bg-pico-rojo shadow-boton-hover transition-transform duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] motion-safe:group-hover:scale-x-[1.08]"
+                  aria-hidden
+                />
+                {banner.tituloPartes[1]}
+              </span>
+            </p>
+          ) : (
+          <>
           <span
             className={`relative h-1 -skew-x-12 rounded-sm bg-pico-rojo transition-all duration-300 group-hover:w-14 ${
               grande ? "w-10 lg:w-14 lg:group-hover:w-20" : lateral ? "hidden w-8 sm:block" : "w-10 lg:w-12 lg:group-hover:w-16"
@@ -127,11 +142,13 @@ export default function BannerInicio({ banner, sizes, tamano = "normal", priorit
             {banner.titulo}
             {lateral && <ChevronRight className="ml-0.5 inline size-4 align-[-2px] sm:hidden" aria-hidden />}
           </p>
+          </>
+          )}
           {banner.texto && (
             // En el banner grande y en móvil se omite el texto: no cabe con el título y el botón.
             <p
               className={`relative max-w-[75%] text-sm ${estilo.texto} ${
-                grande ? "hidden sm:line-clamp-2 md:text-base lg:max-w-[50%] lg:text-lg" : lateral ? "hidden sm:line-clamp-2" : "line-clamp-3 md:text-base lg:text-lg"
+                grande ? `hidden sm:line-clamp-2 md:text-base lg:max-w-[50%] lg:text-lg ${banner.tituloPartes ? "md:max-w-[50%]" : ""}` : lateral ? "hidden sm:line-clamp-2" : "line-clamp-3 md:text-base lg:text-lg"
               }`}
             >
               {banner.texto}
