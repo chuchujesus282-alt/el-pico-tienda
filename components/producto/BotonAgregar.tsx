@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { Check, Plus } from "lucide-react";
 import { useCarrito } from "@/components/carrito/ProveedorCarrito";
+import { volarAlCarrito } from "@/components/carrito/volarAlCarrito";
 import type { Producto } from "@/types/catalogo";
 
 const MS_AGREGADO = 1400;
@@ -25,7 +26,9 @@ export default function BotonAgregar({ producto }: { producto: Producto }) {
   return (
     <button
       type="button"
-      onClick={() => {
+      onClick={(e) => {
+        // La foto de la tarjeta vuela en arco hasta el carrito; el contador sube con su número rodando.
+        volarAlCarrito(e.currentTarget.closest("article"));
         agregar(producto);
         setAgregado(true);
       }}

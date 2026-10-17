@@ -20,6 +20,7 @@ import { useDirecciones } from "@/components/direcciones/almacenDirecciones";
 import { tituloProducto } from "@/lib/formato";
 import ImagenProducto from "@/components/producto/ImagenProducto";
 import Precio from "@/components/ui/Precio";
+import PrecioAnimado from "@/components/ui/PrecioAnimado";
 import { registrarSenales } from "@/lib/recomendaciones/almacenPerfil";
 import { enlaceWhatsApp, totalCarrito } from "@/lib/whatsapp";
 import type { ItemCarrito } from "@/types/carrito";
@@ -376,7 +377,7 @@ export default function FormularioPedido({ itemsDirectos }: Props) {
                 <span className="block text-sm font-semibold text-logo-marino">Total referencial</span>
                 <span className="block text-xs text-gris-texto">en dólares</span>
               </span>
-              <Precio valor={totalCarrito(items)} tamano="grande" tono="logo" className="text-4xl tracking-tight tabular-nums md:text-[2.75rem]" />
+              <PrecioAnimado valor={totalCarrito(items)} tamano="grande" tono="logo" className="text-4xl tracking-tight tabular-nums md:text-[2.75rem]" />
             </div>
 
             <div className="mt-4">

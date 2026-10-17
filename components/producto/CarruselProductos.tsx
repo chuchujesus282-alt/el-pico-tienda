@@ -4,6 +4,7 @@ import { useRef } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import TituloSeccion from "@/components/ui/TituloSeccion";
 import type { Producto } from "@/types/catalogo";
+import Revelar from "@/components/ui/Revelar";
 import ProductCard from "./ProductCard";
 
 type Props = {
@@ -49,12 +50,14 @@ export default function CarruselProductos({ titulo, productos, href, className =
         ref={fila}
         className="sin-scrollbar -mx-[var(--margen-pagina)] flex snap-x snap-mandatory scroll-px-[var(--margen-pagina)] gap-3 overflow-x-auto px-[var(--margen-pagina)] pt-1 pb-3 md:mx-0 md:scroll-px-0 md:gap-4 md:px-0"
       >
-        {productos.map((producto) => (
+        {productos.map((producto, i) => (
           <li
             key={producto.id}
             className="shrink-0 basis-[46%] snap-start md:basis-[calc((100%-2*1rem)/3)] lg:basis-[calc((100%-4*1rem)/5)] 2xl:basis-[calc((100%-5*1rem)/6)]"
           >
-            <ProductCard producto={producto} />
+            <Revelar className="h-full" retraso={Math.min(i, 6) * 50}>
+              <ProductCard producto={producto} />
+            </Revelar>
           </li>
         ))}
       </ul>

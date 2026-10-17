@@ -3,6 +3,7 @@
 import { Check, Info, Minus, Plus, Printer, Ruler, ShoppingCart } from "lucide-react";
 import ImagenProducto from "@/components/producto/ImagenProducto";
 import Precio from "@/components/ui/Precio";
+import PrecioAnimado from "@/components/ui/PrecioAnimado";
 import { formatearPrecio, tituloProducto } from "@/lib/formato";
 import type { Dato } from "@/lib/calculadoras/tipos";
 import type { TasaBCV } from "@/types/tasa";
@@ -140,7 +141,7 @@ export default function ResumenProyecto({ lineas, datos, tasa, sinCalculo, recie
           <span className="text-sm font-semibold text-pico-azul">Total referencial</span>
           <span className="text-right">
             <span key={totalUsd} className="block motion-safe:animate-latido">
-              <Precio valor={totalUsd} tamano="grande" className="md:text-3xl" />
+              <PrecioAnimado valor={totalUsd} tamano="grande" className="tabular-nums md:text-3xl" />
             </span>
             {tasa && totalUsd > 0 && (
               <span className="block text-xs font-medium text-gris-texto tabular-nums">≈ Bs. {formatoBs.format(totalUsd * tasa.tasa)} a tasa BCV</span>

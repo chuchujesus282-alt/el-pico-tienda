@@ -6,6 +6,7 @@ import Link from "next/link";
 import { ArrowRight, Check, Minus, Plus, ShoppingBag, ShoppingCart } from "lucide-react";
 import { useCarrito } from "@/components/carrito/ProveedorCarrito";
 import Precio from "@/components/ui/Precio";
+import { volarAlCarrito } from "@/components/carrito/volarAlCarrito";
 import type { Producto } from "@/types/catalogo";
 
 const sinSuscripcion = () => () => {};
@@ -39,6 +40,8 @@ export default function AccionesCompra({ producto }: { producto: Producto }) {
   const cambiar = (valor: number) => setCantidad(Math.min(CANTIDAD_MAXIMA, Math.max(1, Math.floor(valor) || 1)));
 
   const alAgregar = () => {
+    // La foto de la galería vuela hasta el carrito.
+    volarAlCarrito(document.querySelector("main [aria-label^=\"Ampliar imagen\"]"));
     agregar(producto, cantidad);
     setAgregado(true);
   };

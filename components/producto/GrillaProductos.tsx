@@ -1,4 +1,5 @@
 import type { Producto } from "@/types/catalogo";
+import Revelar from "@/components/ui/Revelar";
 import ProductCard from "./ProductCard";
 import ProductCardEsqueleto from "./ProductCardEsqueleto";
 
@@ -35,7 +36,10 @@ export default function GrillaProductos({
           ))
         : productos.map((producto, i) => (
             <li key={producto.id}>
-              <ProductCard producto={producto} prioritario={i < PRIORITARIAS} />
+              {/* Aparecen en cascada por fila al bajar (50ms entre tarjetas). */}
+              <Revelar className="h-full" retraso={(i % 5) * 50}>
+                <ProductCard producto={producto} prioritario={i < PRIORITARIAS} />
+              </Revelar>
             </li>
           ))}
       </ul>

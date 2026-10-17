@@ -480,3 +480,128 @@ p {
 .lucide[stroke-width="2"] {
   stroke-width: 1.75;
 }
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   Animaciones de la fase 3 (todas detrás de prefers-reduced-motion: sin movimiento, todo queda quieto y visible).
+   ───────────────────────────────────────────────────────────────────────────── */
+
+/* Título de sección (TituloSeccion dentro de Revelar): la barrita roja se dibuja y luego entra el texto. */
+.titulo-barra {
+  transform-origin: bottom;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .titulo-barra {
+    transition: scale 0.5s var(--curva-suave) 0.1s;
+  }
+  .titulo-texto {
+    transition:
+      opacity 0.5s var(--curva-suave) 0.3s,
+      translate 0.5s var(--curva-suave) 0.3s;
+  }
+  [data-estado="oculto"] .titulo-barra {
+    scale: 1 0;
+  }
+  [data-estado="oculto"] .titulo-texto {
+    opacity: 0;
+    translate: -8px 0;
+  }
+}
+
+/* Banner grande del inicio: al quedar activa la diapositiva, su texto entra en cascada
+   (barra roja → título → texto → botón) y el plano hace un acercamiento lento (Ken Burns). */
+@keyframes kenburns {
+  from {
+    scale: 1;
+    translate: 0 0;
+  }
+  to {
+    scale: 1.07;
+    translate: -6px -4px;
+  }
+}
+@media (prefers-reduced-motion: no-preference) {
+  [data-activa] .hero-cascada > :nth-child(n + 2) {
+    animation: aparecer 0.7s var(--curva-suave) both;
+  }
+  [data-activa] .hero-cascada > :nth-child(3) {
+    animation-delay: 0.08s;
+  }
+  [data-activa] .hero-cascada > :nth-child(4) {
+    animation-delay: 0.16s;
+  }
+  [data-activa] .hero-cascada > :nth-child(5) {
+    animation-delay: 0.24s;
+  }
+  [data-activa] .hero-cascada .plano-dibujo {
+    animation: kenburns 9s ease-out both;
+  }
+}
+
+/* Favorito: estallido de partículas rojas alrededor del corazón (BotonFavorito). */
+@keyframes estallido {
+  /* Sale rápido, se queda un instante a la vista y se apaga. */
+  0% {
+    opacity: 1;
+    transform: rotate(var(--angulo)) translateY(-6px) scale(1);
+  }
+  35% {
+    opacity: 1;
+    transform: rotate(var(--angulo)) translateY(-17px) scale(0.85);
+  }
+  65% {
+    opacity: 1;
+    transform: rotate(var(--angulo)) translateY(-19px) scale(0.6);
+  }
+  100% {
+    opacity: 0;
+    transform: rotate(var(--angulo)) translateY(-21px) scale(0.3);
+  }
+}
+.particula {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 5px;
+  height: 5px;
+  margin: -2.5px 0 0 -2.5px;
+  border-radius: 9999px;
+  background: var(--color-pico-rojo);
+  opacity: 0;
+  pointer-events: none;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .particula {
+    animation: estallido 0.75s linear both;
+  }
+}
+
+/* Contador del carrito: el número nuevo entra rodando desde abajo. */
+@keyframes rodar {
+  from {
+    opacity: 0;
+    transform: translateY(70%);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .numero-rodante {
+    display: inline-block;
+    animation: rodar 0.35s var(--curva-suave) both;
+  }
+}
+
+/* Cambio de página (app/template.tsx): fundido corto, solo opacidad (no encierra a los elementos fijos). */
+@keyframes fundido {
+  from {
+    opacity: 0;
+  }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .transicion-pagina {
+    /* backwards (no both): al terminar deja de aplicarse y no queda una capa que tape modales bajo el header. */
+    animation: fundido 0.35s var(--curva-suave) backwards;
+  }
+}

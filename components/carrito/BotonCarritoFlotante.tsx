@@ -2,8 +2,8 @@
 
 import { useSyncExternalStore } from "react";
 import { createPortal } from "react-dom";
-import { ShoppingCart } from "lucide-react";
 import { useCarrito } from "./ProveedorCarrito";
+import IconoCarrito from "@/components/icons/pico/IconoCarrito";
 
 const sinSuscripcion = () => () => {};
 
@@ -34,14 +34,16 @@ export default function BotonCarritoFlotante({ visible }: { visible: boolean }) 
           : "pointer-events-none -translate-y-24 scale-90 opacity-0 motion-reduce:translate-y-0 motion-reduce:scale-100"
       }`}
     >
-      <ShoppingCart className="size-6 motion-safe:group-hover:animate-sacudir" aria-hidden />
+      <span data-destino-carrito className="grupo-icono flex">
+        <IconoCarrito className="size-8" />
+      </span>
       {cantidadTotal > 0 && (
         // key: cada vez que cambia la cantidad, el contador vuelve a montarse y "late".
         <span
           key={cantidadTotal}
           className="absolute -top-1 -right-1 flex min-w-6 items-center justify-center rounded-chip bg-pico-rojo px-1 text-xs leading-6 font-bold text-pico-blanco tabular-nums ring-2 ring-pico-blanco motion-safe:animate-latido"
         >
-          {cantidadTotal > 99 ? "99+" : cantidadTotal}
+          <span className="numero-rodante">{cantidadTotal > 99 ? "99+" : cantidadTotal}</span>
         </span>
       )}
     </button>,

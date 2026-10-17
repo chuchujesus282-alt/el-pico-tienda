@@ -5,7 +5,7 @@ import { createPortal } from "react-dom";
 import { ChevronDown, ChevronUp, CircleHelp, ShoppingCart, X } from "lucide-react";
 import { useCarrito } from "@/components/carrito/ProveedorCarrito";
 import { useTasaBCV } from "@/components/layout/TasaBCV";
-import Precio from "@/components/ui/Precio";
+import PrecioAnimado from "@/components/ui/PrecioAnimado";
 import type { IdMaterial } from "@/lib/calculadoras/materiales";
 import { medidasCompletas, obtenerCalculadora, opcionesIniciales } from "@/lib/calculadoras/registro";
 import type { Calculadora, Campo } from "@/lib/calculadoras/tipos";
@@ -279,7 +279,7 @@ function Proyecto({ calculadora, productos }: { calculadora: Calculadora; produc
                       <span className="block text-xs font-semibold text-gris-texto">
                         Ver resumen · {articulos} {articulos === 1 ? "artículo" : "artículos"}
                       </span>
-                      <Precio valor={totalUsd} />
+                      <PrecioAnimado valor={totalUsd} />
                     </span>
                   </button>
                   <button

@@ -291,14 +291,14 @@ export default function BarraInferiorMovil({ categorias }: { categorias: Categor
               aria-label={`Carrito (${cantidadTotal} ${cantidadTotal === 1 ? "producto" : "productos"})`}
               className={`${clasePestana} justify-end pb-2`}
             >
-              <span className="absolute -top-6 left-1/2 flex size-[60px] -translate-x-1/2 items-center justify-center rounded-chip bg-gradient-to-b from-pico-rojo to-pico-rojo-oscuro text-pico-blanco shadow-lg ring-[5px] shadow-pico-rojo/40 ring-pico-azul transition duration-200 motion-safe:group-hover:-translate-y-0.5 motion-safe:group-active:scale-95">
+              <span data-destino-carrito className="absolute -top-6 left-1/2 flex size-[60px] -translate-x-1/2 items-center justify-center rounded-chip bg-gradient-to-b from-pico-rojo to-pico-rojo-oscuro text-pico-blanco shadow-lg ring-[5px] shadow-pico-rojo/40 ring-pico-azul transition duration-200 motion-safe:group-hover:-translate-y-0.5 motion-safe:group-active:scale-95">
                 {/* key: el carrito "late" cada vez que cambia la cantidad. */}
                 <span key={cantidadTotal} className="flex [--icono-acento:var(--color-pico-blanco)] motion-safe:animate-latido">
                   <IconoCarrito className="size-8" />
                 </span>
                 {cantidadTotal > 0 && (
                   <span className="absolute -top-1 -right-1 flex min-w-[22px] items-center justify-center rounded-chip bg-pico-blanco px-1 text-[11px] leading-[22px] font-bold text-pico-rojo tabular-nums ring-2 ring-pico-rojo">
-                    {cantidadTotal > 99 ? "99+" : cantidadTotal}
+                    <span className="numero-rodante">{cantidadTotal > 99 ? "99+" : cantidadTotal}</span>
                   </span>
                 )}
               </span>

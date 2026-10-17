@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import type { ReactNode } from "react";
+import Revelar from "./Revelar";
 
 type Props = {
   titulo: string;
@@ -27,11 +28,12 @@ export default function TituloSeccion({
   className = "",
 }: Props) {
   return (
-    <div className={`flex items-center justify-between gap-4 ${subtitulo ? "mb-5 md:mb-6" : "mb-4"} ${className}`}>
+    // Al entrar en pantalla (Revelar), la barrita roja se dibuja primero y luego aparece el texto (globals.css).
+    <Revelar className={`flex items-center justify-between gap-4 ${subtitulo ? "mb-5 md:mb-6" : "mb-4"} ${className}`}>
       <div className="min-w-0">
-        <Etiqueta className="flex items-center gap-2.5 text-xl font-bold text-pico-azul md:text-2xl">
-          <span className="h-6 w-1.5 shrink-0 -skew-x-12 rounded-sm bg-pico-rojo md:h-7" aria-hidden />
-          {titulo}
+        <Etiqueta className="flex items-center gap-2.5 text-xl font-bold tracking-tight text-pico-azul md:text-2xl">
+          <span className="titulo-barra h-6 w-1.5 shrink-0 -skew-x-12 rounded-sm bg-pico-rojo md:h-7" aria-hidden />
+          <span className="titulo-texto">{titulo}</span>
         </Etiqueta>
         {subtitulo && <p className="mt-1 pl-4 text-sm text-gris-texto">{subtitulo}</p>}
       </div>
@@ -49,6 +51,6 @@ export default function TituloSeccion({
           {acciones}
         </div>
       )}
-    </div>
+    </Revelar>
   );
 }

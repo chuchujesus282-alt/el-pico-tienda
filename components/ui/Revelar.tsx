@@ -12,7 +12,9 @@ type Props = {
 type Estado = "visible" | "oculto" | "revelado";
 
 /**
- * Hace aparecer su contenido (sube y se aclara) cuando entra en pantalla al bajar.
+ * Hace aparecer su contenido (sube 16px y se aclara) cuando entra en pantalla al bajar, una sola vez.
+ * Expone data-estado ("visible" | "oculto" | "revelado") para que las piezas de adentro coreografíen su entrada
+ * (ej. el título de sección dibuja su barra roja antes del texto).
  * - Del servidor llega visible: si el JavaScript no carga, nada queda escondido.
  * - Solo se esconde lo que está fuera de pantalla al cargar; lo de arriba no parpadea.
  * - Con "reducir movimiento" del sistema, no anima.
@@ -48,9 +50,10 @@ export default function Revelar({ children, className = "", retraso = 0 }: Props
   return (
     <div
       ref={ref}
+      data-estado={estado}
       style={estado === "revelado" && retraso ? { transitionDelay: `${retraso}ms` } : undefined}
-      className={`${estado === "oculto" ? "translate-y-6 opacity-0" : "translate-y-0 opacity-100"} ${
-        estado === "visible" ? "" : "transition duration-700 ease-out"
+      className={`${estado === "oculto" ? "translate-y-4 opacity-0" : "translate-y-0 opacity-100"} ${
+        estado === "visible" ? "" : "transition duration-700 ease-(--curva-suave)"
       } ${className}`}
     >
       {children}

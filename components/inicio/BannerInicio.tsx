@@ -93,7 +93,7 @@ export default function BannerInicio({ banner, sizes, tamano = "normal", priorit
           className="object-cover transition-transform duration-300 group-hover:scale-[1.02]"
         />
       ) : (
-        <div className={`relative flex h-full flex-col justify-center gap-2 ${
+        <div className={`relative flex h-full flex-col justify-center gap-2 ${grande ? "hero-cascada " : ""}${
           grande ? "p-5 md:gap-3 md:px-16 md:py-10 lg:gap-4 lg:px-24 2xl:px-28" : lateral ? "p-4 sm:p-5 md:p-6" : "gap-3 p-6 md:p-10 lg:px-12"
         }`}>
           {Icono && (

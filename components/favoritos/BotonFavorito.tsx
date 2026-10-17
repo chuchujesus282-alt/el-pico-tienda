@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import type { CSSProperties } from "react";
 import { Heart } from "lucide-react";
 import { useFavoritos } from "./almacenFavoritos";
 
@@ -15,6 +16,17 @@ type Props = {
   variante?: "tarjeta" | "chip";
   className?: string;
 };
+
+/** Ocho partículas rojas que salen del corazón al marcarlo (.particula en globals.css; quietas sin movimiento). */
+function Estallido() {
+  return (
+    <span className="pointer-events-none absolute inset-0" aria-hidden>
+      {[0, 45, 90, 135, 180, 225, 270, 315].map((angulo) => (
+        <span key={angulo} className="particula" style={{ "--angulo": `${angulo}deg` } as CSSProperties} />
+      ))}
+    </span>
+  );
+}
 
 /** Marca o quita un producto de los favoritos del cliente (se guardan en su navegador). */
 export default function BotonFavorito({ productoId, titulo, variante = "tarjeta", className = "" }: Props) {
@@ -50,7 +62,10 @@ export default function BotonFavorito({ productoId, titulo, variante = "tarjeta"
             : "border-gris-borde bg-pico-blanco text-logo-marino hover:border-logo-marino hover:bg-logo-marino-claro"
         } ${className}`}
       >
-        {corazon}
+        <span className="relative flex">
+          {corazon}
+          {activo && toques > 0 && <Estallido key={toques} />}
+        </span>
         {activo ? "Guardado" : "Guardar"}
       </button>
     );
@@ -69,6 +84,7 @@ export default function BotonFavorito({ productoId, titulo, variante = "tarjeta"
         }`}
       >
         {corazon}
+        {activo && toques > 0 && <Estallido key={toques} />}
       </button>
     </div>
   );
