@@ -41,7 +41,9 @@ export default function BotonFavorito({ productoId, titulo, variante = "tarjeta"
 
   const corazon = (
     <Heart
-      key={activo ? toques : "vacio"}
+      // Claves con prefijo propio: el corazón y el estallido son hermanos, y si compartieran la misma clave
+      // (ej. las dos "1") React no sabría cuál quitar y se quedarían corazones viejos al desmarcar.
+      key={activo ? `corazon-${toques}` : "corazon-vacio"}
       className={`transition-colors duration-200 ${variante === "chip" ? "size-3.5" : "size-[18px]"} ${
         activo ? "fill-pico-rojo text-pico-rojo motion-safe:animate-latido" : ""
       }`}
@@ -64,7 +66,7 @@ export default function BotonFavorito({ productoId, titulo, variante = "tarjeta"
       >
         <span className="relative flex">
           {corazon}
-          {activo && toques > 0 && <Estallido key={toques} />}
+          {activo && toques > 0 && <Estallido key={`estallido-${toques}`} />}
         </span>
         {activo ? "Guardado" : "Guardar"}
       </button>
@@ -84,7 +86,7 @@ export default function BotonFavorito({ productoId, titulo, variante = "tarjeta"
         }`}
       >
         {corazon}
-        {activo && toques > 0 && <Estallido key={toques} />}
+        {activo && toques > 0 && <Estallido key={`estallido-${toques}`} />}
       </button>
     </div>
   );
