@@ -23,6 +23,16 @@
   --color-estrella: #f2a516;
   --color-estado-abierto: #15803d;
 
+  /* Colores de pintura del banner "Renueva tus espacios" (PRUEBA, rama prueba/animacion-herramientas).
+     Son muestras de producto, no colores de marca: no usarlos en otras piezas. Todos llevan texto blanco (≥4,5:1). */
+  --color-pintura-terracota: #b4532a;
+  --color-pintura-petroleo: #0f6b66;
+  --color-pintura-azul: #1d4fa8;
+  --color-pintura-mostaza: #a8640a;
+  /* Concreto del banner "Todo para tu obra" (PRUEBA): gris cálido de bloque. */
+  --color-concreto: #d9d6d0;
+  --color-concreto-oscuro: #b9b4ab;
+
   --radius-tarjeta: 12px;
   --radius-boton: 8px;
   --radius-banner: 16px;
@@ -41,6 +51,12 @@
   --animate-sacudir: sacudir 0.5s ease-in-out;
   --animate-destello: destello 4s ease-in-out infinite;
   --animate-deriva: flotar 14s ease-in-out infinite;
+  /* PRUEBA (banners del inicio): bloque que brinca y vuelve a asentarse, polvo al caer, franja de pintura que
+     se revela de izquierda a derecha y rodillo que la recorre (los dos con la misma curva para ir juntos) y se retira al terminar. */
+  --animate-brinco: brinco 0.55s cubic-bezier(0.34, 1.56, 0.64, 1);
+  --animate-polvo: polvo 0.9s ease-out forwards;
+  --animate-pintar: pintar 1.15s cubic-bezier(0.65, 0, 0.35, 1) both;
+  --animate-rodar: rodar 1.15s cubic-bezier(0.65, 0, 0.35, 1) both;
 
   @keyframes aparecer {
     from {
@@ -75,6 +91,44 @@
     60%,
     100% {
       transform: translateX(400%);
+    }
+  }
+  @keyframes brinco {
+    40% {
+      transform: translateY(-22%) rotate(-2deg);
+    }
+  }
+  @keyframes polvo {
+    from {
+      opacity: 0.75;
+      transform: translateX(-50%) scale(0.3);
+    }
+    to {
+      opacity: 0;
+      transform: translateX(-50%) scale(1.7);
+    }
+  }
+  @keyframes pintar {
+    from {
+      clip-path: inset(0 100% 0 0);
+    }
+    to {
+      clip-path: inset(0 0 0 0);
+    }
+  }
+  /* --desde y --hasta los define quien la usa (posiciones del rodillo al empezar y al terminar). */
+  @keyframes rodar {
+    from {
+      opacity: 0;
+      transform: translateX(var(--desde));
+    }
+    8%,
+    82% {
+      opacity: 1;
+    }
+    to {
+      opacity: 0;
+      transform: translateX(var(--hasta));
     }
   }
   /* Pequeña sacudida para íconos al pasar el mouse (carrito, WhatsApp). */

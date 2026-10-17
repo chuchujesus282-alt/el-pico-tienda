@@ -4,6 +4,8 @@ import { ChevronRight } from "lucide-react";
 import type { ReactNode } from "react";
 import type { BannerInicio as DatosBanner, VarianteBanner } from "./contenidoInicio";
 import HerramientasAsomadas from "./HerramientasAsomadas";
+import ObraSeLevanta from "./ObraSeLevanta";
+import PinturaEnMovimiento from "./PinturaEnMovimiento";
 
 type Props = {
   banner: DatosBanner;
@@ -109,14 +111,21 @@ export default function BannerInicio({ banner, sizes, tamano = "normal", priorit
           )}
           {/* PRUEBA: herramientas que asoman por los bordes, solo en el banner de herramientas del carrusel. */}
           {grande && banner.id === "herramientas" && <HerramientasAsomadas />}
+          {/* PRUEBA: modelos A (obra) y B (pinturas) para elegir el estilo del carrusel. */}
+          {grande && banner.id === "obra" && <ObraSeLevanta />}
+          {grande && banner.id === "pinturas" && <PinturaEnMovimiento />}
           {grande && banner.tituloPartes ? (
             // Título en dos tiempos: la frase en una línea y la palabra clave enorme, en mayúsculas, sobre un
             // bloque rojo inclinado (el filete de la marca hecho sello) que se estira al pasar el mouse.
             <p className={`relative font-bold ${estilo.titulo}`}>
               <span className="block text-lg leading-none md:text-3xl lg:text-4xl">{banner.tituloPartes[0]}</span>
-              <span className="relative isolate mt-2 inline-block px-2.5 pt-1 text-5xl leading-[0.92] tracking-[-0.02em] uppercase md:mt-3 md:px-4 md:text-7xl lg:text-8xl">
+              <span
+                className={`relative isolate mt-2 inline-block px-2.5 pt-1 leading-[0.92] tracking-[-0.02em] text-pico-blanco uppercase md:mt-3 md:px-4 ${
+                  banner.tituloPartes[1].length > 8 ? "text-3xl md:text-5xl lg:text-6xl" : "text-5xl md:text-7xl lg:text-8xl"
+                }`}
+              >
                 <span
-                  className="absolute inset-0 -z-10 origin-left -skew-x-12 rounded-sm bg-pico-rojo shadow-boton-hover transition-transform duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] motion-safe:group-hover:scale-x-[1.08]"
+                  className="absolute inset-0 -z-10 origin-left -skew-x-12 rounded-sm bg-[var(--color-sello,var(--color-pico-rojo))] shadow-boton-hover transition-[transform,background-color] duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] motion-safe:group-hover:scale-x-[1.08]"
                   aria-hidden
                 />
                 {banner.tituloPartes[1]}
@@ -159,7 +168,9 @@ export default function BannerInicio({ banner, sizes, tamano = "normal", priorit
               {banner.etiquetas.map((etiqueta) => (
                 <li
                   key={etiqueta}
-                  className="flex items-center gap-1.5 rounded-chip border border-pico-blanco/20 bg-pico-blanco/10 px-3 py-1 text-xs font-semibold tracking-[0.04em] text-pico-blanco backdrop-blur-sm lg:text-[13px]"
+                  className={`flex items-center gap-1.5 rounded-chip border px-3 py-1 text-xs font-semibold tracking-[0.04em] lg:text-[13px] ${
+                    banner.variante === "claro" ? "border-pico-azul/20 bg-pico-blanco/70 text-pico-azul" : "border-pico-blanco/20 bg-pico-blanco/10 text-pico-blanco"
+                  }`}
                 >
                   <span className="size-1.5 rounded-chip bg-pico-rojo" aria-hidden />
                   {etiqueta}

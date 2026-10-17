@@ -1,4 +1,4 @@
-import { Bolt, BrickWall, HardHat, PaintRoller } from "lucide-react";
+import { Bolt, HardHat } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import type { Banner, Producto } from "@/types/catalogo";
 
@@ -42,10 +42,12 @@ export const bannersPrincipales: BannerInicio[] = [
     alt: "Materiales de construcción en El Pico",
     href: "/categoria/construccion",
     titulo: "Todo para tu obra en un solo lugar",
+    tituloPartes: ["Todo para tu obra", "en un solo lugar"],
     texto: "Cemento, bloques, pegos y más para construir sin paradas.",
     textoBoton: "Ver materiales",
-    variante: "azul",
-    icono: BrickWall,
+    // PRUEBA — Modelo A: concreto y pila de bloques que se levanta (ObraSeLevanta).
+    variante: "claro",
+    etiquetas: ["Cemento", "Bloques", "Pegos"],
   },
   {
     id: "herramientas",
@@ -66,10 +68,12 @@ export const bannersPrincipales: BannerInicio[] = [
     alt: "Pinturas en El Pico",
     href: "/categoria/pinturas",
     titulo: "Renueva tus espacios",
+    tituloPartes: ["Renueva tus", "espacios"],
     texto: "Pinturas, rodillos y brochas para darle color a tu casa.",
     textoBoton: "Ver pinturas",
-    variante: "azul",
-    icono: PaintRoller,
+    // PRUEBA — Modelo B: pared blanca y rodillo que pinta franjas de color (PinturaEnMovimiento).
+    variante: "claro",
+    etiquetas: ["Pinturas", "Rodillos", "Brochas"],
   },
 ];
 
