@@ -5,8 +5,8 @@ import OcultarEnRutas from "./OcultarEnRutas";
 
 /**
  * Barra azul con las categorías, bajo el header blanco (desde 768px; en el teléfono no se muestra).
- * Solo va en las páginas de compra (inicio, categorías, buscar, finalizar pedido): en las páginas
- * informativas y de cuenta no se muestra. Para cambiarlo, edita SIN_BARRA.
+ * Solo va en las páginas de compra (inicio, categorías, buscar, favoritos): en las páginas
+ * informativas, de cuenta y en finalizar pedido no se muestra. Para cambiarlo, edita SIN_BARRA.
  */
 const SIN_BARRA = [
   "/producto/",
@@ -18,6 +18,7 @@ const SIN_BARRA = [
   "/politicas-de-privacidad",
   "/iniciar-sesion",
   "/crear-cuenta",
+  "/finalizar-pedido",
 ];
 
 export default async function NavCategorias() {

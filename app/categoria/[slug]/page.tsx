@@ -69,12 +69,7 @@ export default async function PaginaCategoria({ params, searchParams }: PageProp
 
   return (
     <div>
-      <EncabezadoPagina etiqueta="Categoría" titulo={categoria.nombre} ruta={[{ texto: categoria.nombre }]} imagen={categoria.banner} icono={Package}>
-        <span className="inline-flex w-fit items-center gap-1.5 rounded-chip bg-pico-blanco/15 px-3 py-1 text-xs font-semibold text-pico-blanco">
-          <Package className="size-3.5" aria-hidden />
-          {resultado.total} {resultado.total === 1 ? "producto" : "productos"}
-        </span>
-      </EncabezadoPagina>
+      <EncabezadoPagina etiqueta="Categoría" titulo={categoria.nombre} ruta={[{ texto: categoria.nombre }]} imagen={categoria.banner} icono={Package} />
 
       <Contenedor className="py-6 md:py-10">
         <div className="lg:grid lg:grid-cols-[15rem_minmax(0,1fr)] lg:gap-8">
