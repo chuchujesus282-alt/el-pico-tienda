@@ -1,4 +1,5 @@
 import Link from "next/link";
+import BotonFavorito from "@/components/favoritos/BotonFavorito";
 import Precio from "@/components/ui/Precio";
 import { tituloProducto } from "@/lib/formato";
 import type { Producto } from "@/types/catalogo";
@@ -42,6 +43,8 @@ export default function ProductCard({ producto, prioritario = false, className =
         </h3>
         <Precio valor={producto.precio} className="mt-auto pt-1" />
       </Link>
+      {/* Fuera del enlace (un botón no puede ir dentro de <a>), encima de la esquina de la foto. */}
+      <BotonFavorito productoId={producto.id} titulo={titulo} />
       <div className="mt-3">
         <BotonAgregar producto={producto} />
       </div>

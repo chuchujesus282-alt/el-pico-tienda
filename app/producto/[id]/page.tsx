@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeft, House } from "lucide-react";
+import BotonFavorito from "@/components/favoritos/BotonFavorito";
 import { CalificacionesProducto, EstrellasProducto } from "@/components/opiniones/CalificacionesVivas";
 import AccionesCompra from "@/components/producto-detalle/AccionesCompra";
 import CodigoCompartir from "@/components/producto-detalle/CodigoCompartir";
@@ -71,6 +72,7 @@ export default async function PaginaProducto({ params }: PageProps<"/producto/[i
                   </span>
                 )}
                 <CodigoCompartir codigo={producto.id} titulo={titulo} />
+                <BotonFavorito productoId={producto.id} titulo={titulo} variante="chip" />
               </div>
               <h1 className="font-titulo text-[1.75rem] leading-tight font-bold text-logo-marino md:text-4xl">{titulo}</h1>
               <EstrellasProducto productoId={producto.id} opiniones={opiniones} />

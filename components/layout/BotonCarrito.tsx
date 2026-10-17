@@ -26,7 +26,8 @@ export default function BotonCarrito() {
         ref={boton}
         type="button"
         onClick={abrir}
-        className="group flex items-center gap-2 rounded-boton p-2.5 text-sm font-semibold text-pico-azul transition-colors hover:bg-pico-azul-claro focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-pico-azul"
+        // En el teléfono no se muestra: el carrito está en la barra inferior (BarraInferiorMovil).
+        className="group hidden items-center gap-2 md:flex rounded-boton p-2.5 text-sm font-semibold text-pico-azul transition-colors hover:bg-pico-azul-claro focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-pico-azul"
         aria-label={`Abrir carrito (${cantidadTotal} ${cantidadTotal === 1 ? "producto" : "productos"})`}
       >
         <span className="relative">

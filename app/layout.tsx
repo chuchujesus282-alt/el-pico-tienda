@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import ProveedorCarrito from "@/components/carrito/ProveedorCarrito";
+import BarraInferior from "@/components/layout/BarraInferior";
 import Footer from "@/components/layout/Footer";
 import Header from "@/components/layout/Header";
 import NavCategorias from "@/components/layout/NavCategorias";
@@ -17,12 +18,14 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="es-VE" className={chakra.variable}>
-      <body className="flex min-h-dvh flex-col">
+      {/* Abajo deja libre el alto de la barra inferior del teléfono (0 desde 768px). */}
+      <body className="flex min-h-dvh flex-col pb-(--alto-barra-inferior)">
         <ProveedorCarrito>
           <Header />
           <NavCategorias />
           <main className="flex-1">{children}</main>
           <Footer />
+          <BarraInferior />
         </ProveedorCarrito>
       </body>
     </html>

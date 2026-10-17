@@ -243,7 +243,7 @@ function Proyecto({ calculadora, productos }: { calculadora: Calculadora; produc
         createPortal(
           <div className="lg:hidden print:hidden">
             {hojaAbierta && (
-              <div className="fixed inset-0 z-40">
+              <div className="fixed inset-0 z-50">
                 <div className="absolute inset-0 bg-pico-azul-oscuro/55 backdrop-blur-[2px]" onClick={() => setHojaAbierta(false)} aria-hidden />
                 <div
                   role="dialog"
@@ -264,7 +264,7 @@ function Proyecto({ calculadora, productos }: { calculadora: Calculadora; produc
               </div>
             )}
             {!hojaAbierta && (
-              <div className="fixed inset-x-0 bottom-0 z-30 border-t border-gris-borde bg-pico-blanco px-4 pt-2.5 pb-[calc(0.625rem+env(safe-area-inset-bottom))] shadow-tarjeta-hover">
+              <div className="fixed inset-x-0 bottom-(--alto-barra-inferior) z-30 border-t border-gris-borde bg-pico-blanco px-4 pt-2.5 pb-[calc(0.625rem+var(--seguro-inferior))] shadow-tarjeta-hover">
                 <div className="flex items-center gap-3">
                   <button
                     type="button"

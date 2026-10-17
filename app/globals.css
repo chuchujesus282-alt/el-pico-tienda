@@ -103,6 +103,18 @@
    Se usa con `px-pagina` (Contenedor) o como `var(--margen-pagina)` en filas que se salen hasta el borde. */
 :root {
   --margen-pagina: clamp(1rem, 4vw, 3rem);
+  /* Barra de navegación fija abajo (BarraInferiorMovil): solo existe en el teléfono. Las barras fijas de
+     producto y calculadoras se apoyan encima con `bottom-(--alto-barra-inferior)`, y como la barra ya cubre
+     la zona del gesto de inicio (iPhone), su relleno inferior usa `--seguro-inferior` (0 en el teléfono). */
+  --alto-barra-inferior: 0px;
+  --seguro-inferior: env(safe-area-inset-bottom);
+}
+
+@media (width < 48rem) {
+  :root {
+    --alto-barra-inferior: calc(4rem + env(safe-area-inset-bottom));
+    --seguro-inferior: 0px;
+  }
 }
 
 @utility px-pagina {

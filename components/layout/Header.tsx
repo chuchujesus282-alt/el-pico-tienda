@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Calculator, User } from "lucide-react";
 import BuscadorConSugerencias from "@/components/busqueda/BuscadorConSugerencias";
+import EnlaceFavoritos from "@/components/favoritos/EnlaceFavoritos";
 import Contenedor from "@/components/ui/Contenedor";
 import BotonCarrito from "./BotonCarrito";
 import Logo from "./Logo";
@@ -32,9 +33,11 @@ export default function Header() {
             <Calculator className="size-6 transition-transform duration-300 motion-safe:group-hover:-translate-y-0.5" aria-hidden />
             <span className="sr-only lg:not-sr-only">Calculadoras</span>
           </Link>
+          {/* Favoritos, Mi cuenta y el carrito: en el teléfono viven en la barra inferior (BarraInferiorMovil). */}
+          <EnlaceFavoritos className="hidden md:flex" />
           <Link
             href="/iniciar-sesion"
-            className="group flex items-center gap-2 rounded-boton p-2.5 text-sm font-semibold text-pico-azul transition-colors hover:bg-pico-azul-claro focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-pico-azul"
+            className="group hidden items-center md:flex gap-2 rounded-boton p-2.5 text-sm font-semibold text-pico-azul transition-colors hover:bg-pico-azul-claro focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-pico-azul"
           >
             <User className="size-6 transition-transform duration-300 motion-safe:group-hover:-translate-y-0.5" aria-hidden />
             <span className="sr-only lg:not-sr-only">Mi cuenta</span>

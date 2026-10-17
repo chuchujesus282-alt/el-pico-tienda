@@ -51,7 +51,8 @@ Ver `app/globals.css`: colores de arriba, radios (`tarjeta` 12px, `boton` 8px, `
 
 ## Distribución de la página principal (de arriba a abajo)
 1. Header (blanco): logo oficial sin placa a la izquierda, píldora "Tasa BCV" (círculo rojo "Bs" + cifra, a la derecha del buscador; compacta en móvil), buscador ancho al centro (fondo blanco, borde de 2px `pico-azul`, radio completo, botón azul "Buscar"), "Mi cuenta" y "Carrito" en azul con su texto (desde 1024px) y contador rojo a la derecha. En móvil el buscador baja a una segunda fila.
-2. Barra de categorías (`pico-azul`): las categorías en una fila; en móvil, desplazable horizontalmente.
+2. Barra de categorías (`pico-azul`): las categorías en una fila, solo desde 768px. En el teléfono no existe: las categorías se abren desde la barra inferior.
+2b. Teléfono: barra inferior fija (degradado azul marino con filete rojo arriba, 64px): Inicio, Categorías, Favoritos, Carrito y Entrar; ícono en una píldora (roja llena en la pestaña activa) con su nombre debajo y contador rojo en carrito y favoritos. Reemplaza a las bolas flotantes de subir y de carrito.
 3. Banner principal: un carrusel a todo el ancho del Contenedor (16:10 móvil, 2:1 tableta, 3:1 escritorio), sobre el fondo gris.
 3b. Nota de precios referenciales, "Te puede interesar", dos banners promocionales (seguridad y tornillería), banner azul de calculadoras (`BannerCalculadorasInicio`), recomendados, marcas y secciones por categoría, todo dentro de un `Contenedor` (como el 2026-10-12; la página principal se va a rehacer).
 4. Sección de productos "Te puede interesar": TituloSeccion + carrusel horizontal de ProductCard.
