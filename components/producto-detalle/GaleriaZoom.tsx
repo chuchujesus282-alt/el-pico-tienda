@@ -64,14 +64,14 @@ export default function GaleriaZoom({ src, alt }: Props) {
           onClick={abrir}
           onPointerMove={(e) => e.pointerType === "mouse" && setLupa(origen(e))}
           onPointerLeave={() => setLupa(null)}
-          className="block w-full cursor-zoom-in overflow-hidden rounded-banner border border-gris-borde bg-pico-blanco shadow-tarjeta transition-shadow duration-300 hover:shadow-tarjeta-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-logo-marino"
+          className="block w-full cursor-zoom-in overflow-hidden rounded-[1.25rem] border border-gris-borde bg-pico-blanco p-2 shadow-tarjeta transition-shadow duration-300 hover:shadow-tarjeta-hover md:p-3 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-logo-marino"
           aria-label={`Ampliar imagen: ${alt}`}
         >
           <div
             className="transition-transform duration-200 ease-out"
             style={lupa ? { transform: `scale(${ZOOM_LUPA})`, transformOrigin: lupa } : undefined}
           >
-            <ImagenProducto src={src} alt={alt} sizes="(min-width: 1280px) 600px, (min-width: 768px) 50vw, 100vw" prioritario />
+            <ImagenProducto src={src} alt={alt} sizes="(min-width: 1280px) 600px, (min-width: 768px) 50vw, 100vw" prioritario className="rounded-xl" />
           </div>
         </button>
         <span className="pointer-events-none absolute right-3 bottom-3 inline-flex items-center gap-1.5 rounded-chip bg-logo-marino/90 px-3 py-1.5 text-xs font-semibold text-pico-blanco shadow-tarjeta transition-opacity duration-200 group-hover:opacity-0">

@@ -3,7 +3,7 @@
 import { useState, useSyncExternalStore } from "react";
 import type { ReactNode } from "react";
 import Link from "next/link";
-import { Check, Layers, MapPin, MapPinPlus, ShoppingCart } from "lucide-react";
+import { Layers, MapPin, MapPinPlus, ShoppingCart } from "lucide-react";
 import IconoBanco from "@/components/icons/pico/IconoBanco";
 import IconoBilletes from "@/components/icons/pico/IconoBilletes";
 import IconoCamion from "@/components/icons/pico/IconoCamion";
@@ -23,6 +23,7 @@ import Precio from "@/components/ui/Precio";
 import { registrarSenales } from "@/lib/recomendaciones/almacenPerfil";
 import { enlaceWhatsApp, totalCarrito } from "@/lib/whatsapp";
 import type { ItemCarrito } from "@/types/carrito";
+import CheckDibujado from "@/components/icons/pico/CheckDibujado";
 import Opcion from "./Opcion";
 import IconoCalculadora from "@/components/icons/pico/IconoCalculadora";
 import IconoMensaje from "@/components/icons/pico/IconoMensaje";
@@ -67,7 +68,7 @@ function MarcaPaso({ numero, completo }: { numero: number; completo: boolean }) 
         completo ? "bg-logo-marino text-pico-blanco" : "border-2 border-logo-marino/30 bg-pico-blanco text-logo-marino"
       }`}
     >
-      {completo ? <Check key="ok" className="size-4 motion-safe:animate-latido" strokeWidth={3} /> : numero}
+      {completo ? <CheckDibujado key="ok" className="size-4" /> : numero}
     </span>
   );
 }
@@ -86,9 +87,10 @@ function Pasos({ estados }: { estados: [boolean, boolean, boolean] }) {
           </span>
           {i < nombres.length - 1 && (
             <span className="mx-3 h-1 flex-1 overflow-hidden rounded-chip bg-gris-fondo" aria-hidden>
+              {/* La línea se llena (scaleX, sin mover nada alrededor) al completar el paso. */}
               <span
-                className="block h-full rounded-chip bg-logo-marino transition-[width] duration-500 ease-out"
-                style={{ width: estados[i] ? "100%" : "0%" }}
+                className="block h-full origin-left rounded-chip bg-logo-marino transition-transform duration-700 ease-(--curva-suave)"
+                style={{ transform: estados[i] ? "scaleX(1)" : "scaleX(0)" }}
               />
             </span>
           )}
@@ -107,9 +109,15 @@ function Seccion({ numero, titulo, completo, children }: { numero: number; titul
       style={{ animationDelay: `${numero * 80}ms` }}
     >
       <legend className="sr-only">{titulo}</legend>
-      <div className="mb-4 flex items-center gap-3" aria-hidden>
-        <MarcaPaso numero={numero} completo={completo} />
-        <h2 className="font-titulo text-xl font-bold text-logo-marino">{titulo}</h2>
+      {/* El número del paso ya está en el indicador de arriba: aquí solo el título y "Listo" al completarlo. */}
+      <div className="mb-4 flex items-center justify-between gap-3" aria-hidden>
+        <h2 className="text-xl font-bold tracking-tight text-logo-marino">{titulo}</h2>
+        {completo && (
+          <span className="inline-flex items-center gap-1 rounded-chip bg-estado-abierto/10 px-2.5 py-1 text-xs font-semibold text-estado-abierto motion-safe:animate-pop">
+            <CheckDibujado className="size-3.5" />
+            Listo
+          </span>
+        )}
       </div>
       {children}
     </fieldset>
@@ -364,8 +372,11 @@ export default function FormularioPedido({ itemsDirectos }: Props) {
             )}
 
             <div className="mt-4 flex items-end justify-between border-t border-gris-borde pt-4">
-              <span className="text-sm font-semibold text-logo-marino">Total referencial</span>
-              <Precio valor={totalCarrito(items)} tamano="grande" tono="logo" className="font-titulo md:text-3xl" />
+              <span>
+                <span className="block text-sm font-semibold text-logo-marino">Total referencial</span>
+                <span className="block text-xs text-gris-texto">en dólares</span>
+              </span>
+              <Precio valor={totalCarrito(items)} tamano="grande" tono="logo" className="text-4xl tracking-tight tabular-nums md:text-[2.75rem]" />
             </div>
 
             <div className="mt-4">
@@ -377,25 +388,28 @@ export default function FormularioPedido({ itemsDirectos }: Props) {
                   rel="noopener noreferrer"
                   // Señal más fuerte del perfil de "Te puede interesar": lo que el cliente pidió.
                   onClick={() => registrarSenales(items.map((i) => ({ tipo: "whatsapp", id: i.producto.id })))}
-                  className="group relative flex h-12 w-full items-center justify-center gap-2 overflow-hidden rounded-boton bg-logo-rojo text-base font-semibold text-pico-blanco transition duration-200 hover:bg-logo-rojo-oscuro hover:shadow-boton-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-logo-marino motion-safe:animate-latido motion-safe:hover:-translate-y-0.5 motion-safe:active:scale-[0.98]"
+                  // Listo: el verde de WhatsApp (estado-abierto), con brillo y un latido al habilitarse.
+                  className="group grupo-icono relative flex h-13 w-full items-center justify-center gap-2 overflow-hidden rounded-xl bg-estado-abierto text-base font-semibold text-pico-blanco transition duration-200 [--icono-acento:var(--color-pico-blanco)] hover:bg-estado-abierto/90 hover:shadow-boton-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-logo-marino motion-safe:animate-pop motion-safe:hover:-translate-y-0.5 motion-safe:active:scale-[0.98]"
                 >
                   <Brillo />
                   <IconoMensaje className="size-6 transition-transform motion-safe:group-hover:-rotate-12" />
                   Enviar pedido por WhatsApp
                 </a>
               ) : (
+                // Aún no: el botón dice el siguiente paso que falta (y debajo, lo que viene después).
                 <button
                   type="button"
                   disabled
-                  className="flex h-12 w-full cursor-not-allowed items-center justify-center gap-2 rounded-boton bg-gris-borde text-base font-semibold text-gris-texto"
+                  className="flex h-13 w-full cursor-not-allowed items-center justify-center gap-2 rounded-xl border-2 border-dashed border-pico-azul/25 bg-pico-azul-claro text-base font-semibold text-pico-azul/80"
                 >
-                  <IconoMensaje className="size-6" />
-                  Enviar pedido por WhatsApp
+                  <span key={faltantes[0]} className="motion-safe:animate-aparecer">
+                    {faltantes[0] ? faltantes[0].charAt(0).toUpperCase() + faltantes[0].slice(1) : "Enviar pedido por WhatsApp"}
+                  </span>
                 </button>
               )}
               {!listo && (
                 <p className="mt-2 text-center text-[13px] text-gris-texto" aria-live="polite">
-                  Para continuar, {faltantes.join(" y ")}.
+                  {faltantes.length > 1 ? `Luego, ${faltantes.slice(1).join(" y ")}.` : "Es el último paso para enviar tu pedido por WhatsApp."}
                 </p>
               )}
             </div>

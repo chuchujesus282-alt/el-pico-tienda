@@ -57,15 +57,15 @@ export default function BotonFavorito({ productoId, titulo, variante = "tarjeta"
   }
 
   return (
-    // El contenedor va posicionado (absolute) y el botón lleva area-tactil: se ve de 36px y se toca en 44px.
+    // El contenedor va posicionado (absolute) y el botón lleva area-tactil: se ve de 40px y se toca en 44px.
     <div className={`absolute top-5 right-5 z-10 ${className}`}>
       <button
         type="button"
         onClick={alTocar}
         aria-pressed={activo}
         aria-label={activo ? `Quitar ${titulo} de favoritos` : `Guardar ${titulo} en favoritos`}
-        className={`area-tactil flex size-9 cursor-pointer items-center justify-center rounded-chip border bg-pico-blanco/95 shadow-tarjeta backdrop-blur-sm transition duration-200 hover:shadow-boton-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-pico-azul motion-safe:active:scale-90 ${
-          activo ? "border-pico-rojo/30 text-pico-rojo" : "border-gris-borde text-pico-azul/70 hover:text-pico-rojo"
+        className={`area-tactil flex size-10 cursor-pointer items-center justify-center rounded-chip border bg-pico-blanco shadow-tarjeta transition duration-200 hover:shadow-boton-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-pico-azul motion-safe:active:scale-90 ${
+          activo ? "border-pico-rojo/40 text-pico-rojo" : "border-pico-azul/15 text-pico-azul hover:border-pico-rojo/40 hover:text-pico-rojo"
         }`}
       >
         {corazon}

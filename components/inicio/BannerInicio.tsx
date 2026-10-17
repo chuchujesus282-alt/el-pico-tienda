@@ -122,7 +122,7 @@ export default function BannerInicio({ banner, sizes, tamano = "normal", priorit
           <p
             className={`relative max-w-[80%] font-bold text-balance ${estilo.titulo} ${
               grande
-                ? "text-2xl leading-tight md:text-4xl lg:max-w-[55%] lg:text-5xl"
+                ? "text-3xl leading-[1.05] tracking-tight md:text-5xl lg:max-w-[55%] lg:text-6xl"
                 : lateral
                   ? "text-base leading-tight sm:text-xl"
                   : "text-2xl leading-tight md:text-3xl lg:text-4xl"

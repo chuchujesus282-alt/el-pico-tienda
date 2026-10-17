@@ -93,10 +93,10 @@ export default async function PaginaProducto({ params }: PageProps<"/producto/[i
               </div>
             )}
 
-            <div className="relative overflow-hidden rounded-tarjeta border border-gris-borde bg-pico-blanco p-4 md:p-5">
-              <span className="absolute inset-y-0 left-0 w-1 bg-logo-rojo" aria-hidden />
-              <Precio valor={producto.precio} tamano="grande" tono="logo" className="font-titulo md:text-4xl" />
-              <p className="mt-1 text-[13px] text-gris-texto">Precio referencial en dólares. No cobramos en la web.</p>
+            {/* Precio limpio: la cifra manda, sin caja ni franja; la nota en una línea debajo. */}
+            <div className="border-y border-gris-borde py-4">
+              <Precio valor={producto.precio} tamano="grande" tono="logo" className="text-4xl tracking-tight tabular-nums md:text-5xl" />
+              <p className="mt-1.5 text-[13px] text-gris-texto">Precio referencial en dólares · No cobramos en la web.</p>
             </div>
 
             <AccionesCompra producto={producto} />

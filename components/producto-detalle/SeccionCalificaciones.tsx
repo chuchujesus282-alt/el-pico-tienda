@@ -53,10 +53,11 @@ export default function SeccionCalificaciones({ resumen, acciones, className = "
                     {estrellas}
                     <Star className="size-3.5 fill-estrella text-estrella" aria-hidden />
                   </span>
-                  <span className="h-2.5 flex-1 overflow-hidden rounded-chip bg-gris-fondo">
+                  {/* Barra fina: se llena con scaleX (sin mover nada alrededor). */}
+                  <span className="h-1.5 flex-1 overflow-hidden rounded-chip bg-pico-azul-claro">
                     <span
-                      className="block h-full rounded-chip bg-estrella transition-[width] duration-700"
-                      style={{ width: `${porcentaje}%` }}
+                      className="block h-full origin-left rounded-chip bg-estrella transition-transform duration-1000 ease-(--curva-suave)"
+                      style={{ transform: `scaleX(${porcentaje / 100})` }}
                     />
                   </span>
                   <span className="w-10 shrink-0 text-right text-[13px] text-gris-texto tabular-nums">{porcentaje}%</span>

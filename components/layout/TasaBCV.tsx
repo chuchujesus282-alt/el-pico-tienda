@@ -70,26 +70,36 @@ type PropsPildora = {
  */
 export function PildoraTasa({ tasa, cargando = false, className = "" }: PropsPildora) {
   if (cargando) {
+    // Cargando: la misma píldora, con el círculo apagado y dos líneas que brillan (nunca una caja gris vacía).
     return (
       <span
-        className={`flex h-12 w-32 shrink-0 animate-pulse items-center rounded-chip border-2 border-gris-borde bg-gris-fondo lg:w-40 ${className}`}
+        className={`relative flex h-12 w-32 shrink-0 items-center gap-2.5 overflow-hidden rounded-chip border-2 border-gris-borde bg-pico-blanco py-1 pr-5 pl-1.5 shadow-tarjeta lg:w-40 ${className}`}
         aria-label="Cargando la tasa BCV"
         role="status"
-      />
+      >
+        <span className="flex size-9 shrink-0 items-center justify-center rounded-chip bg-pico-rojo/25 text-xs font-bold text-pico-blanco">Bs</span>
+        <span className="flex flex-1 flex-col gap-1.5">
+          <span className="hidden h-1.5 w-12 rounded-chip bg-gris-borde lg:block" />
+          <span className="h-2.5 w-14 rounded-chip bg-gris-borde" />
+        </span>
+        <span className="absolute inset-y-0 -left-full w-full bg-gradient-to-r from-transparent via-pico-blanco/80 to-transparent motion-safe:animate-brillo" aria-hidden />
+      </span>
     );
   }
 
-  const cifra = tasa ? `Bs. ${formatoTasa.format(tasa.tasa)}` : "—";
+  const cifra = tasa ? `Bs. ${formatoTasa.format(tasa.tasa)}` : null;
   const detalle = tasa ? `Actualizada el ${textoFecha(tasa.fecha)}` : "Tasa no disponible por ahora";
 
   return (
     <span
       tabIndex={0}
       className={`group/tasa relative flex h-12 w-auto shrink-0 cursor-default items-center gap-2.5 rounded-chip border-2 border-gris-borde bg-pico-blanco py-1 pr-5 pl-1.5 whitespace-nowrap shadow-tarjeta transition duration-200 hover:border-pico-azul/25 hover:shadow-tarjeta-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-pico-azul ${className}`}
-      aria-label={`Tasa BCV: ${cifra}. ${detalle}`}
+      aria-label={cifra ? `Tasa BCV: ${cifra}. ${detalle}` : "Tasa BCV no disponible por ahora"}
     >
       <span
-        className="flex size-9 shrink-0 items-center justify-center rounded-chip bg-pico-rojo text-xs font-bold text-pico-blanco transition-transform duration-300 motion-safe:group-hover/tasa:scale-110"
+        className={`flex size-9 shrink-0 items-center justify-center rounded-chip text-xs font-bold text-pico-blanco transition-transform duration-300 motion-safe:group-hover/tasa:scale-110 ${
+          cifra ? "bg-pico-rojo" : "bg-gris-texto/40"
+        }`}
         aria-hidden
       >
         Bs
@@ -98,7 +108,11 @@ export function PildoraTasa({ tasa, cargando = false, className = "" }: PropsPil
         <span className="mb-0.5 hidden text-[10px] font-semibold tracking-[0.14em] text-gris-texto uppercase lg:block">
           Tasa BCV
         </span>
-        <span className="text-sm font-bold text-pico-azul tabular-nums">{cifra}</span>
+        {cifra ? (
+          <span className="text-sm font-bold text-pico-azul tabular-nums">{cifra}</span>
+        ) : (
+          <span className="text-xs font-semibold text-gris-texto">No disponible</span>
+        )}
       </span>
       <span
         role="tooltip"

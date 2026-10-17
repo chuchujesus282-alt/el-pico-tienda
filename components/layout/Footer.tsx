@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { ChevronRight } from "lucide-react";
+import EstadoHorario from "@/components/horario/EstadoHorario";
 import IconoMensaje from "@/components/icons/pico/IconoMensaje";
 import IconoUbicacion from "@/components/icons/pico/IconoUbicacion";
 import Boton from "@/components/ui/Boton";
@@ -100,6 +101,8 @@ export default async function Footer() {
               <IconoMensaje className="size-6" />
               Escríbenos por WhatsApp
             </Boton>
+            {/* Si la tienda está abierta o cerrada en este momento (con la hora del navegador). */}
+            <EstadoHorario />
             <span className="inline-flex items-center gap-1.5 text-xs font-semibold tracking-[0.18em] text-pico-blanco/60 uppercase">
               <IconoUbicacion className="size-4 text-pico-blanco/70" />
               Caracas · Venezuela

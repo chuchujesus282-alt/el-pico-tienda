@@ -51,6 +51,12 @@
   --animate-caer: caer 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
   --animate-onda: onda 1.1s cubic-bezier(0.16, 1, 0.3, 1) both;
   --animate-salir: salir 0.3s ease-in forwards;
+  /* Brillo de los esqueletos de carga (fotos, tasa BCV, resúmenes): cruza de izquierda a derecha. */
+  --animate-brillo: brillo 1.4s ease-in-out infinite;
+  /* Cinta de marcas: avanza sin parar (la duración la pone el componente según cuántas marcas haya). */
+  --animate-marquesina: marquesina 40s linear infinite;
+  /* Indicador del carrusel: se llena mientras dura la diapositiva (la duración la pone el componente). */
+  --animate-progreso: progreso 6s linear both;
   /* Ícono que se elige: crece un poco y vuelve. */
   --animate-pop: ico-pop 0.45s cubic-bezier(0.16, 1, 0.3, 1);
 
@@ -88,6 +94,27 @@
     to {
       opacity: 0;
       transform: scale(0.94) translateY(8px);
+    }
+  }
+  @keyframes brillo {
+    from {
+      transform: translateX(0);
+    }
+    to {
+      transform: translateX(200%);
+    }
+  }
+  @keyframes marquesina {
+    to {
+      transform: translateX(-50%);
+    }
+  }
+  @keyframes progreso {
+    from {
+      transform: scaleX(0);
+    }
+    to {
+      transform: scaleX(1);
     }
   }
   @keyframes latido {
@@ -182,6 +209,16 @@ body {
   /* Cursor de escritura rojo y casillas/radios en azul de la marca, en todos los formularios. */
   caret-color: var(--color-pico-rojo);
   accent-color: var(--color-pico-azul);
+  /* Profundidad sutil: arriba el fondo se aclara apenas hacia azul claro y baja al gris de siempre. */
+  background-image: linear-gradient(180deg, color-mix(in srgb, var(--color-pico-azul-claro) 55%, var(--color-gris-fondo)) 0, var(--color-gris-fondo) 36rem);
+  background-repeat: no-repeat;
+}
+
+/* Anillo de foco de toda la tienda (solo con teclado). Especificidad mínima: los componentes que definen
+   el suyo lo reemplazan. */
+:where(a, button, input, select, textarea, summary, [tabindex]):focus-visible {
+  outline: 2px solid color-mix(in srgb, var(--color-pico-azul) 60%, transparent);
+  outline-offset: 2px;
 }
 
 /* Títulos con las líneas equilibradas y párrafos sin una palabra sola al final. */
@@ -426,6 +463,16 @@ p {
 }
 [data-icono-activo="true"] .logo-pago .logo-pago-color {
   opacity: 1;
+}
+
+/* Check que se dibuja (CheckDibujado.tsx). */
+.check-dibujado path {
+  stroke-dasharray: 1;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .check-dibujado path {
+    animation: ico-dibujar 0.45s var(--curva-suave) 0.08s both;
+  }
 }
 
 /* Íconos utilitarios de lucide (flechas, cerrar, más/menos): mismo trazo que el set propio.

@@ -7,6 +7,7 @@ import EnlaceFavoritos from "@/components/favoritos/EnlaceFavoritos";
 import Contenedor from "@/components/ui/Contenedor";
 import BotonCarrito from "./BotonCarrito";
 import Logo from "./Logo";
+import MarcaDesplazamiento from "./MarcaDesplazamiento";
 import TasaBCV from "./TasaBCV";
 
 /**
@@ -16,9 +17,14 @@ import TasaBCV from "./TasaBCV";
  */
 export default function Header() {
   return (
-    <header className="relative z-10 border-b border-pico-azul/10 bg-pico-azul-claro shadow-header">
+    // Desde 768px queda fijo arriba; al bajar la página (html[data-desplazado]) se vuelve translúcido con
+    // desenfoque y una sombra más marcada, y el logo se achica un poco (solo transform: el alto no cambia).
+    <header className="relative z-40 border-b border-pico-azul/10 bg-pico-azul-claro shadow-header transition-[background-color,box-shadow] duration-300 md:sticky md:top-0 [html[data-desplazado]_&]:bg-pico-azul-claro/85 [html[data-desplazado]_&]:shadow-tarjeta-hover [html[data-desplazado]_&]:backdrop-blur-md">
+      <MarcaDesplazamiento />
       <Contenedor className="flex flex-wrap items-center gap-x-3 gap-y-3 py-3 md:flex-nowrap md:gap-x-6 md:py-4 lg:gap-x-8">
-        <Logo placa={false} />
+        <span className="origin-left transition-transform duration-300 ease-(--curva-suave) md:[html[data-desplazado]_&]:scale-[0.88]">
+          <Logo placa={false} />
+        </span>
 
         {/* Búsqueda inteligente con sugerencias en vivo (lib/recomendaciones/); Enter lleva a /buscar. */}
         <BuscadorConSugerencias className="order-last w-full md:order-none md:max-w-[45rem] md:min-w-0 md:flex-1" />
