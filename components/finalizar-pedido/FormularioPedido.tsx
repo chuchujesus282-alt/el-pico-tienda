@@ -3,25 +3,17 @@
 import { useState, useSyncExternalStore } from "react";
 import type { ReactNode } from "react";
 import Link from "next/link";
-import {
-  Banknote,
-  Calculator,
-  CircleDollarSign,
-  CalendarClock,
-  Check,
-  Landmark,
-  Layers,
-  MapPin,
-  MapPinPlus,
-  MessageCircle,
-  Motorbike,
-  ShoppingCart,
-  SmartphoneNfc,
-  Split,
-  Store,
-  Truck,
-  Zap,
-} from "lucide-react";
+import { Check, Layers, MapPin, MapPinPlus, ShoppingCart } from "lucide-react";
+import IconoBanco from "@/components/icons/pico/IconoBanco";
+import IconoBilletes from "@/components/icons/pico/IconoBilletes";
+import IconoCamion from "@/components/icons/pico/IconoCamion";
+import IconoCombinado from "@/components/icons/pico/IconoCombinado";
+import IconoCuotas from "@/components/icons/pico/IconoCuotas";
+import IconoMoto from "@/components/icons/pico/IconoMoto";
+import IconoPagoMovil from "@/components/icons/pico/IconoPagoMovil";
+import IconoTienda from "@/components/icons/pico/IconoTienda";
+import IconoUsdt from "@/components/icons/pico/IconoUsdt";
+import IconoZelle from "@/components/icons/pico/IconoZelle";
 import { RUTA_CALCULADORAS } from "@/components/calculadoras/rutas";
 import { useCarrito } from "@/components/carrito/ProveedorCarrito";
 import { useDirecciones } from "@/components/direcciones/almacenDirecciones";
@@ -32,6 +24,8 @@ import { registrarSenales } from "@/lib/recomendaciones/almacenPerfil";
 import { enlaceWhatsApp, totalCarrito } from "@/lib/whatsapp";
 import type { ItemCarrito } from "@/types/carrito";
 import Opcion from "./Opcion";
+import IconoCalculadora from "@/components/icons/pico/IconoCalculadora";
+import IconoMensaje from "@/components/icons/pico/IconoMensaje";
 import {
   armarMensajeFinal,
   type FormaRetiro,
@@ -46,21 +40,21 @@ type Props = {
   itemsDirectos: ItemCarrito[] | null;
 };
 
-// Íconos de las opciones: Opcion los pone en una placa con degradado que se anima al elegir.
+// Íconos propios de las opciones (components/icons/pico): Opcion los pone en su placa, que se anima al elegir.
 const iconosRetiro: Record<FormaRetiro, ReactNode> = {
-  pickup: <Store className="size-5" strokeWidth={1.75} aria-hidden />,
-  delivery: <Motorbike className="size-5" strokeWidth={1.75} aria-hidden />,
-  flete: <Truck className="size-5" strokeWidth={1.75} aria-hidden />,
+  pickup: <IconoTienda />,
+  delivery: <IconoMoto />,
+  flete: <IconoCamion />,
 };
 
 const iconosPago: Record<MetodoPago, ReactNode> = {
-  divisas: <Banknote className="size-5" strokeWidth={1.75} aria-hidden />,
-  "pago-movil": <SmartphoneNfc className="size-5" strokeWidth={1.75} aria-hidden />,
-  transferencia: <Landmark className="size-5" strokeWidth={1.75} aria-hidden />,
-  cashea: <CalendarClock className="size-5" strokeWidth={1.75} aria-hidden />,
-  zelle: <Zap className="size-5" strokeWidth={1.75} aria-hidden />,
-  usdt: <CircleDollarSign className="size-5" strokeWidth={1.75} aria-hidden />,
-  combinado: <Split className="size-5" strokeWidth={1.75} aria-hidden />,
+  divisas: <IconoBilletes />,
+  "pago-movil": <IconoPagoMovil />,
+  transferencia: <IconoBanco />,
+  cashea: <IconoCuotas />,
+  zelle: <IconoZelle />,
+  usdt: <IconoUsdt />,
+  combinado: <IconoCombinado />,
 };
 
 const sinSuscripcion = () => () => {};
@@ -201,7 +195,7 @@ export default function FormularioPedido({ itemsDirectos }: Props) {
           href={RUTA_CALCULADORAS}
           className="group mt-1 inline-flex items-center gap-1.5 rounded-boton px-2 py-1 text-[13px] font-semibold text-logo-marino transition-colors hover:text-logo-rojo focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-logo-marino"
         >
-          <Calculator className="size-4 motion-safe:group-hover:animate-sacudir" aria-hidden />
+          <IconoCalculadora className="size-5 motion-safe:group-hover:animate-sacudir" />
           ¿No sabes cuánto material necesitas? Calcúlalo
         </Link>
       </div>
@@ -386,7 +380,7 @@ export default function FormularioPedido({ itemsDirectos }: Props) {
                   className="group relative flex h-12 w-full items-center justify-center gap-2 overflow-hidden rounded-boton bg-logo-rojo text-base font-semibold text-pico-blanco transition duration-200 hover:bg-logo-rojo-oscuro hover:shadow-boton-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-logo-marino motion-safe:animate-latido motion-safe:hover:-translate-y-0.5 motion-safe:active:scale-[0.98]"
                 >
                   <Brillo />
-                  <MessageCircle className="size-5 transition-transform motion-safe:group-hover:-rotate-12" aria-hidden />
+                  <IconoMensaje className="size-6 transition-transform motion-safe:group-hover:-rotate-12" />
                   Enviar pedido por WhatsApp
                 </a>
               ) : (
@@ -395,7 +389,7 @@ export default function FormularioPedido({ itemsDirectos }: Props) {
                   disabled
                   className="flex h-12 w-full cursor-not-allowed items-center justify-center gap-2 rounded-boton bg-gris-borde text-base font-semibold text-gris-texto"
                 >
-                  <MessageCircle className="size-5" aria-hidden />
+                  <IconoMensaje className="size-6" />
                   Enviar pedido por WhatsApp
                 </button>
               )}

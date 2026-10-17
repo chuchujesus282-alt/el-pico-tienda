@@ -1,8 +1,9 @@
 import Image from "next/image";
 import Link from "next/link";
 import { ChevronRight, House } from "lucide-react";
-import type { LucideIcon } from "lucide-react";
 import type { ReactNode } from "react";
+import Plano from "@/components/icons/pico/Plano";
+import type { ComponenteIcono } from "@/types/icono";
 import Contenedor from "./Contenedor";
 
 export type Miga = { texto: string; href?: string };
@@ -15,8 +16,8 @@ type Props = {
   descripcion?: ReactNode;
   /** Ruta de navegación después de "Inicio". El último elemento es la página actual. */
   ruta?: Miga[];
-  /** Ícono grande y tenue a la derecha, como en los banners. */
-  icono?: LucideIcon;
+  /** Ícono propio (components/icons/pico): se dibuja a la derecha como un plano técnico, con cotas. */
+  icono?: ComponenteIcono;
   /** Imagen de fondo opcional (ej. banner de la categoría). */
   imagen?: string | null;
   /** Contenido extra bajo el título (ej. cantidad de productos, pasos). */
@@ -31,7 +32,7 @@ export default function EncabezadoPagina({ titulo, etiqueta, descripcion, ruta, 
   return (
     // Tarjeta redondeada sobre el fondo gris, con aire arriba: así no se pega a la barra azul de categorías.
     <Contenedor className="pt-4 md:pt-6">
-    <header className="relative isolate overflow-hidden rounded-banner bg-gradient-to-br from-pico-azul via-pico-azul to-pico-azul-oscuro text-pico-blanco shadow-tarjeta-hover print:rounded-none print:bg-none print:text-texto print:shadow-none">
+    <header className="grupo-icono relative isolate overflow-hidden rounded-banner bg-gradient-to-br from-pico-azul via-pico-azul to-pico-azul-oscuro text-pico-blanco shadow-tarjeta-hover print:rounded-none print:bg-none print:text-texto print:shadow-none">
       {imagen && (
         <>
           <Image src={imagen} alt="" fill priority sizes="100vw" className="-z-10 object-cover" />
@@ -39,8 +40,9 @@ export default function EncabezadoPagina({ titulo, etiqueta, descripcion, ruta, 
         </>
       )}
       {Icono && !imagen && (
-        <span className="pointer-events-none absolute right-6 -bottom-10 md:right-16 -z-10 hidden motion-safe:animate-flotar sm:block print:hidden" aria-hidden>
-          <Icono className="size-44 text-pico-blanco/10 md:size-64" strokeWidth={1.25} />
+        // Plano técnico del ícono, entero (sin cortarse), centrado en vertical a la derecha.
+        <span className="pointer-events-none absolute top-1/2 right-4 -z-10 hidden -translate-y-1/2 opacity-80 sm:block md:right-12 lg:right-16 print:hidden" aria-hidden>
+          <Plano Icono={Icono} className="w-40 md:w-52 lg:w-60" />
         </span>
       )}
 

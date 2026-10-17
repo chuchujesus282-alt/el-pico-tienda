@@ -4,7 +4,8 @@ import { useEffect, useId, useRef, useState, useSyncExternalStore } from "react"
 import type { CSSProperties } from "react";
 import { createPortal } from "react-dom";
 import Link from "next/link";
-import { Check, ChevronDown, MapPin, MapPinPlus, X } from "lucide-react";
+import { Check, ChevronDown, MapPinPlus, X } from "lucide-react";
+import IconoUbicacion from "@/components/icons/pico/IconoUbicacion";
 import Boton from "@/components/ui/Boton";
 import { useDirecciones } from "./almacenDirecciones";
 
@@ -69,7 +70,7 @@ export default function SelectorDireccion({ className = "" }: { className?: stri
         aria-haspopup="dialog"
         aria-expanded={abierto}
         aria-label={nombre ? `Entregar en ${nombre}. Cambiar dirección` : "Elegir dirección de entrega"}
-        className={`group/dir flex h-12 shrink-0 cursor-pointer items-center gap-2.5 rounded-chip border-2 border-gris-borde bg-pico-blanco p-1.5 shadow-tarjeta transition duration-200 hover:border-pico-azul/25 hover:shadow-tarjeta-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-pico-azul 2xl:pr-4 ${className}`}
+        className={`group/dir grupo-icono flex h-12 shrink-0 cursor-pointer items-center gap-2.5 rounded-chip border-2 border-gris-borde bg-pico-blanco p-1.5 shadow-tarjeta transition duration-200 hover:border-pico-azul/25 hover:shadow-tarjeta-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-pico-azul 2xl:pr-4 ${className}`}
       >
         {/* Placa azul clara con el pin; al pasar el mouse (o abierta) se vuelve azul marino y el pin da un saltito. */}
         <span
@@ -79,11 +80,7 @@ export default function SelectorDireccion({ className = "" }: { className?: stri
               : "bg-gradient-to-b from-pico-azul-claro to-pico-blanco text-pico-azul ring-pico-azul/15 group-hover/dir:bg-pico-azul group-hover/dir:from-pico-azul group-hover/dir:to-pico-azul group-hover/dir:text-pico-blanco"
           }`}
         >
-          <MapPin
-            className="size-[18px] transition-transform duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] motion-safe:group-hover/dir:-translate-y-0.5"
-            strokeWidth={2.25}
-            aria-hidden
-          />
+          <IconoUbicacion className="size-6" />
           {/* Punto rojo que late: aún no hay dirección elegida. */}
           {montado && !elegida && (
             <span className="absolute -top-0.5 -right-0.5 flex size-3" aria-hidden>
@@ -170,7 +167,7 @@ export default function SelectorDireccion({ className = "" }: { className?: stri
                               marcada ? "bg-pico-azul text-pico-blanco" : "bg-gris-fondo text-pico-azul"
                             }`}
                           >
-                            {marcada ? <Check className="size-5" strokeWidth={2.5} aria-hidden /> : <MapPin className="size-5" aria-hidden />}
+                            {marcada ? <Check className="size-5" strokeWidth={2.5} aria-hidden /> : <IconoUbicacion className="size-6" />}
                           </span>
                           <span className="min-w-0">
                             <span className="block truncate font-bold text-pico-azul">{d.nombre}</span>

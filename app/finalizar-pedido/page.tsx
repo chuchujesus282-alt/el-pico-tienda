@@ -1,12 +1,13 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ArrowLeft, ClipboardCheck } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 import FormularioPedido from "@/components/finalizar-pedido/FormularioPedido";
 import Contenedor from "@/components/ui/Contenedor";
 import EncabezadoPagina from "@/components/ui/EncabezadoPagina";
 import { getProducto } from "@/lib/catalogo";
 import type { ItemCarrito } from "@/types/carrito";
+import IconoLista from "@/components/icons/pico/IconoLista";
 
 // Finalizar pedido — responsable: persona B (rama `finalizar-pedido`).
 // /finalizar-pedido                         → pedido con lo que hay en el carrito.
@@ -36,7 +37,7 @@ export default async function PaginaFinalizarPedido({ searchParams }: PageProps<
         titulo="Finalizar pedido"
         descripcion="Elige cómo lo recibes y cómo pagas. Te llevamos a WhatsApp con todo listo."
         ruta={[{ texto: "Finalizar pedido" }]}
-        icono={ClipboardCheck}
+        icono={IconoLista}
       />
       <Contenedor className="py-6 md:py-10">
         <Link

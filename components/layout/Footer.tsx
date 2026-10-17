@@ -1,5 +1,7 @@
 import Link from "next/link";
-import { ChevronRight, MapPin, MessageCircle } from "lucide-react";
+import { ChevronRight } from "lucide-react";
+import IconoMensaje from "@/components/icons/pico/IconoMensaje";
+import IconoUbicacion from "@/components/icons/pico/IconoUbicacion";
 import Boton from "@/components/ui/Boton";
 import Contenedor from "@/components/ui/Contenedor";
 import Revelar from "@/components/ui/Revelar";
@@ -89,12 +91,17 @@ export default async function Footer() {
             Tu ferretería de confianza en Caracas. Todo para construir, reparar y mejorar tu espacio.
           </p>
           <div className="flex flex-col items-start gap-3">
-            <Boton href={enlaceWhatsApp("¡Hola, El Pico! Tengo una consulta.")} target="_blank" rel="noopener noreferrer">
-              <MessageCircle className="size-5 motion-safe:group-hover/boton:animate-sacudir" aria-hidden />
+            <Boton
+              href={enlaceWhatsApp("¡Hola, El Pico! Tengo una consulta.")}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="grupo-icono [--icono-acento:var(--color-pico-blanco)]"
+            >
+              <IconoMensaje className="size-6" />
               Escríbenos por WhatsApp
             </Boton>
             <span className="inline-flex items-center gap-1.5 text-xs font-semibold tracking-[0.18em] text-pico-blanco/60 uppercase">
-              <MapPin className="size-3.5 text-pico-rojo" aria-hidden />
+              <IconoUbicacion className="size-4 text-pico-blanco/70" />
               Caracas · Venezuela
             </span>
           </div>

@@ -1,12 +1,15 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ArrowRight, MapPin, Route, Store } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import AccionesUbicacion from "@/components/ubicanos/AccionesUbicacion";
 import MapaTienda from "@/components/ubicanos/MapaTienda";
 import Contenedor from "@/components/ui/Contenedor";
 import EncabezadoPagina from "@/components/ui/EncabezadoPagina";
 import TarjetaInfo from "@/components/ui/TarjetaInfo";
 import { TIENDA } from "@/lib/tienda";
+import IconoUbicacion from "@/components/icons/pico/IconoUbicacion";
+import IconoRuta from "@/components/icons/pico/IconoRuta";
+import IconoTienda from "@/components/icons/pico/IconoTienda";
 
 // Ubícanos — responsable: persona A (rama `ubicanos`). Los datos de la tienda están en lib/tienda.ts.
 
@@ -39,7 +42,7 @@ export default function PaginaUbicanos() {
         titulo="Ubícanos"
         descripcion="Estamos en Fila de Mariches, en la carretera Petare–Santa Lucía. Toca el mapa para abrir la ruta en Google Maps, Waze o Apple Maps."
         ruta={[{ texto: "Ubícanos" }]}
-        icono={MapPin}
+        icono={IconoUbicacion}
       />
     <Contenedor className="space-y-6 py-6 md:space-y-8 md:py-10">
       <script
@@ -50,7 +53,7 @@ export default function PaginaUbicanos() {
       <MapaTienda />
 
       <div className="grid gap-4 md:gap-6 lg:grid-cols-[1.4fr_1fr_1fr]">
-        <TarjetaInfo icono={<MapPin className="size-5" aria-hidden />} titulo="Dirección">
+        <TarjetaInfo icono={<IconoUbicacion className="size-6" />} titulo="Dirección">
           <address className="text-base leading-relaxed text-texto not-italic">
             <strong className="block font-semibold">{TIENDA.nombre}</strong>
             {TIENDA.direccion.map((linea) => (
@@ -70,7 +73,7 @@ export default function PaginaUbicanos() {
           </div>
         </TarjetaInfo>
 
-        <TarjetaInfo icono={<Route className="size-5" aria-hidden />} titulo="Cómo llegar">
+        <TarjetaInfo icono={<IconoRuta className="size-6" />} titulo="Cómo llegar">
           <p className="text-sm leading-relaxed text-texto">
             Desde Petare, toma la carretera Petare–Santa Lucía en dirección a Mariches. Estamos en el{" "}
             <strong>kilómetro 6</strong>, en el sector <strong>El Limoncito</strong> de Fila de Mariches.
@@ -80,7 +83,7 @@ export default function PaginaUbicanos() {
           </p>
         </TarjetaInfo>
 
-        <TarjetaInfo icono={<Store className="size-5" aria-hidden />} titulo="Retira tu pedido aquí">
+        <TarjetaInfo icono={<IconoTienda className="size-6" />} titulo="Retira tu pedido aquí">
           <p className="text-sm leading-relaxed text-texto">
             Arma tu pedido en la web y envíalo por WhatsApp. Te confirmamos disponibilidad y forma de pago, y lo pasas buscando
             por la tienda.

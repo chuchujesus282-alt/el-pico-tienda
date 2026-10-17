@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
-import { MapPinPlus } from "lucide-react";
+
 import FormularioDireccion from "@/components/direcciones/FormularioDireccion";
 import Contenedor from "@/components/ui/Contenedor";
 import EncabezadoPagina from "@/components/ui/EncabezadoPagina";
+import IconoUbicacion from "@/components/icons/pico/IconoUbicacion";
 
 // Agregar o editar una dirección — responsable: persona B.
 // /mis-direcciones/nueva                          → dirección nueva.
@@ -28,7 +29,7 @@ export default async function PaginaNuevaDireccion({ searchParams }: PageProps<"
       <EncabezadoPagina
         titulo={editar ? "Editar dirección" : "Agregar dirección"}
         ruta={[{ texto: "Mis direcciones", href: "/mis-direcciones" }, { texto: editar ? "Editar" : "Agregar" }]}
-        icono={MapPinPlus}
+        icono={IconoUbicacion}
         descripcion="Marca el punto en el mapa, ponle un nombre y dile al repartidor cómo llegar."
       />
       <Contenedor className="py-6 md:py-10">

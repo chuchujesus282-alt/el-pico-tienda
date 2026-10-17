@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { ChevronRight } from "lucide-react";
 import type { ReactNode } from "react";
+import Plano from "@/components/icons/pico/Plano";
 import type { BannerInicio as DatosBanner, VarianteBanner } from "./contenidoInicio";
 
 type Props = {
@@ -74,7 +75,7 @@ export default function BannerInicio({ banner, sizes, tamano = "normal", priorit
   return (
     <Destino
       href={banner.href}
-      className={`group relative block overflow-hidden rounded-banner ${
+      className={`group grupo-icono relative block overflow-hidden rounded-banner ${
         // Los banners sueltos flotan y se elevan al pasar el mouse; el del carrusel ya lleva su sombra.
         grande ? "" : "shadow-tarjeta transition duration-200 hover:shadow-tarjeta-hover motion-safe:hover:-translate-y-1"
       } focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-pico-azul ${
@@ -96,13 +97,19 @@ export default function BannerInicio({ banner, sizes, tamano = "normal", priorit
           grande ? "p-5 md:gap-3 md:px-16 md:py-10 lg:gap-4 lg:px-24 2xl:px-28" : lateral ? "p-4 sm:p-5 md:p-6" : "gap-3 p-6 md:p-10 lg:px-12"
         }`}>
           {Icono && (
-            // El span se mece solo (flotar); el ícono, además, gira y crece al pasar el mouse.
-            <span className={`absolute motion-safe:animate-flotar ${grande ? "-right-4 -bottom-6 lg:right-20 lg:-bottom-12 2xl:right-28" : "-right-4 -bottom-6"}`} aria-hidden>
-              <Icono
-                className={`transition-transform duration-500 ease-out group-hover:scale-110 group-hover:-rotate-12 ${estilo.icono} ${
-                  grande ? "size-40 md:size-72 lg:size-[22rem]" : lateral ? "size-20 sm:size-32 md:size-40" : "size-36 md:size-52 lg:size-60"
+            // Plano técnico del ícono a la derecha (entero, sin cortarse); flota apenas y sus piezas se animan al pasar el mouse.
+            <span
+              className={`pointer-events-none absolute top-1/2 -translate-y-1/2 motion-safe:animate-flotar ${
+                grande ? "right-4 hidden sm:block lg:right-20 2xl:right-28" : lateral ? "right-2 hidden sm:block" : "-right-2 md:right-4"
+              }`}
+              aria-hidden
+            >
+              <Plano
+                Icono={Icono}
+                tono={banner.variante === "claro" ? "oscuro" : "claro"}
+                className={`transition-transform duration-700 ease-(--curva-suave) group-hover:scale-105 ${
+                  grande ? "w-48 md:w-64 lg:w-80" : lateral ? "w-28 md:w-36" : "w-36 opacity-60 sm:opacity-100 md:w-48 lg:w-56"
                 }`}
-                strokeWidth={1.25}
               />
             </span>
           )}

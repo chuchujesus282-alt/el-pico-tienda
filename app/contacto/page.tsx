@@ -1,12 +1,15 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import type { ReactNode } from "react";
-import { ArrowRight, Clock, Mail, MapPin, MessageCircle, Phone } from "lucide-react";
+import { ArrowRight, Clock, MapPin } from "lucide-react";
 import Boton from "@/components/ui/Boton";
 import Contenedor from "@/components/ui/Contenedor";
 import EncabezadoPagina from "@/components/ui/EncabezadoPagina";
 import { CONTACTO, enlaceLlamada } from "@/lib/tienda";
 import { enlaceWhatsApp } from "@/lib/whatsapp";
+import IconoTelefono from "@/components/icons/pico/IconoTelefono";
+import IconoMensaje from "@/components/icons/pico/IconoMensaje";
+import IconoCorreo from "@/components/icons/pico/IconoCorreo";
 
 // Contacto — responsable: persona A (rama `contacto`). Correo y teléfonos se cambian en lib/tienda.ts (CONTACTO).
 
@@ -53,24 +56,24 @@ export default function PaginaContacto() {
         titulo="Contacto"
         descripcion="¿Tienes una duda o quieres saber si tenemos un producto? Escríbenos, llámanos o envíanos un correo."
         ruta={[{ texto: "Contacto" }]}
-        icono={Phone}
+        icono={IconoTelefono}
       />
       <Contenedor className="py-6 md:py-10">
         <div className="mx-auto max-w-2xl space-y-6">
           <ul className="overflow-hidden rounded-tarjeta border border-gris-borde bg-pico-blanco shadow-tarjeta">
             <Fila
-              icono={<MessageCircle className="size-5" aria-hidden />}
+              icono={<IconoMensaje className="size-6" />}
               titulo="WhatsApp"
               detalle="La forma más rápida. Te respondemos en horario de tienda."
             >
               <Boton href={enlaceWhatsApp("¡Hola, El Pico! Tengo una pregunta.")} target="_blank" rel="noopener noreferrer">
-                <MessageCircle className="size-4" aria-hidden />
+                <IconoMensaje className="size-5" />
                 Escríbenos
               </Boton>
             </Fila>
 
             <Fila
-              icono={<Phone className="size-5" aria-hidden />}
+              icono={<IconoTelefono className="size-6" />}
               titulo={telefonos.length > 1 ? "Teléfonos" : "Teléfono"}
               detalle="Llámanos en horario de tienda."
             >
@@ -87,7 +90,7 @@ export default function PaginaContacto() {
             </Fila>
 
             <Fila
-              icono={<Mail className="size-5" aria-hidden />}
+              icono={<IconoCorreo className="size-6" />}
               titulo="Correo"
               detalle="Para cotizaciones, facturas o pedidos grandes."
             >

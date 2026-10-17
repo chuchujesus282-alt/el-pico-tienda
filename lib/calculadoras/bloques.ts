@@ -1,4 +1,4 @@
-import { BrickWall } from "lucide-react";
+import IconoBloques from "@/components/icons/pico/IconoBloques";
 import { CAMPOS_PARED } from "./campos";
 import { BLOQUES, DESPERDICIO, MEZCLA_PEGA_BLOQUES } from "./constantes";
 import type { IdMaterial } from "./materiales";
@@ -46,7 +46,7 @@ export const bloques: Calculadora = {
   imagen: "/proyectos/bloques.webp",
   titulo: "Bloques para paredes",
   descripcion: "Bloques de arcilla o de concreto y el mortero para pegarlos.",
-  icono: BrickWall,
+  icono: IconoBloques,
   diagrama: "pared",
   comoMedir: "Mide el largo y el alto de la pared. Resta el área de puertas y ventanas.",
   campos: CAMPOS_PARED,

@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { House, MessageCircle, SearchX } from "lucide-react";
+import { House, SearchX } from "lucide-react";
 import Contenedor from "@/components/ui/Contenedor";
 import { enlaceWhatsApp } from "@/lib/whatsapp";
+import IconoMensaje from "@/components/icons/pico/IconoMensaje";
 
 // Página no encontrada de toda la tienda (enlace roto o dirección mal escrita). El producto
 // inexistente tiene la suya en app/producto/[id]/not-found.tsx.
@@ -35,7 +36,7 @@ export default function NoEncontrada() {
             rel="noopener noreferrer"
             className="inline-flex h-11 items-center gap-2 rounded-boton border-2 border-pico-azul px-5 text-sm font-semibold text-pico-azul transition duration-200 hover:bg-pico-azul-claro focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-pico-azul"
           >
-            <MessageCircle className="size-4" aria-hidden />
+            <IconoMensaje className="size-5" />
             Escríbenos
             <span className="sr-only"> (se abre WhatsApp en una pestaña nueva)</span>
           </a>

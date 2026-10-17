@@ -1,4 +1,4 @@
-import type { LucideIcon } from "lucide-react";
+import type { ComponenteIcono } from "@/types/icono";
 import type { IdMaterial } from "./materiales";
 
 /** Medida que escribe el cliente (paso 1). */
@@ -61,7 +61,8 @@ export type Calculadora = {
   titulo: string;
   /** Una línea para la tarjeta del listado. */
   descripcion: string;
-  icono: LucideIcon;
+  /** Ícono propio (components/icons/pico): placa de la tarjeta y plano del encabezado. */
+  icono: ComponenteIcono;
   /** Foto de alguien haciendo ese trabajo, para la tarjeta del listado (en public/proyectos/). null: fondo azul con el ícono. */
   imagen: string | null;
   diagrama: TipoDiagrama;

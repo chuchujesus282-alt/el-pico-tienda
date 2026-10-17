@@ -1,5 +1,9 @@
-import { Bolt, BrickWall, Drill, HardHat, PaintRoller } from "lucide-react";
-import type { LucideIcon } from "lucide-react";
+import IconoBloques from "@/components/icons/pico/IconoBloques";
+import IconoCasco from "@/components/icons/pico/IconoCasco";
+import IconoRodillo from "@/components/icons/pico/IconoRodillo";
+import IconoTaladro from "@/components/icons/pico/IconoTaladro";
+import IconoTornillo from "@/components/icons/pico/IconoTornillo";
+import type { ComponenteIcono } from "@/types/icono";
 import type { Banner, Producto } from "@/types/catalogo";
 
 // Contenido editable de la página principal: banners, asesoría, logos de marcas y
@@ -14,7 +18,7 @@ export type BannerInicio = Omit<Banner, "imagen"> & {
   texto?: string;
   textoBoton?: string;
   variante?: VarianteBanner;
-  icono?: LucideIcon;
+  icono?: ComponenteIcono;
 };
 
 export type Marca = {
@@ -38,7 +42,7 @@ export const bannersPrincipales: BannerInicio[] = [
     texto: "Cemento, bloques, pegos y más para construir sin paradas.",
     textoBoton: "Ver materiales",
     variante: "azul",
-    icono: BrickWall,
+    icono: IconoBloques,
   },
   {
     id: "herramientas",
@@ -49,7 +53,7 @@ export const bannersPrincipales: BannerInicio[] = [
     texto: "Taladros, esmeriles y herramientas manuales para cada trabajo.",
     textoBoton: "Ver herramientas",
     variante: "oscuro",
-    icono: Drill,
+    icono: IconoTaladro,
   },
   {
     id: "pinturas",
@@ -60,7 +64,7 @@ export const bannersPrincipales: BannerInicio[] = [
     texto: "Pinturas, rodillos y brochas para darle color a tu casa.",
     textoBoton: "Ver pinturas",
     variante: "azul",
-    icono: PaintRoller,
+    icono: IconoRodillo,
   },
 ];
 
@@ -77,7 +81,7 @@ export const bannersPromocionales: BannerInicio[] = [
     texto: "Cascos, guantes, botas y mascarillas de seguridad industrial.",
     textoBoton: "Ver seguridad",
     variante: "azul",
-    icono: HardHat,
+    icono: IconoCasco,
   },
   {
     id: "tornilleria",
@@ -88,7 +92,7 @@ export const bannersPromocionales: BannerInicio[] = [
     texto: "Tornillos, tuercas, anclajes y fijaciones.",
     textoBoton: "Ver tornillería",
     variante: "claro",
-    icono: Bolt,
+    icono: IconoTornillo,
   },
 ];
 

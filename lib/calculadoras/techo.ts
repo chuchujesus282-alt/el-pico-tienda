@@ -1,4 +1,4 @@
-import { House } from "lucide-react";
+import IconoLamina from "@/components/icons/pico/IconoLamina";
 import { DESPERDICIO, PRESENTACION, TECHO } from "./constantes";
 import type { Calculadora, Entrada, Resultado } from "./tipos";
 import { haciaArriba, medida, numero } from "./util";
@@ -50,7 +50,7 @@ export const techo: Calculadora = {
   imagen: "/proyectos/techo.webp",
   titulo: "Techo con láminas",
   descripcion: "Láminas de zinc o acerolit y los tornillos para fijarlas.",
-  icono: House,
+  icono: IconoLamina,
   diagrama: "techo",
   comoMedir: "El largo va a lo largo del alero. La caída se mide siguiendo la pendiente, desde la parte alta hasta el borde.",
   campos: [

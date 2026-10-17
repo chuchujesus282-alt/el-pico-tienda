@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
-import { Calculator, Check, ChevronRight } from "lucide-react";
+import { Check, ChevronRight } from "lucide-react";
+import IconoCalculadora from "@/components/icons/pico/IconoCalculadora";
 import { Montanas } from "@/components/layout/Logo";
 import Contenedor from "@/components/ui/Contenedor";
 import { RUTA_CALCULADORAS } from "./rutas";
@@ -60,9 +61,9 @@ export default function BannerCalculadoras({ imagen = null }: Props) {
             {/* Botón azul con chevron: el mismo de los banners claros del inicio. */}
             <Link
               href={RUTA_CALCULADORAS}
-              className="group inline-flex h-11 w-fit items-center gap-1.5 rounded-boton bg-pico-azul px-5 text-sm font-semibold text-pico-blanco shadow-tarjeta transition duration-200 hover:bg-pico-azul-oscuro hover:shadow-boton-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-pico-azul motion-safe:hover:-translate-y-0.5 lg:h-12 lg:px-6 lg:text-base"
+              className="group grupo-icono inline-flex h-11 w-fit items-center gap-1.5 rounded-boton bg-pico-azul px-5 text-sm font-semibold text-pico-blanco shadow-tarjeta transition duration-200 hover:bg-pico-azul-oscuro hover:shadow-boton-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-pico-azul motion-safe:hover:-translate-y-0.5 lg:h-12 lg:px-6 lg:text-base"
             >
-              <Calculator className="size-5 motion-safe:group-hover:animate-sacudir" aria-hidden />
+              <IconoCalculadora className="size-6" />
               Calcular ahora
               <ChevronRight className="size-4 transition-transform duration-300 group-hover:translate-x-1" aria-hidden />
             </Link>
@@ -98,8 +99,8 @@ export default function BannerCalculadoras({ imagen = null }: Props) {
             <div className="absolute right-4 bottom-1 hidden h-28 w-44 overflow-hidden rounded-banner border-4 border-pico-blanco shadow-tarjeta-hover transition-transform duration-500 ease-out motion-safe:rotate-2 motion-safe:group-hover/banner:rotate-0 lg:block">
               <Image src="/proyectos/concreto.webp" alt="" fill sizes="176px" className="object-cover" />
             </div>
-            <span className="absolute top-1/2 left-1/2 flex size-16 -translate-1/2 items-center justify-center rounded-tarjeta bg-pico-rojo text-pico-blanco shadow-boton-hover ring-4 ring-pico-blanco motion-safe:animate-flotar lg:size-20">
-              <Calculator className="size-8 lg:size-10" strokeWidth={1.75} />
+            <span className="absolute top-1/2 left-1/2 flex size-16 -translate-1/2 items-center justify-center rounded-tarjeta bg-pico-rojo text-pico-blanco shadow-boton-hover ring-4 ring-pico-blanco [--icono-acento:var(--color-pico-blanco)] motion-safe:animate-flotar lg:size-20">
+              <IconoCalculadora className="size-10 lg:size-12" />
             </span>
           </div>
         )}

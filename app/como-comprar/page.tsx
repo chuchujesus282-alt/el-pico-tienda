@@ -1,22 +1,17 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import type { ReactNode } from "react";
-import {
-  Calculator,
-  ChevronDown,
-  CircleCheck,
-  ClipboardList,
-  Lock,
-  MessageCircle,
-  Search,
-  ShoppingBag,
-  ShoppingCart,
-  Tag,
-  Truck,
-  UserRound,
-  Zap,
-} from "lucide-react";
-import type { LucideIcon } from "lucide-react";
+import { ChevronDown } from "lucide-react";
+import IconoBilletes from "@/components/icons/pico/IconoBilletes";
+import IconoCamion from "@/components/icons/pico/IconoCamion";
+import IconoEscudo from "@/components/icons/pico/IconoEscudo";
+import IconoLista from "@/components/icons/pico/IconoLista";
+import IconoLupa from "@/components/icons/pico/IconoLupa";
+import IconoMensaje from "@/components/icons/pico/IconoMensaje";
+import IconoSello from "@/components/icons/pico/IconoSello";
+import IconoUsuario from "@/components/icons/pico/IconoUsuario";
+import PlacaIcono from "@/components/icons/pico/PlacaIcono";
+import type { ComponenteIcono } from "@/types/icono";
 import { RUTA_CALCULADORAS } from "@/components/calculadoras/rutas";
 import { FORMAS_RETIRO, METODOS_COMBINABLES } from "@/components/finalizar-pedido/pedido";
 import Boton from "@/components/ui/Boton";
@@ -26,6 +21,9 @@ import Revelar from "@/components/ui/Revelar";
 import TarjetaInfo from "@/components/ui/TarjetaInfo";
 import TituloSeccion from "@/components/ui/TituloSeccion";
 import { enlaceWhatsApp } from "@/lib/whatsapp";
+import IconoCarrito from "@/components/icons/pico/IconoCarrito";
+import IconoRayo from "@/components/icons/pico/IconoRayo";
+import IconoCalculadora from "@/components/icons/pico/IconoCalculadora";
 
 // Cómo comprar — responsable: persona A (rama `como-comprar`). Explica el flujo de compra desde el punto de vista del
 // cliente. Las formas de retiro y los métodos de pago salen de finalizar-pedido/pedido.ts: si cambian allá, cambian aquí.
@@ -38,11 +36,11 @@ export const metadata: Metadata = {
 };
 
 /** "En pocas palabras": lo que el cliente tiene que saber antes de empezar. */
-const resumen: { icono: LucideIcon; texto: string }[] = [
-  { icono: MessageCircle, texto: "Tu pedido se cierra por WhatsApp: ahí te confirmamos disponibilidad y total final." },
-  { icono: Lock, texto: "En la web no se cobra nada ni te pedimos datos de tarjetas o claves bancarias." },
-  { icono: UserRound, texto: "Por ahora no necesitas cuenta para hacer tu pedido." },
-  { icono: Tag, texto: "Los precios están en dólares y son referenciales." },
+const resumen: { icono: ComponenteIcono; texto: string }[] = [
+  { icono: IconoMensaje, texto: "Tu pedido se cierra por WhatsApp: ahí te confirmamos disponibilidad y total final." },
+  { icono: IconoEscudo, texto: "En la web no se cobra nada ni te pedimos datos de tarjetas o claves bancarias." },
+  { icono: IconoUsuario, texto: "Por ahora no necesitas cuenta para hacer tu pedido." },
+  { icono: IconoBilletes, texto: "Los precios están en dólares y son referenciales." },
 ];
 
 const lista = (textos: string[]) => {
@@ -50,9 +48,9 @@ const lista = (textos: string[]) => {
   return textos.length > 1 ? `${textos.slice(0, -1).join(", ")} o ${ultimo}` : (ultimo ?? "");
 };
 
-const pasos: { icono: LucideIcon; titulo: string; contenido: ReactNode }[] = [
+const pasos: { icono: ComponenteIcono; titulo: string; contenido: ReactNode }[] = [
   {
-    icono: Search,
+    icono: IconoLupa,
     titulo: "Busca lo que necesitas",
     contenido: (
       <>
@@ -68,7 +66,7 @@ const pasos: { icono: LucideIcon; titulo: string; contenido: ReactNode }[] = [
     ),
   },
   {
-    icono: ShoppingCart,
+    icono: IconoCarrito,
     titulo: "Agrégalo al carrito",
     contenido: (
       <>
@@ -83,7 +81,7 @@ const pasos: { icono: LucideIcon; titulo: string; contenido: ReactNode }[] = [
     ),
   },
   {
-    icono: ClipboardList,
+    icono: IconoLista,
     titulo: "Revisa tu carrito",
     contenido: (
       <>
@@ -98,7 +96,7 @@ const pasos: { icono: LucideIcon; titulo: string; contenido: ReactNode }[] = [
     ),
   },
   {
-    icono: Truck,
+    icono: IconoCamion,
     titulo: "Elige cómo retiras y cómo pagas",
     contenido: (
       <>
@@ -121,7 +119,7 @@ const pasos: { icono: LucideIcon; titulo: string; contenido: ReactNode }[] = [
     ),
   },
   {
-    icono: MessageCircle,
+    icono: IconoMensaje,
     titulo: "Envía tu pedido por WhatsApp",
     contenido: (
       <>
@@ -134,7 +132,7 @@ const pasos: { icono: LucideIcon; titulo: string; contenido: ReactNode }[] = [
     ),
   },
   {
-    icono: CircleCheck,
+    icono: IconoSello,
     titulo: "Te confirmamos y pagas",
     contenido: (
       <p>
@@ -199,17 +197,17 @@ export default function PaginaComoComprar() {
         titulo="Cómo comprar"
         descripcion="Arma tu pedido en la web, elige cómo lo retiras y cómo pagas, y nos lo envías por WhatsApp. Así de fácil."
         ruta={[{ texto: "Cómo comprar" }]}
-        icono={ShoppingBag}
+        icono={IconoCarrito}
       />
 
       <Franja compacta>
         <ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
           {resumen.map(({ icono: Icono, texto }, i) => (
             <li key={texto}>
-              <Revelar retraso={i * 80} className="flex h-full items-start gap-3 rounded-tarjeta border border-gris-borde bg-pico-blanco p-4 text-sm text-texto shadow-tarjeta">
-                <span className="flex size-9 shrink-0 items-center justify-center rounded-chip bg-pico-azul-claro text-pico-rojo">
-                  <Icono className="size-5" aria-hidden />
-                </span>
+              <Revelar retraso={i * 80} className="grupo-icono flex h-full items-start gap-3 rounded-tarjeta border border-gris-borde bg-pico-blanco p-4 text-sm text-texto shadow-tarjeta">
+                <PlacaIcono tamano="sm">
+                  <Icono />
+                </PlacaIcono>
                 {texto}
               </Revelar>
             </li>
@@ -224,14 +222,14 @@ export default function PaginaComoComprar() {
             <li key={titulo}>
               <Revelar
                 retraso={(i % 3) * 100}
-                className="flex h-full flex-col gap-3 rounded-tarjeta border border-gris-borde bg-pico-blanco p-5 shadow-tarjeta md:p-6"
+                className="grupo-icono flex h-full flex-col gap-3 rounded-tarjeta border border-gris-borde bg-pico-blanco p-5 shadow-tarjeta md:p-6"
               >
                 <div className="flex items-center gap-3">
                   <span className="flex size-10 shrink-0 items-center justify-center rounded-chip bg-pico-rojo font-titulo text-lg font-bold text-pico-blanco tabular-nums">
                     {i + 1}
                   </span>
                   <h3 className="flex-1 text-lg font-bold text-pico-azul">{titulo}</h3>
-                  <Icono className="size-6 shrink-0 text-pico-rojo" aria-hidden />
+                  <Icono className="size-8 text-pico-azul" />
                 </div>
                 <div className="space-y-2 text-sm leading-relaxed text-texto">{contenido}</div>
               </Revelar>
@@ -243,13 +241,13 @@ export default function PaginaComoComprar() {
       <Franja>
         <TituloSeccion titulo="Atajos para comprar más rápido" />
         <div className="grid gap-4 md:grid-cols-2 md:gap-6">
-          <TarjetaInfo icono={<Zap className="size-5" aria-hidden />} titulo="Comprar ahora">
+          <TarjetaInfo icono={<IconoRayo className="size-6" />} titulo="Comprar ahora">
             <p className="text-sm leading-relaxed text-texto">
               ¿Solo necesitas un producto? En su página toca <strong>Comprar ahora</strong> y vas directo a elegir retiro y pago
               con ese producto. Tu carrito no se toca.
             </p>
           </TarjetaInfo>
-          <TarjetaInfo icono={<Calculator className="size-5" aria-hidden />} titulo="Calculadoras de proyectos">
+          <TarjetaInfo icono={<IconoCalculadora className="size-6" />} titulo="Calculadoras de proyectos">
             <p className="text-sm leading-relaxed text-texto">
               ¿Vas a levantar una pared, pintar o vaciar una losa? Indica las medidas y te decimos qué materiales y cuántos
               necesitas. Con <strong>Agregar todo al carrito</strong> los sumas de una vez.
@@ -289,8 +287,9 @@ export default function PaginaComoComprar() {
               target="_blank"
               rel="noopener noreferrer"
               variante="secundario"
+              className="grupo-icono"
             >
-              <MessageCircle className="size-4" aria-hidden />
+              <IconoMensaje className="size-5" />
               Escríbenos por WhatsApp
             </Boton>
           </div>

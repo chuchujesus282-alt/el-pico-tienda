@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Search } from "lucide-react";
+
 import Link from "next/link";
 import SinResultados from "@/components/busqueda/SinResultados";
 import GrillaProductos from "@/components/producto/GrillaProductos";
@@ -9,6 +9,7 @@ import EncabezadoPagina from "@/components/ui/EncabezadoPagina";
 import { getCategorias, getIndiceProductos } from "@/lib/catalogo";
 import { buscar, crearIndice } from "@/lib/recomendaciones/busqueda";
 import type { Categoria, Producto } from "@/types/catalogo";
+import IconoLupa from "@/components/icons/pico/IconoLupa";
 
 // Resultados de búsqueda (/buscar?q=…) — responsable: persona A. Usa la búsqueda inteligente de lib/recomendaciones/.
 
@@ -32,7 +33,7 @@ export default async function PaginaBuscar({ searchParams }: PageProps<"/buscar"
   } catch {
     return (
       <>
-        <EncabezadoPagina titulo="Buscar productos" ruta={[{ texto: "Buscar" }]} icono={Search} />
+        <EncabezadoPagina titulo="Buscar productos" ruta={[{ texto: "Buscar" }]} icono={IconoLupa} />
         <Contenedor className="py-8 md:py-12">
         <p className="rounded-tarjeta border border-gris-borde bg-pico-blanco p-6 text-center text-sm text-gris-texto">
           No pudimos conectar con el catálogo en este momento. Intenta de nuevo en unos minutos.
@@ -51,7 +52,7 @@ export default async function PaginaBuscar({ searchParams }: PageProps<"/buscar"
       <EncabezadoPagina
         titulo={consulta ? `Resultados para “${consulta}”` : "Buscar productos"}
         ruta={[{ texto: "Buscar" }]}
-        icono={Search}
+        icono={IconoLupa}
         descripcion={cantidad > 0 ? `${cantidad} ${cantidad === 1 ? "producto" : "productos"}` : undefined}
       />
     <Contenedor className="space-y-6 py-6 md:py-10">

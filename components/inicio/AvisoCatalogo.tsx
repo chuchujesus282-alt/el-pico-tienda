@@ -1,6 +1,7 @@
-import { MessageCircle, PackageSearch } from "lucide-react";
+import { PackageSearch } from "lucide-react";
 import Boton from "@/components/ui/Boton";
 import { enlaceWhatsApp } from "@/lib/whatsapp";
+import IconoMensaje from "@/components/icons/pico/IconoMensaje";
 
 /**
  * Se muestra cuando no llegó ningún producto (catálogo caído o vacío): la venta sigue por WhatsApp.
@@ -26,7 +27,7 @@ export default function AvisoCatalogo() {
         rel="noopener noreferrer"
         className="mt-2"
       >
-        <MessageCircle className="size-5" aria-hidden />
+        <IconoMensaje className="size-6" />
         Pedir por WhatsApp
       </Boton>
     </section>

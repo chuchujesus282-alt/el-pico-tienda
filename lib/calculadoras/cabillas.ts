@@ -1,4 +1,4 @@
-import { Grid3x3 } from "lucide-react";
+import IconoMalla from "@/components/icons/pico/IconoMalla";
 import { CAMPOS_SUPERFICIE } from "./campos";
 import { ALAMBRE_KG_POR_KG_ACERO, CABILLAS, PRESENTACION, SOLAPE_EN_DIAMETROS, type DiametroCabilla } from "./constantes";
 import type { IdMaterial } from "./materiales";
@@ -76,7 +76,7 @@ export const cabillas: Calculadora = {
   imagen: "/proyectos/cabillas.webp",
   titulo: "Cabillas para losas",
   descripcion: "Barras de acero y alambre de amarre para la malla de una losa o placa.",
-  icono: Grid3x3,
+  icono: IconoMalla,
   diagrama: "malla",
   comoMedir: "Mide el largo y el ancho de la losa. La separación es la distancia entre una cabilla y la siguiente.",
   campos: [

@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Heart } from "lucide-react";
+import IconoCorazon from "@/components/icons/pico/IconoCorazon";
 import { useFavoritos } from "./almacenFavoritos";
 
 /** "Favoritos" del header (desde 768px; en el teléfono está en la barra inferior), con su contador rojo. */
@@ -11,10 +11,10 @@ export default function EnlaceFavoritos({ className = "" }: { className?: string
     <Link
       href="/favoritos"
       aria-label={`Favoritos (${cantidad} ${cantidad === 1 ? "producto" : "productos"})`}
-      className={`group items-center gap-2 rounded-boton p-2.5 text-sm font-semibold text-pico-azul transition-colors hover:bg-pico-azul-claro focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-pico-azul ${className}`}
+      className={`group grupo-icono items-center gap-2 rounded-boton p-2.5 text-sm font-semibold text-pico-azul transition-colors hover:bg-pico-azul-claro focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-pico-azul ${className}`}
     >
       <span className="relative">
-        <Heart className="size-6 transition-transform duration-300 motion-safe:group-hover:scale-110" aria-hidden />
+        <IconoCorazon className="size-7" />
         {cantidad > 0 && (
           <span
             key={cantidad}

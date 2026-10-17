@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
-import { MapPinned } from "lucide-react";
+
 import ListaDirecciones from "@/components/direcciones/ListaDirecciones";
 import Contenedor from "@/components/ui/Contenedor";
 import EncabezadoPagina from "@/components/ui/EncabezadoPagina";
+import IconoUbicacion from "@/components/icons/pico/IconoUbicacion";
 
 // Mis direcciones — responsable: persona B. Las direcciones viven en el navegador del cliente
 // (components/direcciones/almacenDirecciones.ts); cuando haya cuentas, viajarán con ella.
@@ -27,7 +28,7 @@ export default async function PaginaMisDirecciones({ searchParams }: PageProps<"
       <EncabezadoPagina
         titulo="Mis direcciones"
         ruta={[{ texto: "Mis direcciones" }]}
-        icono={MapPinned}
+        icono={IconoUbicacion}
         descripcion="Guarda los lugares donde recibes tus pedidos y elige uno en cada compra."
       />
       <Contenedor className="py-6 md:py-10">

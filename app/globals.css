@@ -37,6 +37,8 @@
   --shadow-tarjeta-hover: 0 2px 4px rgb(12 45 78 / 0.06), 0 18px 36px -12px rgb(12 45 78 / 0.3);
   --shadow-boton-hover: 0 10px 20px -6px rgb(12 45 78 / 0.35);
   /* Header: brillo blanco en el borde de arriba y una sombra suave abajo que lo separa de la página. */
+  /* Placa de los íconos propios: hundida apenas (sombra interior tenue). */
+  --shadow-placa: inset 0 1px 2px rgb(12 45 78 / 0.12), inset 0 -1px 0 rgb(255 255 255 / 0.6);
   --shadow-header: inset 0 1px 0 rgb(255 255 255 / 0.7), 0 4px 14px -8px rgb(12 45 78 / 0.25);
 
   --animate-aparecer: aparecer 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
@@ -49,6 +51,8 @@
   --animate-caer: caer 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
   --animate-onda: onda 1.1s cubic-bezier(0.16, 1, 0.3, 1) both;
   --animate-salir: salir 0.3s ease-in forwards;
+  /* Ícono que se elige: crece un poco y vuelve. */
+  --animate-pop: ico-pop 0.45s cubic-bezier(0.16, 1, 0.3, 1);
 
   @keyframes aparecer {
     from {
@@ -136,6 +140,8 @@
 /* Margen lateral fluido de todo el sitio: 16px en móvil, crece con la pantalla y se detiene en 48px.
    Se usa con `px-pagina` (Contenedor) o como `var(--margen-pagina)` en filas que se salen hasta el borde. */
 :root {
+  /* Curva de toda la tienda: arranca rápido y frena suave (ease-out exponencial). */
+  --curva-suave: cubic-bezier(0.16, 1, 0.3, 1);
   --margen-pagina: clamp(1rem, 4vw, 3rem);
   /* Barra de navegación fija abajo (BarraInferiorMovil): solo existe en el teléfono. Las barras fijas de
      producto y calculadoras se apoyan encima con `bottom-(--alto-barra-inferior)`, y como la barra ya cubre
@@ -237,4 +243,193 @@ p {
   &::-webkit-scrollbar {
     display: none;
   }
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   Íconos propios (components/icons/pico/). Trazo en currentColor y UN acento en rojo:
+   - .ac-relleno        relleno rojo sin borde (un punto, una franja)
+   - .ac-relleno-borde  relleno rojo con el borde del ícono (la caja de la moto, un bloque)
+   - .ac-trazo          línea roja (una flecha, un check)
+   - .ico-tapa          relleno del color de fondo, para tapar lo que queda detrás (billetes, rodillo)
+   Cada pieza animable lleva una clase .ia-*: se anima al pasar el mouse sobre un .grupo-icono
+   (la tarjeta o la placa que lo contiene) y una vez al quedar elegido ([data-icono-activo="true"]).
+   ───────────────────────────────────────────────────────────────────────────── */
+.icono-pico {
+  overflow: visible;
+}
+.icono-pico .ac-relleno {
+  fill: var(--icono-acento, var(--color-pico-rojo));
+  stroke: none;
+}
+.icono-pico .ac-relleno-borde {
+  fill: var(--icono-acento, var(--color-pico-rojo));
+}
+.icono-pico .ac-trazo {
+  stroke: var(--icono-acento, var(--color-pico-rojo));
+}
+.icono-pico .ico-tapa {
+  /* El fondo lo pone quien contiene al ícono (PlacaIcono); por defecto, blanco. */
+  fill: var(--icono-fondo, var(--color-pico-blanco));
+}
+.icono-pico .ico-solido {
+  fill: currentColor;
+  stroke: none;
+}
+.icono-pico [class*="ia-"] {
+  transform-box: fill-box;
+  transform-origin: center;
+}
+.icono-pico .ia-balanceo {
+  transform-origin: 50% 0;
+}
+.icono-pico .ia-abanico {
+  transform-origin: 0 100%;
+}
+.icono-pico .ia-estirar,
+.icono-pico .ia-franja,
+.icono-pico .ia-onda {
+  transform-origin: 0 50%;
+}
+.icono-pico .ia-cavar {
+  transform-origin: 50% 0;
+}
+.icono-pico .ia-aguja {
+  transform-box: view-box;
+  transform-origin: 16px 16px;
+}
+.icono-pico .ia-dibujar {
+  stroke-dasharray: 1;
+}
+.icono-pico .ia-franja {
+  opacity: 0;
+}
+
+@keyframes ico-balanceo {
+  0%, 100% { transform: rotate(0deg); }
+  30% { transform: rotate(-5deg); }
+  65% { transform: rotate(3deg); }
+}
+@keyframes ico-avanzar {
+  0%, 100% { transform: translateX(0); }
+  45% { transform: translateX(1.6px); }
+}
+@keyframes ico-velocidad {
+  0% { opacity: 0; transform: translateX(2px); }
+  35% { opacity: 1; }
+  100% { opacity: 0; transform: translateX(-3px); }
+}
+@keyframes ico-rebote {
+  0%, 100% { transform: translateY(0); }
+  30% { transform: translateY(-2.2px); }
+  55% { transform: translateY(0); }
+  75% { transform: translateY(-0.8px); }
+}
+@keyframes ico-onda {
+  0% { opacity: 0; transform: scale(0.6); }
+  40% { opacity: 1; }
+  100% { opacity: 1; transform: scale(1); }
+}
+@keyframes ico-abanico {
+  0%, 100% { transform: rotate(0deg); }
+  50% { transform: rotate(-10deg); }
+}
+@keyframes ico-deslizar {
+  0%, 100% { transform: translateX(0); }
+  50% { transform: translateX(2.5px); }
+}
+@keyframes ico-deslizar-inv {
+  0%, 100% { transform: translateX(0); }
+  50% { transform: translateX(-2.5px); }
+}
+@keyframes ico-saltar {
+  0%, 100% { transform: translateY(0); }
+  40% { transform: translateY(-2.5px); }
+  70% { transform: translateY(0.4px); }
+}
+@keyframes ico-oscilar {
+  0%, 100% { transform: rotate(0deg); }
+  25% { transform: rotate(-8deg); }
+  75% { transform: rotate(8deg); }
+}
+@keyframes ico-girar {
+  to { transform: rotate(360deg); }
+}
+@keyframes ico-dibujar {
+  from { stroke-dashoffset: 1; }
+  to { stroke-dashoffset: 0; }
+}
+@keyframes ico-pop {
+  0%, 100% { transform: scale(1); }
+  45% { transform: scale(1.22); }
+}
+@keyframes ico-estirar {
+  0%, 100% { transform: scaleX(1); }
+  50% { transform: scaleX(1.3); }
+}
+@keyframes ico-franja {
+  0% { opacity: 1; transform: scaleX(0); }
+  70% { opacity: 1; transform: scaleX(1); }
+  100% { opacity: 0; transform: scaleX(1); }
+}
+@keyframes ico-caer {
+  0% { opacity: 0; transform: translateY(-5px); }
+  60% { opacity: 1; transform: translateY(0.6px); }
+  100% { transform: translateY(0); }
+}
+@keyframes ico-gota {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(2px); }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  :is(.grupo-icono:hover, .grupo-icono:focus-visible, .grupo-icono:has(:focus-visible), [data-icono-activo="true"]) .icono-pico {
+    & .ia-balanceo { animation: ico-balanceo 0.8s var(--curva-suave); }
+    & .ia-avanzar { animation: ico-avanzar 0.6s var(--curva-suave); }
+    & .ia-velocidad { animation: ico-velocidad 0.6s ease-out; }
+    & .ia-rebote { animation: ico-rebote 0.7s var(--curva-suave); }
+    & .ia-onda { animation: ico-onda 0.7s var(--curva-suave) both; }
+    & .ia-onda-2 { animation-delay: 0.12s; }
+    & .ia-abanico { animation: ico-abanico 0.7s var(--curva-suave); }
+    & .ia-deslizar { animation: ico-deslizar 0.7s var(--curva-suave); }
+    & .ia-deslizar-inv { animation: ico-deslizar-inv 0.7s var(--curva-suave); }
+    & .ia-saltar { animation: ico-saltar 0.6s var(--curva-suave); }
+    & .ia-oscilar { animation: ico-oscilar 0.7s var(--curva-suave); }
+    & .ia-cavar { animation: ico-balanceo 0.7s var(--curva-suave); }
+    & .ia-girar { animation: ico-girar 0.9s var(--curva-suave); }
+    & .ia-aguja { animation: ico-girar 1s var(--curva-suave); }
+    & .ia-dibujar { animation: ico-dibujar 0.7s var(--curva-suave) both; }
+    & .ia-pop { animation: ico-pop 0.45s var(--curva-suave); }
+    & .ia-estirar { animation: ico-estirar 0.7s var(--curva-suave); }
+    & .ia-franja { animation: ico-franja 0.8s var(--curva-suave); }
+    & .ia-caer { animation: ico-caer 0.6s var(--curva-suave) both; }
+    & .ia-gota { animation: ico-gota 0.7s var(--curva-suave); }
+    & .ia-retraso-1 { animation-delay: 0.08s; }
+    & .ia-retraso-2 { animation-delay: 0.16s; }
+    & .ia-retraso-3 { animation-delay: 0.24s; }
+  }
+}
+
+/* Ilustración tipo plano (Plano.tsx): el ícono en línea fina, sin rellenos que tapen (se ven las líneas
+   ocultas, como en un plano) y el acento rojo un poco más suave. */
+.plano-dibujo {
+  --icono-fondo: transparent;
+  --icono-acento: color-mix(in srgb, var(--color-pico-rojo) 85%, transparent);
+}
+.plano-dibujo .icono-pico,
+.plano-dibujo .icono-pico * {
+  stroke-width: 0.6;
+}
+
+/* Logos de pago (Zelle): monocromo en reposo, logo a color al quedar elegido. */
+[data-icono-activo="true"] .logo-pago .logo-pago-mono {
+  opacity: 0;
+}
+[data-icono-activo="true"] .logo-pago .logo-pago-color {
+  opacity: 1;
+}
+
+/* Íconos utilitarios de lucide (flechas, cerrar, más/menos): mismo trazo que el set propio.
+   Solo los que usan el grosor por defecto; los que piden otro a propósito (checks gruesos) se respetan. */
+.lucide[stroke-width="2"] {
+  stroke-width: 1.75;
 }

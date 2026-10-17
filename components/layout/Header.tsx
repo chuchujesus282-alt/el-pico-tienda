@@ -1,6 +1,7 @@
 import Link from "next/link";
-import { Calculator, User } from "lucide-react";
 import BuscadorConSugerencias from "@/components/busqueda/BuscadorConSugerencias";
+import IconoCalculadora from "@/components/icons/pico/IconoCalculadora";
+import IconoUsuario from "@/components/icons/pico/IconoUsuario";
 import SelectorDireccion from "@/components/direcciones/SelectorDireccion";
 import EnlaceFavoritos from "@/components/favoritos/EnlaceFavoritos";
 import Contenedor from "@/components/ui/Contenedor";
@@ -32,18 +33,18 @@ export default function Header() {
           {/* Calculadoras de proyectos: mismo estilo y protagonismo que "Mi cuenta" y el carrito. */}
           <Link
             href="/calculadoras"
-            className="group flex items-center gap-2 rounded-boton p-2.5 text-sm font-semibold text-pico-azul transition-colors hover:bg-pico-azul-claro focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-pico-azul"
+            className="group grupo-icono flex items-center gap-2 rounded-boton p-2.5 text-sm font-semibold text-pico-azul transition-colors hover:bg-pico-azul-claro focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-pico-azul"
           >
-            <Calculator className="size-6 transition-transform duration-300 motion-safe:group-hover:-translate-y-0.5" aria-hidden />
+            <IconoCalculadora className="size-7" />
             <span className="sr-only lg:not-sr-only">Calculadoras</span>
           </Link>
           {/* Favoritos, Mi cuenta y el carrito: en el teléfono viven en la barra inferior (BarraInferiorMovil). */}
           <EnlaceFavoritos className="hidden md:flex" />
           <Link
             href="/iniciar-sesion"
-            className="group hidden items-center md:flex gap-2 rounded-boton p-2.5 text-sm font-semibold text-pico-azul transition-colors hover:bg-pico-azul-claro focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-pico-azul"
+            className="group grupo-icono hidden items-center md:flex gap-2 rounded-boton p-2.5 text-sm font-semibold text-pico-azul transition-colors hover:bg-pico-azul-claro focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-pico-azul"
           >
-            <User className="size-6 transition-transform duration-300 motion-safe:group-hover:-translate-y-0.5" aria-hidden />
+            <IconoUsuario className="size-7" />
             <span className="sr-only lg:not-sr-only">Mi cuenta</span>
           </Link>
           <BotonCarrito />

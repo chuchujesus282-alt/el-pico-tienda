@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { ShoppingCart } from "lucide-react";
+import IconoCarrito from "@/components/icons/pico/IconoCarrito";
 import BotonCarritoFlotante from "@/components/carrito/BotonCarritoFlotante";
 import { useCarrito } from "@/components/carrito/ProveedorCarrito";
 import BotonSubir from "./BotonSubir";
@@ -27,11 +27,11 @@ export default function BotonCarrito() {
         type="button"
         onClick={abrir}
         // En el teléfono no se muestra: el carrito está en la barra inferior (BarraInferiorMovil).
-        className="group hidden items-center gap-2 md:flex rounded-boton p-2.5 text-sm font-semibold text-pico-azul transition-colors hover:bg-pico-azul-claro focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-pico-azul"
+        className="group grupo-icono hidden items-center gap-2 md:flex rounded-boton p-2.5 text-sm font-semibold text-pico-azul transition-colors hover:bg-pico-azul-claro focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-pico-azul"
         aria-label={`Abrir carrito (${cantidadTotal} ${cantidadTotal === 1 ? "producto" : "productos"})`}
       >
         <span className="relative">
-          <ShoppingCart className="size-6 motion-safe:group-hover:animate-sacudir" aria-hidden />
+          <IconoCarrito className="size-7" />
           {cantidadTotal > 0 && (
             // key: cada vez que cambia la cantidad, el contador vuelve a montarse y "late".
             <span

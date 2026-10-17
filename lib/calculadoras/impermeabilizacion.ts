@@ -1,4 +1,4 @@
-import { Umbrella } from "lucide-react";
+import IconoManto from "@/components/icons/pico/IconoManto";
 import { CAMPOS_SUPERFICIE } from "./campos";
 import { DESPERDICIO, IMPERMEABILIZACION, PRESENTACION } from "./constantes";
 import type { Calculadora, Entrada, Resultado } from "./tipos";
@@ -56,7 +56,7 @@ export const impermeabilizacion: Calculadora = {
   imagen: "/proyectos/impermeabilizacion.webp",
   titulo: "Impermeabilización de techos",
   descripcion: "Manto asfáltico con su primer, o impermeabilizante acrílico.",
-  icono: Umbrella,
+  icono: IconoManto,
   diagrama: "superficie",
   comoMedir: "Mide el largo y el ancho de la platabanda o del techo. Nosotros sumamos los bordes.",
   campos: CAMPOS_SUPERFICIE,

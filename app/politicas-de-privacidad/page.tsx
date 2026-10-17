@@ -1,10 +1,11 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import type { ReactNode } from "react";
-import { ShieldCheck } from "lucide-react";
+
 import Contenedor from "@/components/ui/Contenedor";
 import EncabezadoPagina from "@/components/ui/EncabezadoPagina";
 import { TIENDA } from "@/lib/tienda";
+import IconoEscudo from "@/components/icons/pico/IconoEscudo";
 
 // Políticas de privacidad — responsable: persona A (rama `politicas-privacidad`).
 // Describe lo que la tienda REALMENTE hace con los datos. Si cambia cómo se recogen o usan
@@ -68,7 +69,7 @@ export default function PaginaPoliticasPrivacidad() {
         titulo="Políticas de privacidad"
         descripcion={`Última actualización: ${ACTUALIZACION}`}
         ruta={[{ texto: "Políticas de privacidad" }]}
-        icono={ShieldCheck}
+        icono={IconoEscudo}
       />
     <Contenedor className="space-y-6 py-6 md:space-y-8 md:py-10">
 

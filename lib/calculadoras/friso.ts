@@ -1,4 +1,4 @@
-import { PaintbrushVertical } from "lucide-react";
+import IconoLlana from "@/components/icons/pico/IconoLlana";
 import { CAMPOS_PARED } from "./campos";
 import { DESPERDICIO, MORTERO, type MezclaMortero } from "./constantes";
 import type { Calculadora, Entrada, Resultado } from "./tipos";
@@ -28,7 +28,7 @@ export const friso: Calculadora = {
   imagen: "/proyectos/friso.webp",
   titulo: "Friso de paredes",
   descripcion: "Cemento y arena para frisar paredes por dentro o por fuera.",
-  icono: PaintbrushVertical,
+  icono: IconoLlana,
   diagrama: "pared",
   comoMedir: "Mide el largo y el alto de cada cara que vas a frisar. Si frisas los dos lados, suma el largo dos veces.",
   campos: [

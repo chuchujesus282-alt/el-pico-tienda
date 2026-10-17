@@ -1,4 +1,4 @@
-import { LayoutGrid } from "lucide-react";
+import IconoBaldosas from "@/components/icons/pico/IconoBaldosas";
 import { CAMPOS_SUPERFICIE } from "./campos";
 import { DESPERDICIO, PRESENTACION, REVESTIMIENTOS } from "./constantes";
 import type { Calculadora, Entrada, Resultado } from "./tipos";
@@ -57,7 +57,7 @@ export const ceramica: Calculadora = {
   imagen: "/proyectos/ceramica.webp",
   titulo: "Cerámica y porcelanato",
   descripcion: "Cajas de cerámica o porcelanato, pego y carato para tu piso.",
-  icono: LayoutGrid,
+  icono: IconoBaldosas,
   diagrama: "superficie",
   comoMedir: "Mide el largo y el ancho del piso. Si el espacio no es rectangular, divídelo en partes y suma.",
   campos: CAMPOS_SUPERFICIE,

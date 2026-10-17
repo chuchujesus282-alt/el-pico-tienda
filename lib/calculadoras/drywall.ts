@@ -1,4 +1,4 @@
-import { Columns3 } from "lucide-react";
+import IconoDrywall from "@/components/icons/pico/IconoDrywall";
 import { CAMPOS_PARED } from "./campos";
 import { DESPERDICIO, DRYWALL, PRESENTACION } from "./constantes";
 import type { Calculadora, Entrada, Resultado } from "./tipos";
@@ -75,7 +75,7 @@ export const drywall: Calculadora = {
   imagen: "/proyectos/drywall.webp",
   titulo: "Drywall",
   descripcion: "Láminas, parales, rieles, tornillos, cinta y masilla para tu pared.",
-  icono: Columns3,
+  icono: IconoDrywall,
   diagrama: "pared",
   comoMedir: "Mide el largo y el alto de la pared. Resta el área de puertas y ventanas.",
   campos: CAMPOS_PARED,

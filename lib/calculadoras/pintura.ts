@@ -1,4 +1,4 @@
-import { PaintRoller } from "lucide-react";
+import IconoRodillo from "@/components/icons/pico/IconoRodillo";
 import { CAMPOS_PARED } from "./campos";
 import { DESPERDICIO, PINTURA, PRESENTACION } from "./constantes";
 import type { Calculadora, Entrada, LineaMaterial, Resultado } from "./tipos";
@@ -58,7 +58,7 @@ export const pintura: Calculadora = {
   imagen: "/proyectos/pintura.webp",
   titulo: "Pintura",
   descripcion: "Galones o cuñetes de pintura y el sellador, según el área y las manos.",
-  icono: PaintRoller,
+  icono: IconoRodillo,
   diagrama: "pared",
   comoMedir: "Suma el largo de todas las paredes que vas a pintar y mide su alto. Resta puertas y ventanas.",
   campos: CAMPOS_PARED,

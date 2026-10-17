@@ -1,12 +1,13 @@
 "use client";
 
-import { Check, Info, MessageCircle, Minus, Plus, Printer, Ruler, ShoppingCart } from "lucide-react";
+import { Check, Info, Minus, Plus, Printer, Ruler, ShoppingCart } from "lucide-react";
 import ImagenProducto from "@/components/producto/ImagenProducto";
 import Precio from "@/components/ui/Precio";
 import { formatearPrecio, tituloProducto } from "@/lib/formato";
 import type { Dato } from "@/lib/calculadoras/tipos";
 import type { TasaBCV } from "@/types/tasa";
 import { CANTIDAD_MAXIMA, totales, type LineaResumen } from "./proyecto";
+import IconoMensaje from "@/components/icons/pico/IconoMensaje";
 
 const formatoBs = new Intl.NumberFormat("es-VE", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 const claseFoco = "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-pico-azul";
@@ -170,13 +171,13 @@ export default function ResumenProyecto({ lineas, datos, tasa, sinCalculo, recie
               rel="noopener noreferrer"
               className={`group flex h-10 items-center justify-center gap-1.5 rounded-boton border-2 border-pico-azul bg-pico-blanco text-sm font-semibold text-pico-azul transition duration-200 hover:bg-pico-azul hover:text-pico-blanco ${claseFoco}`}
             >
-              <MessageCircle className="size-4 motion-safe:group-hover:animate-sacudir" aria-hidden />
+              <IconoMensaje className="size-5 motion-safe:group-hover:animate-sacudir" />
               Compartir
               <span className="sr-only"> por WhatsApp (se abre en una pestaña nueva)</span>
             </a>
           ) : (
             <span className="flex h-10 cursor-not-allowed items-center justify-center gap-1.5 rounded-boton border-2 border-gris-borde text-sm font-semibold text-gris-texto/60">
-              <MessageCircle className="size-4" aria-hidden />
+              <IconoMensaje className="size-5" />
               Compartir
             </span>
           )}

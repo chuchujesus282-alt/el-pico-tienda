@@ -1,6 +1,7 @@
 import Link from "next/link";
-import { Calculator, SearchX } from "lucide-react";
+import { SearchX } from "lucide-react";
 import Contenedor from "@/components/ui/Contenedor";
+import IconoCalculadora from "@/components/icons/pico/IconoCalculadora";
 
 /** Calculadora inexistente (enlace viejo o mal escrito). */
 export default function CalculadoraNoEncontrada() {
@@ -16,7 +17,7 @@ export default function CalculadoraNoEncontrada() {
           href="/calculadoras"
           className="mt-2 inline-flex h-11 items-center gap-2 rounded-boton bg-pico-azul px-5 text-sm font-semibold text-pico-blanco transition duration-200 hover:bg-pico-azul-oscuro hover:shadow-boton-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-pico-azul motion-safe:hover:-translate-y-0.5"
         >
-          <Calculator className="size-4" aria-hidden />
+          <IconoCalculadora className="size-5" />
           Ver calculadoras
         </Link>
       </div>

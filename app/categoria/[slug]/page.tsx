@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { Package } from "lucide-react";
 import BannerCalculadoras from "@/components/calculadoras/BannerCalculadoras";
 import FiltrosActivos from "@/components/categoria/FiltrosActivos";
 import FiltrosCategoria from "@/components/categoria/FiltrosCategoria";
@@ -12,6 +11,7 @@ import { hrefCategoria, leerEstado, OPCIONES_ORDEN } from "@/components/categori
 import GrillaProductos from "@/components/producto/GrillaProductos";
 import Contenedor from "@/components/ui/Contenedor";
 import EncabezadoPagina from "@/components/ui/EncabezadoPagina";
+import { iconoDeCategoria } from "@/components/icons/pico/porCategoria";
 import { getCategorias, getProductosPorCategoria } from "@/lib/catalogo";
 
 // Página de categoría — responsable: persona B. Ver la sección "Página de categoría" en docs/guia-de-estilo.md.
@@ -69,7 +69,7 @@ export default async function PaginaCategoria({ params, searchParams }: PageProp
 
   return (
     <div>
-      <EncabezadoPagina etiqueta="Categoría" titulo={categoria.nombre} ruta={[{ texto: categoria.nombre }]} imagen={categoria.banner} icono={Package} />
+      <EncabezadoPagina etiqueta="Categoría" titulo={categoria.nombre} ruta={[{ texto: categoria.nombre }]} imagen={categoria.banner} icono={iconoDeCategoria(slug)} />
 
       <Contenedor className="py-6 md:py-10">
         <div className="lg:grid lg:grid-cols-[15rem_minmax(0,1fr)] lg:gap-8">

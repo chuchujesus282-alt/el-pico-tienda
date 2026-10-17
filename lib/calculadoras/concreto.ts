@@ -1,4 +1,4 @@
-import { Cuboid } from "lucide-react";
+import IconoMezcladora from "@/components/icons/pico/IconoMezcladora";
 import { CONCRETO, DESPERDICIO, type ResistenciaConcreto } from "./constantes";
 import type { Calculadora, Entrada, LineaMaterial, Resultado } from "./tipos";
 import { haciaArriba, medida, numero } from "./util";
@@ -46,7 +46,7 @@ export const concreto: Calculadora = {
   imagen: "/proyectos/concreto.webp",
   titulo: "Concreto para vaciados",
   descripcion: "Cemento, arena y piedra para losas, columnas, vigas y zapatas.",
-  icono: Cuboid,
+  icono: IconoMezcladora,
   diagrama: "volumen",
   comoMedir: "Mide largo, ancho y espesor del elemento. Si son varios iguales, indica cuántos.",
   campos: [

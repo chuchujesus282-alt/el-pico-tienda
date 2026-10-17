@@ -1,11 +1,12 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ArrowRight, Clock, MapPin } from "lucide-react";
+import { ArrowRight, MapPin } from "lucide-react";
 import HorarioEnVivo from "@/components/horario/HorarioEnVivo";
 import Contenedor from "@/components/ui/Contenedor";
 import EncabezadoPagina from "@/components/ui/EncabezadoPagina";
 import { HORARIO, formatearFranja } from "@/lib/horario";
 import { TIENDA } from "@/lib/tienda";
+import IconoReloj from "@/components/icons/pico/IconoReloj";
 
 // Horario — responsable: persona A (rama `horario`). Las horas se cambian en lib/horario.ts.
 
@@ -42,7 +43,7 @@ export default function PaginaHorario() {
         titulo="Horario"
         descripcion="Abrimos todos los días. En feriado, el horario es el mismo de los sábados."
         ruta={[{ texto: "Horario" }]}
-        icono={Clock}
+        icono={IconoReloj}
       />
     <Contenedor className="py-6 md:py-10">
       <script

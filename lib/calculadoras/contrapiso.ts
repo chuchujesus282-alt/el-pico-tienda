@@ -1,4 +1,4 @@
-import { Layers } from "lucide-react";
+import IconoRegla from "@/components/icons/pico/IconoRegla";
 import { CAMPOS_SUPERFICIE } from "./campos";
 import { DESPERDICIO } from "./constantes";
 import { materialesConcreto } from "./concreto";
@@ -30,7 +30,7 @@ export const contrapiso: Calculadora = {
   imagen: "/proyectos/contrapiso.webp",
   titulo: "Contrapiso y piso de cemento",
   descripcion: "Cemento, arena y piedra para la base del piso o un piso de cemento.",
-  icono: Layers,
+  icono: IconoRegla,
   diagrama: "volumen",
   comoMedir: "Mide el largo y el ancho del piso, y decide el espesor de la capa.",
   campos: [

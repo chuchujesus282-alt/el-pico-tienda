@@ -4,44 +4,17 @@ import { useEffect, useRef, useState } from "react";
 import type { MouseEvent, ReactNode } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import {
-  BrickWall,
-  Calculator,
-  Car,
-  ChevronRight,
-  Droplet,
-  Hammer,
-  HardHat,
-  Heart,
-  House,
-  LayoutGrid,
-  Nut,
-  PaintRoller,
-  ShoppingCart,
-  Sprout,
-  UserRound,
-  Wrench,
-  X,
-  Zap,
-} from "lucide-react";
-import type { LucideIcon } from "lucide-react";
+import { ChevronRight, House, LayoutGrid, X } from "lucide-react";
+import IconoCalculadora from "@/components/icons/pico/IconoCalculadora";
+import IconoCarrito from "@/components/icons/pico/IconoCarrito";
+import IconoCorazon from "@/components/icons/pico/IconoCorazon";
+import IconoUsuario from "@/components/icons/pico/IconoUsuario";
+import { iconoDeCategoria } from "@/components/icons/pico/porCategoria";
+import type { ComponenteIcono } from "@/types/icono";
 import { RUTA_CALCULADORAS } from "@/components/calculadoras/rutas";
 import { useCarrito } from "@/components/carrito/ProveedorCarrito";
 import { useFavoritos } from "@/components/favoritos/almacenFavoritos";
 import type { Categoria } from "@/types/catalogo";
-
-/** Ícono de cada categoría en la hoja; una categoría nueva sin ícono usa la llave. */
-const ICONOS_CATEGORIA: Record<string, LucideIcon> = {
-  herramientas: Hammer,
-  construccion: BrickWall,
-  ferreteria: Nut,
-  electricidad: Zap,
-  plomeria: Droplet,
-  pinturas: PaintRoller,
-  "hogar-y-jardin": Sprout,
-  "seguridad-industrial": HardHat,
-  vehiculos: Car,
-};
 
 const subirSuave = () => {
   const reducir = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -62,7 +35,7 @@ function Contador({ valor }: { valor: number }) {
 }
 
 type PropsPestana = {
-  icono: LucideIcon;
+  icono: ComponenteIcono;
   texto: string;
   activa: boolean;
   contador?: number;
@@ -99,16 +72,14 @@ function Pestana({ icono: Icono, texto, activa, contador = 0, rellenoActivo = fa
       <span
         className={`relative flex h-8 w-14 items-center justify-center rounded-chip transition duration-300 ease-out ${
           activa
-            ? "bg-pico-rojo text-pico-blanco shadow-lg shadow-pico-rojo/40"
+            ? "bg-pico-rojo text-pico-blanco shadow-lg shadow-pico-rojo/40 [--icono-acento:var(--color-pico-blanco)]"
             : "text-pico-blanco/65 group-hover:bg-pico-blanco/10 group-hover:text-pico-blanco"
         }`}
       >
         <Icono
-          className={`size-6 transition-transform duration-300 motion-safe:group-active:scale-90 ${
+          className={`size-7 transition-transform duration-300 motion-safe:group-active:scale-90 ${
             activa && rellenoActivo ? "fill-pico-blanco" : ""
           }`}
-          strokeWidth={2.25}
-          aria-hidden
         />
         <Contador valor={contador} />
       </span>
@@ -118,7 +89,7 @@ function Pestana({ icono: Icono, texto, activa, contador = 0, rellenoActivo = fa
 }
 
 const clasePestana =
-  "group relative flex h-full w-full cursor-pointer flex-col items-center justify-center gap-1.5 focus-visible:outline-2 focus-visible:-outline-offset-4 focus-visible:outline-pico-blanco rounded-tarjeta";
+  "group grupo-icono relative flex h-full w-full cursor-pointer flex-col items-center justify-center gap-1.5 focus-visible:outline-2 focus-visible:-outline-offset-4 focus-visible:outline-pico-blanco rounded-tarjeta";
 
 /**
  * Barra de navegación fija abajo, SOLO en el teléfono (debajo de 768px): Inicio, Categorías, Carrito (al centro,
@@ -232,7 +203,7 @@ export default function BarraInferiorMovil({ categorias }: { categorias: Categor
                 {categorias.map((categoria, i) => {
                   const href = `/categoria/${categoria.slug}`;
                   const actual = ruta === href;
-                  const Icono = ICONOS_CATEGORIA[categoria.slug] ?? Wrench;
+                  const Icono = iconoDeCategoria(categoria.slug);
                   return (
                     <li
                       key={categoria.slug}
@@ -251,10 +222,12 @@ export default function BarraInferiorMovil({ categorias }: { categorias: Categor
                       >
                         <span
                           className={`flex size-11 items-center justify-center rounded-chip transition-colors ${
-                            actual ? "bg-pico-rojo text-pico-blanco" : "bg-pico-azul text-pico-blanco group-hover:bg-pico-rojo"
+                            actual
+                              ? "bg-pico-rojo text-pico-blanco [--icono-acento:var(--color-pico-blanco)] [--icono-fondo:var(--color-pico-rojo)]"
+                              : "bg-pico-azul text-pico-blanco [--icono-fondo:var(--color-pico-azul)] group-hover:bg-pico-rojo group-hover:[--icono-acento:var(--color-pico-blanco)] group-hover:[--icono-fondo:var(--color-pico-rojo)]"
                           }`}
                         >
-                          <Icono className="size-5" aria-hidden />
+                          <Icono className="size-7" />
                         </span>
                         <span className="text-xs leading-tight font-semibold text-pico-azul">{categoria.nombre}</span>
                       </Link>
@@ -274,7 +247,7 @@ export default function BarraInferiorMovil({ categorias }: { categorias: Categor
               className="group mt-3 flex items-center gap-3 rounded-tarjeta bg-gradient-to-br from-pico-azul to-pico-azul-oscuro p-3 text-pico-blanco focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-pico-azul"
             >
               <span className="flex size-11 shrink-0 items-center justify-center rounded-chip bg-pico-blanco/10 ring-1 ring-pico-blanco/15">
-                <Calculator className="size-5" aria-hidden />
+                <IconoCalculadora className="size-6" />
               </span>
               <span className="min-w-0 flex-1">
                 <span className="block text-sm font-bold">Calculadoras de proyectos</span>
@@ -320,7 +293,9 @@ export default function BarraInferiorMovil({ categorias }: { categorias: Categor
             >
               <span className="absolute -top-6 left-1/2 flex size-[60px] -translate-x-1/2 items-center justify-center rounded-chip bg-gradient-to-b from-pico-rojo to-pico-rojo-oscuro text-pico-blanco shadow-lg ring-[5px] shadow-pico-rojo/40 ring-pico-azul transition duration-200 motion-safe:group-hover:-translate-y-0.5 motion-safe:group-active:scale-95">
                 {/* key: el carrito "late" cada vez que cambia la cantidad. */}
-                <ShoppingCart key={cantidadTotal} className="size-7 motion-safe:animate-latido" strokeWidth={2.25} aria-hidden />
+                <span key={cantidadTotal} className="flex [--icono-acento:var(--color-pico-blanco)] motion-safe:animate-latido">
+                  <IconoCarrito className="size-8" />
+                </span>
                 {cantidadTotal > 0 && (
                   <span className="absolute -top-1 -right-1 flex min-w-[22px] items-center justify-center rounded-chip bg-pico-blanco px-1 text-[11px] leading-[22px] font-bold text-pico-rojo tabular-nums ring-2 ring-pico-rojo">
                     {cantidadTotal > 99 ? "99+" : cantidadTotal}
@@ -334,7 +309,7 @@ export default function BarraInferiorMovil({ categorias }: { categorias: Categor
             {enlace(
               "/favoritos",
               <Pestana
-                icono={Heart}
+                icono={IconoCorazon}
                 texto="Favoritos"
                 activa={activa === "favoritos"}
                 contador={cantidadFavoritos}
@@ -343,7 +318,7 @@ export default function BarraInferiorMovil({ categorias }: { categorias: Categor
               ruta === "/favoritos",
             )}
           </li>
-          <li>{enlace("/iniciar-sesion", <Pestana icono={UserRound} texto="Entrar" activa={activa === "entrar"} />, enCuenta)}</li>
+          <li>{enlace("/iniciar-sesion", <Pestana icono={IconoUsuario} texto="Entrar" activa={activa === "entrar"} />, enCuenta)}</li>
         </ul>
       </nav>
     </div>

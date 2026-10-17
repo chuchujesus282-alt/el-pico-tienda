@@ -1,7 +1,12 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ArrowLeft, House, Motorbike, Store, Truck } from "lucide-react";
+import { ArrowLeft, House } from "lucide-react";
+import IconoCamion from "@/components/icons/pico/IconoCamion";
+import IconoMoto from "@/components/icons/pico/IconoMoto";
+import IconoTienda from "@/components/icons/pico/IconoTienda";
+import PlacaIcono from "@/components/icons/pico/PlacaIcono";
+import type { ComponenteIcono } from "@/types/icono";
 import BotonFavorito from "@/components/favoritos/BotonFavorito";
 import { FORMAS_RETIRO, type FormaRetiro } from "@/components/finalizar-pedido/pedido";
 import { CalificacionesProducto, EstrellasProducto } from "@/components/opiniones/CalificacionesVivas";
@@ -39,7 +44,7 @@ export async function generateMetadata({ params }: PageProps<"/producto/[id]">):
   }
 }
 
-const ICONOS_RETIRO: Record<FormaRetiro, typeof Store> = { pickup: Store, delivery: Motorbike, flete: Truck };
+const ICONOS_RETIRO: Record<FormaRetiro, ComponenteIcono> = { pickup: IconoTienda, delivery: IconoMoto, flete: IconoCamion };
 
 export default async function PaginaProducto({ params }: PageProps<"/producto/[id]">) {
   const { id } = await params;
@@ -103,11 +108,11 @@ export default async function PaginaProducto({ params }: PageProps<"/producto/[i
                 return (
                   <li
                     key={valor}
-                    className="group flex flex-col items-center gap-2 rounded-tarjeta border border-gris-borde bg-pico-blanco px-2 py-3 text-center shadow-tarjeta transition duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] hover:shadow-tarjeta-hover motion-safe:hover:-translate-y-0.5 sm:px-3"
+                    className="group grupo-icono flex flex-col items-center gap-2 rounded-tarjeta border border-gris-borde bg-pico-blanco px-2 py-3 text-center shadow-tarjeta transition duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] hover:shadow-tarjeta-hover motion-safe:hover:-translate-y-0.5 sm:px-3"
                   >
-                    <span className="flex size-10 items-center justify-center rounded-chip bg-pico-azul-claro text-pico-azul transition-colors duration-300 group-hover:bg-pico-azul group-hover:text-pico-blanco">
-                      <Icono className="size-5" strokeWidth={1.75} aria-hidden />
-                    </span>
+                    <PlacaIcono>
+                      <Icono />
+                    </PlacaIcono>
                     <span>
                       <span className="block text-sm font-bold text-pico-azul">{etiqueta}</span>
                       <span className="mt-0.5 hidden text-xs leading-snug text-gris-texto sm:block">{detalle}</span>
