@@ -9,7 +9,7 @@
   --color-pico-rojo: #c4161c;
   --color-pico-rojo-oscuro: #9e1117;
   --color-pico-blanco: #ffffff;
-  --color-gris-fondo: #f3f5f8;
+  --color-gris-fondo: #dee4ec; /* más oscuro que el blanco de las tarjetas: así resaltan y la página no se ve vacía */
   --color-gris-borde: #e1e6ec;
   --color-gris-texto: #586272;
   --color-texto: #14202e;

@@ -13,7 +13,7 @@ Rebranding (logo nuevo): rojo del logo y azul marino de "CENTRO FERRETERO". Apli
 | `pico-rojo` | #c4161c | Rojo del logo. Acción y acentos: "Agregar", precios, contador del carrito, filetes de títulos |
 | `pico-rojo-oscuro` | #9e1117 | Hover de elementos rojos |
 | `pico-blanco` | #ffffff | Fondo de tarjetas y del header |
-| `gris-fondo` | #f3f5f8 | Fondo general detrás de las secciones |
+| `gris-fondo` | #dee4ec | Fondo general detrás de las secciones (gris azulado: las tarjetas blancas resaltan) |
 | `gris-borde` | #e1e6ec | Bordes de tarjetas, divisores, inputs |
 | `gris-texto` | #586272 | Texto secundario (marca, código, descripciones) |
 | `texto` | #14202e | Texto principal |
