@@ -2,17 +2,22 @@
 
 import { useCallback, useState } from "react";
 import type { FormEvent } from "react";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Check, MapPinOff } from "lucide-react";
+import { Briefcase, Building2, Check, HardHat, House, MapPinOff } from "lucide-react";
 import Boton from "@/components/ui/Boton";
 import { LARGO_DESCRIPCION, LARGO_NOMBRE, MAXIMO_DIRECCIONES, validarDireccion, type ErroresDireccion } from "@/lib/direcciones";
 import type { Direccion, Ubicacion } from "@/types/cliente";
 import { useDirecciones } from "./almacenDirecciones";
 import MapaElegirPunto from "./MapaElegirPunto";
+import { PinMapa } from "./PinMapa";
 
 /** Nombres frecuentes: un toque y listo (se pueden cambiar). */
-const SUGERENCIAS = ["Casa", "Trabajo", "Obra", "Oficina"];
+const SUGERENCIAS = [
+  { nombre: "Casa", Icono: House },
+  { nombre: "Trabajo", Icono: Briefcase },
+  { nombre: "Obra", Icono: HardHat },
+  { nombre: "Oficina", Icono: Building2 },
+];
 
 const claseCampo =
   "w-full rounded-boton border bg-pico-blanco px-4 text-base text-texto outline-none transition-shadow placeholder:text-gris-texto focus:ring-4";
@@ -26,12 +31,12 @@ type Props = {
   volver?: string;
 };
 
-/** Agregar o editar una dirección: el mapa a un lado (arriba en el teléfono) y nombre + descripción al otro. */
+/** Agregar o editar una dirección: una tarjeta con el mapa arriba y los datos debajo. */
 export default function FormularioDireccion({ editarId, volver }: Props) {
   const { direcciones, listo, lleno } = useDirecciones();
 
   // Antes de leer el navegador no se sabe qué hay guardado: el mapa espera con su fondo.
-  if (!listo) return <div className="h-[34rem] animate-pulse rounded-banner bg-pico-blanco shadow-tarjeta motion-reduce:animate-none" />;
+  if (!listo) return <div className="h-[38rem] animate-pulse rounded-banner bg-pico-blanco shadow-tarjeta motion-reduce:animate-none" />;
 
   const existente = editarId ? direcciones.find((d) => d.id === editarId) : undefined;
   const salida = volver ?? "/mis-direcciones";
@@ -72,9 +77,14 @@ function Formulario({ existente, salida }: { existente?: Direccion; salida: stri
   const [nombre, setNombre] = useState(existente?.nombre ?? "");
   const [descripcion, setDescripcion] = useState(existente?.descripcion ?? "");
   const [punto, setPunto] = useState<Ubicacion | null>(existente ?? null);
+  // Cuántas veces se ajustó el punto: la línea de estado late cada vez.
+  const [ajustes, setAjustes] = useState(0);
   const [errores, setErrores] = useState<ErroresDireccion>({});
   const [guardada, setGuardada] = useState(false);
-  const alMover = useCallback((u: Ubicacion) => setPunto(u), []);
+  const alMover = useCallback((u: Ubicacion) => {
+    setPunto(u);
+    setAjustes((n) => n + 1);
+  }, []);
 
   const enviar = (evento: FormEvent<HTMLFormElement>) => {
     evento.preventDefault();
@@ -94,117 +104,141 @@ function Formulario({ existente, salida }: { existente?: Direccion; salida: stri
     setTimeout(() => router.push(salida), 700);
   };
 
-  return (
-    <form onSubmit={enviar} noValidate className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_25rem] lg:gap-6">
-      <MapaElegirPunto
-        inicial={existente ?? null}
-        alMover={alMover}
-        className="h-[52dvh] min-h-80 rounded-banner border border-gris-borde shadow-tarjeta motion-safe:animate-aparecer lg:h-auto lg:min-h-[34rem]"
-      />
+  const largo = descripcion.length;
 
-      {/* El panel y sus partes entran en cascada, un poco después del mapa. */}
-      <div className="flex flex-col rounded-banner border border-gris-borde bg-pico-blanco p-5 shadow-tarjeta motion-safe:animate-aparecer [animation-delay:120ms] md:p-7">
-        <div className="flex flex-col gap-2 motion-safe:animate-aparecer [animation-delay:220ms]">
-          <label htmlFor="direccion-nombre" className="text-[15px] font-semibold text-pico-azul">
-            Nombre
-          </label>
-          <div className="grid grid-cols-4 gap-2" role="group" aria-label="Nombres sugeridos">
-            {SUGERENCIAS.map((s) => (
-              <button
-                key={s}
-                type="button"
-                onClick={() => setNombre(s)}
-                aria-pressed={nombre === s}
-                className={`h-10 cursor-pointer rounded-chip border px-1 text-sm font-semibold transition duration-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-pico-azul motion-safe:active:scale-95 ${
-                  nombre === s
-                    ? "border-pico-azul bg-pico-azul text-pico-blanco shadow-boton-hover"
-                    : "border-gris-borde bg-pico-blanco text-pico-azul hover:border-pico-azul/40 hover:bg-pico-azul-claro motion-safe:hover:-translate-y-0.5"
-                }`}
-              >
-                {/* Al elegirla, la sugerencia late una vez. */}
-                <span key={nombre === s ? "si" : "no"} className={`block ${nombre === s ? "motion-safe:animate-latido" : ""}`}>
-                  {s}
-                </span>
-              </button>
-            ))}
+  return (
+    // Una sola tarjeta: el mapa arriba a todo el ancho y los datos debajo (nombre y descripción en dos
+    // columnas desde tableta), con los botones cerrando la tarjeta abajo a la derecha.
+    <form
+      onSubmit={enviar}
+      noValidate
+      className="overflow-hidden rounded-banner border border-gris-borde bg-pico-blanco shadow-tarjeta-hover motion-safe:animate-aparecer"
+    >
+      <MapaElegirPunto inicial={existente ?? null} alMover={alMover} className="h-[46dvh] min-h-72 md:h-[26rem] lg:h-[30rem]" />
+
+      <div className="flex flex-col border-t border-gris-borde">
+        <div className="grid gap-6 p-5 md:grid-cols-2 md:gap-x-8 md:p-7">
+          {/* Estado del punto: confirma que ya quedó marcado y late cada vez que se ajusta. */}
+          <div className="flex items-center gap-3 rounded-tarjeta bg-pico-azul-claro px-4 py-3 motion-safe:animate-aparecer [animation-delay:120ms] md:col-span-2">
+            <span key={ajustes} className="shrink-0 motion-safe:animate-latido">
+              <PinMapa className="h-8" />
+            </span>
+            <span className="min-w-0">
+              <span className="block text-[15px] font-bold text-pico-azul">{punto ? "Punto marcado" : "Cargando el mapa…"}</span>
+              <span className="block text-[13px] text-pico-azul/75">Mueve el mapa para ajustarlo a tu puerta.</span>
+            </span>
           </div>
-          <input
-            id="direccion-nombre"
-            value={nombre}
-            onChange={(e) => setNombre(e.target.value)}
-            maxLength={LARGO_NOMBRE.maximo}
-            placeholder="O escribe otro, ej. Casa de mamá"
-            autoComplete="off"
-            aria-invalid={errores.nombre ? true : undefined}
-            aria-describedby={errores.nombre ? "direccion-nombre-error" : undefined}
-            className={`${claseCampo} ${bordes(errores.nombre)} h-13`}
-          />
-          {errores.nombre && (
-            <p id="direccion-nombre-error" className="text-[13px] text-pico-rojo">
-              {errores.nombre}
+
+          <fieldset className="flex flex-col gap-3 motion-safe:animate-aparecer [animation-delay:200ms]">
+            <legend className="mb-3 text-[15px] font-semibold text-pico-azul">¿Qué lugar es?</legend>
+            <div className="grid grid-cols-4 gap-2">
+              {SUGERENCIAS.map(({ nombre: s, Icono }) => {
+                const marcada = nombre === s;
+                return (
+                  <button
+                    key={s}
+                    type="button"
+                    onClick={() => setNombre(s)}
+                    aria-pressed={marcada}
+                    className={`group/sug flex h-[4.5rem] cursor-pointer flex-col items-center justify-center gap-1.5 rounded-tarjeta border text-[13px] font-semibold transition duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-pico-azul motion-safe:active:scale-95 ${
+                      marcada
+                        ? "border-pico-azul bg-pico-azul text-pico-blanco shadow-boton-hover"
+                        : "border-gris-borde bg-pico-blanco text-pico-azul hover:border-pico-azul/40 hover:bg-pico-azul-claro motion-safe:hover:-translate-y-0.5"
+                    }`}
+                  >
+                    <Icono
+                      key={marcada ? "si" : "no"}
+                      className={`size-5 ${marcada ? "motion-safe:animate-latido" : "transition-transform duration-300 motion-safe:group-hover/sug:-translate-y-0.5"}`}
+                      strokeWidth={marcada ? 2.25 : 1.75}
+                      aria-hidden
+                    />
+                    {s}
+                  </button>
+                );
+              })}
+            </div>
+            <label htmlFor="direccion-nombre" className="sr-only">
+              Nombre de la dirección
+            </label>
+            <input
+              id="direccion-nombre"
+              value={nombre}
+              onChange={(e) => setNombre(e.target.value)}
+              maxLength={LARGO_NOMBRE.maximo}
+              placeholder="O escribe otro nombre"
+              autoComplete="off"
+              aria-invalid={errores.nombre ? true : undefined}
+              aria-describedby={errores.nombre ? "direccion-nombre-error" : undefined}
+              className={`${claseCampo} ${bordes(errores.nombre)} h-12`}
+            />
+            {errores.nombre && (
+              <p id="direccion-nombre-error" className="-mt-1 text-[13px] text-pico-rojo">
+                {errores.nombre}
+              </p>
+            )}
+          </fieldset>
+
+          <div className="flex flex-col gap-2 motion-safe:animate-aparecer [animation-delay:280ms]">
+            <div className="flex items-baseline justify-between gap-3">
+              <label htmlFor="direccion-descripcion" className="text-[15px] font-semibold text-pico-azul">
+                ¿Cómo llega el repartidor?
+              </label>
+              <span className={`text-xs tabular-nums ${largo >= LARGO_DESCRIPCION.maximo ? "text-pico-rojo" : "text-gris-texto"}`} aria-hidden>
+                {largo}/{LARGO_DESCRIPCION.maximo}
+              </span>
+            </div>
+            <textarea
+              id="direccion-descripcion"
+              value={descripcion}
+              onChange={(e) => setDescripcion(e.target.value)}
+              maxLength={LARGO_DESCRIPCION.maximo}
+              rows={3}
+              placeholder="Edificio o casa, piso y una referencia. Ej. Edif. Los Pinos, piso 4, frente a la panadería."
+              aria-invalid={errores.descripcion ? true : undefined}
+              aria-describedby={errores.descripcion ? "direccion-descripcion-error" : undefined}
+              className={`${claseCampo} ${bordes(errores.descripcion)} resize-none py-3 leading-relaxed md:flex-1`}
+            />
+            {/* Barra que se llena mientras escribe: azul hasta tener lo mínimo útil, roja al tope. */}
+            <span className="h-1 overflow-hidden rounded-chip bg-gris-fondo" aria-hidden>
+              <span
+                className={`block h-full rounded-chip transition-[width,background-color] duration-300 ease-out ${
+                  largo >= LARGO_DESCRIPCION.maximo ? "bg-pico-rojo" : descripcion.trim().length >= LARGO_DESCRIPCION.minimo ? "bg-pico-azul" : "bg-pico-azul/35"
+                }`}
+                style={{ width: `${(largo / LARGO_DESCRIPCION.maximo) * 100}%` }}
+              />
+            </span>
+            {errores.descripcion && (
+              <p id="direccion-descripcion-error" className="text-[13px] text-pico-rojo">
+                {errores.descripcion}
+              </p>
+            )}
+          </div>
+
+          {errores.ubicacion && (
+            <p role="alert" className="rounded-boton border border-pico-rojo/30 bg-pico-rojo/5 px-3 py-2.5 text-sm text-pico-rojo motion-safe:animate-aparecer md:col-span-2">
+              {errores.ubicacion}
             </p>
           )}
         </div>
 
-        <div className="mt-5 flex flex-col gap-2 motion-safe:animate-aparecer [animation-delay:320ms]">
-          <div className="flex items-baseline justify-between gap-3">
-            <label htmlFor="direccion-descripcion" className="text-[15px] font-semibold text-pico-azul">
-              Descripción corta
-            </label>
-            <span className={`text-xs tabular-nums ${descripcion.length >= LARGO_DESCRIPCION.maximo ? "text-pico-rojo" : "text-gris-texto"}`} aria-hidden>
-              {descripcion.length}/{LARGO_DESCRIPCION.maximo}
-            </span>
-          </div>
-          <textarea
-            id="direccion-descripcion"
-            value={descripcion}
-            onChange={(e) => setDescripcion(e.target.value)}
-            maxLength={LARGO_DESCRIPCION.maximo}
-            rows={3}
-            placeholder="Ej. Edif. Los Pinos, piso 4, apto 4-B. Frente a la panadería."
-            aria-invalid={errores.descripcion ? true : undefined}
-            aria-describedby="direccion-descripcion-nota"
-            className={`${claseCampo} ${bordes(errores.descripcion)} resize-none py-3 leading-relaxed`}
-          />
-          {/* Barra que se llena mientras escribe: azul hasta tener lo mínimo útil, roja al tope. */}
-          <span className="-mt-1 h-1 overflow-hidden rounded-chip bg-gris-fondo" aria-hidden>
-            <span
-              className={`block h-full rounded-chip transition-[width,background-color] duration-300 ease-out ${
-                descripcion.length >= LARGO_DESCRIPCION.maximo ? "bg-pico-rojo" : descripcion.trim().length >= LARGO_DESCRIPCION.minimo ? "bg-pico-azul" : "bg-pico-azul/35"
-              }`}
-              style={{ width: `${(descripcion.length / LARGO_DESCRIPCION.maximo) * 100}%` }}
-            />
-          </span>
-          <p id="direccion-descripcion-nota" className={`text-[13px] ${errores.descripcion ? "text-pico-rojo" : "text-gris-texto"}`}>
-            {errores.descripcion ?? "Edificio o casa, piso y una referencia que se vea desde la calle."}
-          </p>
-        </div>
-
-        {errores.ubicacion && (
-          <p role="alert" className="mt-4 rounded-boton motion-safe:animate-aparecer border border-pico-rojo/30 bg-pico-rojo/5 px-3 py-2.5 text-sm text-pico-rojo">
-            {errores.ubicacion}
-          </p>
-        )}
-
-        <div className="mt-auto flex flex-col gap-3 pt-7 motion-safe:animate-aparecer [animation-delay:420ms]">
-          <Boton type="submit" anchoCompleto disabled={guardada} className={`h-13! text-base! ${guardada ? "bg-pico-azul! opacity-100!" : ""}`}>
+        {/* Botones del mismo tamaño, cerrando la tarjeta (a lo ancho en el teléfono, a la derecha desde tableta). */}
+        <div className="grid grid-cols-2 gap-3 border-t border-gris-borde bg-gris-fondo/40 px-5 py-4 motion-safe:animate-aparecer [animation-delay:360ms] md:flex md:justify-end md:px-7 md:[&>*]:w-52">
+          <Boton href={salida} variante="secundario" className="h-12!">
+            Cancelar
+          </Boton>
+          <Boton type="submit" disabled={guardada} className={`h-12! ${guardada ? "bg-pico-azul! opacity-100!" : ""}`}>
             {guardada ? (
               <span className="flex items-center gap-2 motion-safe:animate-latido">
                 <Check className="size-5" strokeWidth={3} aria-hidden />
                 ¡Guardada!
               </span>
-            ) : existente ? (
-              "Guardar cambios"
             ) : (
-              "Guardar dirección"
+              <>
+                <Check className="size-5" strokeWidth={2.5} aria-hidden />
+                Guardar
+              </>
             )}
           </Boton>
-          <Link
-            href={salida}
-            className="area-tactil self-center text-sm font-semibold text-gris-texto underline-offset-4 hover:text-pico-azul hover:underline"
-          >
-            Cancelar
-          </Link>
         </div>
       </div>
     </form>

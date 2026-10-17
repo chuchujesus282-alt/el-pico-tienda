@@ -59,7 +59,7 @@ export default function MapaElegirPunto({ inicial, alMover, className = "" }: Pr
         maxBoundsViscosity: 0.8,
       });
       L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", { maxZoom: 19 }).addTo(m);
-      L.control.attribution({ prefix: false, position: "bottomleft" }).addAttribution("© OpenStreetMap").addTo(m);
+      L.control.attribution({ prefix: false, position: "bottomright" }).addAttribution("© OpenStreetMap").addTo(m);
 
       const informar = () => {
         const c = m.getCenter();
@@ -144,32 +144,37 @@ export default function MapaElegirPunto({ inicial, alMover, className = "" }: Pr
         Mueve el mapa hasta tu puerta
       </p>
 
-      <div className="absolute right-3 bottom-3 z-10 flex flex-col gap-2">
+      {/* Zoom: arriba a la derecha, discreto (en el teléfono se acerca con los dedos). */}
+      <div className="absolute top-3 right-3 z-10 hidden flex-col divide-y divide-gris-borde overflow-hidden rounded-boton shadow-tarjeta-hover md:flex">
+        <button type="button" onClick={() => mapa.current?.zoomIn()} aria-label="Acercar" className={claseControl}>
+          <Plus className="size-5" aria-hidden />
+        </button>
+        <button type="button" onClick={() => mapa.current?.zoomOut()} aria-label="Alejar" className={claseControl}>
+          <Minus className="size-5" aria-hidden />
+        </button>
+      </div>
+
+      {/* "Usar mi ubicación": el atajo principal, centrado abajo y con su nombre a la vista. */}
+      <div className="absolute inset-x-3 bottom-4 z-10 flex flex-col items-center gap-2">
+        {error && (
+          <p role="alert" className="max-w-sm rounded-boton bg-pico-blanco px-3 py-2 text-center text-[13px] text-pico-rojo shadow-tarjeta-hover motion-safe:animate-aparecer">
+            {error}
+          </p>
+        )}
         <button
           type="button"
           onClick={irAMiUbicacion}
           disabled={buscando}
-          aria-label="Ir a mi ubicación"
-          title="Ir a mi ubicación"
-          className={`${claseControl} rounded-boton shadow-tarjeta-hover`}
+          className="group flex h-11 cursor-pointer items-center gap-2 rounded-chip bg-pico-blanco pr-5 pl-4 text-sm font-semibold text-pico-azul shadow-tarjeta-hover transition duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] hover:bg-pico-azul hover:text-pico-blanco focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-pico-azul disabled:cursor-wait motion-safe:hover:-translate-y-0.5"
         >
-          {buscando ? <LoaderCircle className="size-5 animate-spin" aria-hidden /> : <LocateFixed className="size-5" aria-hidden />}
+          {buscando ? (
+            <LoaderCircle className="size-5 animate-spin" aria-hidden />
+          ) : (
+            <LocateFixed className="size-5 transition-transform duration-500 motion-safe:group-hover:rotate-90" aria-hidden />
+          )}
+          {buscando ? "Buscando…" : "Usar mi ubicación"}
         </button>
-        <div className="flex flex-col divide-y divide-gris-borde overflow-hidden rounded-boton shadow-tarjeta-hover">
-          <button type="button" onClick={() => mapa.current?.zoomIn()} aria-label="Acercar" className={claseControl}>
-            <Plus className="size-5" aria-hidden />
-          </button>
-          <button type="button" onClick={() => mapa.current?.zoomOut()} aria-label="Alejar" className={claseControl}>
-            <Minus className="size-5" aria-hidden />
-          </button>
-        </div>
       </div>
-
-      {error && (
-        <p role="alert" className="absolute inset-x-3 bottom-3 z-10 mr-14 rounded-boton bg-pico-blanco px-3 py-2 text-[13px] text-pico-rojo shadow-tarjeta-hover">
-          {error}
-        </p>
-      )}
     </div>
   );
 }
