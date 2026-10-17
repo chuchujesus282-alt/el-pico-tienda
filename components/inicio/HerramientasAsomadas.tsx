@@ -1,7 +1,8 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useSyncExternalStore } from "react";
+import { Montanas } from "@/components/layout/Logo";
 import type { CSSProperties } from "react";
 
 // PRUEBA (rama `prueba/animacion-herramientas`): herramientas reales que asoman por los cuatro bordes del
@@ -76,22 +77,84 @@ const PIEZAS: Pieza[] = [
   { foto: "nivel", borde: "abajo", en: 88, tam: 190, giro: -12, asoma: 0.28, fondo: true },
 ];
 
-const RETRASO_MS = 55;
+const RETRASO_MS = 28;
 
-/** Transformación fuera del banner (escondida) y asomada, según el borde por el que entra. */
-function transformaciones({ borde, giro, asoma }: Pieza) {
+/**
+ * Transformación fuera del banner (escondida) y asomada, según el borde por el que entra. Afuera va más
+ * pequeña y girada de más: al entrar "se clava" en su sitio con un giro corto, no solo se desliza.
+ */
+function transformaciones({ borde, giro, asoma }: Pieza, i: number) {
   const dentro = `${((1 - asoma) * 100).toFixed(1)}%`;
   const r = `rotate(${giro}deg)`;
+  const rFuera = `rotate(${giro + (i % 2 ? 38 : -38)}deg) scale(0.7)`;
   switch (borde) {
     case "arriba":
-      return { fuera: `translate(-50%, -150%) ${r}`, asomada: `translate(-50%, -${dentro}) ${r}` };
+      return { fuera: `translate(-50%, -150%) ${rFuera}`, asomada: `translate(-50%, -${dentro}) ${r}` };
     case "abajo":
-      return { fuera: `translate(-50%, 150%) ${r}`, asomada: `translate(-50%, ${dentro}) ${r}` };
+      return { fuera: `translate(-50%, 150%) ${rFuera}`, asomada: `translate(-50%, ${dentro}) ${r}` };
     case "izquierda":
-      return { fuera: `translate(-150%, -50%) ${r}`, asomada: `translate(-${dentro}, -50%) ${r}` };
+      return { fuera: `translate(-150%, -50%) ${rFuera}`, asomada: `translate(-${dentro}, -50%) ${r}` };
     case "derecha":
-      return { fuera: `translate(150%, -50%) ${r}`, asomada: `translate(${dentro}, -50%) ${r}` };
+      return { fuera: `translate(150%, -50%) ${rFuera}`, asomada: `translate(${dentro}, -50%) ${r}` };
   }
+}
+
+/**
+ * PRUEBA DE COLOR (temporal): tres fondos para comparar en la vista previa. Por defecto "corte"; los otros
+ * se ven agregando `?fondo=foco` o `?fondo=rojo` a la dirección. Al elegir uno, se deja solo ese.
+ */
+type Fondo = "corte" | "foco" | "rojo";
+const FONDOS: Fondo[] = ["corte", "foco", "rojo"];
+
+const sinSuscripcion = () => () => {};
+const leerFondo = (): Fondo => {
+  const pedido = new URLSearchParams(window.location.search).get("fondo") as Fondo | null;
+  return pedido && FONDOS.includes(pedido) ? pedido : "corte";
+};
+
+// Cuadrícula técnica (plano de taller). Escritas completas para que Tailwind las encuentre.
+const CUADRICULA_BLANCA =
+  "bg-[linear-gradient(var(--color-pico-blanco)_1px,transparent_1px),linear-gradient(90deg,var(--color-pico-blanco)_1px,transparent_1px)] bg-[size:40px_40px]";
+const CUADRICULA_AZUL =
+  "bg-[linear-gradient(var(--color-pico-azul)_1px,transparent_1px),linear-gradient(90deg,var(--color-pico-azul)_1px,transparent_1px)] bg-[size:40px_40px]";
+
+function FondoTaller({ fondo }: { fondo: Fondo }) {
+  if (fondo === "foco") {
+    // Taller de noche: casi negro, un haz de luz cae sobre el rotomartillo y lo deja en un círculo de luz en el piso.
+    return (
+      <div className="absolute inset-0 bg-gradient-to-br from-pico-azul-oscuro via-pico-azul-oscuro to-pico-azul">
+        <div className={`absolute inset-0 opacity-[0.06] ${CUADRICULA_BLANCA} [mask-image:linear-gradient(to_left,black_20%,transparent_70%)]`} />
+        <div className="absolute inset-y-0 right-[2%] w-[44%] bg-gradient-to-b from-pico-blanco/30 via-pico-blanco/10 to-transparent [clip-path:polygon(38%_0,62%_0,100%_100%,0_100%)] transition-opacity duration-500 group-hover:opacity-100 md:right-[6%] md:w-[38%] lg:opacity-80" />
+        <div className="absolute right-[6%] bottom-[4%] h-[16%] w-[34%] rounded-chip bg-pico-blanco/15 blur-2xl md:right-[10%] md:w-[28%]" />
+        <span className="absolute inset-x-0 bottom-0 h-1 bg-gradient-to-r from-transparent via-pico-rojo to-transparent" />
+      </div>
+    );
+  }
+
+  const rojo = fondo === "rojo";
+  // Corte diagonal con el ángulo del filete rojo de la marca: azul marino para el texto y, a la derecha, una
+  // placa (blanca en "corte", roja en "rojo") donde descansa el rotomartillo, separada por un filete.
+  return (
+    <div className="absolute inset-0 bg-gradient-to-br from-pico-azul via-pico-azul to-pico-azul-oscuro">
+      <div className={`absolute inset-0 opacity-[0.05] ${CUADRICULA_BLANCA} [mask-image:linear-gradient(to_right,black_10%,transparent_55%)]`} />
+      <div
+        className={`absolute -inset-y-6 -right-24 left-[62%] origin-bottom -skew-x-12 overflow-hidden shadow-tarjeta-hover transition-transform duration-500 ease-out motion-safe:group-hover:translate-x-[-1.5%] md:left-[57%] ${
+          rojo ? "bg-gradient-to-br from-pico-rojo to-pico-rojo-oscuro" : "bg-gradient-to-br from-pico-blanco via-pico-blanco to-pico-azul-claro"
+        }`}
+      >
+        <div className={`absolute inset-0 skew-x-12 ${rojo ? `opacity-[0.08] ${CUADRICULA_BLANCA}` : `opacity-[0.07] ${CUADRICULA_AZUL}`}`} />
+        <Montanas
+          className={`absolute -right-6 -bottom-10 w-[115%] skew-x-12 ${rojo ? "fill-pico-blanco/[0.07]" : "fill-pico-azul/[0.05]"}`}
+        />
+      </div>
+      {/* Filete del corte: el mismo trazo inclinado de los títulos, a lo alto del banner. */}
+      <div
+        className={`absolute -inset-y-6 left-[calc(62%-1.1rem)] w-2.5 origin-bottom -skew-x-12 transition-transform duration-500 ease-out motion-safe:group-hover:translate-x-[-1.5%] md:left-[calc(57%-1.1rem)] ${
+          rojo ? "bg-pico-blanco" : "bg-pico-rojo"
+        }`}
+      />
+    </div>
+  );
 }
 
 function posicion({ borde, en }: Pieza): CSSProperties {
@@ -106,6 +169,8 @@ export default function HerramientasAsomadas() {
   // visible: el banner ya se vio en pantalla (se descargan las fotos). asomadas: en celular, entran solas una vez.
   const [visible, setVisible] = useState(false);
   const [asomadas, setAsomadas] = useState(false);
+  // PRUEBA DE COLOR: ?fondo=foco | rojo en la dirección (solo para comparar en la vista previa).
+  const fondo = useSyncExternalStore(sinSuscripcion, leerFondo, () => "corte" as Fondo);
 
   useEffect(() => {
     const el = capa.current;
@@ -133,15 +198,12 @@ export default function HerramientasAsomadas() {
       className="group/capa pointer-events-none absolute inset-0 [--escala:0.45] md:[--escala:0.62] lg:[--escala:0.8] xl:[--escala:0.92] 2xl:[--escala:1]"
       aria-hidden
     >
-      {/* Fondo de taller: cuadrícula técnica muy tenue que se desvanece hacia el texto y un resplandor rojo
-          detrás del rotomartillo. Se ven siempre (también en reposo). */}
-      <div className="absolute inset-0 bg-[linear-gradient(var(--color-pico-blanco)_1px,transparent_1px),linear-gradient(90deg,var(--color-pico-blanco)_1px,transparent_1px)] bg-[size:44px_44px] opacity-[0.05] [mask-image:linear-gradient(to_left,black_25%,transparent_75%)]" />
-      <div className="absolute top-1/2 right-[27%] aspect-square w-[min(62%,40rem)] translate-x-1/2 -translate-y-1/2 rounded-chip bg-[radial-gradient(circle,var(--color-pico-rojo)_0%,transparent_62%)] opacity-35 transition-opacity duration-700 group-hover:opacity-55 md:right-[24%] md:w-[min(48%,40rem)]" />
+      <FondoTaller fondo={fondo} />
 
       {visible &&
         PIEZAS.map((pieza, i) => {
           const [ancho, alto] = FOTOS[pieza.foto];
-          const { fuera, asomada } = transformaciones(pieza);
+          const { fuera, asomada } = transformaciones(pieza, i);
           return (
             <span
               key={pieza.foto}
@@ -154,9 +216,9 @@ export default function HerramientasAsomadas() {
                   "--retraso": `${i * RETRASO_MS}ms`,
                 } as CSSProperties
               }
-              // Escondida fuera del borde; al pasar el cursor (o en celular, al verse) entra con rebote suave y su retraso.
-              // Al salir, todas a la vez y sin rebote. Con movimiento reducido solo aparece, ya en su sitio.
-              className={`absolute block opacity-0 [transform:var(--fuera)] transition-[transform,opacity] duration-500 ease-in [transition-delay:0ms] group-hover:opacity-100 group-hover:[transform:var(--asomada)] group-hover:duration-700 group-hover:ease-[cubic-bezier(0.34,1.45,0.64,1)] group-hover:[transition-delay:var(--retraso)] group-data-[asomadas=si]/capa:opacity-100 group-data-[asomadas=si]/capa:[transform:var(--asomada)] group-data-[asomadas=si]/capa:duration-700 group-data-[asomadas=si]/capa:ease-[cubic-bezier(0.34,1.45,0.64,1)] group-data-[asomadas=si]/capa:[transition-delay:var(--retraso)] motion-reduce:[transform:var(--asomada)] motion-reduce:transition-opacity motion-reduce:duration-200 ${
+              // Escondida fuera del borde; al pasar el cursor (o en celular, al verse) entra rápido, girando y con un
+              // rebote corto, una tras otra. Al salir, todas a la vez. Con movimiento reducido solo aparece en su sitio.
+              className={`absolute block opacity-0 [transform:var(--fuera)] transition-[transform,opacity] duration-250 ease-in [transition-delay:0ms] group-hover:opacity-100 group-hover:[transform:var(--asomada)] group-hover:duration-450 group-hover:ease-[cubic-bezier(0.34,1.56,0.64,1)] group-hover:[transition-delay:var(--retraso)] group-data-[asomadas=si]/capa:opacity-100 group-data-[asomadas=si]/capa:[transform:var(--asomada)] group-data-[asomadas=si]/capa:duration-450 group-data-[asomadas=si]/capa:ease-[cubic-bezier(0.34,1.56,0.64,1)] group-data-[asomadas=si]/capa:[transition-delay:var(--retraso)] motion-reduce:[transform:var(--asomada)] motion-reduce:transition-opacity motion-reduce:duration-200 ${
                 pieza.movil ? "" : "hidden md:block"
               }`}
             >
@@ -171,7 +233,7 @@ export default function HerramientasAsomadas() {
                   width={ancho}
                   height={alto}
                   sizes={`(min-width: 1536px) ${pieza.tam}px, (min-width: 1280px) ${Math.round(pieza.tam * 0.92)}px, (min-width: 1024px) ${Math.round(pieza.tam * 0.8)}px, (min-width: 768px) ${Math.round(pieza.tam * 0.62)}px, ${Math.round(pieza.tam * 0.45)}px`}
-                  className={`h-auto w-full drop-shadow-lg drop-shadow-pico-azul-oscuro/70 ${pieza.fondo ? "opacity-60 blur-[1.5px]" : ""}`}
+                  className={`h-auto w-full drop-shadow-xl drop-shadow-pico-azul-oscuro/60 ${pieza.fondo ? "opacity-85 blur-[1px]" : ""}`}
                 />
               </span>
             </span>
@@ -179,7 +241,7 @@ export default function HerramientasAsomadas() {
         })}
 
       {/* Velo azul sobre las herramientas de la izquierda: el título, el texto y el botón siempre se leen. */}
-      <div className="absolute inset-y-0 left-0 w-[85%] bg-gradient-to-r from-pico-azul-oscuro/90 via-pico-azul-oscuro/55 to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100 group-data-[asomadas=si]/capa:opacity-100 md:w-[65%]" />
+      <div className="absolute inset-y-0 left-0 w-[80%] bg-gradient-to-r from-pico-azul-oscuro/80 via-pico-azul-oscuro/40 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100 group-data-[asomadas=si]/capa:opacity-100 md:w-[52%]" />
 
       {/* Protagonista: un rotomartillo real que flota a la derecha (reemplaza al taladro de línea). Se ve siempre;
           al pasar el cursor crece un poco y se inclina, mientras las demás herramientas asoman alrededor. */}
@@ -191,11 +253,11 @@ export default function HerramientasAsomadas() {
             width={900}
             height={757}
             sizes="(min-width: 1536px) 448px, (min-width: 768px) 30vw, 36vw"
-            className="h-auto w-full drop-shadow-2xl drop-shadow-pico-azul-oscuro"
+            className={`h-auto w-full drop-shadow-2xl ${fondo === "corte" ? "drop-shadow-pico-azul/45" : "drop-shadow-pico-azul-oscuro"}`}
           />
         </span>
         {/* Sombra en el "piso", para que se note que flota. */}
-        <span className="absolute -bottom-[8%] left-1/2 -z-10 h-[9%] w-[55%] -translate-x-1/2 rounded-chip bg-pico-azul-oscuro/80 blur-xl" />
+        <span className={`absolute -bottom-[8%] left-1/2 -z-10 h-[9%] w-[55%] -translate-x-1/2 rounded-chip blur-xl ${fondo === "corte" ? "bg-pico-azul/35" : "bg-pico-azul-oscuro/80"}`} />
       </div>
     </div>
   );
