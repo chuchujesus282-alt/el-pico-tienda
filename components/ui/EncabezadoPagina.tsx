@@ -29,7 +29,7 @@ type Props = {
   lupa?: boolean;
   /** Ilustración propia a la derecha (desde 1024px; antes no cabe junto al título), en lugar del plano del ícono. */
   ilustracion?: ReactNode;
-  /** Más bajo (menos aire y título más chico): para secciones donde el encabezado solo dice dónde estás. Con `imagen`, la foto va solo a la derecha. */
+  /** Más bajo (menos aire y título más chico): para secciones donde el encabezado solo dice dónde estás. */
   compacto?: boolean;
 };
 
@@ -53,18 +53,11 @@ export default function EncabezadoPagina({
     // Tarjeta redondeada sobre el fondo gris, con aire arriba: así no se pega a la barra azul de categorías.
     <Contenedor className="pt-4 md:pt-6">
     <header className={`grupo-icono relative isolate overflow-hidden rounded-banner bg-gradient-to-br from-pico-azul via-pico-azul to-pico-azul-oscuro text-pico-blanco shadow-tarjeta-hover print:rounded-none print:bg-none print:text-texto print:shadow-none`}>
-      {imagen && !compacto && (
+      {imagen && (
         <>
           <Image src={imagen} alt="" fill priority sizes="100vw" className="-z-10 object-cover" />
           <div className="absolute inset-0 -z-10 bg-gradient-to-r from-pico-azul-oscuro/90 via-pico-azul/70 to-pico-azul/20" />
         </>
-      )}
-      {imagen && compacto && (
-        // Compacto: la foto solo a la derecha (desde 640px), fundida con el azul, para que no le reste lectura al título.
-        <div className="absolute inset-y-0 right-0 -z-10 hidden w-1/2 sm:block lg:w-2/5 print:hidden" aria-hidden>
-          <Image src={imagen} alt="" fill priority sizes="(min-width: 1024px) 40vw, 50vw" className="object-cover" />
-          <div className="absolute inset-0 bg-gradient-to-r from-pico-azul via-pico-azul/75 to-pico-azul-oscuro/20" />
-        </div>
       )}
       {Icono && !imagen && !ilustracion && (
         // Plano técnico del ícono, entero (sin cortarse), centrado en vertical a la derecha.

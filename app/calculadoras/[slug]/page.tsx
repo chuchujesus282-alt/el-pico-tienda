@@ -39,13 +39,11 @@ export default async function PaginaCalculadora({ params }: PageProps<"/calculad
         titulo={calculadora.titulo}
         descripcion={calculadora.descripcion}
         ruta={[{ texto: "Calculadoras", href: "/calculadoras" }, { texto: calculadora.titulo }]}
-        imagen={calculadora.imagen}
-        compacto
+        icono={calculadora.icono}
       />
-      {/* Abajo deja espacio en el teléfono para la barra fija del total (BarraMovilCalculadora). */}
-      <Contenedor className="pb-32 lg:pb-12">
-        <CalculadoraProyecto slug={slug} productos={productos} />
-      </Contenedor>
+    <Contenedor className="py-6 md:py-10">
+      <CalculadoraProyecto slug={slug} productos={productos} />
+    </Contenedor>
     </>
   );
 }
