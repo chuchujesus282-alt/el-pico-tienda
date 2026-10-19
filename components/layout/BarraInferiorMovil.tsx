@@ -15,7 +15,6 @@ import { RUTA_CALCULADORAS } from "@/components/calculadoras/rutas";
 import { useCarrito } from "@/components/carrito/ProveedorCarrito";
 import { useFavoritos } from "@/components/favoritos/almacenFavoritos";
 import type { Categoria } from "@/types/catalogo";
-import { vibrar } from "./vibrar";
 
 const subirSuave = () => {
   const reducir = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -154,15 +153,7 @@ export default function BarraInferiorMovil({ categorias }: { categorias: Categor
               : null;
 
   const enlace = (href: string, contenido: ReactNode, actual: boolean) => (
-    <Link
-      href={href}
-      onClick={(e) => {
-        vibrar();
-        alTocarEnlace(href)(e);
-      }}
-      aria-current={actual ? "page" : undefined}
-      className={clasePestana}
-    >
+    <Link href={href} onClick={alTocarEnlace(href)} aria-current={actual ? "page" : undefined} className={clasePestana}>
       {contenido}
     </Link>
   );
@@ -283,7 +274,6 @@ export default function BarraInferiorMovil({ categorias }: { categorias: Categor
             <button
               type="button"
               onClick={() => {
-                vibrar();
                 cerrarCarrito();
                 setHojaAbierta((a) => !a);
               }}
@@ -298,7 +288,6 @@ export default function BarraInferiorMovil({ categorias }: { categorias: Categor
             <button
               type="button"
               onClick={() => {
-                vibrar();
                 setHojaAbierta(false);
                 if (carritoAbierto) cerrarCarrito();
                 else abrirCarrito();
