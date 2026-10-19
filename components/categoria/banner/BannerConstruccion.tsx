@@ -9,8 +9,8 @@ import { Montanas } from "@/components/layout/Logo";
  * Banner de la categoría Construcción (va en `EncabezadoPagina` con la prop `escena`). Misma familia que el de
  * Pinturas: azul marino con el título a la izquierda y, a la derecha, una placa de concreto real cuyo borde es el
  * dentado de una pared de bloques a medio levantar. Encima, una grúa (el gancho cuelga de un cable que sale por arriba)
- * lleva bloques, uno por uno, de la paleta a una pila nueva que va levantando: 3, 2 y 1. Al completarla, la pila se
- * despeja y vuelve a empezar.
+ * lleva bloques, uno por uno, de la paleta a una pila en pirámide que ya está empezada (4, 3, 2 y 1: arranca con 6 y
+ * pone los 4 que faltan). Al completarla, se quitan esos 4 y vuelve a empezar.
  * - Solo mientras el banner se ve y nunca con "reducir movimiento" (ahí se muestra la pila ya armada, quieta).
  * - Clic / Enter / toque: pausa o sigue la grúa (al terminar el paso en curso).
  * - Mouse encima o foco con teclado: asoman herramientas y materiales reales por todo el banner.
@@ -56,17 +56,26 @@ const RECOGER = { x: 27.5, y: 57 };
 /** Altura a la que viaja (la base del bloque, por encima de la paleta). */
 const VIAJE = 69;
 /**
- * Pila nueva, a la izquierda de la paleta: 3 abajo, 2 encima y 1 arriba (cada fila sube lo que mide el frente). Se corre
- * además --hueco hacia la izquierda: 0 en tableta (si no, cruza el corte) y 22cqh desde 1280px (queda en medio de la placa).
+ * Pila a la izquierda de la paleta, en pirámide: 4 abajo, 3, 2 y 1 arriba (cada fila sube lo que mide el frente del
+ * bloque y se corre medio bloque). Se corre además --hueco: en tableta -10cqh (se arrima a la paleta; si no, cruza el corte) y
+ * 22cqh desde 1280px (queda en medio de la placa).
  */
 const PILA = [
   { x: 77, y: 4 },
   { x: 91.5, y: 4 },
   { x: 106, y: 4 },
+  { x: 120.5, y: 4 },
   { x: 84.25, y: 15.2 },
   { x: 98.75, y: 15.2 },
+  { x: 113.25, y: 15.2 },
   { x: 91.5, y: 26.4 },
+  { x: 106, y: 26.4 },
+  { x: 98.75, y: 37.6 },
 ];
+/** Los primeros ya están puestos (la obra nunca se ve vacía); la grúa completa el resto y solo esos se despejan. */
+const INICIALES = 6;
+/** Fila de cada bloque (para que los de arriba tapen a los de abajo). */
+const fila = (i: number) => (i < 4 ? 1 : i < 7 ? 2 : i < 9 ? 3 : 4);
 
 type Paso = { x?: number; y?: number; enPila?: boolean; ms: number; viaje?: boolean; cargar?: boolean; soltar?: boolean };
 
@@ -89,7 +98,7 @@ export default function BannerConstruccion() {
   const raiz = useRef<HTMLDivElement>(null);
   const [grua, setGrua] = useState({ x: RECOGER.x, y: VIAJE, enPila: false, ms: 0, viaje: 0 });
   const [cargando, setCargando] = useState(false);
-  const [colocados, setColocados] = useState(0);
+  const [colocados, setColocados] = useState(INICIALES);
   const [despejando, setDespejando] = useState(false);
   const [reducido, setReducido] = useState(false);
   const [visible, setVisible] = useState(false);
@@ -98,7 +107,7 @@ export default function BannerConstruccion() {
   const puntero = useRef("");
   const pausaRef = useRef(false);
   // Dónde va la grúa: bloque n y paso dentro de su recorrido (sobrevive a pausas y a salir de pantalla).
-  const avance = useRef({ n: 0, paso: 0 });
+  const avance = useRef({ n: INICIALES, paso: 0 });
 
   useEffect(() => {
     const el = raiz.current;
@@ -132,9 +141,9 @@ export default function BannerConstruccion() {
           if (!vivo) return;
           setDespejando(true);
           await esperar(700);
-          setColocados(0);
+          setColocados(INICIALES);
           setDespejando(false);
-          avance.current = { n: 0, paso: 0 };
+          avance.current = { n: INICIALES, paso: 0 };
           continue;
         }
         const p = pasos(a.n)[a.paso];
@@ -221,7 +230,7 @@ export default function BannerConstruccion() {
         className="absolute inset-y-0 right-0 left-[55%] hidden cursor-pointer focus-visible:outline-none md:left-[50%] md:block"
       >
         {/* Escenario: contenedor del alto del banner; todo adentro se mide en cqh. */}
-        <span className="bc-escenario absolute inset-0 block [--hueco:0cqh] xl:[--hueco:22cqh]">
+        <span className="bc-escenario absolute inset-0 block [--hueco:-10cqh] xl:[--hueco:22cqh]">
           {/* Paleta de bloques (de donde sale cada bloque). */}
           <span className="absolute block aspect-[820/813]" style={{ right: `${PALETA.derecha}cqh`, bottom: `${PALETA.abajo}cqh`, height: `${PALETA.alto}cqh` }}>
             <span className="absolute -bottom-[4%] left-1/2 h-[10%] w-[96%] -translate-x-1/2 rounded-[50%] bg-pico-azul-oscuro/55 blur-md" />
@@ -232,12 +241,12 @@ export default function BannerConstruccion() {
           {PILA.slice(0, bloquesEnPila).map((s, i) => (
             <span
               key={i}
-              className={`absolute right-0 bottom-0 block transition-opacity duration-700 ${despejando ? "opacity-0" : "opacity-100"}`}
-              style={{ ...lienzo(s.x, s.y, 0, true), width: `${ANCHO}cqh`, zIndex: i < 3 ? 1 : i < 5 ? 2 : 3 }}
+              className={`absolute right-0 bottom-0 block transition-opacity duration-700 ${despejando && i >= INICIALES ? "opacity-0" : "opacity-100"}`}
+              style={{ ...lienzo(s.x, s.y, 0, true), width: `${ANCHO}cqh`, zIndex: fila(i) }}
             >
               {s.y < 5 && <span className="absolute -bottom-[1%] left-1/2 h-[4%] w-[110%] -translate-x-1/2 rounded-[50%] bg-pico-azul-oscuro/55 blur-sm" />}
               <Image src={`${C}bloque.webp`} alt="" width={397} height={900} sizes="60px" className="relative h-auto w-full drop-shadow-md drop-shadow-pico-azul-oscuro/50" />
-              {i === bloquesEnPila - 1 && !reducido && <span className="bc-polvo absolute bottom-[-2%] left-1/2 block h-[8%] w-[150%] rounded-[50%] bg-[radial-gradient(closest-side,color-mix(in_srgb,var(--color-pico-blanco)_70%,transparent),transparent)]" />}
+              {i === bloquesEnPila - 1 && i >= INICIALES && !reducido && <span className="bc-polvo absolute bottom-[-2%] left-1/2 block h-[8%] w-[150%] rounded-[50%] bg-[radial-gradient(closest-side,color-mix(in_srgb,var(--color-pico-blanco)_70%,transparent),transparent)]" />}
             </span>
           ))}
 
