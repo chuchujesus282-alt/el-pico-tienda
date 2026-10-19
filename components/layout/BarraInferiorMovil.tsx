@@ -27,9 +27,9 @@ function Contador({ valor }: { valor: number }) {
   return (
     <span
       key={valor}
-      className="absolute -top-1.5 left-[calc(50%+0.4rem)] flex min-w-[18px] items-center justify-center rounded-chip bg-pico-rojo px-1 text-[10px] leading-[18px] font-bold text-pico-blanco tabular-nums ring-2 ring-pico-azul motion-safe:animate-latido"
+      className="absolute top-0 left-[calc(50%+0.3rem)] flex min-w-[18px] items-center justify-center rounded-chip bg-pico-rojo px-1 text-[10px] leading-[18px] font-bold text-pico-blanco tabular-nums ring-2 ring-pico-blanco motion-safe:animate-latido"
     >
-      {valor > 99 ? "99+" : valor}
+      <span className="numero-rodante">{valor > 99 ? "99+" : valor}</span>
     </span>
   );
 }
@@ -41,14 +41,16 @@ type PropsPestana = {
   contador?: number;
   /** Ícono relleno cuando está activa (el corazón). */
   rellenoActivo?: boolean;
+  /** Marca el ícono como destino de la foto que vuela al carrito (`volarAlCarrito`). */
+  destinoCarrito?: boolean;
 };
 
-/** Nombre de la pestaña: mayúsculas en negrita, como las etiquetas de la tienda. */
+/** Nombre de la pestaña: corto y en gris; la activa en azul marino y negrita. */
 function Etiqueta({ texto, activa }: { texto: string; activa: boolean }) {
   return (
     <span
-      className={`text-[10px] leading-none font-bold tracking-[0.08em] uppercase transition-colors ${
-        activa ? "text-pico-blanco" : "text-pico-blanco/65 group-hover:text-pico-blanco"
+      className={`text-[11px] leading-none transition-colors ${
+        activa ? "font-bold text-pico-azul" : "font-medium text-gris-texto group-hover:text-pico-azul"
       }`}
     >
       {texto}
@@ -57,27 +59,22 @@ function Etiqueta({ texto, activa }: { texto: string; activa: boolean }) {
 }
 
 /**
- * Contenido de cada pestaña: ícono dentro de una píldora y su nombre debajo. La activa lleva la píldora
- * roja llena y, pegado al borde de arriba, el filete rojo inclinado de los títulos de la tienda.
+ * Contenido de cada pestaña: ícono fino en gris y su nombre debajo. La activa lleva el ícono en blanco
+ * dentro de un círculo azul marino lleno (como la barra de las apps de tiendas).
  */
-function Pestana({ icono: Icono, texto, activa, contador = 0, rellenoActivo = false }: PropsPestana) {
+function Pestana({ icono: Icono, texto, activa, contador = 0, rellenoActivo = false, destinoCarrito = false }: PropsPestana) {
   return (
     <>
       <span
-        className={`absolute top-0 left-1/2 h-1 w-8 -translate-x-1/2 -skew-x-12 rounded-b-sm bg-pico-rojo transition duration-300 ease-out ${
-          activa ? "scale-x-100 opacity-100" : "scale-x-0 opacity-0"
-        }`}
-        aria-hidden
-      />
-      <span
-        className={`relative flex h-8 w-14 items-center justify-center rounded-chip transition duration-300 ease-out ${
+        data-destino-carrito={destinoCarrito || undefined}
+        className={`relative flex size-11 items-center justify-center rounded-chip transition duration-300 ease-out ${
           activa
-            ? "bg-pico-rojo text-pico-blanco shadow-lg shadow-pico-rojo/40 [--icono-acento:var(--color-pico-blanco)]"
-            : "text-pico-blanco/65 group-hover:bg-pico-blanco/10 group-hover:text-pico-blanco"
+            ? "bg-pico-azul text-pico-blanco shadow-md shadow-pico-azul/30 [--icono-acento:var(--color-pico-blanco)] [--icono-fondo:var(--color-pico-azul)]"
+            : "text-gris-texto [--icono-acento:currentColor] group-hover:text-pico-azul"
         }`}
       >
         <Icono
-          className={`size-7 transition-transform duration-300 motion-safe:group-active:scale-90 ${
+          className={`size-6 transition-transform duration-300 motion-safe:group-active:scale-90 ${
             activa && rellenoActivo ? "fill-pico-blanco" : ""
           }`}
         />
@@ -89,11 +86,11 @@ function Pestana({ icono: Icono, texto, activa, contador = 0, rellenoActivo = fa
 }
 
 const clasePestana =
-  "group grupo-icono relative flex h-full w-full cursor-pointer flex-col items-center justify-center gap-1.5 focus-visible:outline-2 focus-visible:-outline-offset-4 focus-visible:outline-pico-blanco rounded-tarjeta";
+  "group grupo-icono relative flex h-full w-full cursor-pointer flex-col items-center justify-center gap-0.5 focus-visible:outline-2 focus-visible:-outline-offset-4 focus-visible:outline-pico-azul rounded-tarjeta";
 
 /**
- * Barra de navegación fija abajo, SOLO en el teléfono (debajo de 768px): Inicio, Categorías, Carrito (al centro,
- * grande y rojo), Favoritos y Entrar. Reemplaza en móvil a la barra horizontal de categorías y a las bolas flotantes
+ * Barra de navegación fija abajo, SOLO en el teléfono (debajo de 768px): Inicio, Categorías, Carrito, Favoritos
+ * y Entrar; blanca, con la pestaña activa en un círculo azul marino. Reemplaza en móvil a la barra horizontal de categorías y a las bolas flotantes
  * (subir y carrito). Su alto vive en `--alto-barra-inferior` (globals.css) para que el resto de la
  * página y las barras fijas de producto y calculadoras se acomoden encima.
  */
@@ -264,7 +261,7 @@ export default function BarraInferiorMovil({ categorias }: { categorias: Categor
 
       <nav
         aria-label="Navegación principal"
-        className="fixed inset-x-0 bottom-0 z-42 border-t border-pico-blanco/10 bg-gradient-to-r from-pico-azul-oscuro via-pico-azul to-pico-azul-oscuro pb-[env(safe-area-inset-bottom)] shadow-[0_-10px_30px_-12px_var(--color-pico-azul-oscuro)]"
+        className="fixed inset-x-0 bottom-0 z-42 border-t border-gris-borde bg-pico-blanco pb-[env(safe-area-inset-bottom)] shadow-[0_-4px_16px_-10px_var(--color-pico-azul-oscuro)]"
       >
         <ul className="grid h-16 grid-cols-5 px-1">
           <li>{enlace("/", <Pestana icono={House} texto="Inicio" activa={activa === "inicio"} />, ruta === "/")}</li>
@@ -279,8 +276,6 @@ export default function BarraInferiorMovil({ categorias }: { categorias: Categor
               <Pestana icono={LayoutGrid} texto="Categorías" activa={activa === "categorias"} />
             </button>
           </li>
-          {/* Carrito al centro, donde cae el pulgar: botón rojo grande que sobresale de la barra. El aro azul
-              lo funde con la barra, como si saliera de ella. */}
           <li>
             <button
               type="button"
@@ -289,20 +284,15 @@ export default function BarraInferiorMovil({ categorias }: { categorias: Categor
                 abrirCarrito();
               }}
               aria-label={`Carrito (${cantidadTotal} ${cantidadTotal === 1 ? "producto" : "productos"})`}
-              className={`${clasePestana} justify-end pb-2`}
+              className={clasePestana}
             >
-              <span data-destino-carrito className="absolute -top-6 left-1/2 flex size-[60px] -translate-x-1/2 items-center justify-center rounded-chip bg-gradient-to-b from-pico-rojo to-pico-rojo-oscuro text-pico-blanco shadow-lg ring-[5px] shadow-pico-rojo/40 ring-pico-azul transition duration-200 motion-safe:group-hover:-translate-y-0.5 motion-safe:group-active:scale-95">
-                {/* key: el carrito "late" cada vez que cambia la cantidad. */}
-                <span key={cantidadTotal} className="flex [--icono-acento:var(--color-pico-blanco)] motion-safe:animate-latido">
-                  <IconoCarrito className="size-8" />
-                </span>
-                {cantidadTotal > 0 && (
-                  <span className="absolute -top-1 -right-1 flex min-w-[22px] items-center justify-center rounded-chip bg-pico-blanco px-1 text-[11px] leading-[22px] font-bold text-pico-rojo tabular-nums ring-2 ring-pico-rojo">
-                    <span className="numero-rodante">{cantidadTotal > 99 ? "99+" : cantidadTotal}</span>
-                  </span>
-                )}
-              </span>
-              <Etiqueta texto="Carrito" activa={activa === "carrito"} />
+              <Pestana
+                icono={IconoCarrito}
+                texto="Carrito"
+                activa={activa === "carrito"}
+                contador={cantidadTotal}
+                destinoCarrito
+              />
             </button>
           </li>
           <li>
