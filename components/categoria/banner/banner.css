@@ -4,6 +4,10 @@
 .bp {
   --activo: 0;
   --bp-curva: cubic-bezier(0.22, 1, 0.36, 1);
+  /* Entrada de las herramientas que asoman: se clavan en su sitio con un rebote corto (como en el banner de herramientas). */
+  --bp-clava: cubic-bezier(0.34, 1.4, 0.64, 1);
+  /* La pasada del rodillo: arranca con peso, va parejo y frena al final. */
+  --bp-pasada: cubic-bezier(0.55, 0.05, 0.35, 1);
 }
 .grupo-icono:is(:hover, :has(:focus-visible), :has(.bp[data-activo])) .bp {
   --activo: 1;
@@ -14,13 +18,13 @@
 .bp .bp-placa {
   transform-origin: bottom;
   transform: skewX(-12deg) translateX(calc(var(--activo) * -14px));
-  transition:
-    transform 0.5s var(--bp-curva),
-    background-color 0.7s ease;
+  transition: transform 0.5s var(--bp-curva);
 }
 
+/* Lata: crece apenas desde su base (no flota: está apoyada). */
 .bp .bp-lata {
-  transform: scale(calc(1 + var(--activo) * 0.04));
+  transform-origin: 50% 100%;
+  transform: scale(calc(1 + var(--activo) * 0.035));
   transition: transform 0.7s var(--bp-curva);
 }
 
@@ -29,36 +33,90 @@
   transition: transform 0.5s var(--bp-curva);
 }
 
-.bp .bp-rodillo {
-  opacity: var(--activo);
-  transform: translateY(calc((1 - var(--activo)) * 100% + 34%)) rotate(-16deg);
-  transition:
-    opacity 0.3s ease,
-    transform 0.6s var(--bp-curva) 0.08s;
+/* Herramientas que asoman: escondidas fuera del borde, más chicas y giradas de más; al activarse entran una tras otra. */
+.bp .bp-asoma {
+  pointer-events: none;
+  transition: transform 0.25s ease-in;
+}
+.bp .bp-asoma-arriba {
+  top: 0;
+  transform: translate(-50%, calc(-100% + var(--activo) * 56%)) rotate(calc(var(--giro) + (1 - var(--activo)) * 28deg))
+    scale(calc(0.75 + var(--activo) * 0.25));
+}
+.bp .bp-asoma-abajo {
+  bottom: 0;
+  transform: translate(-50%, calc(100% - var(--activo) * 56%)) rotate(calc(var(--giro) - (1 - var(--activo)) * 28deg))
+    scale(calc(0.75 + var(--activo) * 0.25));
+}
+.grupo-icono:is(:hover, :has(:focus-visible), :has(.bp[data-activo])) .bp .bp-asoma {
+  transition: transform 0.5s var(--bp-clava) calc(var(--i) * 55ms);
 }
 
-/* Foco con teclado: aro blanco alrededor de la lata (el botón ocupa toda la placa). */
-.bp button:focus-visible .bp-lata {
-  outline: 2px solid var(--color-pico-blanco);
-  outline-offset: 6px;
-  border-radius: 12px;
+.bp .bp-velo {
+  pointer-events: none;
+  opacity: var(--activo);
+  transition: opacity 0.3s ease;
+}
+
+/* Sin animación (reducir movimiento) el rodillo no se ve; el color nuevo queda puesto. */
+.bp .bp-pasada {
+  opacity: 0;
 }
 
 @media (prefers-reduced-motion: no-preference) {
+  /* Cambio de color: el nuevo se extiende detrás del rodillo, que cruza la placa de izquierda a derecha. */
+  .bp .bp-barrido {
+    transform-origin: left;
+    animation: bp-barrido 1.15s var(--bp-pasada) both;
+  }
+  .bp .bp-pasada {
+    animation: bp-pasada 1.15s var(--bp-pasada) both;
+  }
+
+  /* La brocha cruza la muestra de derecha a izquierda y vuelve; detrás, el color nuevo se extiende. */
+  .bp .bp-pincelada {
+    animation: bp-pincelada 0.75s cubic-bezier(0.45, 0, 0.25, 1) 0.2s both;
+  }
+  .bp .bp-mancha {
+    transform-origin: right;
+    animation: bp-mancha 0.6s cubic-bezier(0.45, 0, 0.25, 1) 0.2s both;
+  }
+
   /* Mientras está activo, la brocha retoca la ficha: dos idas y vueltas cortas. */
   .grupo-icono:is(:hover, :has(:focus-visible), :has(.bp[data-activo])) .bp .bp-retoque {
     animation: bp-retoque 0.9s ease-in-out 0.15s 2;
   }
-  /* Clic: la brocha cruza la muestra de derecha a izquierda y vuelve; detrás, el color nuevo se extiende. */
-  .bp .bp-pincelada {
-    animation: bp-pincelada 0.75s cubic-bezier(0.45, 0, 0.25, 1) both;
-  }
-  .bp .bp-mancha {
-    transform-origin: right;
-    animation: bp-mancha 0.6s cubic-bezier(0.45, 0, 0.25, 1) both;
+
+  /* Reflejo que recorre el metal de la lata de vez en cuando (no en bucle continuo). */
+  .bp .bp-reflejo {
+    animation: bp-reflejo 7s cubic-bezier(0.45, 0, 0.3, 1) 1.2s infinite;
   }
 }
 
+@keyframes bp-barrido {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+@keyframes bp-pasada {
+  0% {
+    opacity: 0;
+    transform: translateX(-4%);
+  }
+  8% {
+    opacity: 1;
+  }
+  86% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(100%);
+  }
+}
 @keyframes bp-retoque {
   0%,
   100% {
@@ -83,6 +141,15 @@
   }
   to {
     transform: scaleX(1);
+  }
+}
+@keyframes bp-reflejo {
+  0% {
+    transform: translateX(-110%) skewX(-14deg);
+  }
+  24%,
+  100% {
+    transform: translateX(260%) skewX(-14deg);
   }
 }
 
