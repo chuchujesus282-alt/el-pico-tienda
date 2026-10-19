@@ -617,3 +617,47 @@ p {
     animation: fundido 0.35s var(--curva-suave) backwards;
   }
 }
+
+/* Banner de calculadoras del inicio (components/inicio/BannerCalculadorasInicio.tsx). */
+/* Cuadrícula de plano muy tenue, más visible alrededor de la tablilla y desvanecida hacia los bordes. */
+.plano-cuadricula {
+  background-image:
+    linear-gradient(color-mix(in srgb, var(--color-pico-azul) 7%, transparent) 1px, transparent 1px),
+    linear-gradient(90deg, color-mix(in srgb, var(--color-pico-azul) 7%, transparent) 1px, transparent 1px);
+  background-size: 24px 24px;
+  mask-image: radial-gradient(ellipse 70% 90% at 55% 50%, black 30%, transparent 75%);
+}
+/* Tablilla con la lista de materiales: quieta, todo marcado; con movimiento, los checks se dibujan en cascada
+   (--i = número de fila), la fila se enciende un instante en rojo y la barra avanza; luego se desmarca y repite. */
+.lista-materiales .lista-check {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 0;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .lista-materiales .lista-check {
+    animation: lista-check 6s var(--curva-suave) infinite;
+    animation-delay: calc(var(--i) * 0.55s);
+  }
+  .lista-materiales .lista-fila {
+    animation: lista-fila 6s ease-out infinite;
+    animation-delay: calc(var(--i) * 0.55s);
+  }
+  .lista-materiales .lista-progreso {
+    animation: lista-progreso 6s var(--curva-suave) infinite;
+  }
+}
+@keyframes lista-check {
+  0%, 10% { stroke-dashoffset: 1; }
+  20%, 82% { stroke-dashoffset: 0; }
+  92%, 100% { stroke-dashoffset: 1; }
+}
+@keyframes lista-fila {
+  0%, 12% { background-color: transparent; }
+  18% { background-color: color-mix(in srgb, var(--color-pico-rojo) 10%, transparent); }
+  34%, 100% { background-color: transparent; }
+}
+@keyframes lista-progreso {
+  0%, 8% { transform: scaleX(0); }
+  50%, 84% { transform: scaleX(1); }
+  96%, 100% { transform: scaleX(0); }
+}
