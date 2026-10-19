@@ -13,7 +13,6 @@ const SIN_BARRA = [
   "/ubicanos",
   "/horario",
   "/calculadoras",
-  "/propuestas", // TEMPORAL: rutas de propuestas de diseño de /calculadoras; se quita al elegir
   "/como-comprar",
   "/contacto",
   "/politicas-de-privacidad",
