@@ -31,6 +31,8 @@ type Props = {
   ilustracion?: ReactNode;
   /** Más bajo (menos aire y título más chico): para secciones donde el encabezado solo dice dónde estás. */
   compacto?: boolean;
+  /** Capa decorativa detrás del texto (la pieza decide su posición con `absolute`). Se recorta a la tarjeta. */
+  fondo?: ReactNode;
 };
 
 /**
@@ -47,12 +49,18 @@ export default function EncabezadoPagina({
   children,
   lupa = true,
   compacto = false,
+  fondo,
   ilustracion,
 }: Props) {
   return (
     // Tarjeta redondeada sobre el fondo gris, con aire arriba: así no se pega a la barra azul de categorías.
     <Contenedor className="pt-4 md:pt-6">
     <header className={`grupo-icono relative isolate overflow-hidden rounded-banner bg-gradient-to-br from-pico-azul via-pico-azul to-pico-azul-oscuro text-pico-blanco shadow-tarjeta-hover print:rounded-none print:bg-none print:text-texto print:shadow-none`}>
+      {fondo && (
+        <div className="pointer-events-none absolute inset-0 -z-10 print:hidden" aria-hidden>
+          {fondo}
+        </div>
+      )}
       {imagen && (
         <>
           <Image src={imagen} alt="" fill priority sizes="100vw" className="-z-10 object-cover" />
