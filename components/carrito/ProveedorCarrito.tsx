@@ -2,6 +2,7 @@
 
 import { createContext, useCallback, useContext, useMemo, useState, useSyncExternalStore } from "react";
 import type { ReactNode } from "react";
+import { useRouter } from "next/navigation";
 import type { Producto } from "@/types/catalogo";
 import type { ItemCarrito } from "@/types/carrito";
 import { registrarSenal } from "@/lib/recomendaciones/almacenPerfil";
@@ -33,6 +34,7 @@ export function useCarrito() {
 export default function ProveedorCarrito({ children }: { children: ReactNode }) {
   const items = useSyncExternalStore(suscribir, obtenerItems, obtenerItemsServidor);
   const [abierto, setAbierto] = useState(false);
+  const router = useRouter();
 
   const agregar = useCallback((producto: Producto, cantidad = 1) => {
     const actuales = obtenerItems();
@@ -59,7 +61,11 @@ export default function ProveedorCarrito({ children }: { children: ReactNode }) 
   );
 
   const vaciar = useCallback(() => guardarItems([]), []);
-  const abrir = useCallback(() => setAbierto(true), []);
+  // En el teléfono (debajo de 768px) el carrito es una página propia, la pestaña "Carrito" de la barra inferior.
+  const abrir = useCallback(() => {
+    if (window.matchMedia("(max-width: 767px)").matches) router.push("/carrito");
+    else setAbierto(true);
+  }, [router]);
   const cerrar = useCallback(() => setAbierto(false), []);
 
   const valor = useMemo<ContextoCarrito>(

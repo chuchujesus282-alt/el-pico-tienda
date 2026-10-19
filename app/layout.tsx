@@ -3,6 +3,7 @@ import ProveedorCarrito from "@/components/carrito/ProveedorCarrito";
 import BarraInferior from "@/components/layout/BarraInferior";
 import Footer from "@/components/layout/Footer";
 import Header from "@/components/layout/Header";
+import HeaderSoloInicioMovil from "@/components/layout/HeaderSoloInicioMovil";
 import NavCategorias from "@/components/layout/NavCategorias";
 import OcultarEnRutas from "@/components/layout/OcultarEnRutas";
 import { RUTAS_PANTALLA_COMPLETA } from "@/components/layout/pantallaCompleta";
@@ -23,7 +24,9 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       <body className="flex min-h-dvh flex-col">
         <ProveedorCarrito>
           <OcultarEnRutas prefijos={RUTAS_PANTALLA_COMPLETA}>
-            <Header />
+            <HeaderSoloInicioMovil>
+              <Header />
+            </HeaderSoloInicioMovil>
           </OcultarEnRutas>
           <NavCategorias />
           <main className="flex-1">{children}</main>
