@@ -16,8 +16,10 @@ const INTERVALO_MS = 6000;
 
 const claseFoco = "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-pico-blanco";
 
-// Flechas finas: aro blanco translúcido sobre el banner; al pasar el mouse se llenan de blanco.
-const claseFlecha = `absolute top-1/2 hidden size-10 -translate-y-1/2 items-center justify-center rounded-chip bg-pico-blanco/10 text-pico-blanco ring-1 ring-pico-blanco/30 backdrop-blur-sm transition duration-300 ease-(--curva-suave) hover:bg-pico-blanco hover:text-pico-azul motion-safe:active:scale-95 md:flex ${claseFoco}`;
+// Flechas difuminadas a cada lado, por dentro del banner: vidrio esmerilado azul translúcido con aro blanco;
+// al pasar el mouse se llenan de blanco. z-20: el banner activo va en z-10 y sin esto las tapa.
+// En el teléfono no se muestran (taparían el texto): ahí se pasa deslizando con el dedo.
+const claseFlecha = `absolute top-1/2 z-20 hidden size-11 -translate-y-1/2 items-center justify-center rounded-chip bg-pico-azul-oscuro/25 text-pico-blanco ring-1 ring-pico-blanco/40 backdrop-blur-md transition duration-300 ease-(--curva-suave) hover:bg-pico-blanco hover:text-pico-azul motion-safe:active:scale-95 md:flex ${claseFoco}`;
 
 /**
  * Carrusel del banner principal. Pasa solo, salvo que el usuario lo pause, lo navegue a mano
@@ -90,11 +92,11 @@ export default function CarruselBanners({ diapositivas, etiquetas, className = "
 
       {total > 1 && (
         <>
-          <button type="button" onClick={() => ir(indice - 1)} className={`${claseFlecha} left-3`} aria-label="Banner anterior">
-            <ChevronLeft className="size-4" />
+          <button type="button" onClick={() => ir(indice - 1)} className={`${claseFlecha} left-3 lg:left-5`} aria-label="Banner anterior">
+            <ChevronLeft className="size-5" />
           </button>
-          <button type="button" onClick={() => ir(indice + 1)} className={`${claseFlecha} right-3`} aria-label="Banner siguiente">
-            <ChevronRight className="size-4" />
+          <button type="button" onClick={() => ir(indice + 1)} className={`${claseFlecha} right-3 lg:right-5`} aria-label="Banner siguiente">
+            <ChevronRight className="size-5" />
           </button>
 
           {/* Abajo a la derecha para no tapar el título ni el botón del banner. Cada indicador es una barra
