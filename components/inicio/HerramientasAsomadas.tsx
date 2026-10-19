@@ -54,23 +54,30 @@ type Pieza = {
   fondo?: boolean;
   /** También sale en el celular (ahí solo van unas pocas, para no tapar el título ni el rotomartillo). */
   movil?: boolean;
+  /** Solo desde 1280px (en pantallas más angostas el rotomartillo llega hasta su borde). */
+  soloAncho?: boolean;
 };
 
-// Distribución por ZONAS, para que ninguna herramienta toque a otra, al texto, a la franja ni al rotomartillo:
-// - Abajo a la izquierda (0–46%, bajo el botón): tres piezas separadas al menos su ancho.
-// - Arriba a la izquierda (0–46%): tres piezas que asoman poco, para no bajar hasta el título.
-// - Borde izquierdo: dos piezas de fondo bajo el velo que protege el texto.
-// - Lado amarillo: NINGUNA. Ahí solo está el rotomartillo, que crece y muestra sus partes al pasar el mouse.
-// Si agregas una pieza, búscale una zona libre: nunca encima de otra.
+// Reparto EQUITATIVO alrededor de todo el recuadro, con espacios calculados, y nunca sobre el rotomartillo (que
+// ocupa del 57% al 93% del ancho) ni sobre sus etiquetas, el texto o las flechas del carrusel:
+// - Arriba: 5 piezas del 4% al 48%, cada 11%.
+// - Abajo: 4 piezas intercaladas con las de arriba (9,5 · 21 · 32,5 · 44%), así no se alinean.
+// - Izquierda: 2 piezas al 25% y 75% del alto (la flecha va al 50%).
+// - Derecha: 1 pieza al 20% del alto, sobre el rotomartillo (la flecha va al 50% y la etiqueta "Batería" al ~78%).
+// Todas entran desenfocadas (el rotomartillo, nítido, es el foco). Si cambias una, respeta esas distancias.
 const PIEZAS: Pieza[] = [
-  { foto: "cinta-metrica", borde: "abajo", en: 6, tam: 170, giro: 14, asoma: 0.4, movil: true },
-  { foto: "destornillador", borde: "abajo", en: 20, tam: 165, giro: -62, asoma: 0.3, fondo: true },
-  { foto: "llave-tubo", borde: "abajo", en: 37, tam: 210, giro: 26, asoma: 0.34, movil: true },
-  { foto: "brocha", borde: "arriba", en: 6, tam: 155, giro: 140, asoma: 0.3, fondo: true },
-  { foto: "taladro", borde: "arriba", en: 22, tam: 210, giro: 168, asoma: 0.25 },
-  { foto: "rodillo", borde: "arriba", en: 40, tam: 160, giro: 150, asoma: 0.3, fondo: true },
-  { foto: "llave-ajustable", borde: "izquierda", en: 18, tam: 170, giro: 32, asoma: 0.3, fondo: true },
-  { foto: "palustre", borde: "izquierda", en: 60, tam: 175, giro: -30, asoma: 0.3 },
+  { foto: "brocha", borde: "arriba", en: 4, tam: 130, giro: 140, asoma: 0.36, fondo: true },
+  { foto: "taladro", borde: "arriba", en: 15, tam: 135, giro: 168, asoma: 0.34, fondo: true },
+  { foto: "rodillo", borde: "arriba", en: 26, tam: 125, giro: 160, asoma: 0.36, fondo: true },
+  { foto: "serrucho", borde: "arriba", en: 37, tam: 135, giro: 200, asoma: 0.34, fondo: true },
+  { foto: "cuter", borde: "arriba", en: 48, tam: 125, giro: 200, asoma: 0.36, fondo: true },
+  { foto: "cinta-metrica", borde: "abajo", en: 9.5, tam: 150, giro: 14, asoma: 0.42, fondo: true, movil: true },
+  { foto: "destornillador", borde: "abajo", en: 21, tam: 150, giro: -62, asoma: 0.36, fondo: true },
+  { foto: "llave-tubo", borde: "abajo", en: 32.5, tam: 160, giro: 26, asoma: 0.38, fondo: true, movil: true },
+  { foto: "alicate", borde: "abajo", en: 44, tam: 140, giro: 16, asoma: 0.36, fondo: true },
+  { foto: "llave-ajustable", borde: "izquierda", en: 25, tam: 160, giro: 32, asoma: 0.34, fondo: true },
+  { foto: "palustre", borde: "izquierda", en: 75, tam: 160, giro: -30, asoma: 0.34, fondo: true },
+  { foto: "esmeril", borde: "derecha", en: 20, tam: 200, giro: -24, asoma: 0.32, fondo: true, soloAncho: true },
 ];
 const COLUMNA = { izquierda: 2, derecha: 104 };
 
@@ -194,7 +201,7 @@ export default function HerramientasAsomadas() {
               // Escondida fuera del borde; al pasar el cursor (o en celular, al verse) entra rápido, girando y con un
               // rebote corto, una tras otra. Al salir, todas a la vez. Con movimiento reducido solo aparece en su sitio.
               className={`absolute block opacity-0 [transform:var(--fuera)] transition-[transform,opacity] duration-250 ease-in [transition-delay:0ms] group-hover:opacity-100 group-hover:[transform:var(--asomada)] group-hover:duration-450 group-hover:ease-[cubic-bezier(0.34,1.56,0.64,1)] group-hover:[transition-delay:var(--retraso)] group-data-[asomadas=si]/capa:opacity-100 group-data-[asomadas=si]/capa:[transform:var(--asomada)] group-data-[asomadas=si]/capa:duration-450 group-data-[asomadas=si]/capa:ease-[cubic-bezier(0.34,1.56,0.64,1)] group-data-[asomadas=si]/capa:[transition-delay:var(--retraso)] motion-reduce:[transform:var(--asomada)] motion-reduce:transition-opacity motion-reduce:duration-200 ${
-                pieza.movil ? "" : "hidden md:block"
+                pieza.soloAncho ? "hidden xl:block" : pieza.movil ? "" : "hidden md:block"
               }`}
             >
               {/* Vaivén muy suave mientras están asomadas (pausado cuando están escondidas). */}
@@ -208,7 +215,7 @@ export default function HerramientasAsomadas() {
                   width={ancho}
                   height={alto}
                   sizes={`(min-width: 1536px) ${pieza.tam}px, (min-width: 1280px) ${Math.round(pieza.tam * 0.92)}px, (min-width: 1024px) ${Math.round(pieza.tam * 0.8)}px, (min-width: 768px) ${Math.round(pieza.tam * 0.62)}px, ${Math.round(pieza.tam * 0.45)}px`}
-                  className={`h-auto w-full drop-shadow-xl drop-shadow-pico-azul-oscuro/60 ${pieza.fondo ? "opacity-85 blur-[1px]" : ""}`}
+                  className={`h-auto w-full drop-shadow-xl drop-shadow-pico-azul-oscuro/60 ${pieza.fondo ? "opacity-90 blur-[1.5px]" : ""}`}
                 />
               </span>
             </span>
@@ -216,7 +223,7 @@ export default function HerramientasAsomadas() {
         })}
 
       {/* Velo azul sobre las herramientas de la izquierda: el título, el texto y el botón siempre se leen. */}
-      <div className="absolute inset-y-0 left-0 w-[80%] bg-gradient-to-r from-pico-azul-oscuro/80 via-pico-azul-oscuro/40 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100 group-data-[asomadas=si]/capa:opacity-100 md:w-[52%]" />
+      <div className="absolute inset-y-0 left-0 w-[80%] bg-gradient-to-r from-pico-azul-oscuro/55 via-pico-azul-oscuro/25 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100 group-data-[asomadas=si]/capa:opacity-100 md:w-[52%]" />
 
       {/* Protagonista: un rotomartillo real que flota a la derecha (reemplaza al taladro de línea). Se ve siempre;
           al pasar el cursor crece un poco mientras las demás herramientas asoman alrededor. Flota solo en vertical
