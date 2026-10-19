@@ -39,8 +39,17 @@ const ASOMAN = [
   { foto: "cinta-metrica", ancho: 640, alto: 519, borde: "abajo", en: 66, tam: 125, giro: 10 },
 ] as const;
 
+/**
+ * Fundido sin "fantasmas": la lata nueva aparece ENCIMA de la anterior, que sigue entera debajo y se apaga de golpe
+ * cuando la nueva ya está completa. Las demás, apagadas.
+ */
+function claseFundido(id: string, actual: string, anterior: string) {
+  if (id === actual) return "z-10 opacity-100 transition-opacity delay-700 duration-700";
+  if (id === anterior) return "z-0 opacity-0 transition-opacity delay-[1400ms] duration-0";
+  return "opacity-0";
+}
+
 const lataDe = (n: number) => LATAS[((n % LATAS.length) + LATAS.length) % LATAS.length];
-const colorDe = (n: number) => `var(--color-pintura-${lataDe(n).id})`;
 
 export default function BannerPinturas() {
   const raiz = useRef<HTMLDivElement>(null);
@@ -74,14 +83,18 @@ export default function BannerPinturas() {
     return () => window.clearTimeout(t);
   }, [cambio, visible, espera]);
 
-  const variables = { "--pintura": colorDe(cambio), "--pintura-antes": colorDe(cambio - 1) } as CSSProperties;
-
   return (
-    <div ref={raiz} className="bp absolute inset-0 overflow-hidden" data-activo={tocado || undefined} style={variables}>
+    <div ref={raiz} className="bp absolute inset-0 overflow-hidden" data-activo={tocado || undefined} data-color={lata.id} data-antes={lataDe(cambio - 1).id}>
       {/* Placa cortada en diagonal. Al cambiar de color, el nuevo entra detrás de un rodillo real que la cruza. */}
-      <div className="bp-placa absolute -inset-y-6 -right-24 left-[60%] overflow-hidden shadow-tarjeta-hover md:left-[56%] xl:left-[55%]">
+      <div className="bp-placa absolute -inset-y-6 -right-24 left-[56%] overflow-hidden shadow-tarjeta-hover md:left-[51%] xl:left-[49%]">
         <div className={`absolute inset-0 ${cambio > 0 ? "bg-(--pintura-antes)" : "bg-(--pintura)"}`} />
-        {cambio > 0 && <div key={`capa-${cambio}`} className="bp-barrido absolute inset-0 bg-(--pintura)" />}
+        {/* El color nuevo en dos pasadas del rodillo: la mitad de arriba de izquierda a derecha y la de abajo de vuelta. */}
+        {cambio > 0 && (
+          <div key={`capa-${cambio}`}>
+            <div className="bp-barrido-arriba absolute inset-x-0 top-0 h-1/2 bg-(--pintura)" />
+            <div className="bp-barrido-abajo absolute inset-x-0 bottom-0 h-1/2 bg-(--pintura)" />
+          </div>
+        )}
         {/* Luz de arriba, piso más oscuro abajo (el exhibidor se apoya ahí), cuadrícula y montañas de la marca. */}
         <div className="absolute inset-0 bg-[linear-gradient(170deg,color-mix(in_srgb,var(--color-pico-blanco)_16%,transparent)_0%,transparent_45%,color-mix(in_srgb,var(--color-pico-azul-oscuro)_55%,transparent)_100%)]" />
         <div className="absolute inset-x-0 bottom-0 h-[30%] bg-gradient-to-t from-pico-azul-oscuro/35 to-transparent" />
@@ -89,20 +102,23 @@ export default function BannerPinturas() {
         <Montanas className="absolute -right-6 -bottom-10 w-[115%] skew-x-12 fill-pico-blanco/[0.06]" />
         <div className="absolute top-[45%] left-[64%] aspect-square w-[70%] -translate-x-1/2 -translate-y-1/2 rounded-chip bg-[radial-gradient(circle,var(--color-pico-blanco)_0%,transparent_62%)] opacity-25" />
         {cambio > 0 && (
+          // Rodillo: el de afuera lo lleva de lado a lado, el de adentro baja a la segunda pasada. La felpa va teñida
+          // del color nuevo (la foto recortada con su propia silueta y multiplicada), así se lee que él lo pinta.
           <div key={`rodillo-${cambio}`} className="bp-pasada absolute inset-0">
-            <Image
-              src="/banners/pinturas/rodillo.webp"
-              alt=""
-              width={820}
-              height={648}
-              sizes="380px"
-              className="absolute top-[4%] left-0 h-[95%] w-auto max-w-none translate-x-[-13%] skew-x-12 drop-shadow-2xl drop-shadow-pico-azul-oscuro/60"
-            />
+            <div className="bp-pasada-alto absolute inset-x-0 top-0 h-1/2">
+              <span className="absolute top-[3%] left-0 block h-[94%] translate-x-[-13%] skew-x-12 drop-shadow-xl drop-shadow-pico-azul-oscuro/60">
+                <Image src="/banners/pinturas/rodillo.webp" alt="" width={820} height={648} sizes="200px" className="h-full w-auto max-w-none" />
+                <span
+                  className="absolute inset-0 bg-(--pintura) mix-blend-multiply [clip-path:inset(0_74%_0_0)] [mask-repeat:no-repeat] [mask-size:100%_100%]"
+                  style={{ maskImage: "url(/banners/pinturas/rodillo.webp)" }}
+                />
+              </span>
+            </div>
           </div>
         )}
       </div>
-      {/* Franja del corte: la carta de colores, con filetes blancos. */}
-      <div className="bp-placa absolute -inset-y-6 left-[calc(60%-1.1rem)] w-[1.1rem] border-x-2 border-pico-blanco/85 bg-[linear-gradient(to_bottom,var(--color-pintura-terracota)_0_25%,var(--color-pintura-petroleo)_25%_50%,var(--color-pintura-azul)_50%_75%,var(--color-pintura-mostaza)_75%_100%)] bg-[size:100%_96px] shadow-tarjeta-hover md:left-[calc(56%-1.1rem)] xl:left-[calc(55%-1.1rem)]" />
+      {/* Corte: cinta de pintor (la que separa lo pintado de lo que no) pegada sobre el borde. */}
+      <div className="bp-placa bp-cinta absolute -inset-y-6 left-[calc(56%-0.8rem)] w-[1.6rem] md:left-[calc(51%-0.8rem)] xl:left-[calc(49%-0.8rem)]" />
 
       {/* Herramientas que asoman por los bordes (desfocadas: el exhibidor es el foco). */}
       <div className="hidden [--escala:0.62] md:block lg:[--escala:0.82] xl:[--escala:1]">
@@ -137,7 +153,7 @@ export default function BannerPinturas() {
           const nueva = lataDe(cambio + 1);
           setAnuncio(`Pintura ${nueva.nombre}, ${nueva.codigo}`);
         }}
-        className="absolute inset-y-0 right-0 left-[58%] cursor-pointer focus-visible:outline-none md:left-[54%]"
+        className="absolute inset-y-0 right-0 left-[55%] cursor-pointer focus-visible:outline-none md:left-[50%]"
       >
         {/* Lata de atrás, con el color que viene (solo desde 1280px: antes no cabe). */}
         <span className="absolute right-[33%] bottom-[19%] hidden aspect-[20/21] h-[48%] xl:block">
@@ -150,7 +166,7 @@ export default function BannerPinturas() {
               width={l.ancho}
               height={l.alto}
               sizes="140px"
-              className={`absolute inset-0 size-full object-contain object-bottom blur-[0.6px] brightness-[0.82] transition-opacity delay-300 duration-700 ${l.id === siguiente.id ? "opacity-100" : "opacity-0"}`}
+              className={`absolute inset-0 size-full object-contain object-bottom blur-[0.6px] brightness-[0.82] ${claseFundido(l.id, siguiente.id, lata.id)}`}
             />
           ))}
         </span>
@@ -186,7 +202,7 @@ export default function BannerPinturas() {
             recorre el metal de vez en cuando. Las cuatro están montadas: la nueva se funde sobre la anterior. */}
         <span className="absolute right-[6%] bottom-[5%] block aspect-[20/21] h-[58%] md:right-[7%] md:h-[74%] xl:right-[9%] xl:h-[76%]">
           <span className="absolute -bottom-[3%] left-[46%] h-[12%] w-[86%] -translate-x-1/2 rounded-[50%] bg-pico-azul-oscuro/55 blur-md" />
-          <span className="absolute bottom-[-1%] left-[18%] h-[9%] w-[46%] rounded-[50%] bg-(--pintura) shadow-[inset_0_-2px_4px_rgb(0_0_0/0.35)] transition-colors delay-300 duration-700" />
+          <span className="absolute bottom-[-1%] left-[18%] h-[9%] w-[46%] rounded-[50%] bg-(--pintura) shadow-[inset_0_-2px_4px_rgb(0_0_0/0.35)] transition-colors delay-700 duration-700" />
           <span className="absolute bottom-[3.5%] left-[26%] h-[2.5%] w-[16%] rounded-[50%] bg-pico-blanco/45 blur-[1px]" />
           <span className="bp-lata absolute inset-0 block">
             {LATAS.map((l, i) => (
@@ -199,14 +215,12 @@ export default function BannerPinturas() {
                 priority={i === 0}
                 loading={i === 0 ? undefined : "eager"}
                 sizes="(min-width: 1280px) 220px, (min-width: 768px) 190px, 120px"
-                className={`absolute inset-0 size-full object-contain object-bottom drop-shadow-xl drop-shadow-pico-azul-oscuro/40 transition-opacity delay-300 duration-700 ${
-                  l.id === lata.id ? "opacity-100" : "opacity-0"
-                }`}
+                className={`absolute inset-0 size-full object-contain object-bottom drop-shadow-xl drop-shadow-pico-azul-oscuro/40 ${claseFundido(l.id, lata.id, lataDe(cambio - 1).id)}`}
               />
             ))}
             {/* Reflejo: una banda de luz recortada con la silueta de la lata de turno. */}
             <span
-              className="absolute inset-0 overflow-hidden [mask-position:bottom] [mask-repeat:no-repeat] [mask-size:contain]"
+              className="absolute inset-0 z-20 overflow-hidden [mask-position:bottom] [mask-repeat:no-repeat] [mask-size:contain]"
               style={{ maskImage: `url(/banners/pinturas/lata-${lata.id}.webp)` }}
             >
               <span className="bp-reflejo absolute inset-y-0 left-0 w-[45%] bg-gradient-to-r from-transparent via-pico-blanco/45 to-transparent" />

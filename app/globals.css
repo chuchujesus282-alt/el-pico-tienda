@@ -38,6 +38,9 @@
   --color-pintura-mostaza: #b0801a;
   --color-pintura-petroleo: #0a5f5c;
   --color-pintura-terracota: #a9431e;
+  /* Cinta de pintor (papel crepé) del corte del banner de Pinturas. */
+  --color-cinta-papel: #e9dcbf;
+  --color-cinta-papel-sombra: #cdbb94;
 
   --radius-tarjeta: 12px;
   --radius-boton: 8px;

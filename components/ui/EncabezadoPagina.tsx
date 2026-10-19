@@ -100,7 +100,7 @@ export default function EncabezadoPagina({
         className={`${!titulo ? "px-5 py-3 md:px-10 lg:px-12" : compacto ? "px-5 py-4 md:px-10 md:py-5 lg:px-12" : "px-5 py-6 md:px-10 md:py-9 lg:px-12"} ${lupa && !escena ? "max-md:pr-16" : ""} ${
           escena
             ? // Encima de la escena (z-10) sin taparla: solo la ruta y el título reciben el mouse.
-              "pointer-events-none relative z-10 flex min-h-[12rem] flex-col justify-center pr-[42%]! *:pointer-events-auto md:min-h-[15rem] md:pr-[46%]! xl:min-h-[17rem]"
+              "pointer-events-none relative z-10 flex min-h-[12rem] flex-col justify-center pr-[46%]! *:pointer-events-auto md:min-h-[15rem] md:pr-[51%]! xl:min-h-[17rem]"
             : ""
         } ${
           ilustracion ? "lg:grid lg:grid-cols-[minmax(0,1fr)_auto] lg:items-center lg:gap-12" : ""

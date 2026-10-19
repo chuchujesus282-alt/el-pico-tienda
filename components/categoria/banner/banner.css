@@ -15,6 +15,34 @@
 
 /* ===== Pinturas (BannerPinturas) ===== */
 
+/* Color de turno (--pintura) y el anterior (--pintura-antes), según data-color / data-antes. Escritos aquí (y no armados
+   en el componente) para que Tailwind incluya esos tokens. */
+.bp[data-color="terracota"] {
+  --pintura: var(--color-pintura-terracota);
+}
+.bp[data-antes="terracota"] {
+  --pintura-antes: var(--color-pintura-terracota);
+}
+.bp[data-color="petroleo"] {
+  --pintura: var(--color-pintura-petroleo);
+}
+.bp[data-antes="petroleo"] {
+  --pintura-antes: var(--color-pintura-petroleo);
+}
+.bp[data-color="azul"] {
+  --pintura: var(--color-pintura-azul);
+}
+.bp[data-antes="azul"] {
+  --pintura-antes: var(--color-pintura-azul);
+}
+.bp[data-color="mostaza"] {
+  --pintura: var(--color-pintura-mostaza);
+}
+.bp[data-antes="mostaza"] {
+  --pintura-antes: var(--color-pintura-mostaza);
+}
+
+
 .bp .bp-placa {
   transform-origin: bottom;
   transform: skewX(-12deg) translateX(calc(var(--activo) * -14px));
@@ -58,19 +86,43 @@
   transition: opacity 0.3s ease;
 }
 
+/* Cinta de pintor en el corte: papel crepé (arrugas finas irregulares), cantos un poco más oscuros y sombra corta. */
+.bp .bp-cinta {
+  background:
+    linear-gradient(90deg, color-mix(in srgb, var(--color-cinta-papel-sombra) 90%, transparent) 0 1px, transparent 1px calc(100% - 1px), color-mix(in srgb, var(--color-cinta-papel-sombra) 90%, transparent) calc(100% - 1px)),
+    linear-gradient(90deg, color-mix(in srgb, var(--color-pico-blanco) 35%, transparent), transparent 45%, color-mix(in srgb, var(--color-cinta-papel-sombra) 55%, transparent)),
+    repeating-linear-gradient(180deg, transparent 0 2px, color-mix(in srgb, var(--color-cinta-papel-sombra) 40%, transparent) 2px 3px),
+    repeating-linear-gradient(176deg, transparent 0 5px, color-mix(in srgb, var(--color-cinta-papel-sombra) 30%, transparent) 5px 6px, transparent 6px 11px),
+    var(--color-cinta-papel);
+  box-shadow:
+    0 1px 2px color-mix(in srgb, var(--color-pico-azul-oscuro) 45%, transparent),
+    0 8px 18px -6px color-mix(in srgb, var(--color-pico-azul-oscuro) 55%, transparent);
+}
+
 /* Sin animación (reducir movimiento) el rodillo no se ve; el color nuevo queda puesto. */
-.bp .bp-pasada {
+.bp .bp-pasada-alto > span {
   opacity: 0;
 }
 
 @media (prefers-reduced-motion: no-preference) {
-  /* Cambio de color: el nuevo se extiende detrás del rodillo, que cruza la placa de izquierda a derecha. */
-  .bp .bp-barrido {
+  /* Cambio de color en dos pasadas del rodillo (1,7 s): arriba de izquierda a derecha, abajo de vuelta. El color se
+     extiende justo detrás de la felpa: mismas marcas de tiempo y misma curva en las cuatro animaciones. */
+  .bp .bp-barrido-arriba {
     transform-origin: left;
-    animation: bp-barrido 1.15s var(--bp-pasada) both;
+    animation: bp-barrido-arriba 1.7s var(--bp-pasada) both;
+  }
+  .bp .bp-barrido-abajo {
+    transform-origin: right;
+    animation: bp-barrido-abajo 1.7s var(--bp-pasada) both;
   }
   .bp .bp-pasada {
-    animation: bp-pasada 1.15s var(--bp-pasada) both;
+    animation: bp-pasada 1.7s var(--bp-pasada) both;
+  }
+  .bp .bp-pasada-alto {
+    animation: bp-pasada-alto 1.7s step-end both;
+  }
+  .bp .bp-pasada-alto > span {
+    animation: bp-pasada-luz 1.7s linear both;
   }
 
   /* La brocha cruza la muestra de derecha a izquierda y vuelve; detrás, el color nuevo se extiende. */
@@ -93,28 +145,56 @@
   }
 }
 
-@keyframes bp-barrido {
-  from {
+@keyframes bp-barrido-arriba {
+  0% {
     transform: scaleX(0);
   }
-  to {
+  47%,
+  100% {
     transform: scaleX(1);
   }
 }
+@keyframes bp-barrido-abajo {
+  0%,
+  53% {
+    transform: scaleX(0);
+  }
+  100% {
+    transform: scaleX(1);
+  }
+}
+/* De lado a lado (en % del ancho de la placa); entre las dos pasadas baja fuera de la vista, a la derecha. */
 @keyframes bp-pasada {
   0% {
+    transform: translateX(0);
+  }
+  47%,
+  53% {
+    transform: translateX(100%);
+  }
+  100% {
+    transform: translateX(0);
+  }
+}
+@keyframes bp-pasada-alto {
+  0% {
+    transform: translateY(0);
+  }
+  50%,
+  100% {
+    transform: translateY(100%);
+  }
+}
+@keyframes bp-pasada-luz {
+  0% {
     opacity: 0;
-    transform: translateX(-4%);
   }
-  8% {
-    opacity: 1;
-  }
-  86% {
+  4%,
+  94% {
     opacity: 1;
   }
   100% {
     opacity: 0;
-    transform: translateX(100%);
   }
 }
 @keyframes bp-retoque {
