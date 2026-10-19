@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { ChevronRight } from "lucide-react";
 import { notFound } from "next/navigation";
 import BannerCalculadoras from "@/components/calculadoras/BannerCalculadoras";
 import FiltrosActivos from "@/components/categoria/FiltrosActivos";
@@ -76,13 +77,27 @@ export default async function PaginaCategoria({ params, searchParams }: PageProp
       <EncabezadoPagina
         etiqueta="Categoría"
         titulo={categoria.nombre}
-        descripcion={banner?.subtitulo}
+        descripcion={banner?.texto}
+        tituloPartes={banner?.tituloPartes}
         ruta={[{ texto: categoria.nombre }]}
         imagen={banner ? null : categoria.banner}
         icono={iconoDeCategoria(slug)}
         escena={banner && <banner.Escena />}
-      />
+      >
+        {banner && (
+          // Baja a la lista de productos (misma forma que el botón blanco del banner de herramientas del inicio).
+          <a
+            href="#productos"
+            className="hidden h-11 w-fit items-center gap-1 rounded-boton bg-pico-blanco px-5 text-sm font-semibold text-pico-azul shadow-tarjeta transition duration-200 hover:shadow-boton-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-pico-blanco motion-safe:hover:-translate-y-0.5 md:inline-flex lg:h-12 lg:px-6 lg:text-base"
+          >
+            Ver productos
+            <ChevronRight className="size-4" aria-hidden />
+          </a>
+        )}
+      </EncabezadoPagina>
 
+      {/* Ancla del botón "Ver productos" del encabezado (deja aire para el header fijo de escritorio). */}
+      <span id="productos" className="block scroll-mt-28" aria-hidden />
       <Contenedor className="py-6 md:py-10">
         <div className="lg:grid lg:grid-cols-[15rem_minmax(0,1fr)] lg:gap-8">
           <aside aria-label="Filtros" className="hidden lg:block">

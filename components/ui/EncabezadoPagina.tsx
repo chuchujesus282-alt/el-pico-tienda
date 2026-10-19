@@ -40,6 +40,12 @@ type Props = {
    * pieza decide qué va y dónde; el texto le deja la mitad derecha libre y queda centrado en vertical. Sin ella, nada cambia.
    */
   escena?: ReactNode;
+  /**
+   * Título en dos tiempos, como el banner "Herramientas que RINDEN" del inicio: la frase en una línea y la palabra
+   * clave enorme, en mayúsculas, sobre el sello rojo inclinado. Reemplaza al acento rojo y a la etiqueta; el h1 se lee
+   * completo ("Dale color con Pinturas"). Sin ella, el título de siempre.
+   */
+  tituloPartes?: [string, string];
 };
 
 /**
@@ -60,11 +66,12 @@ export default function EncabezadoPagina({
   tono = "marino",
   ilustracion,
   escena,
+  tituloPartes,
 }: Props) {
   return (
     // Tarjeta redondeada sobre el fondo gris, con aire arriba: así no se pega a la barra azul de categorías.
     <Contenedor className="pt-4 md:pt-6">
-    <header className={`grupo-icono relative isolate overflow-hidden rounded-banner ${tono === "plano" ? "tira-plano" : "bg-gradient-to-br from-pico-azul via-pico-azul to-pico-azul-oscuro"} text-pico-blanco shadow-tarjeta-hover print:rounded-none print:bg-none print:text-texto print:shadow-none`}>
+    <header className={`grupo-icono group/encabezado relative isolate overflow-hidden rounded-banner ${tono === "plano" ? "tira-plano" : "bg-gradient-to-br from-pico-azul via-pico-azul to-pico-azul-oscuro"} text-pico-blanco shadow-tarjeta-hover print:rounded-none print:bg-none print:text-texto print:shadow-none`}>
       {fondo && (
         <div className="pointer-events-none absolute inset-0 -z-10 print:hidden" aria-hidden>
           {fondo}
@@ -140,12 +147,25 @@ export default function EncabezadoPagina({
 
         {titulo && (
           <div className={`motion-safe:animate-aparecer ${ruta ? (compacto ? "mt-3" : "mt-4 md:mt-5") : ""}`}>
-            <span className="block h-1 w-10 -skew-x-12 rounded-sm bg-pico-rojo lg:w-14 print:hidden" aria-hidden />
-            {etiqueta && <span className="mt-3 block text-xs font-semibold tracking-[0.25em] text-pico-blanco/70 uppercase">{etiqueta}</span>}
-            <h1
-              className={`max-w-4xl leading-tight font-bold text-balance ${compacto ? "text-2xl md:text-4xl" : "text-3xl md:text-5xl"} ${etiqueta ? "mt-1" : compacto ? "mt-2" : "mt-3"}`}
-            >{titulo}</h1>
-            {descripcion && <p className="mt-2 max-w-2xl text-sm text-pico-blanco/80 md:text-base print:text-gris-texto">{descripcion}</p>}
+            {tituloPartes ? (
+              // La palabra crece junto con su sello al pasar el mouse por el encabezado, desde la izquierda y con rebote.
+              <h1 className="font-bold">
+                <span className="block text-xl leading-none md:text-3xl lg:text-4xl">{tituloPartes[0]} </span>
+                <span className="relative isolate mt-2 inline-block origin-left px-2.5 pt-1 text-[2rem] leading-[0.92] tracking-[-0.02em] uppercase transition-transform duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] group-hover/encabezado:scale-[1.06] motion-reduce:transition-none sm:text-5xl md:mt-3 md:px-4 md:text-6xl lg:text-7xl">
+                  <span className="absolute inset-0 -z-10 -skew-x-12 rounded-sm bg-pico-rojo shadow-boton-hover" aria-hidden />
+                  {tituloPartes[1]}
+                </span>
+              </h1>
+            ) : (
+              <>
+                <span className="block h-1 w-10 -skew-x-12 rounded-sm bg-pico-rojo lg:w-14 print:hidden" aria-hidden />
+                {etiqueta && <span className="mt-3 block text-xs font-semibold tracking-[0.25em] text-pico-blanco/70 uppercase">{etiqueta}</span>}
+                <h1
+                  className={`max-w-4xl leading-tight font-bold text-balance ${compacto ? "text-2xl md:text-4xl" : "text-3xl md:text-5xl"} ${etiqueta ? "mt-1" : compacto ? "mt-2" : "mt-3"}`}
+                >{titulo}</h1>
+              </>
+            )}
+            {descripcion && <p className={`${tituloPartes ? "mt-3 md:mt-4" : "mt-2"} max-w-2xl text-sm text-pico-blanco/80 md:text-base print:text-gris-texto`}>{descripcion}</p>}
             {children && <div className="mt-4">{children}</div>}
           </div>
         )}
