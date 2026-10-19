@@ -60,23 +60,17 @@ type Pieza = {
 // - Abajo a la izquierda (0–46%, bajo el botón): tres piezas separadas al menos su ancho.
 // - Arriba a la izquierda (0–46%): tres piezas que asoman poco, para no bajar hasta el título.
 // - Borde izquierdo: dos piezas de fondo bajo el velo que protege el texto.
-// - Lado amarillo: la caja abajo (entre la franja, que empieza en el 52%, y la empuñadura), el esmeril en el
-//   borde derecho arriba y, sobre el rotomartillo, martillo y nivel asomando poco desde el borde de arriba. Encima del rotomartillo y junto a sus etiquetas (Mandril, Empuñadura, Batería) no va nada.
+// - Lado amarillo: NINGUNA. Ahí solo está el rotomartillo, que crece y muestra sus partes al pasar el mouse.
 // Si agregas una pieza, búscale una zona libre: nunca encima de otra.
 const PIEZAS: Pieza[] = [
   { foto: "cinta-metrica", borde: "abajo", en: 6, tam: 170, giro: 14, asoma: 0.4, movil: true },
   { foto: "destornillador", borde: "abajo", en: 20, tam: 165, giro: -62, asoma: 0.3, fondo: true },
   { foto: "llave-tubo", borde: "abajo", en: 37, tam: 210, giro: 26, asoma: 0.34, movil: true },
-  { foto: "caja-herramientas", borde: "abajo", en: 69, tam: 240, giro: -6, asoma: 0.32, movil: true },
   { foto: "brocha", borde: "arriba", en: 6, tam: 155, giro: 140, asoma: 0.3, fondo: true },
   { foto: "taladro", borde: "arriba", en: 22, tam: 210, giro: 168, asoma: 0.25 },
   { foto: "rodillo", borde: "arriba", en: 40, tam: 160, giro: 150, asoma: 0.3, fondo: true },
   { foto: "llave-ajustable", borde: "izquierda", en: 18, tam: 170, giro: 32, asoma: 0.3, fondo: true },
   { foto: "palustre", borde: "izquierda", en: 60, tam: 175, giro: -30, asoma: 0.3 },
-  { foto: "esmeril", borde: "derecha", en: 18, tam: 230, giro: -24, asoma: 0.28 },
-  // Lado amarillo, arriba: asoman poco, sobre el rotomartillo sin bajar hasta él ni hasta la etiqueta del mandril.
-  { foto: "martillo", borde: "arriba", en: 79, tam: 170, giro: 190, asoma: 0.34 },
-  { foto: "nivel", borde: "arriba", en: 91, tam: 160, giro: 172, asoma: 0.38 },
 ];
 const COLUMNA = { izquierda: 2, derecha: 104 };
 
