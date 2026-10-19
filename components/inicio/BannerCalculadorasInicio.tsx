@@ -1,140 +1,137 @@
 import type { CSSProperties } from "react";
 import Link from "next/link";
-import { ArrowRight, ChevronRight } from "lucide-react";
-import IconoCalculadora from "@/components/icons/pico/IconoCalculadora";
+import { ArrowRight } from "lucide-react";
 import { RUTA_CALCULADORAS } from "@/components/calculadoras/rutas";
-import Boton from "@/components/ui/Boton";
-import { CALCULADORAS } from "@/lib/calculadoras/registro";
+import { calcularBloques } from "@/lib/calculadoras/bloques";
 
-/** Accesos directos a la derecha del banner (slugs de lib/calculadoras/registro.ts). */
-const DESTACADAS = ["bloques", "concreto", "pintura"];
+// Ejemplo de la libreta: una pared de 4 × 2,5 m de bloque de concreto de 15 cm. Las cantidades NO van escritas a
+// mano: salen de la misma calculadora de bloques de la tienda, así siempre coinciden con lo que obtendría el cliente.
+const EJEMPLO = { largo: 4, alto: 2.5 };
+const NOMBRES: Record<string, string> = {
+  "bloque-concreto-15": "Bloques de 15",
+  cemento: "Cemento",
+  arena: "Arena lavada",
+};
+/** En el teléfono la libreta es angosta: nombres de una palabra para que quepan con su cantidad. */
+const NOMBRES_CORTOS: Record<string, string> = {
+  "bloque-concreto-15": "Bloques",
+  cemento: "Cemento",
+  arena: "Arena",
+};
+const UNIDADES: Record<string, (n: number) => string> = {
+  "bloque-concreto-15": (n) => `${n}`,
+  cemento: (n) => `${n} ${n === 1 ? "saco" : "sacos"}`,
+  arena: (n) => `${n.toLocaleString("es-VE")} m³`,
+};
 
-/** Ejemplo que se "marca" en la tablilla: lo que sale al calcular un muro de bloques. Solo ilustra. */
-const FILAS = [
-  { material: "Bloques de concreto 15 cm", cantidad: "94 und" },
-  { material: "Cemento gris 42,5 kg", cantidad: "3 sacos" },
-  { material: "Arena lavada", cantidad: "0,4 m³" },
-  { material: "Cabillas 3/8\"", cantidad: "6 und" },
-];
+/** Palomita a lápiz rojo; `--i` desfasa su animación (se marcan en cascada). */
+function Palomita({ i }: { i: number }) {
+  return (
+    <svg viewBox="0 0 24 24" className="absolute -top-[35%] -left-[20%] size-[160%] overflow-visible" aria-hidden>
+      <path
+        d="M3.5 13.5c2 1.2 3.6 3.2 5 5.6C11.6 12.2 15.8 6.6 21.5 2.5"
+        pathLength={1}
+        strokeWidth={3.4}
+        className="libreta-check"
+        style={{ "--i": i } as CSSProperties}
+      />
+    </svg>
+  );
+}
 
 /**
- * Tablilla de obra con la lista de materiales: el ícono `IconoLista` en grande (contorno azul marino, pinza arriba
- * y check rojo que se dibuja). Los checks se marcan en cascada mientras la barra roja avanza, y vuelve a empezar;
- * con "reducir movimiento" queda todo marcado y quieto. Animación en globals.css (`.lista-materiales`).
+ * La libreta amarilla del maestro de obra (el concepto "La lista" del concurso): hoja rayada con margen rojo, sujeta
+ * con tirro, con las cuentas de la pared. Las palomitas rojas se marcan una tras otra y la última ("Lo que te falte")
+ * se queda punteada esperando: eso lo completa el cliente en la calculadora. En bucle; con "reducir movimiento" queda
+ * quieta y marcada. Estilos en globals.css (`.libreta`).
  */
-function TablillaMateriales() {
+function Libreta() {
+  const { materiales } = calcularBloques({ medidas: EJEMPLO, opciones: { tipo: "concreto", espesor: "15" } });
+  const renglones = materiales.map((m) => ({
+    nombre: NOMBRES[m.material] ?? m.material,
+    corto: NOMBRES_CORTOS[m.material] ?? m.material,
+    cantidad: (UNIDADES[m.material] ?? String)(m.cantidad),
+  }));
+  const medidas = `${EJEMPLO.largo} × ${EJEMPLO.alto.toLocaleString("es-VE")} m`;
+
   return (
-    <div className="lista-materiales relative mx-auto w-full max-w-[19rem] py-4 motion-safe:animate-flotar" aria-hidden>
-      {/* Placa azul clara detrás, girada al otro lado: le da profundidad a la tablilla. */}
-      <div className="absolute inset-x-3 inset-y-1 rotate-3 rounded-[1.75rem] bg-pico-azul-claro transition-transform duration-500 ease-(--curva-suave) group-hover:rotate-6" />
-
-      <div className="relative -rotate-2 rounded-tarjeta border-2 border-pico-azul bg-pico-blanco px-4 pt-7 pb-4 shadow-tarjeta-hover transition-transform duration-500 ease-(--curva-suave) group-hover:rotate-0">
-        {/* Pinza de la tablilla. */}
-        <div className="absolute -top-4 left-1/2 h-7 w-24 -translate-x-1/2 rounded-boton border-2 border-pico-azul bg-pico-azul-claro">
-          <span className="absolute top-1.5 left-1/2 size-2.5 -translate-x-1/2 rounded-chip border-2 border-pico-azul bg-pico-blanco" />
-        </div>
-
-        <div className="flex items-baseline justify-between gap-2 border-b-2 border-dashed border-gris-borde pb-2">
-          <span className="text-[11px] font-bold tracking-[0.14em] text-pico-azul uppercase">Lista de materiales</span>
-          <span className="text-[11px] whitespace-nowrap text-gris-texto">Muro 3 × 2,5 m</span>
-        </div>
-
-        <ul className="mt-1 divide-y divide-gris-borde">
-          {FILAS.map(({ material, cantidad }, i) => (
-            <li
-              key={material}
-              className="lista-fila flex items-center gap-2.5 rounded-sm px-1 py-2"
-              style={{ "--i": i } as CSSProperties}
-            >
-              <svg viewBox="0 0 20 20" fill="none" strokeLinecap="round" strokeLinejoin="round" className="size-5 shrink-0">
-                <rect x="1.5" y="1.5" width="17" height="17" rx="4" strokeWidth="1.75" className="stroke-pico-azul" />
-                <path pathLength={1} strokeWidth="2.5" d="M5.5 10.5l3 3 6-6.5" className="lista-check stroke-pico-rojo" />
-              </svg>
-              <span className="min-w-0 flex-1 truncate text-[13px] font-semibold text-texto">{material}</span>
-              <span className="text-[13px] font-bold whitespace-nowrap text-pico-azul tabular-nums">{cantidad}</span>
-            </li>
-          ))}
-        </ul>
-
-        {/* pr-12: deja libre la esquina del sello de la calculadora. */}
-        <div className="mt-3 pr-12">
-          <div className="flex justify-between text-[11px] font-semibold text-gris-texto">
-            <span>Listo para tu pedido</span>
-            <span className="text-pico-rojo">{FILAS.length}/{FILAS.length}</span>
-          </div>
-          <div className="mt-1.5 h-1.5 overflow-hidden rounded-chip bg-pico-azul-claro">
-            <div className="lista-progreso h-full origin-left rounded-chip bg-pico-rojo" />
-          </div>
-        </div>
-      </div>
-
-      {/* Sello con la calculadora: de ahí sale la lista. */}
-      <span className="absolute -right-2 bottom-0 flex size-14 rotate-6 items-center justify-center rounded-chip bg-pico-azul text-pico-blanco shadow-tarjeta-hover ring-4 ring-pico-blanco transition-transform duration-500 ease-(--curva-suave) group-hover:rotate-0">
-        <IconoCalculadora className="size-7" />
-      </span>
+    <div
+      className="libreta relative w-full -rotate-3 px-3 pt-4 pb-3 transition-transform duration-500 ease-(--curva-suave) group-hover:rotate-0 md:px-5 md:pt-6 md:pb-4"
+      aria-hidden
+    >
+      <span className="libreta-tirro absolute -top-2.5 left-1/2 h-5 w-16 -translate-x-1/2 rotate-2 md:-top-3 md:h-6 md:w-24" />
+      <p className="relative pl-4 text-[9px] font-bold tracking-[0.08em] whitespace-nowrap text-pico-rojo uppercase sm:text-[10px] sm:tracking-[0.16em] md:pl-6 md:text-xs">
+        Pared {medidas}
+      </p>
+      <ul className="relative mt-1.5 space-y-1 pl-4 md:mt-2 md:space-y-1.5 md:pl-6">
+        {renglones.map((r, i) => (
+          <li key={r.nombre} className="flex items-center gap-2 text-[11px] leading-tight font-semibold text-texto md:gap-2.5 md:text-sm">
+            <span className="relative size-3 shrink-0 rounded-[2px] border-[1.5px] border-texto md:size-3.5">
+              <Palomita i={i} />
+            </span>
+            <span className="min-w-0 flex-1 truncate">
+              <span className="sm:hidden">{r.corto}</span>
+              <span className="hidden sm:inline">{r.nombre}</span>
+            </span>
+            <span className="font-bold whitespace-nowrap tabular-nums">{r.cantidad}</span>
+          </li>
+        ))}
+        <li className="flex items-center gap-2 text-[11px] leading-tight font-bold text-pico-rojo md:gap-2.5 md:text-sm">
+          <span className="libreta-falta relative size-3 shrink-0 rounded-[2px] border-[1.5px] border-dashed border-pico-rojo md:size-3.5" />
+          Lo que te falte
+        </li>
+      </ul>
     </div>
   );
 }
 
 /**
- * Banner del inicio que lleva a /calculadoras: claro, con una cuadrícula de plano muy tenue, el texto a la izquierda,
- * la tablilla con la lista de materiales animada al centro y accesos a las calculadoras más usadas a la derecha.
+ * Tira del inicio que lleva a /calculadoras: azul cobalto de plano de obra con su cuadrícula de tiza (la paleta
+ * ganadora del concurso de colores, "Plano de obra"), la pregunta en grande con subrayado amarillo, la libreta
+ * amarilla al centro (más alta que la tira: sobresale como pegada encima) y el botón blanco con letra roja.
  * El de las categorías es components/calculadoras/BannerCalculadoras.
  */
 export default function BannerCalculadoras() {
-  const destacadas = DESTACADAS.map((slug) => CALCULADORAS.find((c) => c.slug === slug)).filter((c) => c !== undefined);
-
   return (
-    <section
-      aria-labelledby="titulo-banner-calculadoras"
-      className="group relative isolate overflow-hidden rounded-banner border border-gris-borde bg-pico-blanco shadow-tarjeta"
+    <Link
+      href={RUTA_CALCULADORAS}
+      className="group relative isolate my-4 block rounded-banner shadow-tarjeta transition-shadow duration-200 hover:shadow-tarjeta-hover focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-pico-azul md:my-6"
     >
-      <div className="plano-cuadricula pointer-events-none absolute inset-0 -z-10" aria-hidden />
+      {/* Fondo: el plano (va aparte y recortado, así la libreta puede sobresalir de la tira). */}
+      <span className="tira-plano absolute inset-0 -z-10 overflow-hidden rounded-banner" aria-hidden />
 
-      <div className="grid items-center gap-8 p-6 md:grid-cols-[minmax(0,1fr)_auto] md:gap-10 md:p-10 lg:grid-cols-[minmax(0,1fr)_auto_minmax(0,15rem)] lg:gap-12 xl:px-14">
-        <div>
-          <p className="text-xs font-bold tracking-[0.16em] text-pico-rojo uppercase">Calculadoras de proyectos</p>
-          <span className="mt-3 block h-1 w-8 -skew-x-12 rounded-sm bg-pico-rojo transition-all duration-300 group-hover:w-14" aria-hidden />
-          <h2 id="titulo-banner-calculadoras" className="mt-2 text-2xl leading-tight font-bold text-pico-azul md:text-4xl">
-            Calcula tu proyecto
-          </h2>
-          <p className="mt-2 max-w-md text-sm text-gris-texto md:text-base">
-            Bloques, cemento, cabillas, pintura y más: dinos las medidas, te armamos la lista de materiales y te llevas todo en
-            un solo pedido.
+      <div className="grid grid-cols-[minmax(0,1fr)_9.5rem] items-center gap-3 py-5 pr-3 pl-5 sm:grid-cols-[minmax(0,1fr)_12rem] md:grid-cols-[minmax(0,1fr)_16rem] md:gap-8 lg:grid-cols-[minmax(0,1fr)_17rem_auto] md:py-6 md:pr-8 md:pl-10 lg:gap-12 lg:pl-14">
+        <div className="min-w-0">
+          <p className="text-[11px] font-bold tracking-[0.18em] text-amarillo-obra uppercase md:text-xs">Calculadoras gratis</p>
+          <p className="mt-1.5 leading-[0.95] font-bold text-pico-blanco">
+            <span className="block text-base md:text-xl">¿Cuánto material</span>
+            <span className="relative mt-0.5 inline-block text-xl tracking-[-0.02em] whitespace-nowrap uppercase sm:text-3xl lg:text-4xl">
+              te hace falta?
+              <svg viewBox="0 0 200 14" preserveAspectRatio="none" className="absolute -bottom-[0.18em] left-0 h-[0.22em] w-full overflow-visible" aria-hidden>
+                <path d="M3 9C40 4 82 11 122 6s60-3 75 1" pathLength={1} strokeWidth={5} className="tira-subrayado" />
+              </svg>
+            </span>
           </p>
-          <Boton href={RUTA_CALCULADORAS} className="mt-5">
-            Ver calculadoras
-            <ArrowRight className="size-4 transition-transform duration-300 motion-safe:group-hover/boton:translate-x-1" aria-hidden />
-          </Boton>
+          <p className="mt-3 hidden max-w-md text-sm text-pico-blanco/85 sm:block md:text-base">
+            Pon las medidas y te decimos cuántos bloques, sacos y cabillas llevar. Lo agregas todo al pedido.
+          </p>
+          {/* En teléfono y tableta el botón va bajo el texto; desde 1024px, en su propia columna a la derecha. */}
+          <span className="mt-3 inline-flex h-10 items-center gap-1.5 rounded-chip bg-pico-blanco px-4 text-sm font-bold text-pico-rojo shadow-tarjeta md:h-11 md:px-5 md:text-base lg:hidden">
+            Calcular mi obra
+            <ArrowRight className="size-4" aria-hidden />
+          </span>
         </div>
 
-        <TablillaMateriales />
+        {/* La libreta sobresale de la tira por arriba y por abajo. */}
+        <div className="-my-10 md:-my-12">
+          <Libreta />
+        </div>
 
-        {destacadas.length > 0 && (
-          <div className="md:col-span-2 lg:col-span-1">
-            <p className="text-xs font-bold tracking-[0.14em] text-gris-texto uppercase">Las más usadas</p>
-            <ul className="mt-3 grid gap-2 sm:grid-cols-3 lg:grid-cols-1">
-              {destacadas.map(({ slug, titulo, icono: Icono }) => (
-                <li key={slug}>
-                  <Link
-                    href={`${RUTA_CALCULADORAS}/${slug}`}
-                    className="group/acceso grupo-icono flex items-center gap-3 rounded-tarjeta border border-gris-borde bg-pico-blanco/90 p-2.5 transition duration-200 hover:border-pico-azul/30 hover:shadow-tarjeta focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-pico-azul"
-                  >
-                    <span className="flex size-10 shrink-0 items-center justify-center rounded-chip bg-pico-azul-claro text-pico-azul transition-colors group-hover/acceso:bg-pico-azul group-hover/acceso:text-pico-blanco group-hover/acceso:[--icono-fondo:var(--color-pico-azul)]">
-                      <Icono className="size-6" />
-                    </span>
-                    <span className="min-w-0 flex-1 text-sm leading-tight font-semibold text-pico-azul">{titulo}</span>
-                    <ChevronRight
-                      className="size-4 shrink-0 text-gris-texto transition-transform duration-300 group-hover/acceso:translate-x-0.5 group-hover/acceso:text-pico-rojo"
-                      aria-hidden
-                    />
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-        )}
+        <span className="hidden h-12 items-center gap-2 rounded-chip bg-pico-blanco px-6 text-base font-bold whitespace-nowrap text-pico-rojo shadow-tarjeta transition duration-200 group-hover:shadow-boton-hover motion-safe:group-hover:-translate-y-0.5 lg:inline-flex">
+          Calcular mi obra
+          <ArrowRight className="size-4 transition-transform duration-300 group-hover:translate-x-1" aria-hidden />
+        </span>
       </div>
-    </section>
+    </Link>
   );
 }

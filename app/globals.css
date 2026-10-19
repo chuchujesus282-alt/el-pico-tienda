@@ -27,6 +27,11 @@
      obra. Solo para esa placa y su franja de seguridad; el texto encima va en azul marino (≥4,5:1). */
   --color-amarillo-obra: #f2b705;
   --color-amarillo-obra-oscuro: #d99a00;
+  /* Azul cobalto de plano de obra (cianotipo): SOLO para la tira de calculadoras del inicio (paleta ganadora del
+     concurso de colores, "Plano de obra"). Más vivo que el marino de la marca para que no se confunda con el pie. */
+  --color-plano: #164a90;
+  --color-plano-oscuro: #113a74;
+  --color-plano-claro: #184c94;
 
   --radius-tarjeta: 12px;
   --radius-boton: 8px;
@@ -618,46 +623,82 @@ p {
   }
 }
 
-/* Banner de calculadoras del inicio (components/inicio/BannerCalculadorasInicio.tsx). */
-/* Cuadrícula de plano muy tenue, más visible alrededor de la tablilla y desvanecida hacia los bordes. */
-.plano-cuadricula {
+/* Tira de calculadoras del inicio (components/inicio/BannerCalculadorasInicio.tsx). */
+/* El plano: degradado cobalto, luz de mesa de dibujo detrás de la libreta y cuadrícula de tiza (maestra cada 120px). */
+.tira-plano {
+  background-color: var(--color-plano);
   background-image:
-    linear-gradient(color-mix(in srgb, var(--color-pico-azul) 7%, transparent) 1px, transparent 1px),
-    linear-gradient(90deg, color-mix(in srgb, var(--color-pico-azul) 7%, transparent) 1px, transparent 1px);
-  background-size: 24px 24px;
-  mask-image: radial-gradient(ellipse 70% 90% at 55% 50%, black 30%, transparent 75%);
+    radial-gradient(ellipse 30% 130% at 60% 50%, color-mix(in srgb, var(--color-pico-blanco) 10%, transparent), transparent 70%),
+    repeating-linear-gradient(0deg, color-mix(in srgb, var(--color-pico-blanco) 8%, transparent) 0 1px, transparent 1px 120px),
+    repeating-linear-gradient(90deg, color-mix(in srgb, var(--color-pico-blanco) 8%, transparent) 0 1px, transparent 1px 120px),
+    repeating-linear-gradient(0deg, color-mix(in srgb, var(--color-pico-blanco) 4%, transparent) 0 1px, transparent 1px 24px),
+    repeating-linear-gradient(90deg, color-mix(in srgb, var(--color-pico-blanco) 4%, transparent) 0 1px, transparent 1px 24px),
+    linear-gradient(105deg, var(--color-plano-oscuro), var(--color-plano) 45%, var(--color-plano-claro));
 }
-/* Tablilla con la lista de materiales: quieta, todo marcado; con movimiento, los checks se dibujan en cascada
-   (--i = número de fila), la fila se enciende un instante en rojo y la barra avanza; luego se desmarca y repite. */
-.lista-materiales .lista-check {
+.tira-subrayado {
+  fill: none;
+  stroke: var(--color-amarillo-obra);
+  stroke-linecap: round;
+}
+/* La libreta amarilla: hoja rayada con margen rojo, sombra de papel pegado encima de la tira. */
+.libreta {
+  --renglon: 1.25rem;
+  border-radius: 3px;
+  background-color: color-mix(in srgb, var(--color-amarillo-obra) 34%, var(--color-pico-blanco));
+  background-image: repeating-linear-gradient(
+    to bottom,
+    transparent 0 calc(var(--renglon) - 1px),
+    color-mix(in srgb, var(--color-pico-azul) 18%, transparent) calc(var(--renglon) - 1px) var(--renglon)
+  );
+  background-position: 0 0.35rem;
+  box-shadow:
+    0 22px 40px -14px color-mix(in srgb, var(--color-pico-azul-oscuro) 75%, transparent),
+    0 6px 12px -6px color-mix(in srgb, var(--color-pico-azul-oscuro) 45%, transparent);
+}
+@media (min-width: 768px) {
+  .libreta { --renglon: 1.6rem; }
+}
+.libreta::after {
+  content: "";
+  position: absolute;
+  inset-block: 0;
+  left: 0.75rem;
+  width: 1.5px;
+  background: color-mix(in srgb, var(--color-pico-rojo) 50%, transparent);
+}
+@media (min-width: 768px) {
+  .libreta::after { left: 1.15rem; }
+}
+.libreta-tirro {
+  background: color-mix(in srgb, var(--color-pico-blanco) 75%, var(--color-amarillo-obra));
+  opacity: 0.9;
+  box-shadow: 0 1px 2px color-mix(in srgb, var(--color-texto) 20%, transparent);
+  clip-path: polygon(3% 0, 97% 4%, 100% 100%, 0 96%);
+}
+/* Palomitas a lápiz rojo. Quietas: marcadas. Con movimiento: se marcan en cascada, se borran y repiten. */
+.libreta-check {
+  fill: none;
+  stroke: var(--color-pico-rojo);
+  stroke-linecap: round;
+  stroke-linejoin: round;
   stroke-dasharray: 1;
   stroke-dashoffset: 0;
 }
 @media (prefers-reduced-motion: no-preference) {
-  .lista-materiales .lista-check {
-    animation: lista-check 6s var(--curva-suave) infinite;
-    animation-delay: calc(var(--i) * 0.55s);
+  .libreta-check {
+    animation: libreta-check 5s var(--curva-suave) infinite;
+    animation-delay: calc(var(--i) * 0.45s);
   }
-  .lista-materiales .lista-fila {
-    animation: lista-fila 6s ease-out infinite;
-    animation-delay: calc(var(--i) * 0.55s);
-  }
-  .lista-materiales .lista-progreso {
-    animation: lista-progreso 6s var(--curva-suave) infinite;
+  /* "Lo que te falte": la casilla punteada late, esperando que el cliente la complete. */
+  .libreta-falta {
+    animation: libreta-falta 1.4s ease-in-out infinite;
   }
 }
-@keyframes lista-check {
-  0%, 10% { stroke-dashoffset: 1; }
-  20%, 82% { stroke-dashoffset: 0; }
-  92%, 100% { stroke-dashoffset: 1; }
+@keyframes libreta-check {
+  0%, 8% { stroke-dashoffset: 1; }
+  18%, 80% { stroke-dashoffset: 0; }
+  90%, 100% { stroke-dashoffset: 1; }
 }
-@keyframes lista-fila {
-  0%, 12% { background-color: transparent; }
-  18% { background-color: color-mix(in srgb, var(--color-pico-rojo) 10%, transparent); }
-  34%, 100% { background-color: transparent; }
-}
-@keyframes lista-progreso {
-  0%, 8% { transform: scaleX(0); }
-  50%, 84% { transform: scaleX(1); }
-  96%, 100% { transform: scaleX(0); }
+@keyframes libreta-falta {
+  50% { opacity: 0.3; transform: scale(0.85); }
 }
