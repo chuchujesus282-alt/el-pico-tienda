@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { ChevronRight, House } from "lucide-react";
+import { ChevronRight, House, Search } from "lucide-react";
 import type { ReactNode } from "react";
 import Plano from "@/components/icons/pico/Plano";
 import type { ComponenteIcono } from "@/types/icono";
@@ -22,13 +22,18 @@ type Props = {
   imagen?: string | null;
   /** Contenido extra bajo el título (ej. cantidad de productos, pasos). */
   children?: ReactNode;
+  /**
+   * Lupa arriba a la derecha, SOLO en el teléfono: ahí el header con el buscador solo sale en Inicio y /buscar, así
+   * que la lupa lleva a /buscar. Por defecto sí; /buscar la quita porque ya tiene el buscador encima.
+   */
+  lupa?: boolean;
 };
 
 /**
  * Encabezado de página: tarjeta azul marino redondeada (separada de la barra de categorías), con la ruta de navegación, el acento
  * rojo corto y el título. Lo usan todas las páginas interiores para que el sitio se vea parejo.
  */
-export default function EncabezadoPagina({ titulo, etiqueta, descripcion, ruta, icono: Icono, imagen, children }: Props) {
+export default function EncabezadoPagina({ titulo, etiqueta, descripcion, ruta, icono: Icono, imagen, children, lupa = true }: Props) {
   return (
     // Tarjeta redondeada sobre el fondo gris, con aire arriba: así no se pega a la barra azul de categorías.
     <Contenedor className="pt-4 md:pt-6">
@@ -46,7 +51,21 @@ export default function EncabezadoPagina({ titulo, etiqueta, descripcion, ruta, 
         </span>
       )}
 
-      <div className={titulo ? "px-5 py-6 md:px-10 md:py-9 lg:px-12" : "px-5 py-3 md:px-10 lg:px-12"}>
+      {lupa && (
+        <Link
+          href="/buscar"
+          aria-label="Buscar productos"
+          className={`absolute right-3 z-10 flex size-11 items-center justify-center rounded-chip bg-pico-blanco/10 text-pico-blanco ring-1 ring-pico-blanco/15 transition-colors hover:bg-pico-blanco/20 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-pico-blanco md:hidden print:hidden ${
+            titulo ? "top-3" : "inset-y-0 my-auto"
+          }`}
+        >
+          <Search className="size-5" aria-hidden />
+        </Link>
+      )}
+
+      <div
+        className={`${titulo ? "px-5 py-6 md:px-10 md:py-9 lg:px-12" : "px-5 py-3 md:px-10 lg:px-12"} ${lupa ? "max-md:pr-16" : ""}`}
+      >
         {ruta && (
           <nav aria-label="Ruta de navegación" className="text-[13px] text-pico-blanco/70 print:hidden">
             <ol className="flex flex-wrap items-center gap-1">

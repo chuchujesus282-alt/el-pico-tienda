@@ -33,7 +33,7 @@ export default async function PaginaBuscar({ searchParams }: PageProps<"/buscar"
   } catch {
     return (
       <>
-        <EncabezadoPagina titulo="Buscar productos" ruta={[{ texto: "Buscar" }]} icono={IconoLupa} />
+        <EncabezadoPagina titulo="Buscar productos" ruta={[{ texto: "Buscar" }]} icono={IconoLupa} lupa={false} />
         <Contenedor className="py-8 md:py-12">
         <p className="rounded-tarjeta border border-gris-borde bg-pico-blanco p-6 text-center text-sm text-gris-texto">
           No pudimos conectar con el catálogo en este momento. Intenta de nuevo en unos minutos.
@@ -53,6 +53,7 @@ export default async function PaginaBuscar({ searchParams }: PageProps<"/buscar"
         titulo={consulta ? `Resultados para “${consulta}”` : "Buscar productos"}
         ruta={[{ texto: "Buscar" }]}
         icono={IconoLupa}
+        lupa={false}
         descripcion={cantidad > 0 ? `${cantidad} ${cantidad === 1 ? "producto" : "productos"}` : undefined}
       />
     <Contenedor className="space-y-6 py-6 md:py-10">
