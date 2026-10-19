@@ -150,9 +150,9 @@ export default function EncabezadoPagina({
             {tituloPartes ? (
               // La palabra crece junto con su sello al pasar el mouse por el encabezado, desde la izquierda y con rebote.
               <h1 className="font-bold">
-                <span className="block text-xl leading-none md:text-3xl lg:text-4xl">{tituloPartes[0]} </span>
+                <span className="block text-lg leading-none whitespace-nowrap sm:text-xl md:text-3xl lg:text-4xl">{tituloPartes[0]} </span>
                 <span
-                  className={`relative isolate mt-2 inline-block origin-left px-2.5 pt-1 leading-[0.92] tracking-[-0.02em] uppercase transition-transform duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] group-hover/encabezado:scale-[1.06] motion-reduce:transition-none md:mt-3 md:px-4 ${
+                  className={`relative isolate mt-2 inline-block origin-left px-2.5 pt-1 leading-[0.92] whitespace-nowrap tracking-[-0.02em] uppercase transition-transform duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] group-hover/encabezado:scale-[1.06] motion-reduce:transition-none md:mt-3 md:px-4 ${
                     // Palabras largas ("Construcción") un paso más chicas, para que quepan junto a la escena.
                     tituloPartes[1].length > 9
                       ? "text-[1.2rem] sm:text-4xl md:text-[2.6rem] lg:text-5xl xl:text-6xl"
