@@ -24,7 +24,7 @@ const pasos = ["Mide tu obra", "Ve el material", "Pide en un clic"];
 function LibretaDeFondo() {
   return (
     <div className="absolute inset-y-0 right-0 hidden w-1/2 [mask-image:linear-gradient(to_left,black_60%,transparent_100%)] xl:block">
-      <div className="absolute -top-[14%] right-[5%] w-[22rem] origin-top-right scale-[1.35] -rotate-[10deg] 2xl:right-[8%] 2xl:scale-[1.45]">
+      <div className="absolute -top-[24%] right-[4%] w-[22rem] origin-top-right scale-[1.5] -rotate-[10deg] min-[1340px]:scale-[1.7] 2xl:right-[8%] 2xl:scale-[1.85]">
         <LibretaMateriales />
       </div>
     </div>
