@@ -13,7 +13,7 @@ import TasaBCV from "./TasaBCV";
 /**
  * Header blanco: el logo (las montañas del rebranding) a la izquierda, el buscador como pieza
  * central (borde azul de marca) y a la derecha "Mi cuenta" y el carrito con su texto. En móvil
- * el buscador baja a una segunda fila.
+ * el logo y las píldoras van siempre en una sola fila y el buscador baja a la segunda.
  */
 export default function Header() {
   return (
@@ -21,13 +21,15 @@ export default function Header() {
     // desenfoque y una sombra más marcada, y el logo se achica un poco (solo transform: el alto no cambia).
     <header className="relative z-40 border-b border-pico-azul/10 bg-pico-azul-claro shadow-header transition-[background-color,box-shadow] duration-300 md:sticky md:top-0 [html[data-desplazado]_&]:bg-pico-azul-claro/85 [html[data-desplazado]_&]:shadow-tarjeta-hover [html[data-desplazado]_&]:backdrop-blur-md">
       <MarcaDesplazamiento />
-      <Contenedor className="flex flex-wrap items-center gap-x-3 gap-y-3 py-3 md:flex-nowrap md:gap-x-6 md:py-4 lg:gap-x-8">
+      {/* En el teléfono es una cuadrícula: la primera fila (logo, tasa, dirección, calculadoras) nunca se parte, aunque
+          la píldora de la tasa crezca o el iPhone tenga el texto/zoom más grande; el buscador va solo en la segunda. */}
+      <Contenedor className="grid grid-cols-[auto_minmax(0,1fr)_auto_auto] items-center gap-x-2 gap-y-3 py-3 min-[400px]:gap-x-3 md:flex md:gap-x-6 md:py-4 lg:gap-x-8">
         <span className="origin-left transition-transform duration-300 ease-(--curva-suave) md:[html[data-desplazado]_&]:scale-[0.88]">
           <Logo placa={false} />
         </span>
 
         {/* Búsqueda inteligente con sugerencias en vivo (lib/recomendaciones/); Enter lleva a /buscar. */}
-        <BuscadorConSugerencias className="order-last w-full md:order-none md:max-w-[45rem] md:min-w-0 md:flex-1" />
+        <BuscadorConSugerencias className="order-last col-span-full w-full md:order-none md:max-w-[45rem] md:min-w-0 md:flex-1" />
 
         {/* Tasa BCV: píldora que crece con la cifra. En móvil va compacta, en la fila del logo. */}
         <TasaBCV className="ml-auto md:ml-0" />
