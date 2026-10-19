@@ -68,12 +68,17 @@
 }
 .bp .bp-asoma-arriba {
   top: 0;
-  transform: translate(-50%, calc(-100% + var(--activo) * 56%)) rotate(calc(var(--giro) + (1 - var(--activo)) * 28deg))
+  transform: translate(-50%, calc(-100% + var(--activo) * var(--asoma))) rotate(calc(var(--giro) + (1 - var(--activo)) * 28deg))
     scale(calc(0.75 + var(--activo) * 0.25));
 }
 .bp .bp-asoma-abajo {
   bottom: 0;
-  transform: translate(-50%, calc(100% - var(--activo) * 56%)) rotate(calc(var(--giro) - (1 - var(--activo)) * 28deg))
+  transform: translate(-50%, calc(100% - var(--activo) * var(--asoma))) rotate(calc(var(--giro) - (1 - var(--activo)) * 28deg))
+    scale(calc(0.75 + var(--activo) * 0.25));
+}
+.bp .bp-asoma-derecha {
+  right: 0;
+  transform: translate(calc(100% - var(--activo) * var(--asoma)), -50%) rotate(calc(var(--giro) + (1 - var(--activo)) * 28deg))
     scale(calc(0.75 + var(--activo) * 0.25));
 }
 .grupo-icono:is(:hover, :has(:focus-visible), :has(.bp[data-activo])) .bp .bp-asoma {
@@ -93,36 +98,26 @@
     linear-gradient(90deg, color-mix(in srgb, var(--color-pico-blanco) 35%, transparent), transparent 45%, color-mix(in srgb, var(--color-cinta-papel-sombra) 55%, transparent)),
     repeating-linear-gradient(180deg, transparent 0 2px, color-mix(in srgb, var(--color-cinta-papel-sombra) 40%, transparent) 2px 3px),
     repeating-linear-gradient(176deg, transparent 0 5px, color-mix(in srgb, var(--color-cinta-papel-sombra) 30%, transparent) 5px 6px, transparent 6px 11px),
-    var(--color-cinta-papel);
-  box-shadow:
-    0 1px 2px color-mix(in srgb, var(--color-pico-azul-oscuro) 45%, transparent),
-    0 8px 18px -6px color-mix(in srgb, var(--color-pico-azul-oscuro) 55%, transparent);
+    color-mix(in srgb, var(--color-cinta-papel) 80%, transparent);
 }
 
 /* Sin animación (reducir movimiento) el rodillo no se ve; el color nuevo queda puesto. */
-.bp .bp-pasada-alto > span {
+.bp .bp-rodillo {
   opacity: 0;
 }
 
 @media (prefers-reduced-motion: no-preference) {
-  /* Cambio de color en dos pasadas del rodillo (1,7 s): arriba de izquierda a derecha, abajo de vuelta. El color se
-     extiende justo detrás de la felpa: mismas marcas de tiempo y misma curva en las cuatro animaciones. */
-  .bp .bp-barrido-arriba {
+  /* Cambio de color: una sola pasada del rodillo de izquierda a derecha (2,2 s). El color se extiende justo detrás de
+     la felpa: mismas marcas de tiempo y misma curva en las dos animaciones. */
+  .bp .bp-barrido {
     transform-origin: left;
-    animation: bp-barrido-arriba 1.7s var(--bp-pasada) both;
-  }
-  .bp .bp-barrido-abajo {
-    transform-origin: right;
-    animation: bp-barrido-abajo 1.7s var(--bp-pasada) both;
+    animation: bp-barrido 2.2s var(--bp-pasada) both;
   }
   .bp .bp-pasada {
-    animation: bp-pasada 1.7s var(--bp-pasada) both;
+    animation: bp-pasada 2.2s var(--bp-pasada) both;
   }
-  .bp .bp-pasada-alto {
-    animation: bp-pasada-alto 1.7s step-end both;
-  }
-  .bp .bp-pasada-alto > span {
-    animation: bp-pasada-luz 1.7s linear both;
+  .bp .bp-rodillo {
+    animation: bp-pasada-luz 2.2s linear both;
   }
 
   /* La brocha cruza la muestra de derecha a izquierda y vuelve; detrás, el color nuevo se extiende. */
@@ -145,44 +140,20 @@
   }
 }
 
-@keyframes bp-barrido-arriba {
-  0% {
+@keyframes bp-barrido {
+  from {
     transform: scaleX(0);
   }
-  47%,
-  100% {
+  to {
     transform: scaleX(1);
   }
 }
-@keyframes bp-barrido-abajo {
-  0%,
-  53% {
-    transform: scaleX(0);
-  }
-  100% {
-    transform: scaleX(1);
-  }
-}
-/* De lado a lado (en % del ancho de la placa); entre las dos pasadas baja fuera de la vista, a la derecha. */
 @keyframes bp-pasada {
-  0% {
+  from {
     transform: translateX(0);
   }
-  47%,
-  53% {
+  to {
     transform: translateX(100%);
-  }
-  100% {
-    transform: translateX(0);
-  }
-}
-@keyframes bp-pasada-alto {
-  0% {
-    transform: translateY(0);
-  }
-  50%,
-  100% {
-    transform: translateY(100%);
   }
 }
 @keyframes bp-pasada-luz {

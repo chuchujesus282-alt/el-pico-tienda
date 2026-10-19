@@ -25,19 +25,48 @@ const LATAS = [
   { id: "azul", nombre: "Azul profundo", codigo: "2728 C", hex: "#0047BB", ancho: 632, alto: 700 },
   { id: "mostaza", nombre: "Mostaza", codigo: "1255 C", hex: "#AD841F", ancho: 611, alto: 700 },
 ] as const;
-const CADA_MS = 5200;
+const CADA_MS = 6000;
 
 /**
- * Herramientas que asoman por los bordes al pasar el mouse (desde 768px), como en el banner de herramientas. Nunca
- * sobre el título (arriba van del 30% en adelante, abajo del 28%: a 1280px el subtítulo llega al ~19%) ni sobre el exhibidor. `tam` en px a 1280px.
+ * Lo que asoma por los bordes al pasar el mouse (desde 768px), repartido por TODO el banner como en el de
+ * herramientas, y casi todo de pintura. `en`: % a lo largo del borde (izquierda→derecha, o arriba→abajo en el
+ * derecho); `asoma`: fracción que entra; `tam`: ancho en px a 1280px. Reglas: arriba, nada antes del 20% (la ruta);
+ * abajo, nada antes del 25% (el subtítulo llega al ~19%); sobre la placa, solo donde no está el exhibidor.
+ * Faltan fotos de bandeja de rodillo, tirro y mezclador: al tenerlas (webp con transparencia), una línea cada una.
  */
 const ASOMAN = [
-  { foto: "destornillador", ancho: 640, alto: 575, borde: "arriba", en: 31, tam: 150, giro: 196 },
-  { foto: "cuter", ancho: 640, alto: 532, borde: "arriba", en: 44, tam: 140, giro: 158 },
-  { foto: "rodillo", ancho: 563, alto: 640, borde: "abajo", en: 28, tam: 150, giro: 20 },
-  { foto: "brocha", ancho: 635, alto: 640, borde: "abajo", en: 41, tam: 135, giro: -30 },
-  { foto: "cinta-metrica", ancho: 640, alto: 519, borde: "abajo", en: 66, tam: 125, giro: 10 },
+  // Arriba, sobre el azul.
+  { src: "/herramientas/brocha.webp", ancho: 635, alto: 640, borde: "arriba", en: 23, tam: 125, giro: 150, asoma: 0.5 },
+  { src: "/herramientas/rodillo.webp", ancho: 563, alto: 640, borde: "arriba", en: 34, tam: 140, giro: 196, asoma: 0.5 },
+  { src: "/herramientas/destornillador.webp", ancho: 640, alto: 575, borde: "arriba", en: 45, tam: 135, giro: 160, asoma: 0.45 },
+  // Arriba, sobre la placa (entre la ficha y la lata grande).
+  { src: "/herramientas/cinta-metrica.webp", ancho: 640, alto: 519, borde: "arriba", en: 75, tam: 110, giro: 196, asoma: 0.45 },
+  // Borde derecho, sobre la tapa de la lata.
+  { src: "/banners/pinturas/rodillo.webp", ancho: 820, alto: 648, borde: "derecha", en: 16, tam: 150, giro: -14, asoma: 0.42 },
+  // Abajo: latas chicas de otros colores y herramientas de pintor.
+  { src: "/banners/pinturas/lata-mostaza.webp", ancho: 611, alto: 700, borde: "abajo", en: 27, tam: 100, giro: -8, asoma: 0.55 },
+  { src: "/herramientas/cuter.webp", ancho: 640, alto: 532, borde: "abajo", en: 38, tam: 125, giro: 22, asoma: 0.45 },
+  { src: "/herramientas/brocha.webp", ancho: 635, alto: 640, borde: "abajo", en: 48, tam: 115, giro: -34, asoma: 0.5 },
+  { src: "/banners/pinturas/lata-azul.webp", ancho: 632, alto: 700, borde: "abajo", en: 63, tam: 95, giro: 7, asoma: 0.5 },
 ] as const;
+
+/**
+ * Cantos rasgados de la cinta de pintor: un polígono con mordidas pequeñas e irregulares a cada lado (fijas, no al
+ * azar en cada carga, para que el servidor y el navegador dibujen lo mismo).
+ */
+const BORDE_RASGADO = (() => {
+  const pasos = 48;
+  const izq: string[] = [];
+  const der: string[] = [];
+  for (let i = 0; i <= pasos; i++) {
+    const y = ((i / pasos) * 100).toFixed(2);
+    const a = Math.abs(Math.sin(i * 12.9898) * 43758.5453) % 1;
+    const b = Math.abs(Math.sin(i * 78.233) * 12543.123) % 1;
+    izq.push(`${(a * 14).toFixed(1)}% ${y}%`);
+    der.unshift(`${(100 - b * 14).toFixed(1)}% ${y}%`);
+  }
+  return `polygon(${[...izq, ...der].join(", ")})`;
+})();
 
 /**
  * Fundido sin "fantasmas": la lata nueva aparece ENCIMA de la anterior, que sigue entera debajo y se apaga de golpe
@@ -88,13 +117,8 @@ export default function BannerPinturas() {
       {/* Placa cortada en diagonal. Al cambiar de color, el nuevo entra detrás de un rodillo real que la cruza. */}
       <div className="bp-placa absolute -inset-y-6 -right-24 left-[56%] overflow-hidden shadow-tarjeta-hover md:left-[51%] xl:left-[49%]">
         <div className={`absolute inset-0 ${cambio > 0 ? "bg-(--pintura-antes)" : "bg-(--pintura)"}`} />
-        {/* El color nuevo en dos pasadas del rodillo: la mitad de arriba de izquierda a derecha y la de abajo de vuelta. */}
-        {cambio > 0 && (
-          <div key={`capa-${cambio}`}>
-            <div className="bp-barrido-arriba absolute inset-x-0 top-0 h-1/2 bg-(--pintura)" />
-            <div className="bp-barrido-abajo absolute inset-x-0 bottom-0 h-1/2 bg-(--pintura)" />
-          </div>
-        )}
+        {/* El color nuevo se extiende justo detrás del rodillo, en una sola pasada de izquierda a derecha. */}
+        {cambio > 0 && <div key={`capa-${cambio}`} className="bp-barrido absolute inset-0 bg-(--pintura)" />}
         {/* Luz de arriba, piso más oscuro abajo (el exhibidor se apoya ahí), cuadrícula y montañas de la marca. */}
         <div className="absolute inset-0 bg-[linear-gradient(170deg,color-mix(in_srgb,var(--color-pico-blanco)_16%,transparent)_0%,transparent_45%,color-mix(in_srgb,var(--color-pico-azul-oscuro)_55%,transparent)_100%)]" />
         <div className="absolute inset-x-0 bottom-0 h-[30%] bg-gradient-to-t from-pico-azul-oscuro/35 to-transparent" />
@@ -102,11 +126,11 @@ export default function BannerPinturas() {
         <Montanas className="absolute -right-6 -bottom-10 w-[115%] skew-x-12 fill-pico-blanco/[0.06]" />
         <div className="absolute top-[45%] left-[64%] aspect-square w-[70%] -translate-x-1/2 -translate-y-1/2 rounded-chip bg-[radial-gradient(circle,var(--color-pico-blanco)_0%,transparent_62%)] opacity-25" />
         {cambio > 0 && (
-          // Rodillo: el de afuera lo lleva de lado a lado, el de adentro baja a la segunda pasada. La felpa va teñida
-          // del color nuevo (la foto recortada con su propia silueta y multiplicada), así se lee que él lo pinta.
+          // Rodillo (mediano, centrado en el alto) que cruza la placa de lado a lado. La felpa va teñida del color nuevo
+          // (la foto recortada con su propia silueta y multiplicada), así se lee que él lo pinta.
           <div key={`rodillo-${cambio}`} className="bp-pasada absolute inset-0">
-            <div className="bp-pasada-alto absolute inset-x-0 top-0 h-1/2">
-              <span className="absolute top-[3%] left-0 block h-[94%] translate-x-[-13%] skew-x-12 drop-shadow-xl drop-shadow-pico-azul-oscuro/60">
+            <div className="absolute inset-x-0 top-[20%] h-[60%]">
+              <span className="bp-rodillo absolute top-0 left-0 block h-full translate-x-[-13%] skew-x-12 drop-shadow-xl drop-shadow-pico-azul-oscuro/60">
                 <Image src="/banners/pinturas/rodillo.webp" alt="" width={820} height={648} sizes="200px" className="h-full w-auto max-w-none" />
                 <span
                   className="absolute inset-0 bg-(--pintura) mix-blend-multiply [clip-path:inset(0_74%_0_0)] [mask-repeat:no-repeat] [mask-size:100%_100%]"
@@ -118,18 +142,31 @@ export default function BannerPinturas() {
         )}
       </div>
       {/* Corte: cinta de pintor (la que separa lo pintado de lo que no) pegada sobre el borde. */}
-      <div className="bp-placa bp-cinta absolute -inset-y-6 left-[calc(56%-0.8rem)] w-[1.6rem] md:left-[calc(51%-0.8rem)] xl:left-[calc(49%-0.8rem)]" />
+      {/* Papel crepé translúcido con los cantos rasgados; del lado de la placa, la pintura de turno lo mancha un poco. */}
+      <div className="bp-placa absolute -inset-y-6 left-[calc(56%-0.8rem)] w-[1.6rem] drop-shadow-lg drop-shadow-pico-azul-oscuro/50 md:left-[calc(51%-0.8rem)] xl:left-[calc(49%-0.8rem)]">
+        <div className="bp-cinta absolute inset-0" style={{ clipPath: BORDE_RASGADO }}>
+          <div className="absolute inset-y-0 right-0 w-[34%] bg-(--pintura) opacity-45 mix-blend-multiply transition-colors delay-700 duration-700" />
+        </div>
+      </div>
 
       {/* Herramientas que asoman por los bordes (desfocadas: el exhibidor es el foco). */}
       <div className="hidden [--escala:0.62] md:block lg:[--escala:0.82] xl:[--escala:1]">
         {ASOMAN.map((a, i) => (
           <span
-            key={a.foto}
+            key={i}
             className={`bp-asoma bp-asoma-${a.borde} absolute block`}
-            style={{ left: `${a.en}%`, width: `calc(${a.tam}px * var(--escala))`, "--giro": `${a.giro}deg`, "--i": i } as CSSProperties}
+            style={
+              {
+                ...(a.borde === "derecha" ? { top: `${a.en}%` } : { left: `${a.en}%` }),
+                width: `calc(${a.tam}px * var(--escala))`,
+                "--giro": `${a.giro}deg`,
+                "--asoma": `${a.asoma * 100}%`,
+                "--i": i,
+              } as unknown as CSSProperties
+            }
           >
             <Image
-              src={`/herramientas/${a.foto}.webp`}
+              src={a.src}
               alt=""
               width={a.ancho}
               height={a.alto}
