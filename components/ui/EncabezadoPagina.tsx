@@ -27,24 +27,39 @@ type Props = {
    * que la lupa lleva a /buscar. Por defecto sí; /buscar la quita porque ya tiene el buscador encima.
    */
   lupa?: boolean;
+  /** "plano": azul cobalto de plano de obra con cuadrícula de tiza (el de la tira de calculadoras). Por defecto, marino. */
+  tono?: "marino" | "plano";
+  /** Ilustración propia a la derecha (desde 1024px; antes no cabe junto al título), en lugar del plano del ícono. */
+  ilustracion?: ReactNode;
 };
 
 /**
  * Encabezado de página: tarjeta azul marino redondeada (separada de la barra de categorías), con la ruta de navegación, el acento
  * rojo corto y el título. Lo usan todas las páginas interiores para que el sitio se vea parejo.
  */
-export default function EncabezadoPagina({ titulo, etiqueta, descripcion, ruta, icono: Icono, imagen, children, lupa = true }: Props) {
+export default function EncabezadoPagina({
+  titulo,
+  etiqueta,
+  descripcion,
+  ruta,
+  icono: Icono,
+  imagen,
+  children,
+  lupa = true,
+  tono = "marino",
+  ilustracion,
+}: Props) {
   return (
     // Tarjeta redondeada sobre el fondo gris, con aire arriba: así no se pega a la barra azul de categorías.
     <Contenedor className="pt-4 md:pt-6">
-    <header className="grupo-icono relative isolate overflow-hidden rounded-banner bg-gradient-to-br from-pico-azul via-pico-azul to-pico-azul-oscuro text-pico-blanco shadow-tarjeta-hover print:rounded-none print:bg-none print:text-texto print:shadow-none">
+    <header className={`grupo-icono relative isolate overflow-hidden rounded-banner ${tono === "plano" ? "tira-plano" : "bg-gradient-to-br from-pico-azul via-pico-azul to-pico-azul-oscuro"} text-pico-blanco shadow-tarjeta-hover print:rounded-none print:bg-none print:text-texto print:shadow-none`}>
       {imagen && (
         <>
           <Image src={imagen} alt="" fill priority sizes="100vw" className="-z-10 object-cover" />
           <div className="absolute inset-0 -z-10 bg-gradient-to-r from-pico-azul-oscuro/90 via-pico-azul/70 to-pico-azul/20" />
         </>
       )}
-      {Icono && !imagen && (
+      {Icono && !imagen && !ilustracion && (
         // Plano técnico del ícono, entero (sin cortarse), centrado en vertical a la derecha.
         <span className="pointer-events-none absolute top-1/2 right-4 -z-10 hidden -translate-y-1/2 opacity-80 sm:block md:right-12 lg:right-16 print:hidden" aria-hidden>
           <Plano Icono={Icono} className="w-40 md:w-52 lg:w-60" />
@@ -64,8 +79,11 @@ export default function EncabezadoPagina({ titulo, etiqueta, descripcion, ruta, 
       )}
 
       <div
-        className={`${titulo ? "px-5 py-6 md:px-10 md:py-9 lg:px-12" : "px-5 py-3 md:px-10 lg:px-12"} ${lupa ? "max-md:pr-16" : ""}`}
+        className={`${titulo ? "px-5 py-6 md:px-10 md:py-9 lg:px-12" : "px-5 py-3 md:px-10 lg:px-12"} ${lupa ? "max-md:pr-16" : ""} ${
+          ilustracion ? "lg:grid lg:grid-cols-[minmax(0,1fr)_minmax(0,26rem)] lg:items-center lg:gap-16" : ""
+        }`}
       >
+        <div className={ilustracion ? "min-w-0" : "contents"}>
         {ruta && (
           <nav aria-label="Ruta de navegación" className="text-[13px] text-pico-blanco/70 print:hidden">
             <ol className="flex flex-wrap items-center gap-1">
@@ -106,6 +124,8 @@ export default function EncabezadoPagina({ titulo, etiqueta, descripcion, ruta, 
             {children && <div className="mt-4">{children}</div>}
           </div>
         )}
+        </div>
+        {ilustracion && <div className="hidden justify-center pt-2 pb-6 lg:flex print:hidden">{ilustracion}</div>}
       </div>
     </header>
     </Contenedor>

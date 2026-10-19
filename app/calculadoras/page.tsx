@@ -1,14 +1,13 @@
 import type { Metadata } from "next";
+import EscenaPared from "@/components/calculadoras/EscenaPared";
 import TarjetaCalculadora from "@/components/calculadoras/TarjetaCalculadora";
 import Contenedor from "@/components/ui/Contenedor";
 import EncabezadoPagina from "@/components/ui/EncabezadoPagina";
 import Revelar from "@/components/ui/Revelar";
 import { CALCULADORAS } from "@/lib/calculadoras/registro";
-import IconoCalculadora from "@/components/icons/pico/IconoCalculadora";
 import IconoCarritoEnvio from "@/components/icons/pico/IconoCarritoEnvio";
 import IconoCinta from "@/components/icons/pico/IconoCinta";
 import IconoLista from "@/components/icons/pico/IconoLista";
-import PlacaIcono from "@/components/icons/pico/PlacaIcono";
 
 // Calculadoras de proyectos — responsable: persona B (rama `calculadoras`).
 // Las calculadoras salen de lib/calculadoras/registro.ts: agregar una ahí la muestra aquí sola.
@@ -18,7 +17,7 @@ export const metadata: Metadata = {
   description: "Calculadoras de materiales de construcción: bloques, concreto, friso, cabillas, pintura, cerámica, techos y más.",
 };
 
-// Cómo se usa, en tres pasos cortos (en móvil solo se ve el título).
+// Cómo se usa, en tres pasos cortos, dentro del encabezado (en móvil solo se ve el título).
 const pasos = [
   { icono: IconoCinta, titulo: "Mide tu obra", texto: "Largo, alto o área" },
   { icono: IconoLista, titulo: "Ve el material", texto: "Te decimos cuánto llevar" },
@@ -28,33 +27,36 @@ const pasos = [
 export default function PaginaCalculadoras() {
   return (
     <>
+      {/* Encabezado en azul de plano (como la tira del inicio): a la derecha, la pared de la cuenta dibujada a tiza
+          con la libreta de sus materiales; debajo del título, los tres pasos como una ruta. */}
       <EncabezadoPagina
         titulo="Calcula tu proyecto"
         descripcion="Descubre cuánto material necesitas y llévate todo en un solo pedido."
         ruta={[{ texto: "Calculadoras" }]}
-        icono={IconoCalculadora}
-      />
+        tono="plano"
+        ilustracion={<EscenaPared />}
+      >
+        <ol aria-label="Cómo funciona" className="relative mt-2 grid grid-cols-3 gap-2 md:mt-4 md:max-w-xl md:gap-4">
+          {/* Línea de tiza punteada que une los tres pasos. */}
+          <span className="absolute top-5 right-[16%] left-[16%] border-t-2 border-dashed border-pico-blanco/30 md:right-auto md:left-5 md:w-[calc(100%-2.5rem)]" aria-hidden />
+          {pasos.map(({ icono: Icono, titulo, texto }, i) => (
+            <li key={titulo} className="grupo-icono relative flex flex-col items-center gap-2 text-center md:items-start md:text-left">
+              <span className="relative flex size-10 items-center justify-center rounded-chip bg-pico-blanco text-pico-azul shadow-tarjeta ring-4 ring-pico-blanco/15">
+                <Icono className="size-6" />
+                <span className="absolute -top-1.5 -right-1.5 flex size-5 items-center justify-center rounded-chip bg-amarillo-obra text-[11px] font-bold text-pico-azul-oscuro" aria-hidden>
+                  {i + 1}
+                </span>
+              </span>
+              <span>
+                <span className="block text-[13px] leading-tight font-bold sm:text-sm md:text-base">{titulo}</span>
+                <span className="mt-0.5 hidden text-[13px] leading-snug text-pico-blanco/75 sm:block">{texto}</span>
+              </span>
+            </li>
+          ))}
+        </ol>
+      </EncabezadoPagina>
 
     <Contenedor className="space-y-8 py-8 md:space-y-10 md:py-12">
-      <ol aria-label="Cómo funciona" className="grid grid-cols-3 divide-x divide-gris-borde rounded-banner border border-gris-borde bg-pico-blanco shadow-tarjeta">
-        {pasos.map(({ icono: Icono, titulo, texto }, i) => (
-          <li key={titulo} className="grupo-icono flex flex-col items-center gap-2.5 px-2 py-4 text-center sm:flex-row sm:justify-center sm:gap-4 sm:px-5 sm:py-5 sm:text-left md:py-6">
-            <span className="relative shrink-0">
-              <PlacaIcono tamano="md">
-                <Icono />
-              </PlacaIcono>
-              <span className="absolute -top-2 -right-2 flex size-6 items-center justify-center rounded-chip bg-pico-rojo text-xs font-bold text-pico-blanco ring-2 ring-pico-blanco" aria-hidden>
-                {i + 1}
-              </span>
-            </span>
-            <span>
-              <span className="block text-sm leading-tight font-bold text-pico-azul sm:text-base md:text-lg">{titulo}</span>
-              <span className="mt-0.5 hidden text-[13px] leading-snug text-gris-texto sm:block md:text-sm">{texto}</span>
-            </span>
-          </li>
-        ))}
-      </ol>
-
       <ul className="grid gap-3 sm:grid-cols-2 md:gap-4 lg:grid-cols-3 xl:grid-cols-5">
         {CALCULADORAS.map((calculadora, i) => (
           <li key={calculadora.slug}>
