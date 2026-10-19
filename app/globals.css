@@ -703,37 +703,3 @@ p {
   50% { opacity: 0.3; transform: scale(0.85); }
 }
 
-/* Escena de /calculadoras (components/calculadoras/EscenaPared.tsx): la pared dibujada a tiza en el plano, sus cotas,
-   el bloque que falta y la libreta. Quieta: todo dibujado. Con movimiento: se dibuja al entrar y el hueco late. */
-.escena-tiza { stroke: color-mix(in srgb, var(--color-pico-blanco) 85%, transparent); }
-.escena-junta { stroke: color-mix(in srgb, var(--color-pico-blanco) 45%, transparent); }
-.escena-cota { stroke: color-mix(in srgb, var(--color-pico-blanco) 70%, transparent); }
-.escena-texto {
-  fill: var(--color-pico-blanco);
-  stroke: none;
-  font-size: 13px;
-  font-weight: 700;
-}
-.escena-hueco-fondo { fill: var(--color-plano); }
-.escena-hueco {
-  fill: color-mix(in srgb, var(--color-pico-rojo) 75%, transparent);
-  stroke: var(--color-pico-blanco);
-  transform-box: fill-box;
-  transform-origin: center;
-}
-.escena-trazo {
-  stroke-dasharray: 1;
-  stroke-dashoffset: 0;
-}
-@media (prefers-reduced-motion: no-preference) {
-  .escena-trazo { animation: ico-dibujar 0.9s var(--curva-suave) both; animation-delay: var(--d, 0s); }
-  .escena-cota text { animation: escena-aparecer 0.5s ease-out both; animation-delay: calc(var(--d, 0s) + 0.5s); }
-  .escena-hueco { animation: escena-aparecer 0.4s ease-out 1.6s both, libreta-falta 1.4s ease-in-out 2s infinite; }
-  .escena-libreta { animation: escena-caer 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) 0.8s both; }
-}
-@keyframes escena-aparecer {
-  from { opacity: 0; }
-}
-@keyframes escena-caer {
-  from { opacity: 0; transform: translateY(-28px) rotate(-8deg); }
-}

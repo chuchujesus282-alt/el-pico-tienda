@@ -27,8 +27,6 @@ type Props = {
    * que la lupa lleva a /buscar. Por defecto sí; /buscar la quita porque ya tiene el buscador encima.
    */
   lupa?: boolean;
-  /** "plano": azul cobalto de plano de obra con cuadrícula de tiza (el de la tira de calculadoras). Por defecto, marino. */
-  tono?: "marino" | "plano";
   /** Ilustración propia a la derecha (desde 1024px; antes no cabe junto al título), en lugar del plano del ícono. */
   ilustracion?: ReactNode;
   /** Más bajo (menos aire y título más chico): para secciones donde el encabezado solo dice dónde estás. */
@@ -48,14 +46,13 @@ export default function EncabezadoPagina({
   imagen,
   children,
   lupa = true,
-  tono = "marino",
   compacto = false,
   ilustracion,
 }: Props) {
   return (
     // Tarjeta redondeada sobre el fondo gris, con aire arriba: así no se pega a la barra azul de categorías.
     <Contenedor className="pt-4 md:pt-6">
-    <header className={`grupo-icono relative isolate overflow-hidden rounded-banner ${tono === "plano" ? "tira-plano" : "bg-gradient-to-br from-pico-azul via-pico-azul to-pico-azul-oscuro"} text-pico-blanco shadow-tarjeta-hover print:rounded-none print:bg-none print:text-texto print:shadow-none`}>
+    <header className={`grupo-icono relative isolate overflow-hidden rounded-banner bg-gradient-to-br from-pico-azul via-pico-azul to-pico-azul-oscuro text-pico-blanco shadow-tarjeta-hover print:rounded-none print:bg-none print:text-texto print:shadow-none`}>
       {imagen && (
         <>
           <Image src={imagen} alt="" fill priority sizes="100vw" className="-z-10 object-cover" />
