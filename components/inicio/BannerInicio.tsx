@@ -4,6 +4,7 @@ import { ChevronRight } from "lucide-react";
 import type { ReactNode } from "react";
 import Plano from "@/components/icons/pico/Plano";
 import type { BannerInicio as DatosBanner, VarianteBanner } from "./contenidoInicio";
+import HerramientasAsomadas from "./HerramientasAsomadas";
 
 type Props = {
   banner: DatosBanner;
@@ -113,29 +114,56 @@ export default function BannerInicio({ banner, sizes, tamano = "normal", priorit
               />
             </span>
           )}
-          <span
-            className={`relative h-1 -skew-x-12 rounded-sm bg-pico-rojo transition-all duration-300 group-hover:w-14 ${
-              grande ? "w-10 lg:w-14 lg:group-hover:w-20" : lateral ? "hidden w-8 sm:block" : "w-10 lg:w-12 lg:group-hover:w-16"
-            }`}
-            aria-hidden
-          />
-          <p
-            className={`relative max-w-[80%] font-bold text-balance ${estilo.titulo} ${
-              grande
-                ? "text-3xl leading-[1.05] tracking-tight md:text-5xl lg:max-w-[55%] lg:text-6xl"
-                : lateral
-                  ? "text-base leading-tight sm:text-xl"
-                  : "text-2xl leading-tight md:text-3xl lg:text-4xl"
-            }`}
-          >
-            {banner.titulo}
-            {lateral && <ChevronRight className="ml-0.5 inline size-4 align-[-2px] sm:hidden" aria-hidden />}
-          </p>
+          {/* Herramientas reales que asoman por los bordes y rotomartillo flotante, solo en el banner de herramientas del carrusel. */}
+          {grande && banner.id === "herramientas" && <HerramientasAsomadas />}
+          {grande && banner.tituloPartes ? (
+            // Título en dos tiempos: la frase en una línea y la palabra clave enorme, en mayúsculas, sobre un
+            // bloque rojo inclinado (el filete de la marca hecho sello) que se estira al pasar el mouse.
+            <p className={`relative font-bold ${estilo.titulo}`}>
+              <span className="block text-lg leading-none md:text-3xl lg:text-4xl">{banner.tituloPartes[0]}</span>
+              <span
+                className={`relative isolate mt-2 inline-block px-2.5 pt-1 leading-[0.92] tracking-[-0.02em] text-pico-blanco uppercase md:mt-3 md:px-4 ${
+                  banner.tituloPartes[1].length > 8 ? "text-3xl md:text-5xl lg:text-6xl" : "text-5xl md:text-7xl lg:text-8xl"
+                }`}
+              >
+                <span
+                  className="absolute inset-0 -z-10 origin-left -skew-x-12 rounded-sm bg-pico-rojo shadow-boton-hover transition-transform duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] motion-safe:group-hover:scale-x-[1.08]"
+                  aria-hidden
+                />
+                {banner.tituloPartes[1]}
+              </span>
+            </p>
+          ) : (
+            <>
+              <span
+                className={`relative h-1 -skew-x-12 rounded-sm bg-pico-rojo transition-all duration-300 group-hover:w-14 ${
+                  grande ? "w-10 lg:w-14 lg:group-hover:w-20" : lateral ? "hidden w-8 sm:block" : "w-10 lg:w-12 lg:group-hover:w-16"
+                }`}
+                aria-hidden
+              />
+              <p
+                className={`relative max-w-[80%] font-bold text-balance ${estilo.titulo} ${
+                  grande
+                    ? "text-3xl leading-[1.05] tracking-tight md:text-5xl lg:max-w-[55%] lg:text-6xl"
+                    : lateral
+                      ? "text-base leading-tight sm:text-xl"
+                      : "text-2xl leading-tight md:text-3xl lg:text-4xl"
+                }`}
+              >
+                {banner.titulo}
+                {lateral && <ChevronRight className="ml-0.5 inline size-4 align-[-2px] sm:hidden" aria-hidden />}
+              </p>
+            </>
+          )}
           {banner.texto && (
             // En el banner grande y en móvil se omite el texto: no cabe con el título y el botón.
             <p
               className={`relative max-w-[75%] text-sm ${estilo.texto} ${
-                grande ? "hidden sm:line-clamp-2 md:text-base lg:max-w-[50%] lg:text-lg" : lateral ? "hidden sm:line-clamp-2" : "line-clamp-3 md:text-base lg:text-lg"
+                grande
+                  ? `hidden sm:line-clamp-2 md:text-base lg:max-w-[50%] lg:text-lg ${banner.tituloPartes ? "md:max-w-[50%]" : ""}`
+                  : lateral
+                    ? "hidden sm:line-clamp-2"
+                    : "line-clamp-3 md:text-base lg:text-lg"
               }`}
             >
               {banner.texto}

@@ -23,6 +23,11 @@
   --color-estrella: #f2a516;
   --color-estado-abierto: #15803d;
 
+  /* Amarillo industrial del banner "Herramientas que rinden" (HerramientasAsomadas): el de la señalización de
+     obra. Solo para esa placa y su franja de seguridad; el texto encima va en azul marino (≥4,5:1). */
+  --color-amarillo-obra: #f2b705;
+  --color-amarillo-obra-oscuro: #d99a00;
+
   --radius-tarjeta: 12px;
   --radius-boton: 8px;
   --radius-banner: 16px;
@@ -59,6 +64,8 @@
   --animate-progreso: progreso 6s linear both;
   /* Ícono que se elige: crece un poco y vuelve. */
   --animate-pop: ico-pop 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+  /* Protagonista de un banner que flota sin girar (rotomartillo de "Herramientas que rinden"). */
+  --animate-levitar: levitar 6s ease-in-out infinite;
 
   @keyframes aparecer {
     from {
@@ -130,6 +137,11 @@
     }
     50% {
       transform: translateY(-8px) rotate(-3deg);
+    }
+  }
+  @keyframes levitar {
+    50% {
+      transform: translateY(-10px);
     }
   }
   /* Brillo que recorre una franja (filete rojo del footer) de izquierda a derecha. */

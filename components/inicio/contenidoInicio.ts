@@ -1,7 +1,6 @@
 import IconoBloques from "@/components/icons/pico/IconoBloques";
 import IconoCasco from "@/components/icons/pico/IconoCasco";
 import IconoRodillo from "@/components/icons/pico/IconoRodillo";
-import IconoTaladro from "@/components/icons/pico/IconoTaladro";
 import IconoTornillo from "@/components/icons/pico/IconoTornillo";
 import type { ComponenteIcono } from "@/types/icono";
 import type { Banner, Producto } from "@/types/catalogo";
@@ -19,6 +18,11 @@ export type BannerInicio = Omit<Banner, "imagen"> & {
   textoBoton?: string;
   variante?: VarianteBanner;
   icono?: ComponenteIcono;
+  /**
+   * Título en dos tiempos (solo carrusel principal): la frase y la palabra clave, que va enorme sobre un bloque
+   * rojo. Debe decir lo mismo que `titulo`, que se sigue usando como nombre del banner.
+   */
+  tituloPartes?: [string, string];
 };
 
 export type Marca = {
@@ -50,10 +54,11 @@ export const bannersPrincipales: BannerInicio[] = [
     alt: "Herramientas en El Pico",
     href: "/categoria/herramientas",
     titulo: "Herramientas que rinden",
+    tituloPartes: ["Herramientas que", "rinden"],
     texto: "Taladros, esmeriles y herramientas manuales para cada trabajo.",
     textoBoton: "Ver herramientas",
     variante: "oscuro",
-    icono: IconoTaladro,
+    // Sin ícono: en su lugar flota un rotomartillo real (HerramientasAsomadas).
   },
   {
     id: "pinturas",
