@@ -118,16 +118,17 @@ export default function BannerInicio({ banner, sizes, tamano = "normal", priorit
           {grande && banner.id === "herramientas" && <HerramientasAsomadas />}
           {grande && banner.tituloPartes ? (
             // Título en dos tiempos: la frase en una línea y la palabra clave enorme, en mayúsculas, sobre un
-            // bloque rojo inclinado (el filete de la marca hecho sello) que se estira al pasar el mouse.
+            // bloque rojo inclinado (el filete de la marca hecho sello). Al pasar el mouse crecen juntos, barra y palabra,
+            // desde la izquierda y con el mismo rebote.
             <p className={`relative font-bold ${estilo.titulo}`}>
               <span className="block text-lg leading-none md:text-3xl lg:text-4xl">{banner.tituloPartes[0]}</span>
               <span
-                className={`relative isolate mt-2 inline-block px-2.5 pt-1 leading-[0.92] tracking-[-0.02em] text-pico-blanco uppercase md:mt-3 md:px-4 ${
+                className={`relative isolate mt-2 inline-block origin-left px-2.5 pt-1 leading-[0.92] tracking-[-0.02em] text-pico-blanco uppercase transition-transform duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] motion-safe:group-hover:scale-[1.08] md:mt-3 md:px-4 ${
                   banner.tituloPartes[1].length > 8 ? "text-3xl md:text-5xl lg:text-6xl" : "text-5xl md:text-7xl lg:text-8xl"
                 }`}
               >
                 <span
-                  className="absolute inset-0 -z-10 origin-left -skew-x-12 rounded-sm bg-pico-rojo shadow-boton-hover transition-transform duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] motion-safe:group-hover:scale-x-[1.08]"
+                  className="absolute inset-0 -z-10 -skew-x-12 rounded-sm bg-pico-rojo shadow-boton-hover"
                   aria-hidden
                 />
                 {banner.tituloPartes[1]}
