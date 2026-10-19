@@ -31,8 +31,9 @@ const retraso = (s: number) => ({ "--d": `${s}s` }) as CSSProperties;
  * Ilustración de /calculadoras: la pared de la cuenta dibujada a tiza en el plano, con sus cotas (4 m y 2,5 m, las
  * mismas de la libreta) y el bloque que falta punteado en rojo; encima, la libreta amarilla con las cuentas de esa
  * pared. Al entrar la pared se dibuja hilada por hilada y luego las cotas. Estilos en globals.css (`.escena-*`).
+ * `conLibreta={false}`: solo la pared (para el encabezado compacto, donde la libreta no cabe legible).
  */
-export default function EscenaPared() {
+export default function EscenaPared({ conLibreta = true }: { conLibreta?: boolean }) {
   const medidaLargo = `${EJEMPLO_PARED.largo} m`;
   const medidaAlto = `${EJEMPLO_PARED.alto.toLocaleString("es-VE")} m`;
 
@@ -86,9 +87,11 @@ export default function EscenaPared() {
       </svg>
 
       {/* La libreta con las cuentas de esta pared, apoyada encima, abajo a la izquierda. */}
-      <div className="escena-libreta absolute -bottom-6 -left-6 w-[58%] max-w-60">
-        <LibretaMateriales />
-      </div>
+      {conLibreta && (
+        <div className="escena-libreta absolute -bottom-6 -left-6 w-[58%] max-w-60">
+          <LibretaMateriales />
+        </div>
+      )}
     </div>
   );
 }

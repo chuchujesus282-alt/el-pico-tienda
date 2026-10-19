@@ -17,40 +17,41 @@ export const metadata: Metadata = {
   description: "Calculadoras de materiales de construcción: bloques, concreto, friso, cabillas, pintura, cerámica, techos y más.",
 };
 
-// Cómo se usa, en tres pasos cortos, dentro del encabezado (en móvil solo se ve el título).
+// Cómo se usa, en tres pasos cortos (pastillas dentro del encabezado).
 const pasos = [
-  { icono: IconoCinta, titulo: "Mide tu obra", texto: "Largo, alto o área" },
-  { icono: IconoLista, titulo: "Ve el material", texto: "Te decimos cuánto llevar" },
-  { icono: IconoCarritoEnvio, titulo: "Pide en un clic", texto: "Al carrito y por WhatsApp" },
+  { icono: IconoCinta, titulo: "Mide tu obra" },
+  { icono: IconoLista, titulo: "Ve el material" },
+  { icono: IconoCarritoEnvio, titulo: "Pide en un clic" },
 ];
 
 export default function PaginaCalculadoras() {
   return (
     <>
-      {/* Encabezado en azul de plano (como la tira del inicio): a la derecha, la pared de la cuenta dibujada a tiza
-          con la libreta de sus materiales; debajo del título, los tres pasos como una ruta. */}
+      {/* Encabezado compacto en azul de plano (como la tira del inicio): solo dice dónde estás. A la derecha, en
+          pequeño, la pared de la cuenta dibujada a tiza con sus cotas; bajo el título, los tres pasos en pastillas. */}
       <EncabezadoPagina
         titulo="Calcula tu proyecto"
-        descripcion="Descubre cuánto material necesitas y llévate todo en un solo pedido."
+        descripcion={<span className="hidden sm:inline">Descubre cuánto material necesitas y llévate todo en un solo pedido.</span>}
         ruta={[{ texto: "Calculadoras" }]}
         tono="plano"
-        ilustracion={<EscenaPared />}
+        compacto
+        ilustracion={
+          <div className="w-64 xl:w-72">
+            <EscenaPared conLibreta={false} />
+          </div>
+        }
       >
-        <ol aria-label="Cómo funciona" className="relative mt-2 grid grid-cols-3 gap-2 md:mt-4 md:max-w-xl md:gap-4">
-          {/* Línea de tiza punteada que une los tres pasos. */}
-          <span className="absolute top-5 right-[16%] left-[16%] border-t-2 border-dashed border-pico-blanco/30 md:right-auto md:left-5 md:w-[calc(100%-2.5rem)]" aria-hidden />
-          {pasos.map(({ icono: Icono, titulo, texto }, i) => (
-            <li key={titulo} className="grupo-icono relative flex flex-col items-center gap-2 text-center md:items-start md:text-left">
-              <span className="relative flex size-10 items-center justify-center rounded-chip bg-pico-blanco text-pico-azul shadow-tarjeta ring-4 ring-pico-blanco/15">
-                <Icono className="size-6" />
-                <span className="absolute -top-1.5 -right-1.5 flex size-5 items-center justify-center rounded-chip bg-amarillo-obra text-[11px] font-bold text-pico-azul-oscuro" aria-hidden>
-                  {i + 1}
-                </span>
+        <ol aria-label="Cómo funciona" className="flex flex-wrap gap-1.5 md:gap-2">
+          {pasos.map(({ icono: Icono, titulo }, i) => (
+            <li
+              key={titulo}
+              className="grupo-icono flex h-8 items-center gap-1.5 rounded-chip bg-pico-blanco/10 pr-3 pl-1 text-xs font-semibold ring-1 ring-pico-blanco/15 md:h-9 md:text-sm"
+            >
+              <span className="flex size-6 items-center justify-center rounded-chip bg-amarillo-obra text-[11px] font-bold text-pico-azul-oscuro md:size-7" aria-hidden>
+                {i + 1}
               </span>
-              <span>
-                <span className="block text-[13px] leading-tight font-bold sm:text-sm md:text-base">{titulo}</span>
-                <span className="mt-0.5 hidden text-[13px] leading-snug text-pico-blanco/75 sm:block">{texto}</span>
-              </span>
+              <Icono className="hidden size-5 md:block" />
+              {titulo}
             </li>
           ))}
         </ol>

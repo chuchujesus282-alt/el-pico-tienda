@@ -31,6 +31,8 @@ type Props = {
   tono?: "marino" | "plano";
   /** Ilustración propia a la derecha (desde 1024px; antes no cabe junto al título), en lugar del plano del ícono. */
   ilustracion?: ReactNode;
+  /** Más bajo (menos aire y título más chico): para secciones donde el encabezado solo dice dónde estás. */
+  compacto?: boolean;
 };
 
 /**
@@ -47,6 +49,7 @@ export default function EncabezadoPagina({
   children,
   lupa = true,
   tono = "marino",
+  compacto = false,
   ilustracion,
 }: Props) {
   return (
@@ -79,8 +82,8 @@ export default function EncabezadoPagina({
       )}
 
       <div
-        className={`${titulo ? "px-5 py-6 md:px-10 md:py-9 lg:px-12" : "px-5 py-3 md:px-10 lg:px-12"} ${lupa ? "max-md:pr-16" : ""} ${
-          ilustracion ? "lg:grid lg:grid-cols-[minmax(0,1fr)_minmax(0,26rem)] lg:items-center lg:gap-16" : ""
+        className={`${!titulo ? "px-5 py-3 md:px-10 lg:px-12" : compacto ? "px-5 py-4 md:px-10 md:py-5 lg:px-12" : "px-5 py-6 md:px-10 md:py-9 lg:px-12"} ${lupa ? "max-md:pr-16" : ""} ${
+          ilustracion ? "lg:grid lg:grid-cols-[minmax(0,1fr)_auto] lg:items-center lg:gap-12" : ""
         }`}
       >
         <div className={ilustracion ? "min-w-0" : "contents"}>
@@ -116,16 +119,18 @@ export default function EncabezadoPagina({
         )}
 
         {titulo && (
-          <div className={`motion-safe:animate-aparecer ${ruta ? "mt-4 md:mt-5" : ""}`}>
+          <div className={`motion-safe:animate-aparecer ${ruta ? (compacto ? "mt-3" : "mt-4 md:mt-5") : ""}`}>
             <span className="block h-1 w-10 -skew-x-12 rounded-sm bg-pico-rojo lg:w-14 print:hidden" aria-hidden />
             {etiqueta && <span className="mt-3 block text-xs font-semibold tracking-[0.25em] text-pico-blanco/70 uppercase">{etiqueta}</span>}
-            <h1 className={`max-w-4xl text-3xl leading-tight font-bold text-balance md:text-5xl ${etiqueta ? "mt-1" : "mt-3"}`}>{titulo}</h1>
+            <h1
+              className={`max-w-4xl leading-tight font-bold text-balance ${compacto ? "text-2xl md:text-4xl" : "text-3xl md:text-5xl"} ${etiqueta ? "mt-1" : compacto ? "mt-2" : "mt-3"}`}
+            >{titulo}</h1>
             {descripcion && <p className="mt-2 max-w-2xl text-sm text-pico-blanco/80 md:text-base print:text-gris-texto">{descripcion}</p>}
             {children && <div className="mt-4">{children}</div>}
           </div>
         )}
         </div>
-        {ilustracion && <div className="hidden justify-center pt-2 pb-6 lg:flex print:hidden">{ilustracion}</div>}
+        {ilustracion && <div className="hidden justify-center lg:flex print:hidden">{ilustracion}</div>}
       </div>
     </header>
     </Contenedor>
