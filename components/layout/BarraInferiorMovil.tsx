@@ -96,7 +96,7 @@ const clasePestana =
  */
 export default function BarraInferiorMovil({ categorias }: { categorias: Categoria[] }) {
   const ruta = usePathname();
-  const { cantidadTotal, abrir: abrirCarrito, abierto: carritoAbierto } = useCarrito();
+  const { cantidadTotal, abrir: abrirCarrito, cerrar: cerrarCarrito, abierto: carritoAbierto } = useCarrito();
   const { cantidad: cantidadFavoritos } = useFavoritos();
   const [hojaAbierta, setHojaAbierta] = useState(false);
   const [rutaHoja, setRutaHoja] = useState(ruta);
@@ -121,12 +121,17 @@ export default function BarraInferiorMovil({ categorias }: { categorias: Categor
     };
   }, [hojaAbierta]);
 
-  /** Tocar la pestaña de la página en la que ya estás lleva al principio (reemplaza a la flecha de subir). */
+  /**
+   * Tocar una pestaña cierra lo que esté abierto encima (carrito u hoja de categorías). Si es la página en la
+   * que ya estás: con algo abierto solo lo cierra; si no, lleva al principio (reemplaza a la flecha de subir).
+   */
   const alTocarEnlace = (href: string) => (e: MouseEvent) => {
+    const habiaAlgoAbierto = hojaAbierta || carritoAbierto;
     setHojaAbierta(false);
+    cerrarCarrito();
     if (ruta === href) {
       e.preventDefault();
-      subirSuave();
+      if (!habiaAlgoAbierto) subirSuave();
     }
   };
 
@@ -268,7 +273,10 @@ export default function BarraInferiorMovil({ categorias }: { categorias: Categor
           <li>
             <button
               type="button"
-              onClick={() => setHojaAbierta((a) => !a)}
+              onClick={() => {
+                cerrarCarrito();
+                setHojaAbierta((a) => !a);
+              }}
               aria-expanded={hojaAbierta}
               aria-controls="hoja-categorias"
               className={clasePestana}
@@ -281,8 +289,10 @@ export default function BarraInferiorMovil({ categorias }: { categorias: Categor
               type="button"
               onClick={() => {
                 setHojaAbierta(false);
-                abrirCarrito();
+                if (carritoAbierto) cerrarCarrito();
+                else abrirCarrito();
               }}
+              aria-expanded={carritoAbierto}
               aria-label={`Carrito (${cantidadTotal} ${cantidadTotal === 1 ? "producto" : "productos"})`}
               className={clasePestana}
             >

@@ -35,7 +35,12 @@ export default function PanelCarrito() {
   }, [abierto, cerrar]);
 
   return (
-    <div className={`fixed inset-0 z-50 ${abierto ? "" : "pointer-events-none"}`} inert={!abierto}>
+    // En el teléfono termina sobre la barra inferior (z-41, debajo de su z-42): la barra sigue a la vista y tocar
+    // otra pestaña (o "Carrito" otra vez) lo cierra, como en las apps de tiendas. Desde 768px tapa toda la pantalla.
+    <div
+      className={`fixed inset-x-0 top-0 bottom-(--alto-barra-inferior) z-41 md:z-50 ${abierto ? "" : "pointer-events-none"}`}
+      inert={!abierto}
+    >
       <div
         className={`absolute inset-0 bg-pico-azul-oscuro/55 backdrop-blur-[2px] transition-opacity duration-300 ${
           abierto ? "opacity-100" : "opacity-0"
