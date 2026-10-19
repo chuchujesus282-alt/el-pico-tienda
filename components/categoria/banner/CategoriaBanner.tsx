@@ -1,4 +1,5 @@
 import type { ComponentType } from "react";
+import BannerConstruccion from "./BannerConstruccion";
 import BannerPinturas from "./BannerPinturas";
 import "./banner.css";
 
@@ -19,6 +20,11 @@ const BANNERS: Record<string, ConfigBanner> = {
     Escena: BannerPinturas,
     tituloPartes: ["Dale color con", "Pinturas"],
     texto: "Pinturas, brochas, rodillos y todo para pintar como un profesional.",
+  },
+  construccion: {
+    Escena: BannerConstruccion,
+    tituloPartes: ["Materiales de", "Construcción"],
+    texto: "Cemento, bloques, cabillas y todo lo que tu obra necesita.",
   },
 };
 

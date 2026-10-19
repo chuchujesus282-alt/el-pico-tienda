@@ -211,3 +211,72 @@
     animation: none !important;
   }
 }
+
+/* ===== Construcción (BannerConstruccion) ===== */
+
+/* Colgado, gancho y bloque quedan un poco arriba (3,6% de la columna, que mide 4 veces la paleta: unos 25px). */
+.bp .bc-gancho,
+.bp .bc-bloque {
+  transform: translateY(-3.6%);
+}
+/* Bajar a la paleta: el bloque baja junto con el gancho y se queda; el gancho vuelve a subir vacío. */
+.bp .bc-paleta[data-estado="colocado"] .bc-bloque {
+  transform: translateY(0);
+  transition: transform 1.06s var(--bp-pasada);
+}
+/* Levantar: el gancho baja vacío y, al engancharlo, el bloque sube con él. */
+.bp .bc-paleta[data-estado="colgado"] .bc-bloque {
+  transition: transform 0.92s var(--bp-pasada) 1.28s;
+}
+.bp .bc-polvo {
+  opacity: 0;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .bp .bc-baja-y-sube {
+    animation: bc-baja-y-sube 2.2s var(--bp-pasada) both;
+  }
+  /* Colgado, el conjunto se mece como un péndulo desde muy arriba (empieza cuando ya subió). */
+  .bp .bc-paleta[data-estado="colgado"] .bc-grua {
+    transform-origin: 50% 0;
+    animation: bc-mece 5.2s ease-in-out 2.3s infinite;
+  }
+  .bp .bc-polvo {
+    animation: bc-polvo 0.9s ease-out 0.98s both;
+  }
+}
+
+@keyframes bc-baja-y-sube {
+  0% {
+    transform: translateY(-3.6%);
+  }
+  48%,
+  58% {
+    transform: translateY(0);
+  }
+  100% {
+    transform: translateY(-3.6%);
+  }
+}
+@keyframes bc-mece {
+  0%,
+  100% {
+    rotate: 0deg;
+  }
+  30% {
+    rotate: 0.7deg;
+  }
+  75% {
+    rotate: -0.6deg;
+  }
+}
+@keyframes bc-polvo {
+  0% {
+    opacity: 0.9;
+    transform: translateX(-50%) scale(0.4, 0.5);
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(-50%) scale(1.5, 1.3);
+  }
+}
