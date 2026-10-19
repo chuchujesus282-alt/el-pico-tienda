@@ -9,8 +9,8 @@ import { Montanas } from "@/components/layout/Logo";
  * Banner de la categoría Construcción (va en `EncabezadoPagina` con la prop `escena`). Misma familia que el de
  * Pinturas: azul marino con el título a la izquierda y, a la derecha, una placa de concreto real cuyo borde es el
  * dentado de una pared de bloques a medio levantar. Encima, una grúa (el gancho cuelga de un cable que sale por arriba)
- * lleva bloques, uno por uno, de la paleta a una pila en pirámide que ya está empezada (4, 3, 2 y 1: arranca con 6 y
- * pone los 4 que faltan). Al completarla, se quitan esos 4 y vuelve a empezar.
+ * lleva bloques, uno por uno, de la paleta a un muro en construcción que ya va por la cuarta hilada, y la completa.
+ * Al terminar, se quitan esos bloques y vuelve a empezar.
  * - Solo mientras el banner se ve y nunca con "reducir movimiento" (ahí se muestra la pila ya armada, quieta).
  * - Clic / Enter / toque: pausa o sigue la grúa (al terminar el paso en curso).
  * - Mouse encima o foco con teclado: asoman herramientas y materiales reales por todo el banner.
@@ -56,32 +56,27 @@ const RECOGER = { x: 27.5, y: 57 };
 /** Altura a la que viaja (la base del bloque, por encima de la paleta). */
 const VIAJE = 69;
 /**
- * Pila a la izquierda de la paleta, en pirámide: 4 abajo, 3, 2 y 1 arriba (cada fila sube lo que mide el frente del
- * bloque y se corre medio bloque). Se corre además --hueco: en tableta -10cqh (se arrima a la paleta; si no, cruza el corte) y
- * 22cqh desde 1280px (queda en medio de la placa).
+ * Muro en construcción, en la MISMA perspectiva que la foto del bloque (medida sobre su lienzo de 397×900: a lo largo
+ * avanza 309px a la derecha y sube 77; el frente mide 220px de alto). Cada hilada pone 4 bloques uno tras otro a lo
+ * largo (los de atrás quedan detrás) y las hiladas impares van corridas medio bloque (trabado, con el borde dentado).
+ * Arranca con 3 hiladas y un bloque de la cuarta; la grúa pone los 3 que faltan y, al terminar, se quitan y vuelve.
+ * --hueco: en tableta -9cqh (se arrima a la paleta; si no, cruza el corte); desde 1280px 14cqh (en medio de la placa).
  */
-const PILA = [
-  { x: 77, y: 4 },
-  { x: 91.5, y: 4 },
-  { x: 106, y: 4 },
-  { x: 120.5, y: 4 },
-  { x: 84.25, y: 15.2 },
-  { x: 98.75, y: 15.2 },
-  { x: 113.25, y: 15.2 },
-  { x: 91.5, y: 26.4 },
-  { x: 106, y: 26.4 },
-  { x: 98.75, y: 37.6 },
-];
-/** Los primeros ya están puestos (la obra nunca se ve vacía); la grúa completa el resto y solo esos se despejan. */
-const INICIALES = 6;
-/** Fila de cada bloque (para que los de arriba tapen a los de abajo). */
-const fila = (i: number) => (i < 4 ? 1 : i < 7 ? 2 : i < 9 ? 3 : 4);
+const LARGO = { x: (309 / 397) * ANCHO, y: (77 / 397) * ANCHO };
+const HILADA = (220 / 397) * ANCHO + 0.5; // el frente del bloque + la junta de mortero
+const ORIGEN = { x: 116, y: 4 };
+const MURO = Array.from({ length: 16 }, (_, i) => {
+  const hilada = Math.floor(i / 4);
+  const k = (i % 4) + (hilada % 2 ? 0.5 : 0);
+  return { x: ORIGEN.x - k * LARGO.x, y: ORIGEN.y + k * LARGO.y + hilada * HILADA, z: hilada * 10 + (9 - (i % 4)), base: hilada === 0 };
+});
+const INICIALES = 13;
 
 type Paso = { x?: number; y?: number; enPila?: boolean; ms: number; viaje?: boolean; cargar?: boolean; soltar?: boolean };
 
 /** Los 8 pasos de la grúa para el bloque n. */
 function pasos(n: number): Paso[] {
-  const destino = PILA[n];
+  const destino = MURO[n];
   return [
     { x: RECOGER.x, enPila: false, y: VIAJE, ms: 1200, viaje: true },
     { y: RECOGER.y, ms: 800 },
@@ -136,7 +131,7 @@ export default function BannerConstruccion() {
           continue;
         }
         const a = avance.current;
-        if (a.n >= PILA.length) {
+        if (a.n >= MURO.length) {
           await esperar(1400);
           if (!vivo) return;
           setDespejando(true);
@@ -166,7 +161,7 @@ export default function BannerConstruccion() {
   }, [visible, reducido]);
 
   // Con "reducir movimiento" la pila se muestra ya armada.
-  const bloquesEnPila = reducido ? PILA.length : colocados;
+  const bloquesEnPila = reducido ? MURO.length : colocados;
   const lienzo = (x: number, y: number, ms = 0, enPila = false): CSSProperties => ({
     transform: enPila ? `translate(calc(${-x}cqh - var(--hueco)), ${-y}cqh)` : `translate(${-x}cqh, ${-y}cqh)`,
     transitionDuration: `${ms}ms`,
@@ -186,6 +181,8 @@ export default function BannerConstruccion() {
           <div className="absolute inset-x-0 bottom-0 h-[40%] bg-gradient-to-t from-pico-azul-oscuro/55 to-transparent" />
           <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_70%_35%,transparent_30%,color-mix(in_srgb,var(--color-pico-azul-oscuro)_40%,transparent)_100%)]" />
           <Montanas className="absolute -right-6 -bottom-10 w-[115%] skew-x-12 fill-pico-azul-oscuro/[0.08]" />
+          {/* Piso de la obra: una losa más oscura con su canto iluminado, donde se apoyan la paleta y el muro. */}
+          <div className="absolute inset-x-0 bottom-0 h-[30%] border-t border-pico-blanco/15 bg-gradient-to-b from-pico-azul-oscuro/35 to-pico-azul-oscuro/70" />
           <div className="absolute inset-y-0 left-0 w-[26px] bg-[repeating-linear-gradient(to_bottom,transparent_0_33px,color-mix(in_srgb,var(--color-pico-blanco)_35%,transparent)_33px_34px)]" />
         </div>
       </div>
@@ -230,7 +227,7 @@ export default function BannerConstruccion() {
         className="absolute inset-y-0 right-0 left-[55%] hidden cursor-pointer focus-visible:outline-none md:left-[50%] md:block"
       >
         {/* Escenario: contenedor del alto del banner; todo adentro se mide en cqh. */}
-        <span className="bc-escenario absolute inset-0 block [--hueco:-10cqh] xl:[--hueco:22cqh]">
+        <span className="bc-escenario absolute inset-0 block [--hueco:-9cqh] xl:[--hueco:14cqh]">
           {/* Paleta de bloques (de donde sale cada bloque). */}
           <span className="absolute block aspect-[820/813]" style={{ right: `${PALETA.derecha}cqh`, bottom: `${PALETA.abajo}cqh`, height: `${PALETA.alto}cqh` }}>
             <span className="absolute -bottom-[4%] left-1/2 h-[10%] w-[96%] -translate-x-1/2 rounded-[50%] bg-pico-azul-oscuro/55 blur-md" />
@@ -238,13 +235,13 @@ export default function BannerConstruccion() {
           </span>
 
           {/* Pila nueva: los bloques que ya dejó la grúa. */}
-          {PILA.slice(0, bloquesEnPila).map((s, i) => (
+          {MURO.slice(0, bloquesEnPila).map((s, i) => (
             <span
               key={i}
               className={`absolute right-0 bottom-0 block transition-opacity duration-700 ${despejando && i >= INICIALES ? "opacity-0" : "opacity-100"}`}
-              style={{ ...lienzo(s.x, s.y, 0, true), width: `${ANCHO}cqh`, zIndex: fila(i) }}
+              style={{ ...lienzo(s.x, s.y, 0, true), width: `${ANCHO}cqh`, zIndex: s.z }}
             >
-              {s.y < 5 && <span className="absolute -bottom-[1%] left-1/2 h-[4%] w-[110%] -translate-x-1/2 rounded-[50%] bg-pico-azul-oscuro/55 blur-sm" />}
+              {s.base && <span className="absolute -bottom-[1%] left-1/2 h-[4%] w-[110%] -translate-x-1/2 rounded-[50%] bg-pico-azul-oscuro/55 blur-sm" />}
               <Image src={`${C}bloque.webp`} alt="" width={397} height={900} sizes="60px" className="relative h-auto w-full drop-shadow-md drop-shadow-pico-azul-oscuro/50" />
               {i === bloquesEnPila - 1 && i >= INICIALES && !reducido && <span className="bc-polvo absolute bottom-[-2%] left-1/2 block h-[8%] w-[150%] rounded-[50%] bg-[radial-gradient(closest-side,color-mix(in_srgb,var(--color-pico-blanco)_70%,transparent),transparent)]" />}
             </span>
@@ -252,7 +249,7 @@ export default function BannerConstruccion() {
 
           {/* Grúa: el cable sale por arriba del banner y el gancho (con o sin bloque) se mueve con transiciones. */}
           <span
-            className="absolute right-0 bottom-0 z-10 block ease-[cubic-bezier(0.45,0,0.25,1)] [transition-property:transform]"
+            className="absolute right-0 bottom-0 z-50 block ease-[cubic-bezier(0.45,0,0.25,1)] [transition-property:transform]"
             style={{ ...lienzo(grua.x, grua.y, grua.ms, grua.enPila), width: `${ANCHO}cqh` }}
           >
             <span key={grua.viaje} className={`bc-gancho absolute bottom-0 left-0 flex h-[300cqh] w-full flex-col ${grua.viaje > 0 ? "bc-viaje" : ""}`}>
