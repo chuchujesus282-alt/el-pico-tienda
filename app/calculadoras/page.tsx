@@ -18,13 +18,13 @@ export const metadata: Metadata = {
 const pasos = ["Mide tu obra", "Ve el material", "Pide en un clic"];
 
 /**
- * La libreta amarilla de materiales (la de la tira del inicio) ocupando el lado derecho del encabezado, girada 70° y
- * desvaneciéndose hacia la izquierda para dejar el texto limpio. Decorativa: desde 640px.
+ * La libreta amarilla de materiales (la de la tira del inicio) grande en el lado derecho del encabezado, apoyada con un
+ * giro leve, sobresaliendo por abajo y desvaneciéndose hacia la izquierda para dejar el texto limpio. Desde 1280px (antes tapa la descripción).
  */
 function LibretaDeFondo() {
   return (
-    <div className="absolute inset-y-0 right-0 hidden w-[35%] [mask-image:linear-gradient(to_left,black_45%,transparent_100%)] sm:block lg:w-[55%]">
-      <div className="absolute top-[80%] left-1/2 w-[22rem] -translate-1/2 scale-[1.5] rotate-[70deg] md:scale-[1.7] lg:scale-[2]">
+    <div className="absolute inset-y-0 right-0 hidden w-1/2 [mask-image:linear-gradient(to_left,black_60%,transparent_100%)] xl:block">
+      <div className="absolute -top-[14%] right-[5%] w-[22rem] origin-top-right scale-[1.35] -rotate-[10deg] 2xl:right-[8%] 2xl:scale-[1.45]">
         <LibretaMateriales />
       </div>
     </div>
@@ -41,6 +41,7 @@ export default function PaginaCalculadoras() {
         descripcion="Elige tu trabajo, pon las medidas y te decimos cuánto material llevar. Gratis y sin registrarte."
         ruta={[{ texto: "Calculadoras" }]}
         compacto
+        tono="plano"
         fondo={<LibretaDeFondo />}
       >
         <ol aria-label="Cómo funciona" className="hidden flex-wrap gap-2 sm:flex">
