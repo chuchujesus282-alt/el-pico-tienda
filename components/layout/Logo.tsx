@@ -11,9 +11,11 @@ type Props = {
   className?: string;
 };
 
+// Ancho y alto fijos (no solo el alto + aspect-square): Safari calcula el ancho de un SVG con w-full como si
+// midiera 300px, y el logo empujaba el resto del header (en el teléfono quedaba solo en una fila o tapaba la tasa).
 const tamanos = {
-  normal: "h-11 md:h-14",
-  grande: "h-16 md:h-20",
+  normal: "size-11 md:size-14",
+  grande: "size-16 md:size-20",
 };
 
 /**
@@ -38,7 +40,7 @@ export default function Logo({ tamano = "normal", placa = true, className = "" }
     <Link
       href="/"
       aria-label="Centro Ferretero El Pico, ir al inicio"
-      className={`group flex aspect-square shrink-0 items-center justify-center rounded-tarjeta transition duration-300 focus-visible:outline-2 focus-visible:outline-offset-2 ${
+      className={`group flex shrink-0 items-center justify-center rounded-tarjeta transition duration-300 focus-visible:outline-2 focus-visible:outline-offset-2 ${
         placa
           ? "bg-pico-rojo p-2.5 shadow-tarjeta hover:shadow-tarjeta-hover focus-visible:outline-pico-blanco md:p-3"
           : "focus-visible:outline-pico-azul"
