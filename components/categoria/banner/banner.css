@@ -1,0 +1,95 @@
+/* Banners de categoría (components/categoria/banner/). Estado ACTIVO: mouse sobre el encabezado, foco con teclado
+   dentro o tocado en el teléfono; se expone como --activo (0 o 1) y las transiciones hacen el resto. */
+
+.bp {
+  --activo: 0;
+  --bp-curva: cubic-bezier(0.22, 1, 0.36, 1);
+}
+.grupo-icono:is(:hover, :has(:focus-visible), :has(.bp[data-activo])) .bp {
+  --activo: 1;
+}
+
+/* ===== Pinturas (BannerPinturas) ===== */
+
+.bp .bp-placa {
+  transform-origin: bottom;
+  transform: skewX(-12deg) translateX(calc(var(--activo) * -14px));
+  transition:
+    transform 0.5s var(--bp-curva),
+    background-color 0.7s ease;
+}
+
+.bp .bp-lata {
+  transform: scale(calc(1 + var(--activo) * 0.04));
+  transition: transform 0.7s var(--bp-curva);
+}
+
+.bp .bp-ficha {
+  transform: rotate(calc(-7deg + var(--activo) * 3deg)) translateY(calc(var(--activo) * -4px));
+  transition: transform 0.5s var(--bp-curva);
+}
+
+.bp .bp-rodillo {
+  opacity: var(--activo);
+  transform: translateY(calc((1 - var(--activo)) * 100% + 34%)) rotate(-16deg);
+  transition:
+    opacity 0.3s ease,
+    transform 0.6s var(--bp-curva) 0.08s;
+}
+
+/* Foco con teclado: aro blanco alrededor de la lata (el botón ocupa toda la placa). */
+.bp button:focus-visible .bp-lata {
+  outline: 2px solid var(--color-pico-blanco);
+  outline-offset: 6px;
+  border-radius: 12px;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  /* Mientras está activo, la brocha retoca la ficha: dos idas y vueltas cortas. */
+  .grupo-icono:is(:hover, :has(:focus-visible), :has(.bp[data-activo])) .bp .bp-retoque {
+    animation: bp-retoque 0.9s ease-in-out 0.15s 2;
+  }
+  /* Clic: la brocha cruza la muestra de derecha a izquierda y vuelve; detrás, el color nuevo se extiende. */
+  .bp .bp-pincelada {
+    animation: bp-pincelada 0.75s cubic-bezier(0.45, 0, 0.25, 1) both;
+  }
+  .bp .bp-mancha {
+    transform-origin: right;
+    animation: bp-mancha 0.6s cubic-bezier(0.45, 0, 0.25, 1) both;
+  }
+}
+
+@keyframes bp-retoque {
+  0%,
+  100% {
+    transform: translate(0, 0) rotate(0deg);
+  }
+  50% {
+    transform: translate(-7px, -3px) rotate(-5deg);
+  }
+}
+@keyframes bp-pincelada {
+  0%,
+  100% {
+    transform: translate(0, 0) rotate(0deg);
+  }
+  45% {
+    transform: translate(-58%, 2px) rotate(-8deg);
+  }
+}
+@keyframes bp-mancha {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bp,
+  .bp * {
+    transition: none !important;
+    animation: none !important;
+  }
+}

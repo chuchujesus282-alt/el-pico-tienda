@@ -32,6 +32,12 @@
   --color-plano: #164a90;
   --color-plano-oscuro: #113a74;
   --color-plano-claro: #184c94;
+  /* Colores de las latas reales del banner de Pinturas (public/banners/pinturas/), medidos sobre cada foto. SOLO para
+     ese banner: la placa de la derecha y la ficha de color toman el de la lata de turno. */
+  --color-pintura-azul: #0b3fae;
+  --color-pintura-mostaza: #b0801a;
+  --color-pintura-petroleo: #0a5f5c;
+  --color-pintura-terracota: #a9431e;
 
   --radius-tarjeta: 12px;
   --radius-boton: 8px;

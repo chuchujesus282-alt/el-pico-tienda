@@ -35,6 +35,11 @@ type Props = {
   fondo?: ReactNode;
   /** "plano": azul cobalto de plano de obra con cuadrícula (el de la tira de calculadoras del inicio). Por defecto, marino. */
   tono?: "marino" | "plano";
+  /**
+   * Escena a la derecha (banner de cada categoría, components/categoria/banner/): una capa a todo el recuadro donde la
+   * pieza decide qué va y dónde; el texto le deja la mitad derecha libre y queda centrado en vertical. Sin ella, nada cambia.
+   */
+  escena?: ReactNode;
 };
 
 /**
@@ -54,6 +59,7 @@ export default function EncabezadoPagina({
   fondo,
   tono = "marino",
   ilustracion,
+  escena,
 }: Props) {
   return (
     // Tarjeta redondeada sobre el fondo gris, con aire arriba: así no se pega a la barra azul de categorías.
@@ -70,7 +76,8 @@ export default function EncabezadoPagina({
           <div className="absolute inset-0 -z-10 bg-gradient-to-r from-pico-azul-oscuro/90 via-pico-azul/70 to-pico-azul/20" />
         </>
       )}
-      {Icono && !imagen && !ilustracion && (
+      {escena && <div className="absolute inset-0 print:hidden">{escena}</div>}
+      {Icono && !imagen && !ilustracion && !escena && (
         // Plano técnico del ícono, entero (sin cortarse), centrado en vertical a la derecha.
         <span className="pointer-events-none absolute top-1/2 right-4 -z-10 hidden -translate-y-1/2 opacity-80 sm:block md:right-12 lg:right-16 print:hidden" aria-hidden>
           <Plano Icono={Icono} className="w-40 md:w-52 lg:w-60" />
@@ -90,7 +97,12 @@ export default function EncabezadoPagina({
       )}
 
       <div
-        className={`${!titulo ? "px-5 py-3 md:px-10 lg:px-12" : compacto ? "px-5 py-4 md:px-10 md:py-5 lg:px-12" : "px-5 py-6 md:px-10 md:py-9 lg:px-12"} ${lupa ? "max-md:pr-16" : ""} ${
+        className={`${!titulo ? "px-5 py-3 md:px-10 lg:px-12" : compacto ? "px-5 py-4 md:px-10 md:py-5 lg:px-12" : "px-5 py-6 md:px-10 md:py-9 lg:px-12"} ${lupa && !escena ? "max-md:pr-16" : ""} ${
+          escena
+            ? // Encima de la escena (z-10) sin taparla: solo la ruta y el título reciben el mouse.
+              "pointer-events-none relative z-10 flex min-h-[12rem] flex-col justify-center pr-[42%]! *:pointer-events-auto md:min-h-[15rem] md:pr-[46%]! xl:min-h-[17rem]"
+            : ""
+        } ${
           ilustracion ? "lg:grid lg:grid-cols-[minmax(0,1fr)_auto] lg:items-center lg:gap-12" : ""
         }`}
       >

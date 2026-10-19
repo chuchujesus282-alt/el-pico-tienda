@@ -10,6 +10,7 @@ import SinResultados from "@/components/categoria/SinResultados";
 import { hrefCategoria, leerEstado, OPCIONES_ORDEN } from "@/components/categoria/rutas";
 import GrillaProductos from "@/components/producto/GrillaProductos";
 import Contenedor from "@/components/ui/Contenedor";
+import { bannerDeCategoria } from "@/components/categoria/banner/CategoriaBanner";
 import EncabezadoPagina from "@/components/ui/EncabezadoPagina";
 import { iconoDeCategoria } from "@/components/icons/pico/porCategoria";
 import { getCategorias, getProductosPorCategoria } from "@/lib/catalogo";
@@ -65,11 +66,22 @@ export default async function PaginaCategoria({ params, searchParams }: PageProp
   );
 
   // Cambia con cada filtro/orden/página: la grilla se vuelve a montar y repite su animación de entrada.
+  // Banner propio de la categoría (fotos reales a la derecha); sin él, el plano con su ícono de siempre.
+  const banner = bannerDeCategoria(slug);
+
   const claveVista = hrefCategoria(slug, estado, { pagina: estado.pagina });
 
   return (
     <div>
-      <EncabezadoPagina etiqueta="Categoría" titulo={categoria.nombre} ruta={[{ texto: categoria.nombre }]} imagen={categoria.banner} icono={iconoDeCategoria(slug)} />
+      <EncabezadoPagina
+        etiqueta="Categoría"
+        titulo={categoria.nombre}
+        descripcion={banner?.subtitulo}
+        ruta={[{ texto: categoria.nombre }]}
+        imagen={banner ? null : categoria.banner}
+        icono={iconoDeCategoria(slug)}
+        escena={banner && <banner.Escena />}
+      />
 
       <Contenedor className="py-6 md:py-10">
         <div className="lg:grid lg:grid-cols-[15rem_minmax(0,1fr)] lg:gap-8">
