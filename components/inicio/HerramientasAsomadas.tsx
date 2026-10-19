@@ -56,26 +56,24 @@ type Pieza = {
   movil?: boolean;
 };
 
-// El texto va a la izquierda y el rotomartillo flota a la derecha (ocupa ~58–92% del ancho). Las herramientas
-// lo enmarcan desde las esquinas, sin tocarlo: encima de él (arriba, del 50% al 90%) no va ninguna, y las del
-// borde derecho dejan libre la altura de la etiqueta "Batería". Las del borde izquierdo asoman poco, van al fondo
-// y quedan bajo el velo que protege el texto.
+// Distribución por ZONAS, para que ninguna herramienta toque a otra, al texto, a la franja ni al rotomartillo:
+// - Abajo a la izquierda (0–46%, bajo el botón): tres piezas separadas al menos su ancho.
+// - Arriba a la izquierda (0–46%): tres piezas que asoman poco, para no bajar hasta el título.
+// - Borde izquierdo: dos piezas de fondo bajo el velo que protege el texto.
+// - Lado amarillo: solo la caja abajo (entre la franja, que empieza en el 52%, y la empuñadura) y el esmeril en el
+//   borde derecho arriba. Encima del rotomartillo y junto a sus etiquetas (Mandril, Empuñadura, Batería) no va nada.
+// Si agregas una pieza, búscale una zona libre: nunca encima de otra.
 const PIEZAS: Pieza[] = [
-  { foto: "serrucho", borde: "arriba", en: 96, tam: 250, giro: -146, asoma: 0.4, movil: true },
-  { foto: "caja-herramientas", borde: "abajo", en: 62, tam: 240, giro: -6, asoma: 0.32, movil: true },
-  { foto: "taladro", borde: "arriba", en: 38, tam: 210, giro: 168, asoma: 0.38 },
-  { foto: "esmeril", borde: "derecha", en: 16, tam: 230, giro: -24, asoma: 0.28 },
-  { foto: "llave-tubo", borde: "abajo", en: 46, tam: 210, giro: 26, asoma: 0.34, movil: true },
-  { foto: "martillo", borde: "derecha", en: 58, tam: 220, giro: 205, asoma: 0.3 },
   { foto: "cinta-metrica", borde: "abajo", en: 6, tam: 170, giro: 14, asoma: 0.4, movil: true },
-  { foto: "palustre", borde: "izquierda", en: 86, tam: 175, giro: -30, asoma: 0.32 },
-  { foto: "destornillador", borde: "abajo", en: 34, tam: 165, giro: -62, asoma: 0.3, fondo: true },
-  { foto: "llave-ajustable", borde: "izquierda", en: 14, tam: 170, giro: 32, asoma: 0.3, fondo: true },
-  { foto: "rodillo", borde: "arriba", en: 30, tam: 160, giro: 150, asoma: 0.4, fondo: true },
-  { foto: "alicate", borde: "abajo", en: 20, tam: 150, giro: 16, asoma: 0.32, fondo: true },
-  { foto: "cuter", borde: "izquierda", en: 50, tam: 150, giro: 200, asoma: 0.3, fondo: true },
-  { foto: "brocha", borde: "arriba", en: 10, tam: 155, giro: 140, asoma: 0.36, fondo: true },
-  { foto: "nivel", borde: "abajo", en: 88, tam: 190, giro: -12, asoma: 0.28, fondo: true },
+  { foto: "destornillador", borde: "abajo", en: 20, tam: 165, giro: -62, asoma: 0.3, fondo: true },
+  { foto: "llave-tubo", borde: "abajo", en: 37, tam: 210, giro: 26, asoma: 0.34, movil: true },
+  { foto: "caja-herramientas", borde: "abajo", en: 69, tam: 240, giro: -6, asoma: 0.32, movil: true },
+  { foto: "brocha", borde: "arriba", en: 6, tam: 155, giro: 140, asoma: 0.3, fondo: true },
+  { foto: "taladro", borde: "arriba", en: 22, tam: 210, giro: 168, asoma: 0.25 },
+  { foto: "rodillo", borde: "arriba", en: 40, tam: 160, giro: 150, asoma: 0.3, fondo: true },
+  { foto: "llave-ajustable", borde: "izquierda", en: 18, tam: 170, giro: 32, asoma: 0.3, fondo: true },
+  { foto: "palustre", borde: "izquierda", en: 60, tam: 175, giro: -30, asoma: 0.3 },
+  { foto: "esmeril", borde: "derecha", en: 18, tam: 230, giro: -24, asoma: 0.28 },
 ];
 const COLUMNA = { izquierda: 2, derecha: 104 };
 
@@ -127,14 +125,14 @@ function FondoTaller() {
   return (
     <div className="absolute inset-0 bg-gradient-to-br from-pico-azul via-pico-azul to-pico-azul-oscuro">
       <div className={`absolute inset-0 opacity-[0.05] ${CUADRICULA_BLANCA} [mask-image:linear-gradient(to_right,black_10%,transparent_55%)]`} />
-      <div className="absolute -inset-y-6 -right-24 left-[62%] origin-bottom -skew-x-12 overflow-hidden bg-gradient-to-br from-amarillo-obra via-amarillo-obra to-amarillo-obra-oscuro shadow-tarjeta-hover transition-transform duration-500 ease-out motion-safe:group-hover:translate-x-[-1.5%] md:left-[52%]">
+      <div className="absolute -inset-y-6 -right-24 left-[62%] origin-bottom -skew-x-12 overflow-hidden bg-gradient-to-br from-amarillo-obra via-amarillo-obra to-amarillo-obra-oscuro shadow-tarjeta-hover transition-transform duration-500 ease-out motion-safe:group-hover:translate-x-[-1.5%] md:left-[57%] xl:left-[52%]">
         <div className={`absolute inset-0 skew-x-12 opacity-[0.09] ${CUADRICULA_AZUL}`} />
         <Montanas className="absolute -right-6 -bottom-10 w-[115%] skew-x-12 fill-pico-azul/[0.07]" />
         {/* Luz suave detrás del rotomartillo. */}
         <div className="absolute top-1/2 left-[45%] aspect-square w-[80%] -translate-x-1/2 -translate-y-1/2 skew-x-12 rounded-chip bg-[radial-gradient(circle,var(--color-pico-blanco)_0%,transparent_60%)] opacity-40" />
       </div>
       {/* Franja de seguridad en el corte. */}
-      <div className="absolute -inset-y-6 left-[calc(62%-1.4rem)] w-[1.4rem] origin-bottom -skew-x-12 bg-[repeating-linear-gradient(135deg,var(--color-amarillo-obra)_0,var(--color-amarillo-obra)_10px,var(--color-pico-azul-oscuro)_10px,var(--color-pico-azul-oscuro)_20px)] shadow-tarjeta-hover transition-transform duration-500 ease-out motion-safe:group-hover:translate-x-[-1.5%] md:left-[calc(52%-1.4rem)]" />
+      <div className="absolute -inset-y-6 left-[calc(62%-1.4rem)] w-[1.4rem] origin-bottom -skew-x-12 bg-[repeating-linear-gradient(135deg,var(--color-amarillo-obra)_0,var(--color-amarillo-obra)_10px,var(--color-pico-azul-oscuro)_10px,var(--color-pico-azul-oscuro)_20px)] shadow-tarjeta-hover transition-transform duration-500 ease-out motion-safe:group-hover:translate-x-[-1.5%] md:left-[calc(57%-1.4rem)] xl:left-[calc(52%-1.4rem)]" />
     </div>
   );
 }
@@ -226,7 +224,7 @@ export default function HerramientasAsomadas() {
       {/* Protagonista: un rotomartillo real que flota a la derecha (reemplaza al taladro de línea). Se ve siempre;
           al pasar el cursor crece un poco mientras las demás herramientas asoman alrededor. Flota solo en vertical
           y los señaladores van DENTRO de lo que flota: así los puntos no se despegan de las piezas. */}
-      <div className="absolute top-1/2 right-[3%] w-[36%] max-w-[28rem] -translate-y-1/2 transition-transform duration-700 ease-[cubic-bezier(0.34,1.45,0.64,1)] group-hover:scale-[1.04] motion-reduce:transition-none md:right-[2%] md:w-[30%] lg:right-[8%]">
+      <div className="absolute top-1/2 right-[3%] w-[36%] max-w-[28rem] -translate-y-1/2 transition-transform duration-700 ease-[cubic-bezier(0.34,1.45,0.64,1)] group-hover:scale-[1.04] motion-reduce:transition-none md:right-[2%] md:w-[30%] lg:right-[7%] lg:w-[25%] xl:right-[8%] xl:w-[30%]">
         {/* Sombra en el "piso", para que se note que flota. */}
         <span className="absolute -bottom-[8%] left-1/2 h-[9%] w-[55%] -translate-x-1/2 rounded-chip bg-pico-azul-oscuro/45 blur-xl" />
         <span className="relative block motion-safe:animate-levitar">
@@ -239,13 +237,13 @@ export default function HerramientasAsomadas() {
             className="h-auto w-full drop-shadow-2xl drop-shadow-pico-azul-oscuro/50"
           />
           {/* Ficha técnica: punto rojo sobre la pieza, línea hasta la columna y etiqueta centrada en la línea.
-              Solo desde 1024px (en pantallas chicas no caben). */}
+              Solo desde 1280px: más angosto, las etiquetas de la izquierda pisaban el título. */}
           {SENALES.map((s, i) => {
             const izquierda = s.lado === "izquierda";
             const col = COLUMNA[s.lado];
             const retraso = { "--retraso": `${380 + i * 90}ms` } as CSSProperties;
             return (
-              <span key={s.texto} className="hidden lg:block" style={retraso}>
+              <span key={s.texto} className="hidden xl:block" style={retraso}>
                 <span
                   className={`absolute h-0.5 -translate-y-1/2 scale-x-0 rounded-chip bg-pico-azul-oscuro transition-transform duration-300 group-hover:scale-x-100 group-hover:[transition-delay:var(--retraso)] motion-reduce:transition-none ${
                     izquierda ? "origin-right" : "origin-left"
