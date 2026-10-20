@@ -41,9 +41,6 @@
   /* Cinta de pintor (papel crepé) del corte del banner de Pinturas. */
   --color-cinta-papel: #e9dcbf;
   --color-cinta-papel-sombra: #cdbb94;
-  /* Tablero perforado (masonite) del banner de Herramientas: solo para ese banner. */
-  --color-tablero: #b4855a;
-  --color-tablero-oscuro: #7d5734;
 
   --radius-tarjeta: 12px;
   --radius-boton: 8px;

@@ -30,7 +30,7 @@ const BANNERS: Record<string, ConfigBanner> = {
   herramientas: {
     Escena: BannerHerramientas,
     tituloPartes: ["Herramientas para", "tu taller"],
-    texto: "Taladros, llaves, martillos y todo para trabajar con precisión.",
+    texto: "Taladros, esmeriles, martillos y todo para cada trabajo.",
   },
 };
 
