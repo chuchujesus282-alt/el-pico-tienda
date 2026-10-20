@@ -5,6 +5,7 @@ import AvisoCatalogo from "@/components/inicio/AvisoCatalogo";
 import BannersPromocionales from "@/components/inicio/BannersPromocionales";
 import BloqueBanners from "@/components/inicio/BloqueBanners";
 import CarruselMarcas from "@/components/inicio/CarruselMarcas";
+import ColumnasCategorias from "@/components/inicio/ColumnasCategorias";
 import NotaPedido from "@/components/inicio/NotaPedido";
 import SeccionCategoria from "@/components/inicio/SeccionCategoria";
 import {
@@ -31,12 +32,17 @@ async function seguro<T>(promesa: Promise<T>, respaldo: T): Promise<T> {
   }
 }
 
+/** Slug de la categoría a la que lleva un banner, o undefined si apunta a otra cosa. */
+function slugDeBanner(banner: BannerInicio): string | undefined {
+  return banner.href.match(/^\/categoria\/([^/?#]+)/)?.[1];
+}
+
 /** Quita los banners que apuntan a una categoría que el catálogo no tiene (si se pudo consultar). */
 function soloCategoriasExistentes(banners: BannerInicio[], categorias: Categoria[]): BannerInicio[] {
   if (categorias.length === 0) return banners;
   const slugs = new Set(categorias.map((c) => c.slug));
   return banners.filter((b) => {
-    const slug = b.href.match(/^\/categoria\/([^/?#]+)/)?.[1];
+    const slug = slugDeBanner(b);
     return !slug || slugs.has(slug);
   });
 }
@@ -61,6 +67,9 @@ export default async function Inicio() {
   const todos = [...interesar, ...recomendados, ...productosPorSeccion.flat()];
   const principales = soloCategoriasExistentes(bannersPrincipales, categorias);
   const promocionales = soloCategoriasExistentes(bannersPromocionales, categorias);
+  // Las categorías que no tienen banner van en columnas: así todas quedan a la vista en el primer tramo.
+  const conBanner = new Set([...principales, ...promocionales].map(slugDeBanner));
+  const sinBanner = categorias.filter((c) => !conBanner.has(c.slug));
 
   const secciones = seccionesCategoria.flatMap((seccion, i) => {
     const categoria = categorias.find((c) => c.slug === seccion.slug);
@@ -102,6 +111,11 @@ export default async function Inicio() {
 
           <Revelar>
             <CarruselMarcas titulo="Marcas que encuentras aquí" marcas={marcasDeProductos(todos)} />
+          </Revelar>
+
+          {/* Las categorías sin banner, lejos de los banners promocionales: abren la parte de la página por categorías. */}
+          <Revelar>
+            <ColumnasCategorias categorias={sinBanner} />
           </Revelar>
 
           {secciones[0]}
