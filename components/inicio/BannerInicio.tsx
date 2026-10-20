@@ -126,11 +126,12 @@ export default function BannerInicio({ banner, sizes, tamano = "normal", priorit
             <p className={`relative font-bold ${estilo.titulo}`}>
               <span className="block text-lg leading-none md:text-3xl lg:text-4xl">{banner.tituloPartes[0]}</span>
               <span
-                className={`relative isolate mt-2 inline-block origin-left px-2.5 pt-1 leading-[0.92] tracking-[-0.02em] text-pico-blanco uppercase transition-transform duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] motion-safe:group-hover:scale-[1.08] md:mt-3 md:px-4 ${
+                className={`relative isolate mt-2 inline-block origin-left px-2.5 pt-1 leading-[0.92] tracking-[-0.02em] text-[var(--color-sello-texto,var(--color-pico-blanco))] uppercase transition-transform duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] motion-safe:group-hover:scale-[1.08] md:mt-3 md:px-4 ${
                   banner.tituloPartes[1].length > 8 ? "text-3xl md:text-5xl lg:text-6xl" : "text-5xl md:text-7xl lg:text-8xl"
                 }`}
               >
-                {/* Rojo de la marca, salvo que el banner defina --color-sello (pinturas: el color de la pintura de turno). */}
+                {/* Rojo de la marca con letra blanca, salvo que el banner defina --color-sello y --color-sello-texto
+                    (pinturas: sello blanco con la palabra en el color de la pintura de turno). */}
                 <span
                   className="absolute inset-0 -z-10 -skew-x-12 rounded-sm bg-[var(--color-sello,var(--color-pico-rojo))] shadow-boton-hover transition-colors duration-500"
                   aria-hidden

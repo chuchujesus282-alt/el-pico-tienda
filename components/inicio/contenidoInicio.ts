@@ -68,8 +68,8 @@ export const bannersPrincipales: BannerInicio[] = [
     tituloPartes: ["Renueva tus", "espacios"],
     texto: "Pinturas, rodillos y brochas para darle color a tu casa.",
     textoBoton: "Ver pinturas",
-    // Pared blanca y rodillo que pinta una franja del color de turno (PinturaEnMovimiento).
-    variante: "claro",
+    // Todo el banner es la pared pintada del color de turno; un rodillo la repinta (PinturaEnMovimiento).
+    variante: "oscuro",
   },
 ];
 
