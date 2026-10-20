@@ -1,6 +1,5 @@
 import IconoBloques from "@/components/icons/pico/IconoBloques";
 import IconoCasco from "@/components/icons/pico/IconoCasco";
-import IconoRodillo from "@/components/icons/pico/IconoRodillo";
 import IconoTornillo from "@/components/icons/pico/IconoTornillo";
 import type { ComponenteIcono } from "@/types/icono";
 import type { Banner, Producto } from "@/types/catalogo";
@@ -66,10 +65,11 @@ export const bannersPrincipales: BannerInicio[] = [
     alt: "Pinturas en El Pico",
     href: "/categoria/pinturas",
     titulo: "Renueva tus espacios",
+    tituloPartes: ["Renueva tus", "espacios"],
     texto: "Pinturas, rodillos y brochas para darle color a tu casa.",
     textoBoton: "Ver pinturas",
-    variante: "azul",
-    icono: IconoRodillo,
+    // Pared blanca y rodillo que pinta una franja del color de turno (PinturaEnMovimiento).
+    variante: "claro",
   },
 ];
 

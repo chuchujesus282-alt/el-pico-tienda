@@ -5,6 +5,7 @@ import type { ReactNode } from "react";
 import Plano from "@/components/icons/pico/Plano";
 import type { BannerInicio as DatosBanner, VarianteBanner } from "./contenidoInicio";
 import HerramientasAsomadas from "./HerramientasAsomadas";
+import PinturaEnMovimiento from "./PinturaEnMovimiento";
 
 type Props = {
   banner: DatosBanner;
@@ -116,6 +117,8 @@ export default function BannerInicio({ banner, sizes, tamano = "normal", priorit
           )}
           {/* Herramientas reales que asoman por los bordes y rotomartillo flotante, solo en el banner de herramientas del carrusel. */}
           {grande && banner.id === "herramientas" && <HerramientasAsomadas />}
+          {/* Pared blanca con un rodillo que pinta una franja de color, solo en el banner de pinturas del carrusel. */}
+          {grande && banner.id === "pinturas" && <PinturaEnMovimiento />}
           {grande && banner.tituloPartes ? (
             // Título en dos tiempos: la frase en una línea y la palabra clave enorme, en mayúsculas, sobre un
             // bloque rojo inclinado (el filete de la marca hecho sello). Al pasar el mouse crecen juntos, barra y palabra,
@@ -127,8 +130,9 @@ export default function BannerInicio({ banner, sizes, tamano = "normal", priorit
                   banner.tituloPartes[1].length > 8 ? "text-3xl md:text-5xl lg:text-6xl" : "text-5xl md:text-7xl lg:text-8xl"
                 }`}
               >
+                {/* Rojo de la marca, salvo que el banner defina --color-sello (pinturas: el color de la pintura de turno). */}
                 <span
-                  className="absolute inset-0 -z-10 -skew-x-12 rounded-sm bg-pico-rojo shadow-boton-hover"
+                  className="absolute inset-0 -z-10 -skew-x-12 rounded-sm bg-[var(--color-sello,var(--color-pico-rojo))] shadow-boton-hover transition-colors duration-500"
                   aria-hidden
                 />
                 {banner.tituloPartes[1]}
