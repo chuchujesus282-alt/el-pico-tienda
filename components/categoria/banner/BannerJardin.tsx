@@ -4,14 +4,16 @@ import { useEffect, useRef, useState } from "react";
 
 /**
  * Banner de la categoría Hogar y jardín (va en `EncabezadoPagina` con la prop `escena`). Misma familia que los demás:
- * azul marino con el título a la izquierda y, cortado en diagonal, un césped vivo dibujado en canvas: miles de hojas de
- * grama (cada una con su largo, grosor y tono) que se mecen con ráfagas de viento, con luz de tarde que entra de arriba.
- * Una pala real está clavada entre la grama (las hojas de adelante tapan su base) y una manguera fuera de cuadro riega:
- * gotas con gravedad que caen en arco y salpican al tocar la grama.
+ * azul marino con el título a la izquierda y, cortado en diagonal, un jardín vivo dibujado en canvas: un seto nítido al
+ * fondo y miles de hojas de grama (cada una con su largo, grosor y tono) que se mecen con ráfagas de viento, con luz de
+ * tarde. En la grama, un rollo de manguera cuya punta alzada riega con un chorro (gotas con gravedad que salpican) y una
+ * pala real clavada en la tierra. Pala y manguera se dibujan en su profundidad: las hojas de adelante las tapan.
  * - Clic / Enter / toque: cierra o abre el agua.
- * - Mouse encima o foco con teclado: sopla más viento y el chorro sale con más fuerza.
- * - "Reducir movimiento": un cuadro quieto (sin viento ni agua corriendo). Fuera de pantalla no dibuja.
- * Colores desde los tokens `grama*` y `agua` de globals.css. Pala en public/banners/jardin/.
+ * - Mouse encima o foco con teclado: sopla más viento, el chorro sale con más fuerza y la pala sale de la tierra
+ *   (sube, se inclina y suelta terrones); al soltar vuelve a clavarse.
+ * - "Reducir movimiento": un cuadro quieto. Fuera de pantalla no dibuja.
+ * Colores desde los tokens `grama*`, `agua`, `amarillo-obra`, `tablero-oscuro` y `pico-azul-oscuro`. Pala en
+ * public/banners/jardin/.
  */
 
 type Hoja = { x: number; y: number; alto: number; ancho: number; color: string; fase: number; inclina: number };
@@ -28,7 +30,7 @@ function rgb(nombre: string): [number, number, number] {
 const mezcla = (a: number[], b: number[], t: number) => a.map((v, i) => Math.round(v + (b[i] - v) * t));
 const css = (c: number[], a = 1) => `rgba(${c[0]},${c[1]},${c[2]},${a})`;
 
-/** Número pseudoaleatorio fijo por semilla (el césped se ve igual en cada carga). */
+/** Número pseudoaleatorio fijo por semilla (el jardín se ve igual en cada carga). */
 function semilla(s: number) {
   return () => {
     s = (s * 16807) % 2147483647;
@@ -62,6 +64,9 @@ export default function BannerJardin() {
     const agua = rgb("--color-agua");
     const sol = rgb("--color-amarillo-obra");
     const noche = rgb("--color-pico-azul-oscuro");
+    const tierra = rgb("--color-tablero-oscuro");
+    const blanco = [255, 255, 255];
+    const naranja = mezcla(sol, rgb("--color-pico-rojo"), 0.45);
 
     const pala = new Image();
     pala.src = PALA.src;
@@ -69,10 +74,49 @@ export default function BannerJardin() {
     let W = 0;
     let H = 0;
     let hojas: Hoja[] = [];
-    let setos: { x: number; y: number; r: number; c: number[] }[] = [];
-    let palaBase = 0; // índice de la primera hoja que va delante de la pala
     let palaCaja = { x: 0, y: 0, w: 0, h: 0 };
+    let rollo = { x: 0, y: 0, rx: 0, ry: 0, g: 0 };
+    let boquilla = { x: 0, y: 0 };
+    let palaAlzada = 0;
     const gotas: Gota[] = [];
+    const terrones: Gota[] = [];
+    const fondoCache = document.createElement("canvas");
+
+    /** Cielo y seto: se dibujan una vez (cuando cambia el tamaño) en un canvas aparte y se copian en cada cuadro. */
+    const pintarFondo = (azar: () => number, dpr: number) => {
+      fondoCache.width = Math.round(W * dpr);
+      fondoCache.height = Math.round(H * dpr);
+      const f = fondoCache.getContext("2d");
+      if (!f) return;
+      f.setTransform(dpr, 0, 0, dpr, 0, 0);
+      const g = f.createLinearGradient(W * 0.8, 0, W * 0.2, H);
+      g.addColorStop(0, css(mezcla(sol, blanco, 0.45)));
+      g.addColorStop(0.3, css(mezcla(claro, sol, 0.3)));
+      g.addColorStop(0.55, css(mezcla(grama, oscuro, 0.2)));
+      g.addColorStop(1, css(oscuro));
+      f.fillStyle = g;
+      f.fillRect(0, 0, W, H);
+      // Seto nítido: hojitas (elipses giradas) con el contorno de arriba irregular; las de arriba reciben luz.
+      const tope = (x: number) => H * (0.13 + 0.05 * Math.sin(x * 0.021) + 0.03 * Math.sin(x * 0.067 + 1.7));
+      const paso = Math.max(3, W / 260);
+      for (let x = -10; x < W + 10; x += paso) {
+        const arriba = tope(x);
+        for (let y = arriba; y < H * 0.42; y += paso * 1.1) {
+          const prof = (y - arriba) / (H * 0.42 - arriba);
+          const c = mezcla(mezcla(grama, claro, (1 - prof) * 0.55 * azar()), oscuro, prof * 0.6 + azar() * 0.25);
+          f.fillStyle = css(c);
+          f.beginPath();
+          f.ellipse(x + (azar() - 0.5) * paso, y + (azar() - 0.5) * paso, paso * (0.9 + azar() * 0.7), paso * (0.5 + azar() * 0.4), azar() * Math.PI, 0, Math.PI * 2);
+          f.fill();
+        }
+      }
+      // Base del seto en sombra, donde empieza el césped.
+      const b = f.createLinearGradient(0, H * 0.3, 0, H * 0.46);
+      b.addColorStop(0, css(oscuro, 0));
+      b.addColorStop(1, css(oscuro, 0.85));
+      f.fillStyle = b;
+      f.fillRect(0, H * 0.3, W, H * 0.7);
+    };
 
     const armar = () => {
       const r = canvas.getBoundingClientRect();
@@ -104,19 +148,18 @@ export default function BannerJardin() {
         });
       }
       hojas.sort((a, b) => a.y - b.y);
-      setos = [];
-      for (let x = -20; x < W + 40; x += 26 + azar() * 22) {
-        const r = H * (0.12 + azar() * 0.1);
-        setos.push({ x, y: H * (0.27 + azar() * 0.06), r, c: mezcla(oscuro, grama, azar() * 0.45) });
-      }
+      pintarFondo(azar, dpr);
 
-      // Pala: clavada a un tercio del ancho; la base de la hoja queda a ~82% del alto (la tapan las hojas de adelante).
+      // Pala: clavada a un tercio del ancho; la base de la hoja queda escondida entre las hojas de adelante.
       const ph = H * 0.78;
       const pw = (ph * PALA.ancho) / PALA.alto;
       const base = H * 0.88;
-      palaCaja = { x: W * 0.3 - pw / 2, y: base - ph, w: pw, h: ph };
-      palaBase = hojas.findIndex((h) => h.y > base - 4);
-      if (palaBase < 0) palaBase = hojas.length;
+      // En el teléfono la placa es angosta: la pala va más al centro y el rollo más a la derecha.
+      const angosta = W < 420;
+      palaCaja = { x: W * (angosta ? 0.5 : 0.32) - pw / 2, y: base - ph, w: pw, h: ph };
+      // Rollo de manguera tirado en la grama, a la derecha (g = grosor del tubo).
+      const rx = Math.min(W * 0.11, H * 0.32);
+      rollo = { x: W * (angosta ? 0.84 : 0.72), y: H * 0.8, rx, ry: rx * 0.3, g: Math.max(5, H * 0.032) };
     };
 
     const dibujarHoja = (h: Hoja, t: number, viento: number) => {
@@ -133,61 +176,110 @@ export default function BannerJardin() {
       ctx.fill();
     };
 
-    const fondo = () => {
-      // Cielo de tarde: cálido arriba a la derecha, azulado hacia el corte; se funde con el verde hacia abajo.
-      const g = ctx.createLinearGradient(W * 0.8, 0, W * 0.2, H);
-      g.addColorStop(0, css(mezcla(sol, [255, 255, 255], 0.45)));
-      g.addColorStop(0.3, css(mezcla(claro, sol, 0.3)));
-      g.addColorStop(0.55, css(mezcla(grama, oscuro, 0.2)));
-      g.addColorStop(1, css(oscuro));
-      ctx.fillStyle = g;
-      ctx.fillRect(0, 0, W, H);
-      // Seto lejano, desenfocado (manchas suaves de verde oscuro a lo largo del horizonte).
-      for (const m of setos) {
-        const r = ctx.createRadialGradient(m.x, m.y, 0, m.x, m.y, m.r);
-        r.addColorStop(0, css(m.c, 0.9));
-        r.addColorStop(0.6, css(m.c, 0.55));
-        r.addColorStop(1, css(m.c, 0));
-        ctx.fillStyle = r;
-        ctx.fillRect(m.x - m.r, m.y - m.r, m.r * 2, m.r * 2);
+    /** Tubo de manguera: verde con franja naranja y trenzado, sombreado (oscuro abajo, brillo arriba). */
+    const tubo = (trazar: () => void, g: number) => {
+      ctx.lineCap = "round";
+      ctx.lineJoin = "round";
+      const capas: [number[], number, number, number][] = [
+        [oscuro, 1, 0, 1],
+        [grama, 0.78, -0.08, 1],
+        [mezcla(grama, claro, 0.5), 0.42, -0.2, 0.9],
+        [mezcla(claro, blanco, 0.5), 0.14, -0.3, 0.7],
+      ];
+      for (const [c, k, dy, a] of capas) {
+        ctx.save();
+        ctx.translate(0, dy * g);
+        ctx.strokeStyle = css(c, a);
+        ctx.lineWidth = g * k;
+        trazar();
+        ctx.stroke();
+        ctx.restore();
       }
-      // Bruma de luz entre el seto y el césped.
-      const b = ctx.createLinearGradient(0, H * 0.22, 0, H * 0.45);
-      b.addColorStop(0, css(mezcla(claro, sol, 0.4), 0));
-      b.addColorStop(0.5, css(mezcla(claro, sol, 0.4), 0.25));
-      b.addColorStop(1, css(mezcla(claro, sol, 0.4), 0));
-      ctx.fillStyle = b;
-      ctx.fillRect(0, H * 0.22, W, H * 0.23);
+      ctx.save();
+      ctx.strokeStyle = css(naranja, 0.85);
+      ctx.lineWidth = g * 0.16;
+      ctx.translate(0, g * 0.18);
+      trazar();
+      ctx.stroke();
+      ctx.restore();
+      ctx.save();
+      ctx.setLineDash([1.2, 2.6]);
+      ctx.strokeStyle = css(oscuro, 0.35);
+      ctx.lineWidth = g * 0.6;
+      trazar();
+      ctx.stroke();
+      ctx.restore();
+    };
+
+    /** Rollo de manguera en la grama y su punta alzada con la boquilla; devuelve la boca de la boquilla. */
+    const manguera = () => {
+      const { x, y, rx, ry, g } = rollo;
+      for (let k = 0; k < 4; k++) {
+        const r = rx - k * g * 0.25;
+        tubo(() => {
+          ctx.beginPath();
+          ctx.ellipse(x, y - k * g * 0.62, r, ry - k * g * 0.08, 0, 0, Math.PI * 2);
+        }, g);
+      }
+      // Punta que sale del rollo y sube hacia la izquierda.
+      const fin = { x: x - rx * 1.05 + g * 1.6, y: y - H * 0.36 + g * 0.5 };
+      tubo(() => {
+        ctx.beginPath();
+        ctx.moveTo(x + rx * 0.4, y - 3 * g * 0.62 - ry * 0.8);
+        ctx.bezierCurveTo(x + rx * 0.2, y - H * 0.42, x - rx * 0.3, y - H * 0.4, fin.x, fin.y);
+      }, g);
+      // Boquilla: casquillo naranja y pico oscuro, apuntando a la izquierda y un poco hacia arriba.
+      const ang = Math.PI - 0.35;
+      ctx.save();
+      ctx.translate(fin.x, fin.y);
+      ctx.rotate(ang);
+      const cas = ctx.createLinearGradient(0, -g * 0.7, 0, g * 0.7);
+      cas.addColorStop(0, css(mezcla(naranja, blanco, 0.35)));
+      cas.addColorStop(0.5, css(naranja));
+      cas.addColorStop(1, css(mezcla(naranja, oscuro, 0.6)));
+      ctx.fillStyle = cas;
+      ctx.beginPath();
+      ctx.roundRect(-g * 0.4, -g * 0.72, g * 1.4, g * 1.44, g * 0.25);
+      ctx.fill();
+      const pico = ctx.createLinearGradient(0, -g * 0.5, 0, g * 0.5);
+      pico.addColorStop(0, css(mezcla(noche, blanco, 0.35)));
+      pico.addColorStop(1, css(noche));
+      ctx.fillStyle = pico;
+      ctx.beginPath();
+      ctx.roundRect(g * 0.95, -g * 0.48, g * 1.25, g * 0.96, g * 0.2);
+      ctx.fill();
+      ctx.restore();
+      const largo = g * 2.2;
+      return { x: fin.x + Math.cos(ang) * largo, y: fin.y + Math.sin(ang) * largo };
     };
 
     const luz = () => {
       // Luz de tarde que baña desde arriba a la derecha y penumbra abajo a la izquierda.
       const l = ctx.createRadialGradient(W * 0.9, -H * 0.1, 0, W * 0.9, -H * 0.1, W * 0.9);
-      l.addColorStop(0, css(sol, 0.28));
+      l.addColorStop(0, css(sol, 0.24));
       l.addColorStop(1, css(sol, 0));
       ctx.fillStyle = l;
       ctx.fillRect(0, 0, W, H);
       const p = ctx.createLinearGradient(0, H, W * 0.5, H * 0.4);
-      p.addColorStop(0, css(noche, 0.45));
+      p.addColorStop(0, css(noche, 0.4));
       p.addColorStop(1, css(noche, 0));
       ctx.fillStyle = p;
       ctx.fillRect(0, 0, W, H);
     };
 
-    const regar = (dt: number, fuerza: number) => {
-      // La boquilla está fuera de cuadro, arriba a la derecha; las gotas salen en abanico.
+    const regar = (dt: number, fuerza: number, t: number) => {
+      // Un chorro desde la boquilla: muchas gotas con poca dispersión (se lee continuo), que oscila apenas.
       if (estado.current.abierta) {
-        // Un chorro: muchas gotas con poca dispersión (se lee continuo); la boquilla oscila apenas, como en la mano.
         const nuevas = Math.round((260 + fuerza * 160) * dt);
         const pulso = Math.sin(t * 0.7) * 0.06;
         for (let i = 0; i < nuevas; i++) {
-          const v = (1 + (Math.random() - 0.5) * 0.08) * (1 + fuerza * 0.12);
+          const v = (1 + (Math.random() - 0.5) * 0.08) * (1 + fuerza * 0.15);
           gotas.push({
-            x: W + 6,
-            y: H * 0.1 + (Math.random() - 0.5) * 3,
-            vx: -(W * 0.5) * v * (1 + pulso),
-            vy: -H * (0.55 + (Math.random() - 0.5) * 0.06),
-            suelo: H * (0.62 + Math.random() * 0.2),
+            x: boquilla.x,
+            y: boquilla.y + (Math.random() - 0.5) * 2,
+            vx: -(W * 0.38) * v * (1 + pulso),
+            vy: -H * (0.62 + (Math.random() - 0.5) * 0.06) * v,
+            suelo: H * (0.62 + Math.random() * 0.22),
             vida: 1,
             chispa: false,
           });
@@ -216,14 +308,43 @@ export default function BannerJardin() {
           ctx.fillRect(d.x, d.y, 1.4, 1.4);
         } else {
           // Cada gota es un trazo corto en la dirección en que va (se lee como agua en movimiento).
-          const largo = 0.02;
           ctx.strokeStyle = css(agua, 0.55);
           ctx.lineWidth = 1.6;
           ctx.beginPath();
           ctx.moveTo(d.x, d.y);
-          ctx.lineTo(d.x - d.vx * largo, d.y - d.vy * largo);
+          ctx.lineTo(d.x - d.vx * 0.02, d.y - d.vy * 0.02);
           ctx.stroke();
         }
+      }
+    };
+
+    /** Pala (sube e inclina según cuánto salió de la tierra) y los terrones que suelta. */
+    const dibujarPala = (dt: number) => {
+      if (!pala.complete || !pala.naturalWidth) return;
+      const sube = palaAlzada * H * 0.1;
+      ctx.save();
+      ctx.translate(palaCaja.x + palaCaja.w / 2, palaCaja.y + palaCaja.h - sube);
+      ctx.rotate(-palaAlzada * 0.14);
+      ctx.shadowColor = css(noche, 0.45);
+      ctx.shadowBlur = 10;
+      ctx.shadowOffsetX = 6;
+      ctx.shadowOffsetY = 4;
+      ctx.drawImage(pala, -palaCaja.w / 2, -palaCaja.h, palaCaja.w, palaCaja.h);
+      ctx.restore();
+      for (let i = terrones.length - 1; i >= 0; i--) {
+        const d = terrones[i];
+        d.vy += H * 2.2 * dt;
+        d.x += d.vx * dt;
+        d.y += d.vy * dt;
+        d.vida -= dt * 1.4;
+        if (d.vida <= 0) {
+          terrones.splice(i, 1);
+          continue;
+        }
+        ctx.fillStyle = css(tierra, d.vida);
+        ctx.beginPath();
+        ctx.arc(d.x, d.y, 1.6 + (i % 3), 0, Math.PI * 2);
+        ctx.fill();
       }
     };
 
@@ -236,26 +357,43 @@ export default function BannerJardin() {
       const dt = Math.min(0.05, (ahora - previo) / 1000);
       previo = ahora;
       t += dt;
-      // El estado activo sube y baja suave (viento y chorro).
+      // El estado activo sube y baja suave (viento, chorro y pala).
       const activo = cont.closest("header")?.matches(":hover, :has(:focus-visible)") || cont.dataset.activo ? 1 : 0;
       estado.current.activo += (activo - estado.current.activo) * Math.min(1, dt * 3);
       const fuerza = estado.current.activo;
       const viento = 0.55 + fuerza * 0.6;
 
-      ctx.clearRect(0, 0, W, H);
-      fondo();
-      for (let i = 0; i < palaBase; i++) dibujarHoja(hojas[i], t, viento);
-      if (pala.complete && pala.naturalWidth) {
-        ctx.save();
-        ctx.shadowColor = css(noche, 0.45);
-        ctx.shadowBlur = 10;
-        ctx.shadowOffsetX = 6;
-        ctx.shadowOffsetY = 4;
-        ctx.drawImage(pala, palaCaja.x, palaCaja.y, palaCaja.w, palaCaja.h);
-        ctx.restore();
+      // La pala sale de la tierra al activarse: al pasar el umbral, saltan terrones.
+      const antes = palaAlzada;
+      palaAlzada += (fuerza - palaAlzada) * Math.min(1, dt * 5);
+      if (!reducido && antes < 0.15 && palaAlzada >= 0.15) {
+        for (let k = 0; k < 14; k++) {
+          terrones.push({
+            x: palaCaja.x + palaCaja.w * (0.3 + Math.random() * 0.4),
+            y: palaCaja.y + palaCaja.h * 0.97,
+            vx: (Math.random() - 0.5) * 120,
+            vy: -60 - Math.random() * 110,
+            suelo: Infinity,
+            vida: 1,
+            chispa: true,
+          });
+        }
       }
-      for (let i = palaBase; i < hojas.length; i++) dibujarHoja(hojas[i], t, viento);
-      if (!reducido) regar(dt, fuerza);
+
+      ctx.clearRect(0, 0, W, H);
+      ctx.drawImage(fondoCache, 0, 0, W, H);
+      // Pala y manguera van en su profundidad: las hojas que están delante las tapan.
+      const capas = [
+        { y: palaCaja.y + palaCaja.h - 4, dibujar: () => dibujarPala(dt) },
+        { y: rollo.y + rollo.ry * 0.6, dibujar: () => (boquilla = manguera()) },
+      ].sort((a, b) => a.y - b.y);
+      let c = 0;
+      for (const h of hojas) {
+        while (c < capas.length && h.y > capas[c].y) capas[c++].dibujar();
+        dibujarHoja(h, t, viento);
+      }
+      while (c < capas.length) capas[c++].dibujar();
+      if (!reducido) regar(dt, fuerza, t);
       luz();
       if (!reducido && visible) cuadro = requestAnimationFrame(pintar);
     };
@@ -289,11 +427,11 @@ export default function BannerJardin() {
 
   return (
     <div ref={raiz} className="bp absolute inset-0 overflow-hidden" data-activo={tocado || undefined}>
-      {/* Césped vivo, cortado en diagonal; el canvas va contrarrestando el sesgo de la placa (no se deforma). */}
+      {/* Jardín vivo, cortado en diagonal; el canvas va contrarrestando el sesgo de la placa (no se deforma). */}
       <div className="bp-placa absolute -inset-y-6 -right-24 left-[56%] overflow-hidden shadow-tarjeta-hover md:left-[51%] xl:left-[49%]">
         <canvas ref={lienzo} className="absolute inset-y-0 -left-16 right-0 h-full w-[calc(100%+4rem)] skew-x-12" aria-hidden />
       </div>
-      {/* Borde del corte: listón de madera. */}
+      {/* Borde del corte: banda azul de la marca con un filete rojo, que continúa el lado del título. */}
       <div className="bp-placa bj-liston absolute -inset-y-6 left-[calc(56%-0.55rem)] w-[1.1rem] md:left-[calc(51%-0.55rem)] xl:left-[calc(49%-0.55rem)]" />
 
       <button

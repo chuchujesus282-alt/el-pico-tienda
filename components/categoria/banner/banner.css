@@ -387,14 +387,14 @@
 
 /* ===== Hogar y jardín (BannerJardin) ===== */
 
-/* Listón de madera en el corte (el mismo de los canteros de la foto): veta y canto con luz. */
+/* Borde del corte: banda azul de la marca (continúa el lado del título) con brillo en un canto y un filete rojo. */
 .bp .bj-liston {
   background:
-    repeating-linear-gradient(180deg, transparent 0 9px, color-mix(in srgb, var(--color-tablero-oscuro) 35%, transparent) 9px 10px, transparent 10px 23px),
-    linear-gradient(90deg, var(--color-tablero-oscuro), color-mix(in srgb, var(--color-pico-blanco) 25%, var(--color-tablero)) 35%, var(--color-tablero) 60%, var(--color-tablero-oscuro));
+    linear-gradient(90deg, transparent 58%, var(--color-pico-rojo) 58% 74%, transparent 74%),
+    linear-gradient(90deg, var(--color-pico-azul-oscuro), color-mix(in srgb, var(--color-pico-blanco) 18%, var(--color-pico-azul)) 30%, var(--color-pico-azul) 55%, var(--color-pico-azul-oscuro));
   box-shadow:
     0 1px 2px color-mix(in srgb, var(--color-pico-azul-oscuro) 50%, transparent),
-    0 10px 20px -6px color-mix(in srgb, var(--color-pico-azul-oscuro) 60%, transparent);
+    0.4rem 0 1.2rem -0.3rem color-mix(in srgb, var(--color-pico-azul-oscuro) 70%, transparent);
 }
 
 /* Agua. Los trazos no se deforman al estirarse el SVG. */
