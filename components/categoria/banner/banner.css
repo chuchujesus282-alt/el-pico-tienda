@@ -365,3 +365,22 @@
     translate: -0.6px 0.4px;
   }
 }
+
+/* Lámpara de taller: un cono de luz cálida que baja desde arriba sobre el tablero (el resto queda en penumbra). */
+.bp .bh-lampara {
+  background:
+    radial-gradient(ellipse 55% 75% at 52% -8%, color-mix(in srgb, var(--color-amarillo-obra) 22%, transparent), transparent 70%),
+    radial-gradient(ellipse 120% 90% at 50% 30%, transparent 45%, color-mix(in srgb, var(--color-pico-azul-oscuro) 40%, transparent) 100%);
+  mix-blend-mode: soft-light;
+}
+/* Mesón de trabajo: canto de madera iluminado arriba y frente en sombra, con la veta del tablero. */
+.bp .bh-meson {
+  background:
+    linear-gradient(to bottom, color-mix(in srgb, var(--color-pico-blanco) 30%, var(--color-tablero)) 0 6%, var(--color-tablero) 6% 22%, color-mix(in srgb, var(--color-pico-azul-oscuro) 35%, var(--color-tablero-oscuro)) 22%, color-mix(in srgb, var(--color-pico-azul-oscuro) 70%, var(--color-tablero-oscuro)) 100%),
+    var(--color-tablero-oscuro);
+  box-shadow: 0 -0.8cqh 1.6cqh color-mix(in srgb, var(--color-pico-azul-oscuro) 35%, transparent);
+}
+/* Sombra de cada herramienta colgada sobre el tablero: hacia abajo y a la derecha (la luz viene de arriba). */
+.bp .bh-sombra {
+  filter: drop-shadow(0.7cqh 1.4cqh 0.9cqh color-mix(in srgb, var(--color-pico-azul-oscuro) 55%, transparent));
+}

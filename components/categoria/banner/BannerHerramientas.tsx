@@ -26,8 +26,8 @@ const H = "/herramientas/";
  * colgada, en % del alto del banner. Se van rotando por los ganchos.
  */
 const COLGABLES = [
-  { id: "martillo", ancho: 260, alto: 640, largo: 58 },
-  { id: "esmeril", ancho: 308, alto: 640, largo: 52 },
+  { id: "martillo", ancho: 260, alto: 640, largo: 54 },
+  { id: "esmeril", ancho: 308, alto: 640, largo: 48 },
   { id: "serrucho", ancho: 150, alto: 640, largo: 68 },
   { id: "llave-tubo", ancho: 176, alto: 640, largo: 64 },
   { id: "llave-ajustable", ancho: 150, alto: 640, largo: 56 },
@@ -37,17 +37,18 @@ type Colgable = (typeof COLGABLES)[number]["id"];
 
 /**
  * Ganchos del tablero: x en % del área de la escena desde 1280px (`xMd`: entre 768 y 1279px, donde solo caben 2;
- * sin él, ese gancho solo sale desde 1280px).
+ * sin él, ese gancho solo sale desde 1280px). Medidos para la herramienta MÁS ANCHA (el esmeril, que va rotando por
+ * todos): arriba, el corte diagonal se mete ~25cqh en la escena, así que el primer gancho va lejos del perfil; el último
+ * deja aire antes del taladro.
  */
 const GANCHOS = [
-  { x: 12, xMd: null },
-  { x: 23.5, xMd: 26 },
-  { x: 35, xMd: 41 },
-  { x: 46.5, xMd: null },
-  { x: 58, xMd: null },
+  { x: 20, xMd: null },
+  { x: 33, xMd: 32 },
+  { x: 46, xMd: 46 },
+  { x: 59, xMd: null },
 ];
 /** Orden en que se reponen los ganchos (salteado, para que no parezca una fila que avanza). */
-const ORDEN = [2, 0, 4, 1, 3];
+const ORDEN = [1, 3, 0, 2];
 
 /** Lo que asoma por los bordes (desde 768px): rotomartillo, destornillador, caja y cinta. Nada sobre el título ni el tablero. */
 const ASOMAN = [
@@ -61,7 +62,7 @@ const datos = (id: Colgable) => COLGABLES.find((c) => c.id === id)!;
 
 export default function BannerHerramientas() {
   const raiz = useRef<HTMLDivElement>(null);
-  const [colgadas, setColgadas] = useState<Colgable[]>(["martillo", "esmeril", "serrucho", "llave-tubo", "llave-ajustable"]);
+  const [colgadas, setColgadas] = useState<Colgable[]>(["martillo", "esmeril", "serrucho", "llave-tubo"]);
   // Herramienta que se está descolgando (sigue dibujada un momento, saliendo).
   const [saliente, setSaliente] = useState<{ gancho: number; id: Colgable; vez: number } | null>(null);
   const [vez, setVez] = useState(0);
@@ -101,10 +102,12 @@ export default function BannerHerramientas() {
 
   return (
     <div ref={raiz} className="bp absolute inset-0 overflow-hidden" data-activo={tocado || undefined}>
-      {/* Tablero perforado cortado en diagonal: masonite con sus agujeros en cuadrícula, luz de arriba y piso abajo. */}
+      {/* Tablero perforado cortado en diagonal: masonite con sus agujeros en cuadrícula, la luz de una lámpara de taller
+          arriba, los bordes en penumbra y abajo el mesón de trabajo donde se apoya el taladro. */}
       <div className="bp-placa bh-tablero absolute -inset-y-6 -right-24 left-[56%] overflow-hidden shadow-tarjeta-hover md:left-[51%] xl:left-[49%]">
-        <div className="absolute inset-0 bg-[linear-gradient(170deg,color-mix(in_srgb,var(--color-pico-blanco)_14%,transparent)_0%,transparent_40%,color-mix(in_srgb,var(--color-pico-azul-oscuro)_45%,transparent)_100%)]" />
-        <div className="absolute inset-x-0 bottom-0 h-[24%] border-t border-pico-blanco/20 bg-gradient-to-b from-pico-azul-oscuro/55 to-pico-azul-oscuro/80" />
+        <div className="bh-lampara absolute inset-0" />
+        <div className="absolute inset-0 bg-[linear-gradient(170deg,color-mix(in_srgb,var(--color-pico-blanco)_10%,transparent)_0%,transparent_40%,color-mix(in_srgb,var(--color-pico-azul-oscuro)_45%,transparent)_100%)]" />
+        <div className="bh-meson absolute inset-x-0 bottom-0 h-[20%]" />
       </div>
       {/* Perfil de aluminio atornillado sobre el corte. */}
       <div className="bp-placa bh-perfil absolute -inset-y-6 left-[calc(56%-0.7rem)] w-[1.4rem] md:left-[calc(51%-0.7rem)] xl:left-[calc(49%-0.7rem)]" />
@@ -156,7 +159,7 @@ export default function BannerHerramientas() {
               <span className="bh-gancho absolute -top-[3px] left-1/2 block h-3 w-1.5 -translate-x-1/2 rounded-b-full border-x-2 border-b-2 border-gris-borde" />
               {sale && (
                 <span key={`sale-${sale.vez}`} className="bh-descolgar absolute top-1 left-1/2 block" style={{ height: `${datos(sale.id).largo}cqh` }}>
-                  <Image src={`${B}${sale.id}.webp`} alt="" width={datos(sale.id).ancho} height={datos(sale.id).alto} sizes="60px" className="h-full w-auto max-w-none -translate-x-1/2 drop-shadow-lg drop-shadow-pico-azul-oscuro/50" />
+                  <Image src={`${B}${sale.id}.webp`} alt="" width={datos(sale.id).ancho} height={datos(sale.id).alto} sizes="60px" className="bh-sombra h-full w-auto max-w-none -translate-x-1/2" />
                 </span>
               )}
               <span
@@ -164,14 +167,14 @@ export default function BannerHerramientas() {
                 className={`bh-colgada absolute top-1 left-1/2 block origin-top ${vez > 0 && saliente?.gancho === i ? "bh-colgar" : ""}`}
                 style={{ height: `${d.largo}cqh`, "--i": i } as CSSProperties}
               >
-                <Image src={`${B}${id}.webp`} alt="" width={d.ancho} height={d.alto} sizes="60px" className="h-full w-auto max-w-none -translate-x-1/2 drop-shadow-lg drop-shadow-pico-azul-oscuro/50" />
+                <Image src={`${B}${id}.webp`} alt="" width={d.ancho} height={d.alto} sizes="60px" className="bh-sombra h-full w-auto max-w-none -translate-x-1/2" />
               </span>
             </span>
           );
         })}
 
-        {/* Taladro al frente, apoyado en el piso, con su sombra de contacto. */}
-        <span className="absolute right-[6%] bottom-[4%] block aspect-[515/640] h-[50%] md:right-[3%] md:h-[68%] xl:right-[7%] xl:h-[84%]">
+        {/* Taladro al frente, parado sobre el mesón, con su sombra de contacto. */}
+        <span className="absolute right-[6%] bottom-[12%] block aspect-[515/640] h-[50%] md:right-[3%] md:h-[64%] xl:right-[4%] xl:h-[72%]">
           <span className="absolute -bottom-[3%] left-[52%] h-[8%] w-[80%] -translate-x-1/2 rounded-[50%] bg-pico-azul-oscuro/60 blur-md" />
           <span className="bh-taladro relative block size-full">
             <Image src={`${H}taladro.webp`} alt="" width={515} height={640} priority sizes="(min-width: 768px) 190px, 110px" className="size-full object-contain drop-shadow-2xl drop-shadow-pico-azul-oscuro/50" />
