@@ -113,6 +113,18 @@ export function marcasDeProductos(productos: Producto[], limite = 12): Marca[] {
     .map((nombre) => ({ nombre, logo: logosMarcas[nombre] ?? null }));
 }
 
+/**
+ * Columnas de "Más categorías" (las categorías que no tienen banner salen solas, en el orden del catálogo). Aquí
+ * solo se les pone foto y texto corto. Foto: vertical (3:4, idealmente 900×1200) en public/categorias/; sin foto
+ * se ve el plano técnico del ícono de la categoría.
+ */
+export const columnasCategorias: Record<string, { imagen: string | null; texto?: string }> = {
+  electricidad: { imagen: null, texto: "Cables, breakers, tomas e iluminación." },
+  plomeria: { imagen: null, texto: "Tuberías, conexiones, llaves y grifería." },
+  "hogar-y-jardin": { imagen: null, texto: "Mangueras, herramientas de jardín y más para tu casa." },
+  vehiculos: { imagen: null, texto: "Aceites, lubricantes y accesorios para tu carro." },
+};
+
 export const seccionesCategoria: SeccionCategoriaInicio[] = [
   { slug: "construccion", imagen: null },
   { slug: "hogar-y-jardin", imagen: null },
