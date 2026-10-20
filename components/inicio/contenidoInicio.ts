@@ -52,12 +52,12 @@ export const bannersPrincipales: BannerInicio[] = [
     imagen: null,
     alt: "Herramientas en El Pico",
     href: "/categoria/herramientas",
-    titulo: "Herramientas de todo tipo",
-    tituloPartes: ["Herramientas de", "todo tipo"],
-    texto: "Manuales y eléctricas para medir, cortar, perforar, clavar y ajustar.",
+    titulo: "Herramientas que rinden",
+    tituloPartes: ["Herramientas que", "rinden"],
+    texto: "Taladros, esmeriles y herramientas manuales para cada trabajo.",
     textoBoton: "Ver herramientas",
     variante: "oscuro",
-    // Sin ícono: en su lugar va la vitrina de herramientas con el trabajo de cada una (VitrinaHerramientas).
+    // Sin ícono: en su lugar flota un rotomartillo real (HerramientasAsomadas).
   },
   {
     id: "pinturas",
