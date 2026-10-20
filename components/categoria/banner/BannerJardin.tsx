@@ -428,7 +428,7 @@ export default function BannerJardin() {
   return (
     <div ref={raiz} className="bp absolute inset-0 overflow-hidden" data-activo={tocado || undefined}>
       {/* Jardín vivo, cortado en diagonal; el canvas va contrarrestando el sesgo de la placa (no se deforma). */}
-      <div className="bp-placa absolute -inset-y-6 -right-24 left-[56%] overflow-hidden shadow-tarjeta-hover md:left-[51%] xl:left-[49%]">
+      <div className="bp-placa bp-difumina absolute -inset-y-6 -right-24 left-[56%] overflow-hidden md:left-[51%] xl:left-[49%]">
         <canvas ref={lienzo} className="absolute inset-y-0 -left-16 right-0 h-full w-[calc(100%+4rem)] skew-x-12" aria-hidden />
         <div className="bp-funde absolute inset-y-0 left-0" />
       </div>

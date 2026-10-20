@@ -13,6 +13,12 @@
   --activo: 1;
 }
 
+/* Corte difuminado (igual en todas las placas): la escena se desvanece hacia el lado azul en vez de cortarse en seco. La
+   máscara va en la placa sesgada, así el difuminado sigue la diagonal. */
+.bp .bp-difumina {
+  mask-image: linear-gradient(90deg, transparent 0, black 22%);
+}
+
 /* Fundido del corte (todas las placas): el azul de la marca entra suave en la placa desde el borde, así el paso del
    lado del título a la escena es un cambio sutil y los colores de los dos lados se mezclan. */
 .bp .bp-funde {
@@ -68,46 +74,6 @@
 .bp .bp-ficha {
   transform: rotate(calc(-7deg + var(--activo) * 3deg)) translateY(calc(var(--activo) * -4px));
   transition: transform 0.5s var(--bp-curva);
-}
-
-/* Herramientas que asoman: escondidas fuera del borde, más chicas y giradas de más; al activarse entran una tras otra. */
-.bp .bp-asoma {
-  pointer-events: none;
-  transition: transform 0.25s ease-in;
-}
-.bp .bp-asoma-arriba {
-  top: 0;
-  transform: translate(-50%, calc(-100% + var(--activo) * var(--asoma))) rotate(calc(var(--giro) + (1 - var(--activo)) * 28deg))
-    scale(calc(0.75 + var(--activo) * 0.25));
-}
-.bp .bp-asoma-abajo {
-  bottom: 0;
-  transform: translate(-50%, calc(100% - var(--activo) * var(--asoma))) rotate(calc(var(--giro) - (1 - var(--activo)) * 28deg))
-    scale(calc(0.75 + var(--activo) * 0.25));
-}
-.bp .bp-asoma-derecha {
-  right: 0;
-  transform: translate(calc(100% - var(--activo) * var(--asoma)), -50%) rotate(calc(var(--giro) + (1 - var(--activo)) * 28deg))
-    scale(calc(0.75 + var(--activo) * 0.25));
-}
-.grupo-icono:is(:hover, :has(:focus-visible), :has(.bp[data-activo])) .bp .bp-asoma {
-  transition: transform 0.5s var(--bp-clava) calc(var(--i) * 55ms);
-}
-
-.bp .bp-velo {
-  pointer-events: none;
-  opacity: var(--activo);
-  transition: opacity 0.3s ease;
-}
-
-/* Cinta de pintor en el corte: papel crepé (arrugas finas irregulares), cantos un poco más oscuros y sombra corta. */
-.bp .bp-cinta {
-  background:
-    linear-gradient(90deg, color-mix(in srgb, var(--color-cinta-papel-sombra) 90%, transparent) 0 1px, transparent 1px calc(100% - 1px), color-mix(in srgb, var(--color-cinta-papel-sombra) 90%, transparent) calc(100% - 1px)),
-    linear-gradient(90deg, color-mix(in srgb, var(--color-pico-blanco) 35%, transparent), transparent 45%, color-mix(in srgb, var(--color-cinta-papel-sombra) 55%, transparent)),
-    repeating-linear-gradient(180deg, transparent 0 2px, color-mix(in srgb, var(--color-cinta-papel-sombra) 40%, transparent) 2px 3px),
-    repeating-linear-gradient(176deg, transparent 0 5px, color-mix(in srgb, var(--color-cinta-papel-sombra) 30%, transparent) 5px 6px, transparent 6px 11px),
-    color-mix(in srgb, var(--color-cinta-papel) 80%, transparent);
 }
 
 /* Sin animación (reducir movimiento) el rodillo no se ve; el color nuevo queda puesto. */

@@ -13,36 +13,12 @@ import { Montanas } from "@/components/layout/Logo";
  * Al terminar, se quitan esos bloques y vuelve a empezar.
  * - Solo mientras el banner se ve y nunca con "reducir movimiento" (ahí se muestra la pila ya armada, quieta).
  * - Clic / Enter / toque: pausa o sigue la grúa (al terminar el paso en curso).
- * - Mouse encima o foco con teclado: asoman herramientas y materiales reales por todo el banner.
  * Las medidas de la escena van en `cqh` (% del alto del escenario, que es un contenedor): así las posiciones de la
  * grúa, la paleta y la pila calzan igual en cualquier ancho. Fotos en public/banners/construccion/; gancho y bloque
  * son dos capas sacadas de una misma foto (mismo lienzo de 397×900: encimadas calzan exactas).
  */
 
 const C = "/banners/construccion/";
-const H = "/herramientas/";
-
-/** Lo que asoma por los bordes (desde 768px). Nada sobre el título ni sobre la escena. */
-const ASOMAN = [
-  { src: `${H}martillo.webp`, ancho: 640, alto: 602, borde: "arriba", en: 23, tam: 130, giro: 160, asoma: 0.5 },
-  { src: `${H}nivel.webp`, ancho: 640, alto: 580, borde: "arriba", en: 35, tam: 150, giro: 186, asoma: 0.42 },
-  { src: `${C}cabillas.webp`, ancho: 192, alto: 900, borde: "arriba", en: 45, tam: 46, giro: 164, asoma: 0.4 },
-  { src: `${H}cinta-metrica.webp`, ancho: 640, alto: 519, borde: "abajo", en: 27, tam: 110, giro: 12, asoma: 0.5 },
-  { src: `${H}palustre.webp`, ancho: 640, alto: 587, borde: "abajo", en: 38, tam: 130, giro: 24, asoma: 0.5 },
-  { src: `${C}paila.webp`, ancho: 578, alto: 760, borde: "abajo", en: 48, tam: 92, giro: 5, asoma: 0.5 },
-] as const;
-
-/** Dentado del borde izquierdo de la placa: escalones del alto de un bloque, como una pared que se sigue levantando. */
-const DENTADO = (() => {
-  const alto = 34;
-  const saliente = 26;
-  const puntos: string[] = ["100% 0", "100% 100%"];
-  for (let y = 26 * alto; y >= 0; y -= alto) {
-    const x = (y / alto) % 2 === 0 ? 0 : saliente;
-    puntos.push(`${x}px ${y + alto}px`, `${x}px ${y}px`);
-  }
-  return `polygon(${puntos.join(", ")})`;
-})();
 
 /*
  * Geometría en cqh, medida desde la esquina de abajo a la derecha del escenario. `x`: distancia del borde derecho del
@@ -169,11 +145,10 @@ export default function BannerConstruccion() {
 
   return (
     <div ref={raiz} className="bp absolute inset-0 overflow-hidden" data-activo={tocado || undefined}>
-      {/* Placa de concreto con el borde dentado (la sombra va en el contenedor: el recorte se la comería). */}
+      {/* Placa de concreto con el corte difuminado. */}
       <div className="absolute inset-0 drop-shadow-xl drop-shadow-pico-azul-oscuro/60">
         <div
-          className="bp-placa absolute -inset-y-6 -right-24 left-[56%] overflow-hidden md:left-[51%] xl:left-[49%]"
-          style={{ clipPath: DENTADO }}
+          className="bp-placa bp-difumina absolute -inset-y-6 -right-24 left-[56%] overflow-hidden md:left-[51%] xl:left-[49%]"
         >
           <div className="absolute inset-0 skew-x-12 scale-125 bg-[url(/banners/construccion/concreto.webp)] bg-[size:520px_auto] bg-repeat" />
           <div className="absolute inset-0 bg-[linear-gradient(170deg,color-mix(in_srgb,var(--color-amarillo-obra)_14%,transparent)_0%,transparent_40%,color-mix(in_srgb,var(--color-pico-azul-oscuro)_60%,transparent)_100%)]" />
@@ -183,31 +158,10 @@ export default function BannerConstruccion() {
           <Montanas className="absolute -right-6 -bottom-10 w-[115%] skew-x-12 fill-pico-azul-oscuro/[0.08]" />
           {/* Piso de la obra: una losa más oscura con su canto iluminado, donde se apoyan la paleta y el muro. */}
           <div className="absolute inset-x-0 bottom-0 h-[30%] border-t border-pico-blanco/15 bg-gradient-to-b from-pico-azul-oscuro/35 to-pico-azul-oscuro/70" />
-          <div className="absolute inset-y-0 left-0 w-[26px] bg-[repeating-linear-gradient(to_bottom,transparent_0_33px,color-mix(in_srgb,var(--color-pico-blanco)_35%,transparent)_33px_34px)]" />
           <div className="bp-funde absolute inset-y-0 left-0" />
         </div>
       </div>
 
-      <div className="hidden [--escala:0.62] md:block lg:[--escala:0.82] xl:[--escala:1]">
-        {ASOMAN.map((a, i) => (
-          <span
-            key={i}
-            className={`bp-asoma bp-asoma-${a.borde} absolute block`}
-            style={
-              {
-                left: `${a.en}%`,
-                width: `calc(${a.tam}px * var(--escala))`,
-                "--giro": `${a.giro}deg`,
-                "--asoma": `${a.asoma * 100}%`,
-                "--i": i,
-              } as unknown as CSSProperties
-            }
-          >
-            <Image src={a.src} alt="" width={a.ancho} height={a.alto} sizes={`${a.tam}px`} className="h-auto w-full opacity-90 blur-[1.2px] drop-shadow-xl drop-shadow-pico-azul-oscuro/60" />
-          </span>
-        ))}
-      </div>
-      <div className="bp-velo absolute inset-y-0 left-0 w-[55%] bg-gradient-to-r from-pico-azul-oscuro/55 via-pico-azul-oscuro/25 to-transparent" />
 
       {/* En el teléfono: solo la paleta (la lupa ocupa la esquina de arriba y no cabe la grúa). */}
       <span className="absolute right-[4%] bottom-[4%] block aspect-[820/813] h-[54%] md:hidden">

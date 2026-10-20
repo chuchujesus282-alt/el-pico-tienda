@@ -12,8 +12,7 @@ import type { CSSProperties } from "react";
  * - Solo (cada pocos segundos, mientras se ve; nunca con "reducir movimiento"): el exhibidor se repone. Una herramienta
  *   se descuelga y en su gancho cae otra, que se mece hasta quedarse quieta.
  * - Clic / Enter / toque: repone una al instante.
- * - Mouse encima o foco con teclado: el taladro vibra como si estuviera encendido y asoman herramientas eléctricas por
- *   los bordes.
+ * - Mouse encima o foco con teclado: el taladro vibra como si estuviera encendido.
  * Fotos en public/banners/herramientas/ (las de mano, ya verticales) y public/herramientas/. Animaciones en banner.css.
  */
 
@@ -49,14 +48,6 @@ const GANCHOS = [
 ];
 /** Orden en que se reponen los ganchos (salteado, para que no parezca una fila que avanza). */
 const ORDEN = [1, 3, 0, 2];
-
-/** Lo que asoma por los bordes (desde 768px): rotomartillo, destornillador, caja y cinta. Nada sobre el título ni el tablero. */
-const ASOMAN = [
-  { src: `${H}rotomartillo.webp`, ancho: 900, alto: 757, borde: "arriba", en: 25, tam: 170, giro: 192, asoma: 0.45 },
-  { src: `${H}destornillador.webp`, ancho: 640, alto: 575, borde: "arriba", en: 39, tam: 130, giro: 160, asoma: 0.45 },
-  { src: `${H}caja-herramientas.webp`, ancho: 640, alto: 455, borde: "abajo", en: 28, tam: 140, giro: -6, asoma: 0.5 },
-  { src: `${H}cinta-metrica.webp`, ancho: 640, alto: 519, borde: "abajo", en: 41, tam: 110, giro: 14, asoma: 0.5 },
-] as const;
 
 const datos = (id: Colgable) => COLGABLES.find((c) => c.id === id)!;
 
@@ -104,33 +95,12 @@ export default function BannerHerramientas() {
     <div ref={raiz} className="bp absolute inset-0 overflow-hidden" data-activo={tocado || undefined}>
       {/* Tablero perforado cortado en diagonal: masonite con sus agujeros en cuadrícula, la luz de una lámpara de taller
           arriba, los bordes en penumbra y abajo el mesón de trabajo donde se apoya el taladro. */}
-      <div className="bp-placa bh-tablero absolute -inset-y-6 -right-24 left-[56%] overflow-hidden shadow-tarjeta-hover md:left-[51%] xl:left-[49%]">
+      <div className="bp-placa bp-difumina bh-tablero absolute -inset-y-6 -right-24 left-[56%] overflow-hidden md:left-[51%] xl:left-[49%]">
         <div className="bh-lampara absolute inset-0" />
         <div className="absolute inset-0 bg-[linear-gradient(170deg,color-mix(in_srgb,var(--color-pico-blanco)_10%,transparent)_0%,transparent_40%,color-mix(in_srgb,var(--color-pico-azul-oscuro)_45%,transparent)_100%)]" />
         <div className="bh-meson absolute inset-x-0 bottom-0 h-[20%]" />
         <div className="bp-funde absolute inset-y-0 left-0" />
       </div>
-
-      <div className="hidden [--escala:0.62] md:block lg:[--escala:0.82] xl:[--escala:1]">
-        {ASOMAN.map((a, i) => (
-          <span
-            key={i}
-            className={`bp-asoma bp-asoma-${a.borde} absolute block`}
-            style={
-              {
-                left: `${a.en}%`,
-                width: `calc(${a.tam}px * var(--escala))`,
-                "--giro": `${a.giro}deg`,
-                "--asoma": `${a.asoma * 100}%`,
-                "--i": i,
-              } as unknown as CSSProperties
-            }
-          >
-            <Image src={a.src} alt="" width={a.ancho} height={a.alto} sizes={`${a.tam}px`} className="h-auto w-full opacity-90 blur-[1.2px] drop-shadow-xl drop-shadow-pico-azul-oscuro/60" />
-          </span>
-        ))}
-      </div>
-      <div className="bp-velo absolute inset-y-0 left-0 w-[55%] bg-gradient-to-r from-pico-azul-oscuro/55 via-pico-azul-oscuro/25 to-transparent" />
 
       <button
         type="button"

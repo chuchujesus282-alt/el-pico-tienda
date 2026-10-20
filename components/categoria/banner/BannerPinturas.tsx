@@ -2,7 +2,6 @@
 
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
-import type { CSSProperties } from "react";
 import { Montanas } from "@/components/layout/Logo";
 
 /**
@@ -13,7 +12,7 @@ import { Montanas } from "@/components/layout/Logo";
  * - Solo: cada pocos segundos pasa al color siguiente (mientras el banner se ve; nunca con "reducir movimiento").
  *   Un rodillo real cruza la placa pintándola, la brocha repinta la ficha y la lata cambia.
  * - Clic / Enter / toque: pasa al color siguiente al instante (y el reloj vuelve a empezar).
- * - Mouse encima o foco con teclado: asoman herramientas reales por los bordes, la lata crece un poco y la brocha
+ * - Mouse encima o foco con teclado: la lata crece un poco y la brocha
  *   retoca la ficha. Con el foco del teclado dentro, los colores no pasan solos.
  * Fotos en public/banners/pinturas/ y public/herramientas/. Animaciones en banner.css.
  */
@@ -26,47 +25,6 @@ const LATAS = [
   { id: "mostaza", nombre: "Mostaza", codigo: "1255 C", hex: "#AD841F", ancho: 611, alto: 700 },
 ] as const;
 const CADA_MS = 6000;
-
-/**
- * Lo que asoma por los bordes al pasar el mouse (desde 768px), repartido por TODO el banner como en el de
- * herramientas, y casi todo de pintura. `en`: % a lo largo del borde (izquierda→derecha, o arriba→abajo en el
- * derecho); `asoma`: fracción que entra; `tam`: ancho en px a 1280px. Reglas: arriba, nada antes del 20% (la ruta);
- * abajo, nada antes del 25% (el subtítulo llega al ~19%); sobre la placa, solo donde no está el exhibidor.
- * Faltan fotos de bandeja de rodillo, tirro y mezclador: al tenerlas (webp con transparencia), una línea cada una.
- */
-const ASOMAN = [
-  // Arriba, sobre el azul.
-  { src: "/herramientas/brocha.webp", ancho: 635, alto: 640, borde: "arriba", en: 23, tam: 125, giro: 150, asoma: 0.5 },
-  { src: "/herramientas/rodillo.webp", ancho: 563, alto: 640, borde: "arriba", en: 34, tam: 140, giro: 196, asoma: 0.5 },
-  { src: "/herramientas/destornillador.webp", ancho: 640, alto: 575, borde: "arriba", en: 45, tam: 135, giro: 160, asoma: 0.45 },
-  // Arriba, sobre la placa (entre la ficha y la lata grande).
-  { src: "/herramientas/cinta-metrica.webp", ancho: 640, alto: 519, borde: "arriba", en: 75, tam: 110, giro: 196, asoma: 0.45 },
-  // Borde derecho, sobre la tapa de la lata.
-  { src: "/banners/pinturas/rodillo.webp", ancho: 820, alto: 648, borde: "derecha", en: 16, tam: 150, giro: -14, asoma: 0.42 },
-  // Abajo: latas chicas de otros colores y herramientas de pintor.
-  { src: "/banners/pinturas/lata-mostaza.webp", ancho: 611, alto: 700, borde: "abajo", en: 27, tam: 100, giro: -8, asoma: 0.55 },
-  { src: "/herramientas/cuter.webp", ancho: 640, alto: 532, borde: "abajo", en: 38, tam: 125, giro: 22, asoma: 0.45 },
-  { src: "/herramientas/brocha.webp", ancho: 635, alto: 640, borde: "abajo", en: 48, tam: 115, giro: -34, asoma: 0.5 },
-  { src: "/banners/pinturas/lata-azul.webp", ancho: 632, alto: 700, borde: "abajo", en: 63, tam: 95, giro: 7, asoma: 0.5 },
-] as const;
-
-/**
- * Cantos rasgados de la cinta de pintor: un polígono con mordidas pequeñas e irregulares a cada lado (fijas, no al
- * azar en cada carga, para que el servidor y el navegador dibujen lo mismo).
- */
-const BORDE_RASGADO = (() => {
-  const pasos = 48;
-  const izq: string[] = [];
-  const der: string[] = [];
-  for (let i = 0; i <= pasos; i++) {
-    const y = ((i / pasos) * 100).toFixed(2);
-    const a = Math.abs(Math.sin(i * 12.9898) * 43758.5453) % 1;
-    const b = Math.abs(Math.sin(i * 78.233) * 12543.123) % 1;
-    izq.push(`${(a * 14).toFixed(1)}% ${y}%`);
-    der.unshift(`${(100 - b * 14).toFixed(1)}% ${y}%`);
-  }
-  return `polygon(${[...izq, ...der].join(", ")})`;
-})();
 
 /**
  * Fundido sin "fantasmas": la lata nueva aparece ENCIMA de la anterior, que sigue entera debajo y se apaga de golpe
@@ -115,7 +73,7 @@ export default function BannerPinturas() {
   return (
     <div ref={raiz} className="bp absolute inset-0 overflow-hidden" data-activo={tocado || undefined} data-color={lata.id} data-antes={lataDe(cambio - 1).id}>
       {/* Placa cortada en diagonal. Al cambiar de color, el nuevo entra detrás de un rodillo real que la cruza. */}
-      <div className="bp-placa absolute -inset-y-6 -right-24 left-[56%] overflow-hidden shadow-tarjeta-hover md:left-[51%] xl:left-[49%]">
+      <div className="bp-placa bp-difumina absolute -inset-y-6 -right-24 left-[56%] overflow-hidden md:left-[51%] xl:left-[49%]">
         <div className={`absolute inset-0 ${cambio > 0 ? "bg-(--pintura-antes)" : "bg-(--pintura)"}`} />
         {/* El color nuevo se extiende justo detrás del rodillo, en una sola pasada de izquierda a derecha. */}
         {cambio > 0 && <div key={`capa-${cambio}`} className="bp-barrido absolute inset-0 bg-(--pintura)" />}
@@ -142,43 +100,6 @@ export default function BannerPinturas() {
         )}
         <div className="bp-funde absolute inset-y-0 left-0" />
       </div>
-      {/* Corte: cinta de pintor (la que separa lo pintado de lo que no) pegada sobre el borde. */}
-      {/* Papel crepé translúcido con los cantos rasgados; del lado de la placa, la pintura de turno lo mancha un poco. */}
-      <div className="bp-placa absolute -inset-y-6 left-[calc(56%-0.8rem)] w-[1.6rem] drop-shadow-lg drop-shadow-pico-azul-oscuro/50 md:left-[calc(51%-0.8rem)] xl:left-[calc(49%-0.8rem)]">
-        <div className="bp-cinta absolute inset-0" style={{ clipPath: BORDE_RASGADO }}>
-          <div className="absolute inset-y-0 right-0 w-[34%] bg-(--pintura) opacity-45 mix-blend-multiply transition-colors delay-700 duration-700" />
-        </div>
-      </div>
-
-      {/* Herramientas que asoman por los bordes (desfocadas: el exhibidor es el foco). */}
-      <div className="hidden [--escala:0.62] md:block lg:[--escala:0.82] xl:[--escala:1]">
-        {ASOMAN.map((a, i) => (
-          <span
-            key={i}
-            className={`bp-asoma bp-asoma-${a.borde} absolute block`}
-            style={
-              {
-                ...(a.borde === "derecha" ? { top: `${a.en}%` } : { left: `${a.en}%` }),
-                width: `calc(${a.tam}px * var(--escala))`,
-                "--giro": `${a.giro}deg`,
-                "--asoma": `${a.asoma * 100}%`,
-                "--i": i,
-              } as unknown as CSSProperties
-            }
-          >
-            <Image
-              src={a.src}
-              alt=""
-              width={a.ancho}
-              height={a.alto}
-              sizes={`${a.tam}px`}
-              className="h-auto w-full opacity-90 blur-[1.2px] drop-shadow-xl drop-shadow-pico-azul-oscuro/60"
-            />
-          </span>
-        ))}
-      </div>
-      {/* Velo sobre la zona del texto cuando asoman las herramientas: el título siempre se lee. */}
-      <div className="bp-velo absolute inset-y-0 left-0 w-[55%] bg-gradient-to-r from-pico-azul-oscuro/55 via-pico-azul-oscuro/25 to-transparent" />
 
       <button
         type="button"
