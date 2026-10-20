@@ -44,6 +44,11 @@
   /* Tablero perforado (masonite) del banner de Herramientas: solo para ese banner. */
   --color-tablero: #b4855a;
   --color-tablero-oscuro: #7d5734;
+  /* Grama del banner de Hogar y jardín (se dibuja en canvas): solo para ese banner. */
+  --color-grama: #3f7d2c;
+  --color-grama-claro: #8fc45a;
+  --color-grama-oscuro: #16351a;
+  --color-agua: #d9f0ff;
 
   --radius-tarjeta: 12px;
   --radius-boton: 8px;
