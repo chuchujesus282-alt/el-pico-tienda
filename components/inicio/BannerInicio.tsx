@@ -115,7 +115,7 @@ export default function BannerInicio({ banner, sizes, tamano = "normal", priorit
               />
             </span>
           )}
-          {/* Herramientas reales que asoman por los bordes y rotomartillo flotante, solo en el banner de herramientas del carrusel. */}
+          {/* Placa amarilla con el rotomartillo flotante, solo en el banner de herramientas del carrusel. */}
           {grande && banner.id === "herramientas" && <HerramientasAsomadas />}
           {/* Pared blanca con un rodillo que pinta una franja de color, solo en el banner de pinturas del carrusel. */}
           {grande && banner.id === "pinturas" && <PinturaEnMovimiento />}
