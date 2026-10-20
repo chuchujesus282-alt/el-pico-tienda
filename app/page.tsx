@@ -106,15 +106,16 @@ export default async function Inicio() {
           </Revelar>
 
           <Revelar>
-            <ColumnasCategorias categorias={sinBanner} />
-          </Revelar>
-
-          <Revelar>
             <CarruselProductos titulo="Nuestros recomendados" productos={recomendados} />
           </Revelar>
 
           <Revelar>
             <CarruselMarcas titulo="Marcas que encuentras aquí" marcas={marcasDeProductos(todos)} />
+          </Revelar>
+
+          {/* Las categorías sin banner, lejos de los banners promocionales: abren la parte de la página por categorías. */}
+          <Revelar>
+            <ColumnasCategorias categorias={sinBanner} />
           </Revelar>
 
           {secciones[0]}

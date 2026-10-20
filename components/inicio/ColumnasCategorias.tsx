@@ -3,7 +3,6 @@ import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import Plano from "@/components/icons/pico/Plano";
 import { iconoDeCategoria } from "@/components/icons/pico/porCategoria";
-import TituloSeccion from "@/components/ui/TituloSeccion";
 import type { Categoria } from "@/types/catalogo";
 import { columnasCategorias } from "./contenidoInicio";
 
@@ -21,8 +20,8 @@ export default function ColumnasCategorias({ categorias }: { categorias: Categor
   if (categorias.length === 0) return null;
 
   return (
-    <section>
-      <TituloSeccion titulo="Más categorías" subtitulo="Encuentra lo que necesitas para cada trabajo." />
+    // Sin título a la vista (más espontáneo); el nombre queda para lectores de pantalla.
+    <section aria-label="Más categorías">
       <ul className={`grid grid-cols-2 gap-3 md:gap-4 ${categorias.length >= 4 ? "lg:grid-cols-4" : "lg:grid-cols-3"}`}>
         {categorias.map((categoria) => (
           <li key={categoria.slug}>
