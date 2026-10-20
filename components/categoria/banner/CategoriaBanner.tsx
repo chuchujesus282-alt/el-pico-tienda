@@ -1,6 +1,7 @@
 import type { ComponentType } from "react";
 import BannerConstruccion from "./BannerConstruccion";
 import BannerHerramientas from "./BannerHerramientas";
+import BannerJardin from "./BannerJardin";
 import BannerPinturas from "./BannerPinturas";
 import "./banner.css";
 
@@ -31,6 +32,11 @@ const BANNERS: Record<string, ConfigBanner> = {
     Escena: BannerHerramientas,
     tituloPartes: ["Herramientas para", "tu taller"],
     texto: "Taladros, esmeriles, martillos y todo para cada trabajo.",
+  },
+  "hogar-y-jardin": {
+    Escena: BannerJardin,
+    tituloPartes: ["Hogar y", "jardín"],
+    texto: "Mangueras, palas, materos y todo para tu casa y tu jardín.",
   },
 };
 

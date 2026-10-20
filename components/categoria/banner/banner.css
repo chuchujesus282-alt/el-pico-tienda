@@ -384,3 +384,163 @@
 .bp .bh-sombra {
   filter: drop-shadow(0.7cqh 1.4cqh 0.9cqh color-mix(in srgb, var(--color-pico-azul-oscuro) 55%, transparent));
 }
+
+/* ===== Hogar y jardín (BannerJardin) ===== */
+
+/* Listón de madera en el corte (el mismo de los canteros de la foto): veta y canto con luz. */
+.bp .bj-liston {
+  background:
+    repeating-linear-gradient(180deg, transparent 0 9px, color-mix(in srgb, var(--color-tablero-oscuro) 35%, transparent) 9px 10px, transparent 10px 23px),
+    linear-gradient(90deg, var(--color-tablero-oscuro), color-mix(in srgb, var(--color-pico-blanco) 25%, var(--color-tablero)) 35%, var(--color-tablero) 60%, var(--color-tablero-oscuro));
+  box-shadow:
+    0 1px 2px color-mix(in srgb, var(--color-pico-azul-oscuro) 50%, transparent),
+    0 10px 20px -6px color-mix(in srgb, var(--color-pico-azul-oscuro) 60%, transparent);
+}
+
+/* Agua. Los trazos no se deforman al estirarse el SVG. */
+.bp .bj-agua path,
+.bp .bj-agua ellipse {
+  vector-effect: non-scaling-stroke;
+  fill: none;
+  stroke-linecap: round;
+}
+.bp .bj-cuerpo {
+  stroke: color-mix(in srgb, var(--color-pico-blanco) 30%, transparent);
+  filter: blur(1.5px);
+}
+.bp .bj-corre {
+  stroke: color-mix(in srgb, var(--color-pico-blanco) 85%, transparent);
+  stroke-dasharray: 22 4 9 3 14 5;
+  filter: blur(0.4px);
+}
+.bp .bj-gotas {
+  stroke: color-mix(in srgb, var(--color-pico-blanco) 95%, transparent);
+  stroke-dasharray: 0.1 7;
+  stroke-dashoffset: 0;
+}
+.bp .bj-anillo {
+  stroke: color-mix(in srgb, var(--color-pico-blanco) 70%, transparent);
+  stroke-width: 1px;
+  opacity: 0;
+}
+.bp .bj-salto {
+  fill: color-mix(in srgb, var(--color-pico-blanco) 90%, transparent);
+  opacity: 0;
+}
+/* Llave cerrada: el agua se apaga suave. */
+.bp .bj-agua {
+  transition: opacity 0.6s ease;
+}
+.bp[data-agua="cerrada"] .bj-agua {
+  opacity: 0;
+}
+/* Activo (mouse/foco/toque): el chorro llega más lejos. */
+.bp .bj-barrido {
+  transform-origin: 104% 6%;
+  transform: scale(calc(1 + var(--activo) * 0.08));
+  transition: transform 0.6s var(--bp-curva);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  /* La manguera va y viene: el chorro barre los canteros. */
+  .bp .bj-barrido > * {
+    animation: bj-barrer 7s ease-in-out infinite;
+  }
+  .bp .bj-corre {
+    animation: bj-correr 0.55s linear var(--r) infinite;
+  }
+  .bp .bj-gotas {
+    animation: bj-correr-gotas 0.8s linear var(--r) infinite;
+  }
+  .bp .bj-anillo {
+    animation: bj-anillo 0.9s ease-out var(--r) infinite;
+  }
+  .bp .bj-salto-1 {
+    animation: bj-salto-1 0.7s cubic-bezier(0.3, 0, 0.7, 1) var(--r) infinite;
+  }
+  .bp .bj-salto-2 {
+    animation: bj-salto-2 0.8s cubic-bezier(0.3, 0, 0.7, 1) calc(var(--r) + 0.2s) infinite;
+  }
+  .bp .bj-salto-3 {
+    animation: bj-salto-3 0.75s cubic-bezier(0.3, 0, 0.7, 1) calc(var(--r) + 0.4s) infinite;
+  }
+  /* Fuera de pantalla, todo quieto. */
+  .bp[data-pausa] .bj-agua * {
+    animation-play-state: paused;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  /* Quieto pero visible: el agua se ve como un chorro fijo. */
+  .bp .bj-anillo {
+    opacity: 0.6;
+  }
+}
+
+@keyframes bj-barrer {
+  0%,
+  100% {
+    translate: 0 0;
+  }
+  50% {
+    translate: -9px 2px;
+  }
+}
+@keyframes bj-correr {
+  to {
+    stroke-dashoffset: -40;
+  }
+}
+@keyframes bj-correr-gotas {
+  to {
+    stroke-dashoffset: -14.2;
+  }
+}
+@keyframes bj-anillo {
+  0% {
+    opacity: 0.8;
+    scale: 0.3;
+  }
+  100% {
+    opacity: 0;
+    scale: 1.3;
+  }
+}
+@keyframes bj-salto-1 {
+  0% {
+    opacity: 1;
+    translate: 0 0;
+  }
+  50% {
+    translate: -1.6px -3px;
+  }
+  100% {
+    opacity: 0;
+    translate: -2.6px 0.5px;
+  }
+}
+@keyframes bj-salto-2 {
+  0% {
+    opacity: 1;
+    translate: 0 0;
+  }
+  50% {
+    translate: 1.8px -2.4px;
+  }
+  100% {
+    opacity: 0;
+    translate: 3px 0.6px;
+  }
+}
+@keyframes bj-salto-3 {
+  0% {
+    opacity: 1;
+    translate: 0 0;
+  }
+  50% {
+    translate: 0.4px -3.6px;
+  }
+  100% {
+    opacity: 0;
+    translate: 0.8px 0.4px;
+  }
+}
