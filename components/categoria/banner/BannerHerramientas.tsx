@@ -6,139 +6,108 @@ import type { CSSProperties } from "react";
 
 /**
  * Banner de la categoría Herramientas (va en `EncabezadoPagina` con la prop `escena`). Misma familia que Pinturas y
- * Construcción: azul marino con el título a la izquierda y, a la derecha, cortada en diagonal, una placa de acero de
- * taller (con un esquinero metálico en el corte). Delante, una columna de concreto; un rotomartillo real perfora su canto,
- * uno tras otro: apunta, la broca se hunde vibrando (la columna la tapa), cae polvo que se junta en el piso y, al
- * retirarse, queda la boca del hueco en el canto. Con 4 huecos, se borran y vuelve a empezar.
- * - Solo mientras el banner se ve y nunca con "reducir movimiento" (ahí se ven los huecos hechos y el rotomartillo quieto).
- * - Clic / Enter / toque: pausa o sigue.
- * - Mouse encima o foco con teclado: asoman herramientas clásicas por los bordes.
- * La escena se mide en `cqh` (% del alto; el área es un contenedor). Fotos en public/herramientas/; animaciones en
- * banner.css (clases .bh-*).
+ * Construcción: azul marino con el título a la izquierda y, a la derecha, cortado en diagonal, el tablero perforado de un
+ * taller (con su perfil de aluminio atornillado en el corte). Del tablero cuelgan herramientas reales en sus ganchos y,
+ * al frente, un taladro real apoyado en el piso.
+ * - Solo (cada pocos segundos, mientras se ve; nunca con "reducir movimiento"): el exhibidor se repone. Una herramienta
+ *   se descuelga y en su gancho cae otra, que se mece hasta quedarse quieta.
+ * - Clic / Enter / toque: repone una al instante.
+ * - Mouse encima o foco con teclado: el taladro vibra como si estuviera encendido y asoman herramientas eléctricas por
+ *   los bordes.
+ * Fotos en public/banners/herramientas/ (las de mano, ya verticales) y public/herramientas/. Animaciones en banner.css.
  */
 
+const CADA_MS = 5000;
+const B = "/banners/herramientas/";
 const H = "/herramientas/";
 
-/** Lo que asoma por los bordes (desde 768px): las clásicas. Nada sobre el título ni sobre la pared. */
+/**
+ * Las clásicas, para colgar (fotos verticales; ancho × alto reales; el esmeril cuelga de su cable). `largo`: cuánto mide
+ * colgada, en % del alto del banner. Se van rotando por los ganchos.
+ */
+const COLGABLES = [
+  { id: "martillo", ancho: 260, alto: 640, largo: 58 },
+  { id: "esmeril", ancho: 308, alto: 640, largo: 52 },
+  { id: "serrucho", ancho: 150, alto: 640, largo: 68 },
+  { id: "llave-tubo", ancho: 176, alto: 640, largo: 64 },
+  { id: "llave-ajustable", ancho: 150, alto: 640, largo: 56 },
+  { id: "nivel", ancho: 117, alto: 640, largo: 68 },
+] as const;
+type Colgable = (typeof COLGABLES)[number]["id"];
+
+/**
+ * Ganchos del tablero: x en % del área de la escena desde 1280px (`xMd`: entre 768 y 1279px, donde solo caben 2;
+ * sin él, ese gancho solo sale desde 1280px).
+ */
+const GANCHOS = [
+  { x: 12, xMd: null },
+  { x: 23.5, xMd: 26 },
+  { x: 35, xMd: 41 },
+  { x: 46.5, xMd: null },
+  { x: 58, xMd: null },
+];
+/** Orden en que se reponen los ganchos (salteado, para que no parezca una fila que avanza). */
+const ORDEN = [2, 0, 4, 1, 3];
+
+/** Lo que asoma por los bordes (desde 768px): rotomartillo, destornillador, caja y cinta. Nada sobre el título ni el tablero. */
 const ASOMAN = [
-  { src: `${H}martillo.webp`, ancho: 640, alto: 602, borde: "arriba", en: 23, tam: 135, giro: 160, asoma: 0.5 },
-  { src: `${H}esmeril.webp`, ancho: 640, alto: 308, borde: "arriba", en: 38, tam: 175, giro: 186, asoma: 0.5 },
-  { src: `${H}taladro.webp`, ancho: 515, alto: 640, borde: "abajo", en: 26, tam: 115, giro: -14, asoma: 0.5 },
-  { src: `${H}llave-ajustable.webp`, ancho: 640, alto: 606, borde: "abajo", en: 37, tam: 135, giro: 24, asoma: 0.45 },
-  { src: `${H}serrucho.webp`, ancho: 640, alto: 507, borde: "abajo", en: 47, tam: 135, giro: -8, asoma: 0.42 },
+  { src: `${H}rotomartillo.webp`, ancho: 900, alto: 757, borde: "arriba", en: 25, tam: 170, giro: 192, asoma: 0.45 },
+  { src: `${H}destornillador.webp`, ancho: 640, alto: 575, borde: "arriba", en: 39, tam: 130, giro: 160, asoma: 0.45 },
+  { src: `${H}caja-herramientas.webp`, ancho: 640, alto: 455, borde: "abajo", en: 28, tam: 140, giro: -6, asoma: 0.5 },
+  { src: `${H}cinta-metrica.webp`, ancho: 640, alto: 519, borde: "abajo", en: 41, tam: 110, giro: 14, asoma: 0.5 },
 ] as const;
 
-/*
- * Rotomartillo: foto de 900×757 con la punta de la broca arriba a la izquierda (en 3, 18). Alto ALTO cqh, así que mide
- * ANCHO cqh de ancho; la punta queda a PUNTA.x cqh de su borde derecho y PUNTA.y cqh de su borde de arriba.
- */
-const ALTO = 60;
-const ANCHO = (ALTO * 900) / 757;
-const PUNTA = { x: ANCHO - (ALTO * 3) / 757, y: (ALTO * 18) / 757 };
-/** Canto de la columna: a CANTO cqh del borde derecho del área (la columna va de ahí a la izquierda). */
-const CANTO = 92;
-/** Ancho de la columna (en cqh): angosta, así se ve el acero a su izquierda. */
-const COLUMNA = 38;
-/** Huecos en el canto, de arriba abajo: altura de la punta desde arriba (en cqh). */
-const HUECOS = [18, 26, 34, 41];
-/** Dónde queda la punta (distancia al borde derecho): separada del canto al apuntar, hundida al perforar. */
-const AFUERA = CANTO - 5;
-const ADENTRO = CANTO + 9;
-
-type Fase = "mover" | "apuntar" | "perforar" | "retirar";
+const datos = (id: Colgable) => COLGABLES.find((c) => c.id === id)!;
 
 export default function BannerHerramientas() {
   const raiz = useRef<HTMLDivElement>(null);
-  const [punta, setPunta] = useState({ x: AFUERA, y: HUECOS[0], ms: 0 });
-  const [fase, setFase] = useState<Fase>("retirar");
-  const [hechos, setHechos] = useState(0);
-  const [perforando, setPerforando] = useState(-1);
-  const [borrando, setBorrando] = useState(false);
-  const [reducido, setReducido] = useState(false);
-  const [visible, setVisible] = useState(false);
-  const [pausa, setPausa] = useState(false);
+  const [colgadas, setColgadas] = useState<Colgable[]>(["martillo", "esmeril", "serrucho", "llave-tubo", "llave-ajustable"]);
+  // Herramienta que se está descolgando (sigue dibujada un momento, saliendo).
+  const [saliente, setSaliente] = useState<{ gancho: number; id: Colgable; vez: number } | null>(null);
+  const [vez, setVez] = useState(0);
   const [tocado, setTocado] = useState(false);
+  const [visible, setVisible] = useState(false);
+  const [espera, setEspera] = useState(0);
   const puntero = useRef("");
-  const pausaRef = useRef(false);
-  const avance = useRef({ n: 0, paso: 0 });
 
   useEffect(() => {
     const el = raiz.current;
     if (!el) return;
     const obs = new IntersectionObserver(([e]) => setVisible(e.isIntersecting), { threshold: 0.4 });
     obs.observe(el);
-    const consulta = window.matchMedia("(prefers-reduced-motion: reduce)");
-    const alCambiar = () => setReducido(consulta.matches);
-    alCambiar();
-    consulta.addEventListener("change", alCambiar);
-    return () => {
-      obs.disconnect();
-      consulta.removeEventListener("change", alCambiar);
-    };
+    return () => obs.disconnect();
   }, []);
 
-  useEffect(() => {
-    if (!visible || reducido) return;
-    let vivo = true;
-    const esperar = (ms: number) => new Promise((r) => window.setTimeout(r, ms));
-    (async () => {
-      while (vivo) {
-        if (pausaRef.current || raiz.current?.closest("header")?.matches(":has(:focus-visible)")) {
-          await esperar(300);
-          continue;
-        }
-        const a = avance.current;
-        if (a.n >= HUECOS.length) {
-          await esperar(1300);
-          if (!vivo) return;
-          setBorrando(true);
-          await esperar(700);
-          setHechos(0);
-          setBorrando(false);
-          avance.current = { n: 0, paso: 0 };
-          continue;
-        }
-        const y = HUECOS[a.n];
-        // Cada hueco: sube o baja apuntando, arrima la punta, la hunde vibrando (lento: está perforando) y se retira.
-        const pasos: { x: number; ms: number; fase: Fase; espera: number }[] = [
-          { x: AFUERA, ms: 900, fase: "mover", espera: 950 },
-          { x: CANTO + 0.5, ms: 300, fase: "apuntar", espera: 320 },
-          { x: ADENTRO, ms: 1600, fase: "perforar", espera: 1650 },
-          { x: AFUERA, ms: 500, fase: "retirar", espera: 900 },
-        ];
-        const p = pasos[a.paso];
-        setFase(p.fase);
-        setPunta({ x: p.x, y, ms: p.ms });
-        if (p.fase === "perforar") setPerforando(a.n);
-        if (p.fase === "retirar") {
-          setPerforando(-1);
-          setHechos(a.n + 1);
-        }
-        await esperar(p.espera);
-        if (!vivo) return;
-        avance.current = a.paso === 3 ? { n: a.n + 1, paso: 0 } : { n: a.n, paso: a.paso + 1 };
-      }
-    })();
-    return () => {
-      vivo = false;
-    };
-  }, [visible, reducido]);
+  /** Repone un gancho: la herramienta que tenía se descuelga y cae la siguiente que no esté colgada. */
+  const reponer = () => {
+    const gancho = ORDEN[vez % ORDEN.length];
+    const actual = colgadas[gancho];
+    const libres = COLGABLES.map((c) => c.id).filter((id) => !colgadas.includes(id));
+    const nueva = libres[vez % libres.length];
+    setSaliente({ gancho, id: actual, vez });
+    setColgadas((c) => c.map((id, i) => (i === gancho ? nueva : id)));
+    setVez((v) => v + 1);
+  };
 
-  // Con "reducir movimiento", los huecos ya hechos y el rotomartillo quieto, apuntando.
-  const huecosVisibles = reducido ? HUECOS.length : hechos;
-  const p = reducido ? { x: AFUERA, y: HUECOS[0], ms: 0 } : punta;
+  useEffect(() => {
+    if (!visible || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const t = window.setTimeout(() => {
+      if (raiz.current?.closest("header")?.matches(":has(:focus-visible)")) setEspera((e) => e + 1);
+      else reponer();
+    }, CADA_MS);
+    return () => window.clearTimeout(t);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- `vez` marca cada reposición; reponer() lee el estado al día.
+  }, [vez, visible, espera]);
 
   return (
     <div ref={raiz} className="bp absolute inset-0 overflow-hidden" data-activo={tocado || undefined}>
-      {/* Placa de acero de taller, con bordes más oscuros y el piso abajo. */}
-      <div className="bp-placa absolute -inset-y-6 -right-24 left-[56%] overflow-hidden shadow-tarjeta-hover md:left-[51%] xl:left-[49%]">
-        <div className="absolute inset-0 skew-x-12 scale-125 bg-[url(/banners/herramientas/acero.webp)] bg-[size:640px_auto] bg-repeat" />
-        <div className="absolute inset-0 bg-pico-azul-oscuro/20 mix-blend-multiply" />
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_70%_35%,transparent_30%,color-mix(in_srgb,var(--color-pico-azul-oscuro)_45%,transparent)_100%)]" />
-        <div className="absolute inset-x-0 bottom-0 h-[18%] border-t border-pico-blanco/20 bg-gradient-to-b from-pico-azul-oscuro/45 to-pico-azul-oscuro/75" />
+      {/* Tablero perforado cortado en diagonal: masonite con sus agujeros en cuadrícula, luz de arriba y piso abajo. */}
+      <div className="bp-placa bh-tablero absolute -inset-y-6 -right-24 left-[56%] overflow-hidden shadow-tarjeta-hover md:left-[51%] xl:left-[49%]">
+        <div className="absolute inset-0 bg-[linear-gradient(170deg,color-mix(in_srgb,var(--color-pico-blanco)_14%,transparent)_0%,transparent_40%,color-mix(in_srgb,var(--color-pico-azul-oscuro)_45%,transparent)_100%)]" />
+        <div className="absolute inset-x-0 bottom-0 h-[24%] border-t border-pico-blanco/20 bg-gradient-to-b from-pico-azul-oscuro/55 to-pico-azul-oscuro/80" />
       </div>
-      {/* Esquinero metálico en el corte. */}
-      <div className="bp-placa bh-esquinero absolute -inset-y-6 left-[calc(56%-0.45rem)] w-[0.9rem] md:left-[calc(51%-0.45rem)] xl:left-[calc(49%-0.45rem)]" />
+      {/* Perfil de aluminio atornillado sobre el corte. */}
+      <div className="bp-placa bh-perfil absolute -inset-y-6 left-[calc(56%-0.7rem)] w-[1.4rem] md:left-[calc(51%-0.7rem)] xl:left-[calc(49%-0.7rem)]" />
 
       <div className="hidden [--escala:0.62] md:block lg:[--escala:0.82] xl:[--escala:1]">
         {ASOMAN.map((a, i) => (
@@ -161,75 +130,54 @@ export default function BannerHerramientas() {
       </div>
       <div className="bp-velo absolute inset-y-0 left-0 w-[55%] bg-gradient-to-r from-pico-azul-oscuro/55 via-pico-azul-oscuro/25 to-transparent" />
 
-      {/* En el teléfono: el rotomartillo quieto (la escena animada no cabe junto al título). */}
-      <span className="absolute right-[2%] bottom-[8%] block aspect-[900/757] w-[33%] md:hidden">
-        <Image src={`${H}rotomartillo.webp`} alt="" width={900} height={757} sizes="150px" className="size-full object-contain drop-shadow-2xl drop-shadow-pico-azul-oscuro/50" />
-      </span>
-
       <button
         type="button"
-        aria-label={pausa ? "Seguir perforando" : "Pausar el rotomartillo"}
-        aria-pressed={pausa}
+        aria-label="Reponer una herramienta del tablero"
         onPointerDown={(e) => (puntero.current = e.pointerType)}
         onClick={() => {
           if (puntero.current === "touch") setTocado(true);
           puntero.current = "";
-          pausaRef.current = !pausaRef.current;
-          setPausa(pausaRef.current);
+          reponer();
         }}
-        className="bh-escena absolute inset-y-0 right-0 left-[55%] hidden cursor-pointer focus-visible:outline-none md:left-[50%] md:block"
+        className="bh-escena absolute inset-y-0 right-0 left-[55%] cursor-pointer focus-visible:outline-none md:left-[50%]"
       >
-        {/* Columna de concreto, del techo al piso; tapa la broca cuando se hunde (va encima del rotomartillo). En su
-            canto, las bocas de los huecos. */}
-        <span className="bh-columna absolute top-0 bottom-[6%] z-20 block" style={{ right: `${CANTO}cqh`, width: `${COLUMNA}cqh` }}>
-          {HUECOS.map((y, i) => {
-            const hecho = i < huecosVisibles;
-            const ahora = i === perforando;
-            if (!hecho && !ahora) return null;
-            return (
+        {/* Ganchos con su herramienta (desde 768px; en el teléfono no caben junto al taladro). */}
+        {GANCHOS.map((g, i) => {
+          const id = colgadas[i];
+          const d = datos(id);
+          const sale = saliente?.gancho === i ? saliente : null;
+          return (
+            <span
+              key={i}
+              className={`absolute top-[9%] hidden left-(--x-md) xl:left-(--x) ${g.xMd === null ? "xl:block" : "md:block"}`}
+              style={{ "--x": `${g.x}%`, "--x-md": `${g.xMd ?? g.x}%` } as CSSProperties}
+            >
+              {/* Gancho: la pieza de alambre que sale del tablero. */}
+              <span className="bh-gancho absolute -top-[3px] left-1/2 block h-3 w-1.5 -translate-x-1/2 rounded-b-full border-x-2 border-b-2 border-gris-borde" />
+              {sale && (
+                <span key={`sale-${sale.vez}`} className="bh-descolgar absolute top-1 left-1/2 block" style={{ height: `${datos(sale.id).largo}cqh` }}>
+                  <Image src={`${B}${sale.id}.webp`} alt="" width={datos(sale.id).ancho} height={datos(sale.id).alto} sizes="60px" className="h-full w-auto max-w-none -translate-x-1/2 drop-shadow-lg drop-shadow-pico-azul-oscuro/50" />
+                </span>
+              )}
               <span
-                key={i}
-                className={`bh-boca absolute right-0 block ${ahora ? "bh-boca-abriendo" : ""} ${borrando ? "opacity-0 transition-opacity duration-700" : ""}`}
-                style={{ top: `${y}cqh` }}
-              />
-            );
-          })}
-        </span>
-        {/* Montoncito de polvo al pie del canto: crece con cada hueco. */}
-        <span
-          className={`bh-monton absolute z-20 block transition-[scale,opacity] duration-700 ${borrando ? "opacity-0" : ""}`}
-          style={{ right: `${CANTO - 5}cqh`, scale: `${(reducido ? HUECOS.length : hechos + (perforando >= 0 ? 0.5 : 0)) / HUECOS.length}` }}
-        />
+                key={`${id}-${vez}`}
+                className={`bh-colgada absolute top-1 left-1/2 block origin-top ${vez > 0 && saliente?.gancho === i ? "bh-colgar" : ""}`}
+                style={{ height: `${d.largo}cqh`, "--i": i } as CSSProperties}
+              >
+                <Image src={`${B}${id}.webp`} alt="" width={d.ancho} height={d.alto} sizes="60px" className="h-full w-auto max-w-none -translate-x-1/2 drop-shadow-lg drop-shadow-pico-azul-oscuro/50" />
+              </span>
+            </span>
+          );
+        })}
 
-        {/* Polvo que sale del hueco y cae por el canto mientras perfora. */}
-        {fase === "perforar" && (
-          <span className="absolute z-30 block" style={{ right: `${CANTO}cqh`, top: `${p.y}cqh` }}>
-            {Array.from({ length: 7 }, (_, i) => (
-              <span key={i} className="bh-mota absolute block rounded-full" style={{ "--i": i } as CSSProperties} />
-            ))}
-          </span>
-        )}
-
-        {/* Rotomartillo: se mueve la caja entera, así la punta de la broca queda en la posición pedida. */}
-        <span
-          className="absolute top-0 right-0 z-10 block ease-[cubic-bezier(0.45,0,0.25,1)] [transition-property:transform]"
-          style={{
-            width: `${ANCHO}cqh`,
-            height: `${ALTO}cqh`,
-            transform: `translate(${-(p.x - PUNTA.x)}cqh, ${p.y - PUNTA.y}cqh)`,
-            transitionDuration: `${p.ms}ms`,
-          }}
-        >
-          <span className="absolute -bottom-[14%] left-[58%] h-[10%] w-[50%] -translate-x-1/2 rounded-[50%] bg-pico-azul-oscuro/45 blur-lg" />
-          <span className={`relative block size-full ${fase === "perforar" ? "bh-vibra" : ""}`}>
-            <Image src={`${H}rotomartillo.webp`} alt="" width={900} height={757} priority sizes="(min-width: 1280px) 200px, 170px" className="size-full object-contain drop-shadow-2xl drop-shadow-pico-azul-oscuro/50" />
+        {/* Taladro al frente, apoyado en el piso, con su sombra de contacto. */}
+        <span className="absolute right-[6%] bottom-[4%] block aspect-[515/640] h-[50%] md:right-[3%] md:h-[68%] xl:right-[7%] xl:h-[84%]">
+          <span className="absolute -bottom-[3%] left-[52%] h-[8%] w-[80%] -translate-x-1/2 rounded-[50%] bg-pico-azul-oscuro/60 blur-md" />
+          <span className="bh-taladro relative block size-full">
+            <Image src={`${H}taladro.webp`} alt="" width={515} height={640} priority sizes="(min-width: 768px) 190px, 110px" className="size-full object-contain drop-shadow-2xl drop-shadow-pico-azul-oscuro/50" />
           </span>
         </span>
       </button>
-
-      <span className="sr-only" aria-live="polite">
-        {pausa ? "Rotomartillo en pausa" : ""}
-      </span>
     </div>
   );
 }

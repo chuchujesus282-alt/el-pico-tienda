@@ -265,77 +265,92 @@
 
 /* ===== Herramientas (BannerHerramientas) ===== */
 
+/* La escena es un contenedor: el largo de cada herramienta colgada se mide en cqh (% del alto del banner). */
 .bp .bh-escena {
   container-type: size;
 }
-/* Esquinero metálico (el perfil que protege la arista): canal con brillo. */
-.bp .bh-esquinero {
-  background: linear-gradient(90deg, var(--color-gris-texto), var(--color-pico-blanco) 35%, var(--color-gris-borde) 60%, var(--color-gris-texto));
+/* Masonite perforado: agujeros oscuros en cuadrícula de 22px sobre el color del tablero, con veta muy suave. */
+.bp .bh-tablero {
+  background:
+    radial-gradient(circle, color-mix(in srgb, var(--color-pico-azul-oscuro) 70%, transparent) 2.4px, color-mix(in srgb, var(--color-pico-blanco) 18%, transparent) 2.9px, transparent 3.6px) 0 0 / 22px 22px,
+    repeating-linear-gradient(97deg, transparent 0 13px, color-mix(in srgb, var(--color-tablero-oscuro) 12%, transparent) 13px 15px),
+    linear-gradient(160deg, var(--color-tablero), var(--color-tablero-oscuro));
+}
+/* Perfil de aluminio en el corte: canal con brillo y tornillos cada 64px. */
+.bp .bh-perfil {
+  background:
+    radial-gradient(circle, var(--color-gris-texto) 0 2px, var(--color-gris-borde) 2.5px 3.5px, transparent 4px) 50% 18px / 100% 64px,
+    linear-gradient(90deg, var(--color-gris-texto), var(--color-pico-blanco) 30%, var(--color-gris-borde) 55%, var(--color-gris-texto));
   box-shadow:
     0 1px 2px color-mix(in srgb, var(--color-pico-azul-oscuro) 50%, transparent),
     0 10px 20px -6px color-mix(in srgb, var(--color-pico-azul-oscuro) 60%, transparent);
 }
 
-/* Columna de concreto: textura real; el canto (derecha) con luz y una arista clara, y sombra sobre el acero. */
-.bp .bh-columna {
-  background:
-    linear-gradient(90deg, transparent calc(100% - 4cqh), color-mix(in srgb, var(--color-pico-blanco) 22%, transparent) calc(100% - 4cqh), color-mix(in srgb, var(--color-pico-blanco) 8%, transparent) calc(100% - 0.5cqh), color-mix(in srgb, var(--color-pico-blanco) 55%, transparent) calc(100% - 0.5cqh)),
-    linear-gradient(90deg, color-mix(in srgb, var(--color-pico-azul-oscuro) 45%, transparent), transparent 60%),
-    url(/banners/construccion/concreto.webp) right top / 380px auto repeat;
-  box-shadow:
-    1.6cqh 0 2.4cqh -0.6cqh color-mix(in srgb, var(--color-pico-azul-oscuro) 65%, transparent),
-    -1.6cqh 0 2.4cqh -0.6cqh color-mix(in srgb, var(--color-pico-azul-oscuro) 65%, transparent);
+@media (prefers-reduced-motion: no-preference) {
+  /* Cada herramienta colgada se mece apenas, cada una a su ritmo. */
+  .bp .bh-colgada {
+    animation: bh-mecer calc(4.4s + var(--i) * 0.7s) ease-in-out calc(var(--i) * -1.3s) infinite;
+  }
+  /* La nueva cae en el gancho y se mece hasta quedarse quieta. */
+  .bp .bh-colgada.bh-colgar {
+    animation: bh-colgar 1.5s cubic-bezier(0.3, 0.7, 0.4, 1) both;
+  }
+  /* La de antes se levanta del gancho y se va hacia arriba. */
+  .bp .bh-descolgar {
+    animation: bh-descolgar 0.55s ease-in both;
+  }
+  /* Taladro encendido mientras el banner está activo: vibración corta y muy fina. */
+  .grupo-icono:is(:hover, :has(:focus-visible), :has(.bp[data-activo])) .bp .bh-taladro {
+    animation: bh-vibrar 0.09s linear infinite;
+  }
 }
-/* Boca del hueco en el canto: un óvalo oscuro con el borde rajado y polvo alrededor. */
-.bp .bh-boca {
-  width: 4.6cqh;
-  height: 3.6cqh;
-  translate: 0 -50%;
-  border-radius: 50%;
-  background:
-    radial-gradient(ellipse at 45% 50%, var(--color-texto) 0 40%, color-mix(in srgb, var(--color-texto) 65%, var(--color-gris-texto)) 58%, transparent 70%),
-    radial-gradient(ellipse at 50% 50%, color-mix(in srgb, var(--color-pico-blanco) 55%, transparent) 0 50%, transparent 72%);
-  background-size: 100% 100%, 190% 190%;
-  background-position: center;
-}
-/* Montoncito de polvo al pie del canto (crece con cada hueco: lo escala el componente). */
-.bp .bh-monton {
-  bottom: 5%;
-  width: 14cqh;
-  height: 3.2cqh;
-  translate: 50% 0;
-  transform-origin: 50% 100%;
-  border-radius: 50% 50% 8% 8% / 100% 100% 8% 8%;
-  background: radial-gradient(ellipse at 50% 100%, color-mix(in srgb, var(--color-pico-blanco) 85%, var(--color-gris-texto)), color-mix(in srgb, var(--color-pico-blanco) 55%, var(--color-gris-texto)) 60%, transparent 72%);
-}
-.bp .bh-mota {
-  width: 0.8cqh;
-  height: 0.8cqh;
-  background: color-mix(in srgb, var(--color-pico-blanco) 80%, var(--color-gris-texto));
+.bp .bh-descolgar {
   opacity: 0;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  /* Mientras perfora, la boca se va abriendo. */
-  .bp .bh-boca-abriendo {
-    animation: bh-abrir 1.6s ease-out both;
+@keyframes bh-mecer {
+  0%,
+  100% {
+    rotate: -0.8deg;
   }
-  /* Vibración del rotomartillo al perforar: golpes cortos hacia la columna. */
-  .bp .bh-vibra {
-    animation: bh-vibrar 0.07s linear infinite;
-  }
-  /* Polvo: cada mota sale del hueco hacia afuera y cae por el canto hasta el piso, en ráfagas. */
-  .bp .bh-mota {
-    animation: bh-mota 0.9s cubic-bezier(0.35, 0, 0.75, 1) calc(var(--i) * 0.21s) infinite;
+  50% {
+    rotate: 0.8deg;
   }
 }
-
-@keyframes bh-abrir {
-  from {
-    scale: 0.15;
+@keyframes bh-colgar {
+  0% {
+    opacity: 0;
+    translate: 0 -40%;
+    rotate: 0deg;
   }
-  to {
-    scale: 1;
+  28% {
+    opacity: 1;
+    translate: 0 0;
+    rotate: 7deg;
+  }
+  50% {
+    rotate: -4.5deg;
+  }
+  70% {
+    rotate: 2.2deg;
+  }
+  86% {
+    rotate: -0.9deg;
+  }
+  100% {
+    opacity: 1;
+    translate: 0 0;
+    rotate: 0deg;
+  }
+}
+@keyframes bh-descolgar {
+  0% {
+    opacity: 1;
+    translate: 0 0;
+  }
+  100% {
+    opacity: 0;
+    translate: 0 -35%;
   }
 }
 @keyframes bh-vibrar {
@@ -343,20 +358,10 @@
   100% {
     translate: 0 0;
   }
-  50% {
-    translate: 0.35cqh 0.12cqh;
+  25% {
+    translate: 0.6px -0.4px;
   }
-}
-@keyframes bh-mota {
-  0% {
-    opacity: 1;
-    translate: 0 0;
-  }
-  20% {
-    translate: calc(0.8cqh + var(--i) * 0.35cqh) 2cqh;
-  }
-  100% {
-    opacity: 0;
-    translate: calc(1.2cqh + var(--i) * 0.4cqh) 40cqh;
+  75% {
+    translate: -0.6px 0.4px;
   }
 }
