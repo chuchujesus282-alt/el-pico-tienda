@@ -7,17 +7,23 @@ import type { CSSProperties } from "react";
 // Banner "Renueva tus espacios" del carrusel del inicio (viene de la rama `prueba/animacion-herramientas`).
 // TODO el banner es la pared pintada del color de turno. Cada vez que el cliente pasa el cursor, un rodillo real del
 // alto del banner, con la felpa teñida del color nuevo, cruza de lado a lado y lo repinta entero (terracota,
-// petróleo, azul, mostaza). El nombre del color va gigante y translúcido abajo a la derecha, cortado por el borde, y
-// una lata abierta de ese color se apoya abajo a la derecha. El sello del título pasa a blanco con la palabra en el
+// petróleo, azul, mostaza). El nombre del color va gigante y translúcido arriba a la derecha, cortado por el borde, y
+// una lata abierta, siempre la misma y quieta, se apoya abajo a la derecha: al pasar el rodillo solo cambia el color
+// de su pintura. El sello del título pasa a blanco con la palabra en el
 // color de la pintura. En el celular cambia solo cada pocos segundos mientras se ve.
 // Fotos HD generadas con Higgsfield (public/banners/pinturas/). Solo la monta BannerInicio cuando banner.id === "pinturas".
 
 const COLORES = [
-  { nombre: "Terracota", var: "var(--color-pintura-terracota)", lata: "terracota" },
-  { nombre: "Petróleo", var: "var(--color-pintura-petroleo)", lata: "petroleo" },
-  { nombre: "Azul profundo", var: "var(--color-pintura-azul)", lata: "azul" },
-  { nombre: "Mostaza", var: "var(--color-pintura-mostaza)", lata: "mostaza" },
+  { nombre: "Terracota", var: "var(--color-pintura-terracota)" },
+  { nombre: "Petróleo", var: "var(--color-pintura-petroleo)" },
+  { nombre: "Azul profundo", var: "var(--color-pintura-azul)" },
+  { nombre: "Mostaza", var: "var(--color-pintura-mostaza)" },
 ];
+
+// Una sola lata para todos los colores: lata-base.webp es la foto con la pintura en gris claro (con sus brillos) y
+// lata-mascara.webp marca la zona de pintura (superficie y chorreado). El color se le pone por código multiplicando
+// dentro de la máscara. Las dos salen de lata-terracota.webp.
+const MASCARA_LATA = "url(/banners/pinturas/lata-mascara.webp)";
 const CADA_MS_MOVIL = 3800;
 
 /** Rodillo: alto (en cqh del banner) y centro del cilindro dentro de la foto (≈11,5% de su ancho; la foto es 820×648). */
@@ -72,20 +78,14 @@ export default function PinturaEnMovimiento() {
 
   return (
     <div ref={capa} className="pointer-events-none absolute inset-0 [container-type:size]" aria-hidden>
-      {/* La pared: el color de antes y, encima, el nuevo, que se descubre de izquierda a derecha detrás del rodillo. */}
-      <div className="absolute inset-0" style={{ backgroundColor: anterior.var }} />
+      {/* La escena del color de antes y, encima, la del nuevo, que se descubre de izquierda a derecha detrás del
+          rodillo. Las dos llevan la MISMA lata en el mismo sitio: al pasar el rodillo solo cambia el color de su pintura. */}
+      <Escena color={anterior.var} />
       {actual && (
-        <div
-          key={pasada}
-          className="absolute inset-0 motion-safe:animate-pintar"
-          style={{ backgroundColor: actual.var }}
-        />
+        <div key={pasada} className="absolute inset-0 motion-safe:animate-pintar">
+          <Escena color={actual.var} />
+        </div>
       )}
-
-      {/* Textura de rodillo (vetas finas), luz arriba a la izquierda y sombra abajo: se lee como pintura fresca. */}
-      <div className="absolute inset-0 bg-[repeating-linear-gradient(to_bottom,transparent_0,transparent_5px,var(--color-pico-blanco)_5px,var(--color-pico-blanco)_6px)] opacity-[0.06]" />
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_15%_0%,var(--color-pico-blanco)_0%,transparent_55%)] opacity-15" />
-      <div className="absolute inset-0 bg-gradient-to-t from-pico-azul-oscuro/20 via-transparent to-transparent" />
 
       {/* El nombre del color, gigante y translúcido, arriba a la derecha y cortado por el borde de arriba (abajo
           está la lata y a la izquierda el título y el botón). */}
@@ -101,30 +101,6 @@ export default function PinturaEnMovimiento() {
       {/* Velo azul a la izquierda: el título, el texto y el botón blancos siempre se leen, sea cual sea el color. */}
       {/* Suave a propósito: más oscuro, el azul ensucia los colores cálidos (terracota y mostaza se vuelven marrón). */}
       <div className="absolute inset-y-0 left-0 w-[85%] bg-gradient-to-r from-pico-azul-oscuro/35 to-transparent md:w-[55%]" />
-
-      {/* La lata del color de turno, grande, apoyada abajo a la derecha (desde tableta). Se precargan las cuatro. */}
-      {visible && actual && (
-        <span
-          key={`lata-${pasada}`}
-          className="absolute right-[6%] -bottom-[10%] hidden w-[22%] max-w-[22rem] motion-safe:animate-aparecer md:block lg:right-[9%]"
-        >
-          <Image
-            src={`/banners/pinturas/lata-${actual.lata}.webp`}
-            alt=""
-            width={700}
-            height={700}
-            sizes="(min-width: 1536px) 352px, 22vw"
-            className="h-auto w-full drop-shadow-2xl drop-shadow-pico-azul-oscuro/60"
-          />
-        </span>
-      )}
-      {visible && (
-        <span className="hidden">
-          {COLORES.map((c) => (
-            <Image key={c.lata} src={`/banners/pinturas/lata-${c.lata}.webp`} alt="" width={700} height={700} sizes="22vw" loading="eager" />
-          ))}
-        </span>
-      )}
 
       {/* El rodillo, del alto del banner, cruza de lado a lado con el centro del cilindro justo en el borde de lo
           pintado. La felpa va teñida del color nuevo (capa con mix-blend-multiply sobre el cilindro). */}
@@ -155,6 +131,43 @@ export default function PinturaEnMovimiento() {
           />
         </span>
       )}
+    </div>
+  );
+}
+
+/**
+ * La pared pintada de un color, con su textura, y la lata (siempre la misma, en el mismo sitio) con la pintura de
+ * ese color. Se dibuja dos veces (color de antes y color nuevo) y el rodillo descubre la nueva encima.
+ */
+function Escena({ color }: { color: string }) {
+  return (
+    <div className="absolute inset-0" style={{ backgroundColor: color }}>
+      {/* Textura de rodillo (vetas finas), luz arriba a la izquierda y sombra abajo: se lee como pintura fresca. */}
+      <div className="absolute inset-0 bg-[repeating-linear-gradient(to_bottom,transparent_0,transparent_5px,var(--color-pico-blanco)_5px,var(--color-pico-blanco)_6px)] opacity-[0.06]" />
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_15%_0%,var(--color-pico-blanco)_0%,transparent_55%)] opacity-15" />
+      <div className="absolute inset-0 bg-gradient-to-t from-pico-azul-oscuro/20 via-transparent to-transparent" />
+
+      {/* La lata, grande, apoyada abajo a la derecha (desde tableta). isolate: el multiplicado solo tiñe la foto. */}
+      <span className="absolute right-[6%] -bottom-[10%] isolate hidden w-[22%] max-w-[22rem] md:block lg:right-[9%]">
+        <Image
+          src="/banners/pinturas/lata-base.webp"
+          alt=""
+          width={700}
+          height={700}
+          sizes="(min-width: 1536px) 352px, 22vw"
+          className="h-auto w-full drop-shadow-2xl drop-shadow-pico-azul-oscuro/60"
+        />
+        <span
+          className="absolute inset-0 mix-blend-multiply"
+          style={{
+            backgroundColor: color,
+            maskImage: MASCARA_LATA,
+            WebkitMaskImage: MASCARA_LATA,
+            maskSize: "100% 100%",
+            WebkitMaskSize: "100% 100%",
+          }}
+        />
+      </span>
     </div>
   );
 }
