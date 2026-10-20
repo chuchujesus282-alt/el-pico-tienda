@@ -4,7 +4,7 @@ import { ChevronRight } from "lucide-react";
 import type { ReactNode } from "react";
 import Plano from "@/components/icons/pico/Plano";
 import type { BannerInicio as DatosBanner, VarianteBanner } from "./contenidoInicio";
-import HerramientasAsomadas from "./HerramientasAsomadas";
+import VitrinaHerramientas from "./VitrinaHerramientas";
 import PinturaEnMovimiento from "./PinturaEnMovimiento";
 
 type Props = {
@@ -80,7 +80,13 @@ export default function BannerInicio({ banner, sizes, tamano = "normal", priorit
       className={`group grupo-icono relative block overflow-hidden rounded-banner ${
         // Los banners sueltos flotan y se elevan al pasar el mouse; el del carrusel ya lleva su sombra.
         grande ? "" : "shadow-tarjeta transition duration-200 hover:shadow-tarjeta-hover motion-safe:hover:-translate-y-1"
-      } focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-pico-azul ${
+      } focus-visible:outline-2 ${
+        // En el carrusel el contorno va hacia adentro: por fuera lo recorta su overflow-hidden y, en marino, no se
+        // vería sobre el fondo marino.
+        grande
+          ? `focus-visible:-outline-offset-4 ${banner.variante === "claro" ? "focus-visible:outline-pico-azul" : "focus-visible:outline-pico-blanco"}`
+          : "focus-visible:outline-offset-2 focus-visible:outline-pico-azul"
+      } ${
         banner.imagen ? "bg-gris-borde" : estilo.fondo
       } ${className}`}
     >
@@ -115,8 +121,8 @@ export default function BannerInicio({ banner, sizes, tamano = "normal", priorit
               />
             </span>
           )}
-          {/* Herramientas reales que asoman por los bordes y rotomartillo flotante, solo en el banner de herramientas del carrusel. */}
-          {grande && banner.id === "herramientas" && <HerramientasAsomadas />}
+          {/* Vitrina de herramientas con el trabajo de cada una, solo en el banner de herramientas del carrusel. */}
+          {grande && banner.id === "herramientas" && <VitrinaHerramientas />}
           {/* Pared blanca con un rodillo que pinta una franja de color, solo en el banner de pinturas del carrusel. */}
           {grande && banner.id === "pinturas" && <PinturaEnMovimiento />}
           {grande && banner.tituloPartes ? (
@@ -126,7 +132,7 @@ export default function BannerInicio({ banner, sizes, tamano = "normal", priorit
             <p className={`relative font-bold ${estilo.titulo}`}>
               <span className="block text-lg leading-none md:text-3xl lg:text-4xl">{banner.tituloPartes[0]}</span>
               <span
-                className={`relative isolate mt-2 inline-block origin-left px-2.5 pt-1 leading-[0.92] tracking-[-0.02em] text-[var(--color-sello-texto,var(--color-pico-blanco))] uppercase transition-transform duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] motion-safe:group-hover:scale-[1.08] md:mt-3 md:px-4 ${
+                className={`relative isolate mt-2 inline-block origin-left px-2.5 pt-1 leading-[0.92] tracking-[-0.02em] text-[var(--color-sello-texto,var(--color-pico-blanco))] uppercase transition-transform duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] motion-safe:group-hover:scale-[1.08] motion-safe:group-focus-visible:scale-[1.08] md:mt-3 md:px-4 ${
                   banner.tituloPartes[1].length > 8 ? "text-3xl md:text-5xl lg:text-6xl" : "text-5xl md:text-7xl lg:text-8xl"
                 }`}
               >
@@ -166,7 +172,7 @@ export default function BannerInicio({ banner, sizes, tamano = "normal", priorit
             <p
               className={`relative max-w-[75%] text-sm ${estilo.texto} ${
                 grande
-                  ? `hidden sm:line-clamp-2 md:text-base lg:max-w-[50%] lg:text-lg ${banner.tituloPartes ? "md:max-w-[50%]" : ""}`
+                  ? `hidden sm:line-clamp-2 md:text-base lg:max-w-[50%] lg:text-lg ${banner.tituloPartes ? "sm:max-w-[55%] md:max-w-[50%]" : ""}`
                   : lateral
                     ? "hidden sm:line-clamp-2"
                     : "line-clamp-3 md:text-base lg:text-lg"
@@ -178,12 +184,12 @@ export default function BannerInicio({ banner, sizes, tamano = "normal", priorit
           {banner.textoBoton && (
             // Es un span y no <Boton>: todo el banner ya es un enlace. Misma forma que Boton.
             <span
-              className={`relative mt-1 h-10 w-fit items-center gap-1 rounded-boton px-4 text-sm font-semibold shadow-tarjeta transition duration-200 group-hover:shadow-boton-hover motion-safe:group-hover:-translate-y-0.5 ${estilo.boton} ${
+              className={`relative mt-1 h-10 w-fit items-center gap-1 rounded-boton px-4 text-sm font-semibold shadow-tarjeta transition duration-200 group-hover:shadow-boton-hover group-focus-visible:shadow-boton-hover motion-safe:group-hover:-translate-y-0.5 motion-safe:group-focus-visible:-translate-y-0.5 ${estilo.boton} ${
                 grande ? "inline-flex md:mt-2 lg:h-12 lg:px-6 lg:text-base" : lateral ? "hidden sm:inline-flex" : "inline-flex md:mt-2 md:h-12 md:px-6 md:text-base"
               }`}
             >
               {banner.textoBoton}
-              <ChevronRight className="size-4 transition-transform duration-300 group-hover:translate-x-1" aria-hidden />
+              <ChevronRight className="size-4 transition-transform duration-300 group-hover:translate-x-1 group-focus-visible:translate-x-1" aria-hidden />
             </span>
           )}
         </div>

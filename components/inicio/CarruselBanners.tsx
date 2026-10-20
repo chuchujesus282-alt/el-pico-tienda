@@ -31,6 +31,8 @@ export default function CarruselBanners({ diapositivas, etiquetas, className = "
   const [encima, setEncima] = useState(false);
   const [detenido, setDetenido] = useState(false);
   const inicioToque = useRef<number | null>(null);
+  // El dedo se movió de lado: el toque fue un intento de deslizar, no de abrir el banner.
+  const deslizo = useRef(false);
 
   /** Navegación manual: el usuario toma el control y el carrusel deja de pasar solo. */
   const ir = (nuevo: number) => {
@@ -61,13 +63,24 @@ export default function CarruselBanners({ diapositivas, etiquetas, className = "
       onMouseLeave={() => setEncima(false)}
       onFocus={() => setEncima(true)}
       onBlur={(e) => !e.currentTarget.contains(e.relatedTarget) && setEncima(false)}
-      onTouchStart={(e) => (inicioToque.current = e.touches[0].clientX)}
+      onTouchStart={(e) => {
+        inicioToque.current = e.touches[0].clientX;
+        deslizo.current = false;
+      }}
       onTouchCancel={() => (inicioToque.current = null)}
       onTouchEnd={(e) => {
         if (inicioToque.current === null) return;
         const distancia = e.changedTouches[0].clientX - inicioToque.current;
         inicioToque.current = null;
+        deslizo.current = Math.abs(distancia) > 10;
         if (Math.abs(distancia) > 40) ir(indice + (distancia < 0 ? 1 : -1));
+      }}
+      // Un deslizamiento corto (que no llega a cambiar de banner) no debe abrir el enlace del banner.
+      onClickCapture={(e) => {
+        if (!deslizo.current) return;
+        deslizo.current = false;
+        e.preventDefault();
+        e.stopPropagation();
       }}
     >
       {/* Las diapositivas van apiladas en la misma celda: la actual aparece con un fundido y un desplazamiento
@@ -123,7 +136,7 @@ export default function CarruselBanners({ diapositivas, etiquetas, className = "
                   {i === indice && (
                     <span
                       key={`${indice}-${corriendo}`}
-                      className={`absolute inset-0 origin-left rounded-chip bg-pico-rojo ${corriendo ? "motion-safe:animate-progreso" : ""}`}
+                      className={`absolute inset-0 origin-left rounded-chip bg-pico-blanco ${corriendo ? "motion-safe:animate-progreso" : ""}`}
                       style={{ animationDuration: `${INTERVALO_MS}ms` }}
                     />
                   )}

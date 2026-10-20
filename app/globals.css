@@ -23,8 +23,8 @@
   --color-estrella: #f2a516;
   --color-estado-abierto: #15803d;
 
-  /* Amarillo industrial del banner "Herramientas que rinden" (HerramientasAsomadas): el de la señalización de
-     obra. Solo para esa placa y su franja de seguridad; el texto encima va en azul marino (≥4,5:1). */
+  /* Amarillo industrial de la señalización de obra. Lo usan la tira de calculadoras del inicio y los banners de
+     construcción y jardín de las categorías; no es color de marca. El texto encima va en azul marino (≥4,5:1). */
   --color-amarillo-obra: #f2b705;
   --color-amarillo-obra-oscuro: #d99a00;
   /* Azul cobalto de plano de obra (cianotipo): SOLO para la tira de calculadoras del inicio (paleta ganadora del
@@ -86,8 +86,6 @@
   --animate-progreso: progreso 6s linear both;
   /* Ícono que se elige: crece un poco y vuelve. */
   --animate-pop: ico-pop 0.45s cubic-bezier(0.16, 1, 0.3, 1);
-  /* Protagonista de un banner que flota sin girar (rotomartillo de "Herramientas que rinden"). */
-  --animate-levitar: levitar 6s ease-in-out infinite;
   /* Banner "Renueva tus espacios" del inicio: franja de pintura que se revela de izquierda a derecha y rodillo que
      la recorre (las dos con la misma curva para ir juntos) y se retira al terminar. */
   --animate-pintar: pintar 1.15s cubic-bezier(0.65, 0, 0.35, 1) both;
@@ -163,11 +161,6 @@
     }
     50% {
       transform: translateY(-8px) rotate(-3deg);
-    }
-  }
-  @keyframes levitar {
-    50% {
-      transform: translateY(-10px);
     }
   }
   @keyframes pintar {
