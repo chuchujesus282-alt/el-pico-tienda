@@ -41,10 +41,10 @@ type Colgable = (typeof COLGABLES)[number]["id"];
  * deja aire antes del taladro.
  */
 const GANCHOS = [
-  { x: 20, xMd: null },
-  { x: 33, xMd: 32 },
-  { x: 46, xMd: 46 },
-  { x: 59, xMd: null },
+  { x: 14, xMd: null },
+  { x: 26, xMd: 18 },
+  { x: 38, xMd: 34 },
+  { x: 50, xMd: null },
 ];
 /** Orden en que se reponen los ganchos (salteado, para que no parezca una fila que avanza). */
 const ORDEN = [1, 3, 0, 2];
@@ -113,7 +113,7 @@ export default function BannerHerramientas() {
         }}
         className="bh-escena absolute inset-y-0 right-0 left-[55%] cursor-pointer focus-visible:outline-none md:left-[50%]"
       >
-        {/* Ganchos con su herramienta (desde 768px; en el teléfono no caben junto al taladro). */}
+        {/* Ganchos con su herramienta (desde 768px; en el teléfono solo va el taladro). */}
         {GANCHOS.map((g, i) => {
           const id = colgadas[i];
           const d = datos(id);
@@ -142,11 +142,14 @@ export default function BannerHerramientas() {
           );
         })}
 
-        {/* Taladro al frente, parado sobre el mesón, con su sombra de contacto. */}
-        <span className="absolute right-[6%] bottom-[12%] block aspect-[515/640] h-[50%] md:right-[3%] md:h-[64%] xl:right-[4%] xl:h-[72%]">
-          <span className="absolute -bottom-[3%] left-[52%] h-[8%] w-[80%] -translate-x-1/2 rounded-[50%] bg-pico-azul-oscuro/60 blur-md" />
-          <span className="bh-taladro relative block size-full">
-            <Image src={`${H}taladro.webp`} alt="" width={515} height={640} priority sizes="(min-width: 768px) 190px, 110px" className="size-full object-contain drop-shadow-2xl drop-shadow-pico-azul-oscuro/50" />
+        {/* Taladro colgado en el tablero como las demás, en su gancho propio (siempre el mismo: es la estrella). Se
+            mece igual que las otras; al pasar el mouse vibra como si estuviera encendido. */}
+        <span className="absolute top-[24%] right-[26cqh] md:top-[9%] md:right-[34cqh] xl:right-[40cqh]">
+          <span className="bh-gancho absolute -top-[3px] left-1/2 block h-3 w-1.5 -translate-x-1/2 rounded-b-full border-x-2 border-b-2 border-gris-borde" />
+          <span className="bh-colgada absolute top-1 left-1/2 block h-[50cqh] origin-top md:h-[66cqh]" style={{ "--i": 4 } as CSSProperties}>
+            <span className="bh-taladro block h-full">
+              <Image src={`${H}taladro.webp`} alt="" width={515} height={640} priority sizes="(min-width: 768px) 200px, 120px" className="bh-sombra h-full w-auto max-w-none -translate-x-1/2" />
+            </span>
           </span>
         </span>
       </button>
