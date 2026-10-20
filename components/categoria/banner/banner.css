@@ -13,6 +13,15 @@
   --activo: 1;
 }
 
+/* Fundido del corte (todas las placas): el azul de la marca entra suave en la placa desde el borde, así el paso del
+   lado del título a la escena es un cambio sutil y los colores de los dos lados se mezclan. */
+.bp .bp-funde {
+  width: 26%;
+  pointer-events: none;
+  background: linear-gradient(90deg, color-mix(in srgb, var(--color-pico-azul) 62%, transparent), color-mix(in srgb, var(--color-pico-azul) 22%, transparent) 45%, transparent);
+  box-shadow: inset 1px 0 0 color-mix(in srgb, var(--color-pico-blanco) 18%, transparent);
+}
+
 /* ===== Pinturas (BannerPinturas) ===== */
 
 /* Color de turno (--pintura) y el anterior (--pintura-antes), según data-color / data-antes. Escritos aquí (y no armados
@@ -276,15 +285,6 @@
     repeating-linear-gradient(97deg, transparent 0 13px, color-mix(in srgb, var(--color-tablero-oscuro) 12%, transparent) 13px 15px),
     linear-gradient(160deg, var(--color-tablero), var(--color-tablero-oscuro));
 }
-/* Perfil de aluminio en el corte: canal con brillo y tornillos cada 64px. */
-.bp .bh-perfil {
-  background:
-    radial-gradient(circle, var(--color-gris-texto) 0 2px, var(--color-gris-borde) 2.5px 3.5px, transparent 4px) 50% 18px / 100% 64px,
-    linear-gradient(90deg, var(--color-gris-texto), var(--color-pico-blanco) 30%, var(--color-gris-borde) 55%, var(--color-gris-texto));
-  box-shadow:
-    0 1px 2px color-mix(in srgb, var(--color-pico-azul-oscuro) 50%, transparent),
-    0 10px 20px -6px color-mix(in srgb, var(--color-pico-azul-oscuro) 60%, transparent);
-}
 
 @media (prefers-reduced-motion: no-preference) {
   /* Cada herramienta colgada se mece apenas, cada una a su ritmo. */
@@ -387,15 +387,6 @@
 
 /* ===== Hogar y jardín (BannerJardin) ===== */
 
-/* Borde del corte: banda azul de la marca (continúa el lado del título) con brillo en un canto y un filete rojo. */
-.bp .bj-liston {
-  background:
-    linear-gradient(90deg, transparent 58%, var(--color-pico-rojo) 58% 74%, transparent 74%),
-    linear-gradient(90deg, var(--color-pico-azul-oscuro), color-mix(in srgb, var(--color-pico-blanco) 18%, var(--color-pico-azul)) 30%, var(--color-pico-azul) 55%, var(--color-pico-azul-oscuro));
-  box-shadow:
-    0 1px 2px color-mix(in srgb, var(--color-pico-azul-oscuro) 50%, transparent),
-    0.4rem 0 1.2rem -0.3rem color-mix(in srgb, var(--color-pico-azul-oscuro) 70%, transparent);
-}
 
 /* Agua. Los trazos no se deforman al estirarse el SVG. */
 .bp .bj-agua path,

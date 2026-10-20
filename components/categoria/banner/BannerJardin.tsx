@@ -430,9 +430,8 @@ export default function BannerJardin() {
       {/* Jardín vivo, cortado en diagonal; el canvas va contrarrestando el sesgo de la placa (no se deforma). */}
       <div className="bp-placa absolute -inset-y-6 -right-24 left-[56%] overflow-hidden shadow-tarjeta-hover md:left-[51%] xl:left-[49%]">
         <canvas ref={lienzo} className="absolute inset-y-0 -left-16 right-0 h-full w-[calc(100%+4rem)] skew-x-12" aria-hidden />
+        <div className="bp-funde absolute inset-y-0 left-0" />
       </div>
-      {/* Borde del corte: banda azul de la marca con un filete rojo, que continúa el lado del título. */}
-      <div className="bp-placa bj-liston absolute -inset-y-6 left-[calc(56%-0.55rem)] w-[1.1rem] md:left-[calc(51%-0.55rem)] xl:left-[calc(49%-0.55rem)]" />
 
       <button
         type="button"

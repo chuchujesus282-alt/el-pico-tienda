@@ -108,9 +108,8 @@ export default function BannerHerramientas() {
         <div className="bh-lampara absolute inset-0" />
         <div className="absolute inset-0 bg-[linear-gradient(170deg,color-mix(in_srgb,var(--color-pico-blanco)_10%,transparent)_0%,transparent_40%,color-mix(in_srgb,var(--color-pico-azul-oscuro)_45%,transparent)_100%)]" />
         <div className="bh-meson absolute inset-x-0 bottom-0 h-[20%]" />
+        <div className="bp-funde absolute inset-y-0 left-0" />
       </div>
-      {/* Perfil de aluminio atornillado sobre el corte. */}
-      <div className="bp-placa bh-perfil absolute -inset-y-6 left-[calc(56%-0.7rem)] w-[1.4rem] md:left-[calc(51%-0.7rem)] xl:left-[calc(49%-0.7rem)]" />
 
       <div className="hidden [--escala:0.62] md:block lg:[--escala:0.82] xl:[--escala:1]">
         {ASOMAN.map((a, i) => (

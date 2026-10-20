@@ -140,6 +140,7 @@ export default function BannerPinturas() {
             </div>
           </div>
         )}
+        <div className="bp-funde absolute inset-y-0 left-0" />
       </div>
       {/* Corte: cinta de pintor (la que separa lo pintado de lo que no) pegada sobre el borde. */}
       {/* Papel crepé translúcido con los cantos rasgados; del lado de la placa, la pintura de turno lo mancha un poco. */}

@@ -184,6 +184,7 @@ export default function BannerConstruccion() {
           {/* Piso de la obra: una losa más oscura con su canto iluminado, donde se apoyan la paleta y el muro. */}
           <div className="absolute inset-x-0 bottom-0 h-[30%] border-t border-pico-blanco/15 bg-gradient-to-b from-pico-azul-oscuro/35 to-pico-azul-oscuro/70" />
           <div className="absolute inset-y-0 left-0 w-[26px] bg-[repeating-linear-gradient(to_bottom,transparent_0_33px,color-mix(in_srgb,var(--color-pico-blanco)_35%,transparent)_33px_34px)]" />
+          <div className="bp-funde absolute inset-y-0 left-0" />
         </div>
       </div>
 
