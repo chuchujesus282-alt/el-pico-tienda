@@ -87,12 +87,13 @@ export default function PinturaEnMovimiento() {
         </div>
       )}
 
-      {/* El nombre del color, gigante y translúcido, arriba a la derecha y cortado por el borde de arriba (abajo
-          está la lata y a la izquierda el título y el botón). */}
+      {/* El nombre del color, gigante y translúcido, arriba a la derecha (abajo está la lata y a la izquierda el título
+          y el botón). text-box recorta el aire que la letra deja sobre las mayúsculas: así su borde de arriba queda
+          justo en el borde del banner, sin cortarse (donde no se soporta, queda apenas más abajo). */}
       {actual && (
         <span
           key={`n${pasada}`}
-          className="absolute -top-[7cqh] -right-[1cqw] text-[30cqh] leading-none font-bold tracking-[-0.04em] whitespace-nowrap text-pico-blanco/15 uppercase motion-safe:animate-aparecer"
+          className="absolute top-0 -right-[1cqw] text-[30cqh] leading-none font-bold tracking-[-0.04em] whitespace-nowrap text-pico-blanco/15 uppercase [text-box:trim-both_cap_alphabetic] motion-safe:animate-aparecer"
         >
           {actual.nombre}
         </span>
