@@ -3,6 +3,7 @@ import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import Plano from "@/components/icons/pico/Plano";
 import { iconoDeCategoria } from "@/components/icons/pico/porCategoria";
+import CategoryCardElectricidad from "@/components/tarjetas-categoria/CategoryCardElectricidad";
 import type { Categoria } from "@/types/catalogo";
 import { columnasCategorias } from "./contenidoInicio";
 
@@ -25,7 +26,17 @@ export default function ColumnasCategorias({ categorias }: { categorias: Categor
       <ul className={`grid grid-cols-2 gap-3 md:gap-4 ${categorias.length >= 4 ? "lg:grid-cols-4" : "lg:grid-cols-3"}`}>
         {categorias.map((categoria) => (
           <li key={categoria.slug}>
-            <Columna categoria={categoria} />
+            {categoria.slug === "electricidad" ? (
+              // Tarjeta 3D aprobada (bombillo que se enrosca y prende), escalada al ancho de la columna.
+              <CategoryCardElectricidad
+                titulo={categoria.nombre}
+                descripcion={columnasCategorias[categoria.slug]?.texto}
+                href={`/categoria/${categoria.slug}`}
+                escalar
+              />
+            ) : (
+              <Columna categoria={categoria} />
+            )}
           </li>
         ))}
       </ul>

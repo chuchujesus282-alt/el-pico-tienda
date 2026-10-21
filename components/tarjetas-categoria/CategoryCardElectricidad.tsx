@@ -17,6 +17,11 @@ type Props = {
   titulo?: string;
   descripcion?: string;
   href?: string;
+  /**
+   * Llena el ancho de quien la contiene y escala TODO en proporción (ej. una columna del inicio). Sin ella mide
+   * 320×420, como el prototipo.
+   */
+  escalar?: boolean;
 };
 
 /** "Cables, breakers, tomas e iluminación." → "cables, breakers, tomas e iluminación" (para el aria-label). */
@@ -29,6 +34,7 @@ export default function CategoryCardElectricidad({
   titulo = "Electricidad",
   descripcion = "Cables, breakers, tomas e iluminación.",
   href = "#electricidad",
+  escalar = false,
 }: Props) {
   const cardRef = useRef<HTMLAnchorElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -388,11 +394,11 @@ export default function CategoryCardElectricidad({
     };
   }, []);
 
-  return (
+  const tarjeta = (
     <Link
       ref={cardRef}
       href={href}
-      className={`${styles.card} ${plexMono.variable}`}
+      className={`${styles.card} ${escalar ? styles.escalable : ""} ${plexMono.variable}`}
       aria-label={`${titulo}: ${enFrase(descripcion)}`}
     >
       <div className={styles.dim} />
@@ -433,4 +439,7 @@ export default function CategoryCardElectricidad({
       </div>
     </Link>
   );
+
+  // Para escalar, el ancho de referencia (100cqw) es el de este contenedor.
+  return escalar ? <div className={styles.contenedor}>{tarjeta}</div> : tarjeta;
 }
