@@ -1,0 +1,181 @@
+/*
+ * Portado TAL CUAL de tarjeta-electricidad.html (prototipo aprobado). No cambies valores sin acordarlo.
+ * Excepción a la regla de tokens del CLAUDE.md: los colores van escritos aquí, idénticos al prototipo.
+ * Las variables que en el prototipo vivían en :root van en .card (un CSS Module no admite :root).
+ */
+
+.card {
+  --ink: #0b1d33; /* fondo de página */
+  --card: #0f2a4a; /* azul plano */
+  --card-deep: #0a1f38;
+  --line: rgba(150, 190, 235, 0.1);
+  --trace: rgba(190, 215, 245, 0.55);
+  --paper: #f3f6fa; /* texto de la página */
+  --muted: #a9bad0;
+  --card-ink: #f3f6fa; /* texto de la tarjeta */
+  --card-muted: #a9bad0;
+  --lit-ink: #fff3e0; /* texto bajo la luz */
+  --lit-muted: #d8c4a6;
+  --signal: #e3262f; /* rojo marca */
+  --warm: #ffcf87; /* luz encendida */
+  --f-display: var(--font-chakra), "Rajdhani", "Segoe UI", system-ui, sans-serif;
+  --f-mono: var(--font-plex-mono), ui-monospace, "SFMono-Regular", Menlo, monospace;
+  color-scheme: dark;
+
+  --p: 0; /* potencia de la luz 0..1 */
+  --f: 1; /* presencia de las cotas del plano */
+  position: relative;
+  display: block;
+  width: min(320px, 100%);
+  aspect-ratio: 320 / 420;
+  max-width: 100%;
+  border-radius: 14px;
+  overflow: hidden;
+  text-decoration: none;
+  color: color-mix(in srgb, var(--card-ink), var(--lit-ink) calc(var(--p) * 100%));
+  background: linear-gradient(180deg, var(--card) 0%, var(--card-deep) 100%);
+  box-shadow:
+    0 0 0 1px rgba(150, 190, 235, 0.12),
+    0 24px 60px -20px rgba(0, 0, 0, 0.55);
+  outline: none;
+  isolation: isolate;
+
+  /* En el prototipo la tarjeta heredaba esto del body; aquí se fija para no tomar lo de la tienda (Chakra, 1.5,
+     suavizado de letra). */
+  font-family: var(--f-mono);
+  line-height: normal;
+  -webkit-font-smoothing: auto;
+  -moz-osx-font-smoothing: auto;
+  text-rendering: auto;
+}
+.card:focus-visible {
+  outline: none;
+  box-shadow:
+    0 0 0 2px var(--warm),
+    0 24px 60px -20px rgba(0, 0, 0, 0.6);
+}
+
+/* al encender: el resto de la tarjeta se oscurece y el bombillo proyecta luz */
+.dim {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+  opacity: var(--p);
+  background: radial-gradient(
+    circle at 50% 32%,
+    rgba(16, 20, 28, 0) 0px,
+    rgba(16, 20, 28, 0.08) 45px,
+    rgba(16, 20, 28, 0.48) 150px,
+    rgba(12, 15, 22, 0.8) 300px,
+    rgba(10, 12, 18, 0.86) 100%
+  );
+}
+.glow {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 2;
+  opacity: var(--p);
+  background:
+    radial-gradient(
+      circle at 50% 32%,
+      rgba(255, 205, 125, 0.55) 0px,
+      rgba(255, 170, 70, 0.34) 55px,
+      rgba(255, 150, 50, 0.12) 150px,
+      transparent 260px
+    ),
+    radial-gradient(ellipse 60% 40% at 50% 62%, rgba(255, 175, 80, 0.14), transparent 70%);
+  mix-blend-mode: screen;
+}
+.blueprint {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 2;
+  opacity: var(--f);
+}
+.blueprint text {
+  font-family: var(--f-mono);
+  font-size: 9px;
+  fill: var(--trace);
+  letter-spacing: 0.06em;
+}
+canvas.scene {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 3;
+  pointer-events: none;
+  filter: drop-shadow(
+    0 calc((1 - var(--p)) * 14px) calc(6px + (1 - var(--p)) * 12px) rgba(2, 8, 18, calc(0.45 - var(--p) * 0.3))
+  );
+}
+
+.copy {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 4;
+  padding: 0 28px 30px;
+  display: grid;
+  gap: 10px;
+}
+.rule {
+  width: 34px;
+  height: 3px;
+  background: var(--signal);
+  border-radius: 2px;
+}
+.copy h2 {
+  margin: 4px 0 0;
+  font-family: var(--f-display);
+  font-weight: 700;
+  font-size: 30px;
+  line-height: 1.05;
+  letter-spacing: 0.01em;
+  text-wrap: balance;
+  text-shadow: 0 0 calc(var(--p) * 14px) rgba(255, 180, 80, 0.35);
+}
+.copy p {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.5;
+  color: color-mix(in srgb, var(--card-muted), var(--lit-muted) calc(var(--p) * 100%));
+  /* La tienda pone text-wrap: pretty a todo <p>; el prototipo no. */
+  text-wrap: wrap;
+}
+.cta {
+  margin-top: 18px;
+  font-family: var(--f-display);
+  font-weight: 600;
+  font-size: 15px;
+  display: inline-flex;
+  gap: 8px;
+  align-items: center;
+}
+.cta span {
+  transition: transform 0.3s ease;
+  /* Chakra Petch no trae "→": en el prototipo la dibuja la letra siguiente de --f-display (Segoe UI en Windows).
+     next/font mete antes "Chakra Petch Fallback" (Arial ajustada), que daría otra flecha; aquí se salta. */
+  font-family: "Rajdhani", "Segoe UI", system-ui, sans-serif;
+}
+.card:hover .cta span,
+.card.on .cta span {
+  transform: translateX(4px);
+}
+
+.fallback {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  display: grid;
+  place-items: start center;
+  padding-top: 22%;
+  color: var(--card-muted);
+  font-size: 12px;
+}
