@@ -1,4 +1,3 @@
-import IconoBloques from "@/components/icons/pico/IconoBloques";
 import IconoCasco from "@/components/icons/pico/IconoCasco";
 import IconoTornillo from "@/components/icons/pico/IconoTornillo";
 import type { ComponenteIcono } from "@/types/icono";
@@ -41,11 +40,12 @@ export const bannersPrincipales: BannerInicio[] = [
     imagen: null,
     alt: "Materiales de construcción en El Pico",
     href: "/categoria/construccion",
-    titulo: "Todo para tu obra en un solo lugar",
+    titulo: "Materiales para construir",
+    tituloPartes: ["Materiales para", "construir"],
     texto: "Cemento, bloques, pegos y más para construir sin paradas.",
     textoBoton: "Ver materiales",
     variante: "azul",
-    icono: IconoBloques,
+    // Sin ícono: en su lugar flota la paleta de bloques real sobre concreto (ObraEnConcreto).
   },
   {
     id: "herramientas",

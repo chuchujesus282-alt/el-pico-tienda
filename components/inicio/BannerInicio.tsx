@@ -5,6 +5,7 @@ import type { ReactNode } from "react";
 import Plano from "@/components/icons/pico/Plano";
 import type { BannerInicio as DatosBanner, VarianteBanner } from "./contenidoInicio";
 import HerramientasAsomadas from "./HerramientasAsomadas";
+import ObraEnConcreto from "./ObraEnConcreto";
 import PinturaEnMovimiento from "./PinturaEnMovimiento";
 
 type Props = {
@@ -117,6 +118,8 @@ export default function BannerInicio({ banner, sizes, tamano = "normal", priorit
           )}
           {/* Placa amarilla con el rotomartillo flotante, solo en el banner de herramientas del carrusel. */}
           {grande && banner.id === "herramientas" && <HerramientasAsomadas />}
+          {/* Placa de concreto con la paleta de bloques flotante, solo en el banner de construcción del carrusel. */}
+          {grande && banner.id === "obra" && <ObraEnConcreto prioritario={prioritario} />}
           {/* Pared blanca con un rodillo que pinta una franja de color, solo en el banner de pinturas del carrusel. */}
           {grande && banner.id === "pinturas" && <PinturaEnMovimiento />}
           {grande && banner.tituloPartes ? (
