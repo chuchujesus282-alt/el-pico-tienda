@@ -6,6 +6,7 @@ import { iconoDeCategoria } from "@/components/icons/pico/porCategoria";
 import CategoryCardElectricidad from "@/components/tarjetas-categoria/CategoryCardElectricidad";
 import CategoryCardPlomeria from "@/components/tarjetas-categoria/CategoryCardPlomeria";
 import CategoryCardJardin from "@/components/tarjetas-categoria/CategoryCardJardin";
+import CategoryCardVehiculos from "@/components/tarjetas-categoria/CategoryCardVehiculos";
 import type { Categoria } from "@/types/catalogo";
 import { columnasCategorias } from "./contenidoInicio";
 
@@ -56,6 +57,16 @@ export default function ColumnasCategorias({ categorias }: { categorias: Categor
               // Tarjeta aprobada (pala de línea que cava una montaña de tierra), escalada al ancho de la columna.
               <div className={LEVANTAR}>
                 <CategoryCardJardin
+                  titulo={categoria.nombre}
+                  descripcion={columnasCategorias[categoria.slug]?.texto}
+                  href={`/categoria/${categoria.slug}`}
+                  escalar
+                />
+              </div>
+            ) : categoria.slug === "vehiculos" ? (
+              // Tarjeta aprobada (rueda de línea que gira, sale y vuelve rodando), escalada al ancho de la columna.
+              <div className={LEVANTAR}>
+                <CategoryCardVehiculos
                   titulo={categoria.nombre}
                   descripcion={columnasCategorias[categoria.slug]?.texto}
                   href={`/categoria/${categoria.slug}`}
