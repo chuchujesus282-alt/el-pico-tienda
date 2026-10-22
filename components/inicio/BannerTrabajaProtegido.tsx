@@ -3,17 +3,20 @@
 import Link from "next/link";
 import { useEffect, useId, useRef } from "react";
 import { plexMono } from "@/components/tarjetas-categoria/fuentes";
+import { animarAlDesplazar } from "@/components/tarjetas-categoria/tactil";
 import styles from "./BannerTrabajaProtegido.module.css";
 
 // Banner "Trabaja protegido", versión de LÍNEA: el casco es un ícono de línea en SVG animado con JavaScript propio
 // (sin librerías). Portado TAL CUAL del prototipo aprobado banner-trabaja-protegido.html: SVG, física (G, TOP, Y0,
 // LIFE, DROPS), objState(), helmetKick(), startBob, flotación, colores y CSS sin cambios.
-// Al pasar el mouse (o con el foco, o al tocarlo fuera del botón) caen un bloque, un martillo y una llave inglesa sobre
-// el casco, que se hunde y se balancea en cada golpe; los objetos rebotan y salen por abajo a la derecha. Corre UNA vez
-// por entrada y siempre termina; no se rebobina.
-// Diferencias con el prototipo: pasa a una columna (ilustración arriba) cuando el BANNER mide 560px o menos, no la
-// pantalla (en el inicio va en media columna); llena el ancho de quien lo contiene (el prototipo medía hasta 620px);
-// sin window.__demo ni el texto de ayuda de arriba.
+// Al pasar el mouse (o con el foco del teclado) caen un bloque, un martillo y una llave inglesa sobre el casco, que se
+// hunde y se balancea en cada golpe; los objetos rebotan y salen por abajo a la derecha. Corre UNA vez por entrada y
+// siempre termina; no se rebobina.
+// Diferencias con el prototipo, acordadas: todo el banner es un <Link> a la categoría y el botón es solo el indicador
+// (en el teléfono anima el toque que desplaza la página y el toque quieto entra, como las tarjetas de categoría, ver
+// tactil.ts); título más grande (44px; 36px en una columna); pasa a una columna (ilustración arriba) cuando el BANNER
+// mide 560px o menos, no la pantalla (en el inicio va en media columna); llena el ancho de quien lo contiene (el
+// prototipo medía hasta 620px); sin window.__demo ni el texto de ayuda de arriba.
 
 type Props = {
   titulo?: string;
@@ -21,6 +24,12 @@ type Props = {
   textoBoton?: string;
   href?: string;
 };
+
+/** "Cascos, guantes… en cada obra." → "cascos, guantes… en cada obra" (para el aria-label). */
+function enFrase(texto: string) {
+  const sinPunto = texto.trim().replace(/\.$/, "");
+  return sinPunto.charAt(0).toLowerCase() + sinPunto.slice(1);
+}
 
 type Ease = (x: number) => number;
 const clamp = (x: number) => Math.max(0, Math.min(1, x));
@@ -89,7 +98,7 @@ export default function BannerTrabajaProtegido({
   const uid = useId().replace(/[^a-zA-Z0-9_-]/g, "");
   const ids = { domeClip: `domeClip-${uid}` };
 
-  const bannerRef = useRef<HTMLElement>(null);
+  const bannerRef = useRef<HTMLAnchorElement>(null);
   const helmetRef = useRef<SVGGElement>(null);
   const hitRef = useRef<SVGGElement>(null);
   const objsRef = useRef<(SVGGElement | null)[]>([]);
@@ -115,13 +124,16 @@ export default function BannerTrabajaProtegido({
       t = 0;
       startBob = curBob;
     }
-    // Un toque fuera del botón solo anima; el botón navega.
-    const onClick = (e: MouseEvent) => {
-      if (!(e.target as Element).closest("a")) start();
+    const finePointer = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
+    // Foco: solo el del teclado anima (en el teléfono, el toque también enfoca el enlace).
+    const onFocusIn = () => {
+      if (banner.matches(":focus-visible")) start();
     };
-    banner.addEventListener("mouseenter", start);
-    banner.addEventListener("focusin", start);
-    banner.addEventListener("click", onClick);
+    banner.addEventListener("focusin", onFocusIn);
+    // Escritorio: anima el mouse al entrar. Teléfono: anima el toque que desplaza la página; el que no, entra. La
+    // pasada no se cancela (es corta y nunca se rebobina): si una tarjeta toma el turno, el banner solo termina.
+    const quitarTactil = finePointer ? null : animarAlDesplazar(banner, start, () => {});
+    if (finePointer) banner.addEventListener("mouseenter", start);
 
     let last = performance.now();
     let raf = 0;
@@ -173,20 +185,25 @@ export default function BannerTrabajaProtegido({
     return () => {
       cancelAnimationFrame(raf);
       banner.removeEventListener("mouseenter", start);
-      banner.removeEventListener("focusin", start);
-      banner.removeEventListener("click", onClick);
+      banner.removeEventListener("focusin", onFocusIn);
+      quitarTactil?.();
       banner.style.removeProperty("--f");
     };
   }, []);
 
   return (
     <div className={styles.contenedor}>
-      <section ref={bannerRef} className={`${styles.banner} ${plexMono.variable}`} aria-label={titulo}>
+      <Link
+        ref={bannerRef}
+        href={href}
+        aria-label={`${titulo}: ${enFrase(descripcion)}`}
+        className={`${styles.banner} ${plexMono.variable}`}
+      >
         <div className={styles.copy}>
           <div className={styles.rule} />
           <h2>{titulo}</h2>
           <p>{descripcion}</p>
-          <Link className={styles.btn} href={href}>
+          <span className={styles.btn}>
             {textoBoton}
             <svg viewBox="0 0 16 16" aria-hidden="true">
               <path
@@ -198,7 +215,7 @@ export default function BannerTrabajaProtegido({
                 strokeLinejoin="round"
               />
             </svg>
-          </Link>
+          </span>
         </div>
 
         <div className={styles.art} aria-hidden="true">
@@ -322,7 +339,7 @@ export default function BannerTrabajaProtegido({
             </g>
           </svg>
         </div>
-      </section>
+      </Link>
     </div>
   );
 }

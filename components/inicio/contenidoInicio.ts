@@ -82,10 +82,10 @@ export const bannersPromocionales: BannerInicio[] = [
     imagen: null,
     alt: "Seguridad industrial en El Pico",
     href: "/categoria/seguridad-industrial",
-    // Se muestra con BannerTrabajaProtegido (el casco al que le caen cosas): el título juega con esa animación.
-    titulo: "Que nada te caiga encima",
-    texto: "Cascos, guantes, botas y mascarillas para trabajar seguro, golpe tras golpe.",
-    textoBoton: "Equípate",
+    // Se muestra con BannerTrabajaProtegido (el casco al que le caen cosas). El título es el nombre de la categoría.
+    titulo: "Seguridad industrial",
+    texto: "Cascos, guantes, botas y mascarillas para que trabajes protegido en cada obra.",
+    textoBoton: "Ver seguridad",
     variante: "azul",
     icono: IconoCasco,
   },
