@@ -69,6 +69,9 @@
 .card.escalable {
   --u: calc(100cqw / 320);
   width: 100%;
+  /* Alto: 420 (el del prototipo) salvo que quien la contiene pida otro con --alto-tarjeta (ej. el inicio, 470). La
+     escena y el plano quedan centrados en el alto extra (SVG con meet) y el texto sigue abajo. */
+  aspect-ratio: 320 / var(--alto-tarjeta, 420);
 }
 .card:focus-visible {
   outline: none;

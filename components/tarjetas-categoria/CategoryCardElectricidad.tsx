@@ -260,7 +260,7 @@ export default function CategoryCardElectricidad({
       <div className={styles.dim} />
       <div className={styles.glow} />
 
-      <svg className={styles.blueprint} viewBox="0 0 320 420" preserveAspectRatio="none" aria-hidden="true">
+      <svg className={styles.blueprint} viewBox="0 0 320 420" aria-hidden="true">
         <path d="M40 46 V30 H56" fill="none" stroke="rgba(190,215,245,.45)" strokeWidth="1.2" />
         <circle cx="160" cy="136" r="100" fill="none" stroke="rgba(190,215,245,.28)" strokeDasharray="2 4" />
         <line x1="250" y1="50" x2="250" y2="221" stroke="rgba(190,215,245,.5)" />

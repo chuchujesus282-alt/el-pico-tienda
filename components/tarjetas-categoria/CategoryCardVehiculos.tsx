@@ -233,7 +233,7 @@ export default function CategoryCardVehiculos({
       aria-label={`${titulo}: ${enFrase(descripcion)}`}
       className={`${styles.card} ${escalar ? styles.escalable : ""} ${plexMono.variable}`}
     >
-      <svg className={styles.blueprint} viewBox="0 0 320 420" preserveAspectRatio="none" aria-hidden="true">
+      <svg className={styles.blueprint} viewBox="0 0 320 420" aria-hidden="true">
         <path d="M74 66 V52 H90" fill="none" stroke="rgba(190,215,245,.45)" strokeWidth="1.2" />
         <circle cx="160" cy="135" r="88" fill="none" stroke="rgba(190,215,245,.28)" strokeDasharray="2 4" />
         <line x1="160" y1="34" x2="160" y2="52" stroke="rgba(190,215,245,.45)" />

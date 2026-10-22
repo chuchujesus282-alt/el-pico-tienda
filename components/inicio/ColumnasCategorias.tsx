@@ -20,8 +20,8 @@ const LEVANTAR = "transition duration-300 ease-(--curva-suave) motion-safe:hover
 /**
  * "Más categorías": las categorías que no tienen banner en el inicio, en columnas verticales (más altas que una
  * tarjeta de producto) para darle verticalidad a la página. 2×2 hasta 1024px (en tableta, 4 en fila quedan
- * demasiado angostas) y una fila de 4 desde ahí. Todas en 320:420, la proporción de las tarjetas animadas, para que
- * midan lo mismo.
+ * demasiado angostas) y una fila de 4 desde ahí. Todas en 320:470 (las animadas lo toman de `--alto-tarjeta` en el
+ * <li>; su prototipo es 320:420 y el dibujo queda centrado en el alto extra), para que midan lo mismo.
  * Foto y texto de cada una en `columnasCategorias`; sin foto, el plano técnico de su ícono sobre azul.
  */
 export default function ColumnasCategorias({ categorias }: { categorias: Categoria[] }) {
@@ -32,7 +32,7 @@ export default function ColumnasCategorias({ categorias }: { categorias: Categor
     <section aria-label="Más categorías">
       <ul className={`grid grid-cols-2 gap-3 md:gap-4 ${categorias.length >= 4 ? "lg:grid-cols-4" : "lg:grid-cols-3"}`}>
         {categorias.map((categoria) => (
-          <li key={categoria.slug}>
+          <li key={categoria.slug} className="[--alto-tarjeta:470]">
             {categoria.slug === "electricidad" ? (
               // Tarjeta aprobada (bombillo de línea que se enrosca y prende), escalada al ancho de la columna.
               <div className={LEVANTAR}>
@@ -90,7 +90,7 @@ function Columna({ categoria }: { categoria: Categoria }) {
   return (
     <Link
       href={`/categoria/${categoria.slug}`}
-      className="group grupo-icono relative flex aspect-[320/420] flex-col justify-end overflow-hidden rounded-banner bg-gradient-to-b from-pico-azul to-pico-azul-oscuro shadow-tarjeta transition duration-300 ease-(--curva-suave) hover:shadow-tarjeta-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-pico-azul motion-safe:hover:-translate-y-1"
+      className="group grupo-icono relative flex aspect-[320/470] flex-col justify-end overflow-hidden rounded-banner bg-gradient-to-b from-pico-azul to-pico-azul-oscuro shadow-tarjeta transition duration-300 ease-(--curva-suave) hover:shadow-tarjeta-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-pico-azul motion-safe:hover:-translate-y-1"
     >
       {imagen ? (
         <Image

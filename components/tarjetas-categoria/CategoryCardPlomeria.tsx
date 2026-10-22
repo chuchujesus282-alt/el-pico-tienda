@@ -208,7 +208,7 @@ export default function CategoryCardPlomeria({
     >
       {/* Plano del codo en reposo, a la medida de CODO_REPOSO (el del prototipo, agrandado 1,3 desde el centro
           (160, 138); los textos y los topes de las cotas conservan su tamaño). */}
-      <svg className={styles.blueprint} viewBox="0 0 320 420" preserveAspectRatio="none" aria-hidden="true">
+      <svg className={styles.blueprint} viewBox="0 0 320 420" aria-hidden="true">
         <path d="M61 50 V36 H77" fill="none" stroke="rgba(190,215,245,.45)" strokeWidth="1.2" />
         <circle cx="160" cy="138" r="96" fill="none" stroke="rgba(190,215,245,.28)" strokeDasharray="2 4" />
         <line x1="160" y1="32" x2="160" y2="52" stroke="rgba(190,215,245,.45)" />
