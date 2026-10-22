@@ -84,7 +84,7 @@ export const bannersPromocionales: BannerInicio[] = [
     href: "/categoria/seguridad-industrial",
     // Se muestra con BannerTrabajaProtegido (el casco al que le caen cosas). El título es el nombre de la categoría.
     titulo: "Seguridad industrial",
-    texto: "Cascos, guantes, botas y mascarillas para que trabajes protegido en cada obra.",
+    texto: "Cascos, guantes, botas y mascarillas.",
     textoBoton: "Ver seguridad",
     variante: "azul",
     icono: IconoCasco,

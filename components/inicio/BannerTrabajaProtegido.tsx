@@ -14,9 +14,10 @@ import styles from "./BannerTrabajaProtegido.module.css";
 // siempre termina; no se rebobina.
 // Diferencias con el prototipo, acordadas: todo el banner es un <Link> a la categoría y el botón es solo el indicador
 // (en el teléfono anima el toque que desplaza la página y el toque quieto entra, como las tarjetas de categoría, ver
-// tactil.ts); título más grande (44px; 36px en una columna); pasa a una columna (ilustración arriba) cuando el BANNER
-// mide 560px o menos, no la pantalla (en el inicio va en media columna); llena el ancho de quien lo contiene (el
-// prototipo medía hasta 620px); sin window.__demo ni el texto de ayuda de arriba.
+// tactil.ts); título más grande (44px); con el BANNER de 560px o menos (no la pantalla: en el inicio va en media
+// columna) la ilustración queda al lado, más chica, y el texto a la escala de Tornillería, para medir lo mismo que ese
+// banner (el prototipo la subía arriba); llena el ancho de quien lo contiene (el prototipo medía hasta 620px); sin
+// window.__demo ni el texto de ayuda de arriba.
 
 type Props = {
   titulo?: string;

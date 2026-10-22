@@ -4,9 +4,9 @@
  * que en el prototipo vivían en :root van en .banner (un CSS Module no admite :root).
  *
  * Diferencias con el prototipo: todo el banner es el enlace (el botón es un indicador que reacciona al pasar el mouse
- * por el banner); título más grande (44px; 36px en una columna); el cambio a una columna lo decide el ancho del
- * BANNER (contenedor), no el de la pantalla, porque en el inicio va en media columna; y el banner llena el ancho de
- * quien lo contiene.
+ * por el banner); título más grande (44px); con el banner angosto (≤560px, medido en el BANNER y no en la pantalla)
+ * la ilustración no sube arriba: queda al lado, más chica, con el texto a la escala de Tornillería (ver el @container
+ * del final); y el banner llena el ancho de quien lo contiene.
  */
 
 /* height: 100% en los dos: en una fila con otro banner más alto, se estira igual que él. */
@@ -140,18 +140,39 @@
   z-index: 1;
 }
 
+/* Banner angosto (teléfono y media columna hasta 1279px): en vez de apilar la ilustración arriba (prototipo), queda al
+   lado, más chica, y el texto pasa a la escala del banner de Tornillería (BannerInicio: p-6, título text-2xl, texto
+   text-sm, botón h-10), para que los dos midan lo mismo. El SVG escala solo (viewBox, meet). */
 @container (max-width: 560px) {
   .banner {
-    grid-template-columns: minmax(0, 1fr);
+    grid-template-columns: minmax(0, 1fr) 44%;
+    min-height: 12rem;
   }
   .art {
-    order: -1;
-    height: 230px;
+    height: auto;
+    align-self: stretch;
   }
   .copy {
-    padding: 0 24px 28px;
+    padding: 24px 0 24px 24px;
+    gap: 10px;
+  }
+  .rule {
+    width: 40px;
   }
   .copy h2 {
-    font-size: 36px;
+    margin: 2px 0 0;
+    /* crece con el banner: 26px en el teléfono, hasta 36px en media columna (como el título de Tornillería ahí) */
+    font-size: clamp(26px, 7.6cqw, 36px);
+  }
+  .copy p {
+    font-size: 14px;
+    line-height: 1.45;
+  }
+  .btn {
+    margin-top: 4px;
+    gap: 6px;
+    padding: 0 16px;
+    height: 40px;
+    font-size: 14px;
   }
 }

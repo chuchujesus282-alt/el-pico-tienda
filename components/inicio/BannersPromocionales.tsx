@@ -10,16 +10,22 @@ export default function BannersPromocionales({ banners }: { banners: DatosBanner
   if (banners.length === 0) return null;
 
   return (
-    <div className="grid gap-3 md:grid-cols-2 md:gap-4">
+    // auto-rows-fr: en el teléfono (uno debajo del otro) todos los banners miden lo mismo que el más alto.
+    <div className="grid auto-rows-fr gap-3 md:grid-cols-2 md:gap-4">
       {banners.map((banner) =>
         banner.id === "seguridad" ? (
-          <BannerTrabajaProtegido
+          // Se levanta igual que BannerInicio (Tornillería): 4px y sombra de tarjeta, en 200 ms.
+          <div
             key={banner.id}
-            titulo={banner.titulo}
-            descripcion={banner.texto}
-            textoBoton={banner.textoBoton}
-            href={banner.href}
-          />
+            className="h-full rounded-[14px] shadow-tarjeta transition duration-200 hover:shadow-tarjeta-hover motion-safe:hover:-translate-y-1"
+          >
+            <BannerTrabajaProtegido
+              titulo={banner.titulo}
+              descripcion={banner.texto}
+              textoBoton={banner.textoBoton}
+              href={banner.href}
+            />
+          </div>
         ) : (
           <BannerInicio
             key={banner.id}
