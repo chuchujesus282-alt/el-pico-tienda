@@ -57,6 +57,15 @@
   text-rendering: auto;
   -webkit-tap-highlight-color: transparent;
 }
+/* Velo bajo el texto, como el de las columnas fijas del inicio: la cuadrícula se difumina hacia abajo. Va por
+   debajo de los dibujos. */
+.card::before {
+  content: "";
+  position: absolute;
+  inset: 40% 0 0;
+  pointer-events: none;
+  background: linear-gradient(to top, rgba(10, 31, 56, 0.95), rgba(10, 31, 56, 0.6) 50%, transparent);
+}
 .card.escalable {
   --u: calc(100cqw / 320);
   width: 100%;
