@@ -1,12 +1,14 @@
 import type { Metadata } from "next";
 import CategoryCardElectricidad from "@/components/tarjetas-categoria/CategoryCardElectricidad";
+import CategoryCardPlomeria from "@/components/tarjetas-categoria/CategoryCardPlomeria";
 import { plexMono } from "@/components/tarjetas-categoria/fuentes";
 import styles from "./demo.module.css";
 
-// Página de prueba TEMPORAL (sin enlaces desde la tienda): muestra la tarjeta de Electricidad igual que el
-// prototipo tarjeta-electricidad-linea.html para compararlos. Pantalla completa (ver components/layout/pantallaCompleta.ts).
+// Página de prueba TEMPORAL (sin enlaces desde la tienda): muestra las tarjetas de categoría igual que sus prototipos
+// (tarjeta-electricidad-linea.html, tarjeta-plomeria-linea.html) para compararlas. Pantalla completa (ver
+// components/layout/pantallaCompleta.ts).
 
-export const metadata: Metadata = { title: "Tarjeta Electricidad El Pico", robots: { index: false } };
+export const metadata: Metadata = { title: "Tarjetas de categoría El Pico", robots: { index: false } };
 
 export default function PaginaDemoTarjeta() {
   return (
@@ -15,7 +17,10 @@ export default function PaginaDemoTarjeta() {
         <p className={styles.hint}>
           Demo para el equipo · <b>pasa el mouse</b> sobre la tarjeta (en el teléfono, tócala)
         </p>
-        <CategoryCardElectricidad />
+        <div className={styles.tarjetas}>
+          <CategoryCardElectricidad />
+          <CategoryCardPlomeria />
+        </div>
       </main>
     </div>
   );
