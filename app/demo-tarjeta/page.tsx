@@ -1,11 +1,12 @@
 import type { Metadata } from "next";
 import CategoryCardElectricidad from "@/components/tarjetas-categoria/CategoryCardElectricidad";
 import CategoryCardPlomeria from "@/components/tarjetas-categoria/CategoryCardPlomeria";
+import CategoryCardJardin from "@/components/tarjetas-categoria/CategoryCardJardin";
 import { plexMono } from "@/components/tarjetas-categoria/fuentes";
 import styles from "./demo.module.css";
 
 // Página de prueba TEMPORAL (sin enlaces desde la tienda): muestra las tarjetas de categoría igual que sus prototipos
-// (tarjeta-electricidad-linea.html, tarjeta-plomeria-linea.html) para compararlas. Pantalla completa (ver
+// (tarjeta-electricidad-linea.html, tarjeta-plomeria-linea.html, tarjeta-jardin-linea.html) para compararlas. Pantalla completa (ver
 // components/layout/pantallaCompleta.ts).
 
 export const metadata: Metadata = { title: "Tarjetas de categoría El Pico", robots: { index: false } };
@@ -20,6 +21,7 @@ export default function PaginaDemoTarjeta() {
         <div className={styles.tarjetas}>
           <CategoryCardElectricidad />
           <CategoryCardPlomeria />
+          <CategoryCardJardin />
         </div>
       </main>
     </div>

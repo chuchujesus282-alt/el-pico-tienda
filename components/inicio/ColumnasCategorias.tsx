@@ -5,6 +5,7 @@ import Plano from "@/components/icons/pico/Plano";
 import { iconoDeCategoria } from "@/components/icons/pico/porCategoria";
 import CategoryCardElectricidad from "@/components/tarjetas-categoria/CategoryCardElectricidad";
 import CategoryCardPlomeria from "@/components/tarjetas-categoria/CategoryCardPlomeria";
+import CategoryCardJardin from "@/components/tarjetas-categoria/CategoryCardJardin";
 import type { Categoria } from "@/types/catalogo";
 import { columnasCategorias } from "./contenidoInicio";
 
@@ -45,6 +46,16 @@ export default function ColumnasCategorias({ categorias }: { categorias: Categor
               // Tarjeta aprobada (tubería de línea que se arma y por la que corre el agua), escalada al ancho de la columna.
               <div className={LEVANTAR}>
                 <CategoryCardPlomeria
+                  titulo={categoria.nombre}
+                  descripcion={columnasCategorias[categoria.slug]?.texto}
+                  href={`/categoria/${categoria.slug}`}
+                  escalar
+                />
+              </div>
+            ) : categoria.slug === "hogar-y-jardin" ? (
+              // Tarjeta aprobada (pala de línea que cava una montaña de tierra), escalada al ancho de la columna.
+              <div className={LEVANTAR}>
+                <CategoryCardJardin
                   titulo={categoria.nombre}
                   descripcion={columnasCategorias[categoria.slug]?.texto}
                   href={`/categoria/${categoria.slug}`}
