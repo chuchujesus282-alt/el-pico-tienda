@@ -27,7 +27,7 @@ export default function ColumnasCategorias({ categorias }: { categorias: Categor
         {categorias.map((categoria) => (
           <li key={categoria.slug}>
             {categoria.slug === "electricidad" ? (
-              // Tarjeta 3D aprobada (bombillo que se enrosca y prende), escalada al ancho de la columna.
+              // Tarjeta aprobada (bombillo de línea que se enrosca y prende), escalada al ancho de la columna.
               <CategoryCardElectricidad
                 titulo={categoria.nombre}
                 descripcion={columnasCategorias[categoria.slug]?.texto}

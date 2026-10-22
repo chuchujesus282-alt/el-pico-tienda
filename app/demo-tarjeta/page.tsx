@@ -4,7 +4,7 @@ import { plexMono } from "@/components/tarjetas-categoria/fuentes";
 import styles from "./demo.module.css";
 
 // Página de prueba TEMPORAL (sin enlaces desde la tienda): muestra la tarjeta de Electricidad igual que el
-// prototipo tarjeta-electricidad.html para compararlos. Pantalla completa (ver components/layout/pantallaCompleta.ts).
+// prototipo tarjeta-electricidad-linea.html para compararlos. Pantalla completa (ver components/layout/pantallaCompleta.ts).
 
 export const metadata: Metadata = { title: "Tarjeta Electricidad El Pico", robots: { index: false } };
 
