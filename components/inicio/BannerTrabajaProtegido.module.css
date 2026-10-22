@@ -1,0 +1,153 @@
+/*
+ * Portado TAL CUAL de banner-trabaja-protegido.html (prototipo aprobado). No cambies valores sin acordarlo.
+ * Excepción a la regla de tokens del CLAUDE.md: los colores van escritos aquí, idénticos al prototipo. Las variables
+ * que en el prototipo vivían en :root van en .banner (un CSS Module no admite :root).
+ *
+ * Diferencias con el prototipo: el cambio a una columna lo decide el ancho del BANNER (contenedor), no el de la
+ * pantalla, porque en el inicio va en media columna; y el banner llena el ancho de quien lo contiene.
+ */
+
+/* height: 100% en los dos: en una fila con otro banner más alto, se estira igual que él. */
+.contenedor {
+  container-type: inline-size;
+  height: 100%;
+}
+
+.banner {
+  --card: #0f2a4a;
+  --card-deep: #0a1f38;
+  --grid: rgba(150, 190, 235, 0.08);
+  --trace: rgba(190, 215, 245, 0.55);
+  --paper: #f3f6fa;
+  --muted: #c3cfdf;
+  --navy: #0f2a4a;
+  --signal: #e3262f;
+  --f-display: var(--font-chakra), "Rajdhani", "Segoe UI", system-ui, sans-serif;
+  --f-mono: var(--font-plex-mono), ui-monospace, "SFMono-Regular", Menlo, monospace;
+
+  --f: 1;
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 280px;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  min-height: 290px;
+  border-radius: 14px;
+  overflow: hidden;
+  color: var(--paper);
+  background:
+    linear-gradient(var(--grid) 1px, transparent 1px) 0 0 / 32px 32px,
+    linear-gradient(90deg, var(--grid) 1px, transparent 1px) 0 0 / 32px 32px,
+    linear-gradient(160deg, var(--card) 0%, var(--card-deep) 100%);
+  box-shadow: 0 18px 40px -22px rgba(10, 31, 56, 0.6);
+  isolation: isolate;
+
+  /* En el prototipo el banner heredaba esto del body; aquí se fija para no tomar lo de la tienda. */
+  font-family: var(--f-display);
+  line-height: normal;
+  -webkit-font-smoothing: auto;
+  -moz-osx-font-smoothing: auto;
+  text-rendering: auto;
+  -webkit-tap-highlight-color: transparent;
+}
+.copy {
+  padding: 36px 8px 36px 44px;
+  display: grid;
+  gap: 14px;
+  justify-items: start;
+  position: relative;
+  z-index: 2;
+  min-width: 0;
+}
+.rule {
+  width: 46px;
+  height: 4px;
+  background: var(--signal);
+  border-radius: 2px;
+}
+.copy h2 {
+  margin: 4px 0 0;
+  font-weight: 700;
+  font-size: 34px;
+  line-height: 1.1;
+  letter-spacing: 0.01em;
+  text-wrap: balance;
+}
+.copy p {
+  margin: 0;
+  font-size: 16px;
+  line-height: 1.55;
+  color: var(--muted);
+  max-width: 34ch;
+  /* La tienda pone text-wrap: pretty a todo <p>; el prototipo no. */
+  text-wrap: wrap;
+}
+.btn {
+  margin-top: 10px;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: #fff;
+  color: var(--navy);
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 15px;
+  padding: 13px 22px;
+  border-radius: 8px;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+.btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px -8px rgba(0, 0, 0, 0.5);
+}
+.btn:focus-visible {
+  outline: 2px solid var(--signal);
+  outline-offset: 3px;
+}
+.btn svg {
+  width: 14px;
+  height: 14px;
+}
+
+.art {
+  position: relative;
+  height: 290px;
+}
+.art svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+.blueprint {
+  opacity: var(--f);
+}
+.blueprint text {
+  font-family: var(--f-mono);
+  font-size: 9px;
+  fill: var(--trace);
+  letter-spacing: 0.06em;
+}
+.art svg.scene {
+  overflow: visible;
+  z-index: 1;
+}
+
+@container (max-width: 560px) {
+  .banner {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .art {
+    order: -1;
+    height: 230px;
+  }
+  .copy {
+    padding: 0 24px 28px;
+  }
+  .copy h2 {
+    font-size: 28px;
+  }
+}

@@ -38,6 +38,10 @@
   gap: 20px;
   width: 100%;
 }
+/* El banner del casco mide como su prototipo: hasta 620px. */
+.banner {
+  width: min(620px, 100%);
+}
 .hint {
   font-size: 12px;
   letter-spacing: 0.08em;
