@@ -85,6 +85,10 @@
   --animate-pop: ico-pop 0.45s cubic-bezier(0.16, 1, 0.3, 1);
   /* Protagonista de un banner que flota sin girar (rotomartillo de "Herramientas que rinden"). */
   --animate-levitar: levitar 6s ease-in-out infinite;
+  /* Banner "Renueva tus espacios" del inicio: franja de pintura que se revela de izquierda a derecha y rodillo que
+     la recorre (las dos con la misma curva para ir juntos) y se retira al terminar. */
+  --animate-pintar: pintar 1.15s cubic-bezier(0.65, 0, 0.35, 1) both;
+  --animate-pasada-rodillo: pasada-rodillo 1.15s cubic-bezier(0.65, 0, 0.35, 1) both;
 
   @keyframes aparecer {
     from {
@@ -161,6 +165,29 @@
   @keyframes levitar {
     50% {
       transform: translateY(-10px);
+    }
+  }
+  @keyframes pintar {
+    from {
+      clip-path: inset(0 100% 0 0);
+    }
+    to {
+      clip-path: inset(0 0 0 0);
+    }
+  }
+  /* --desde y --hasta los define quien la usa (posiciones del rodillo al empezar y al terminar). */
+  @keyframes pasada-rodillo {
+    from {
+      opacity: 0;
+      transform: translateX(var(--desde));
+    }
+    8%,
+    82% {
+      opacity: 1;
+    }
+    to {
+      opacity: 0;
+      transform: translateX(var(--hasta));
     }
   }
   /* Brillo que recorre una franja (filete rojo del footer) de izquierda a derecha. */

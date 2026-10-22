@@ -5,6 +5,8 @@ import type { ReactNode } from "react";
 import Plano from "@/components/icons/pico/Plano";
 import type { BannerInicio as DatosBanner, VarianteBanner } from "./contenidoInicio";
 import HerramientasAsomadas from "./HerramientasAsomadas";
+import ObraEnConcreto from "./ObraEnConcreto";
+import PinturaEnMovimiento from "./PinturaEnMovimiento";
 
 type Props = {
   banner: DatosBanner;
@@ -114,8 +116,12 @@ export default function BannerInicio({ banner, sizes, tamano = "normal", priorit
               />
             </span>
           )}
-          {/* Herramientas reales que asoman por los bordes y rotomartillo flotante, solo en el banner de herramientas del carrusel. */}
+          {/* Placa amarilla con el rotomartillo flotante, solo en el banner de herramientas del carrusel. */}
           {grande && banner.id === "herramientas" && <HerramientasAsomadas />}
+          {/* Placa de concreto con la paleta de bloques flotante, solo en el banner de construcción del carrusel. */}
+          {grande && banner.id === "obra" && <ObraEnConcreto prioritario={prioritario} />}
+          {/* Pared blanca con un rodillo que pinta una franja de color, solo en el banner de pinturas del carrusel. */}
+          {grande && banner.id === "pinturas" && <PinturaEnMovimiento />}
           {grande && banner.tituloPartes ? (
             // Título en dos tiempos: la frase en una línea y la palabra clave enorme, en mayúsculas, sobre un
             // bloque rojo inclinado (el filete de la marca hecho sello). Al pasar el mouse crecen juntos, barra y palabra,
@@ -123,12 +129,14 @@ export default function BannerInicio({ banner, sizes, tamano = "normal", priorit
             <p className={`relative font-bold ${estilo.titulo}`}>
               <span className="block text-lg leading-none md:text-3xl lg:text-4xl">{banner.tituloPartes[0]}</span>
               <span
-                className={`relative isolate mt-2 inline-block origin-left px-2.5 pt-1 leading-[0.92] tracking-[-0.02em] text-pico-blanco uppercase transition-transform duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] motion-safe:group-hover:scale-[1.08] md:mt-3 md:px-4 ${
+                className={`relative isolate mt-2 inline-block origin-left px-2.5 pt-1 leading-[0.92] tracking-[-0.02em] text-[var(--color-sello-texto,var(--color-pico-blanco))] uppercase transition-transform duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] motion-safe:group-hover:scale-[1.08] md:mt-3 md:px-4 ${
                   banner.tituloPartes[1].length > 8 ? "text-3xl md:text-5xl lg:text-6xl" : "text-5xl md:text-7xl lg:text-8xl"
                 }`}
               >
+                {/* Rojo de la marca con letra blanca, salvo que el banner defina --color-sello y --color-sello-texto
+                    (pinturas: sello blanco con la palabra en el color de la pintura de turno). */}
                 <span
-                  className="absolute inset-0 -z-10 -skew-x-12 rounded-sm bg-pico-rojo shadow-boton-hover"
+                  className="absolute inset-0 -z-10 -skew-x-12 rounded-sm bg-[var(--color-sello,var(--color-pico-rojo))] shadow-boton-hover transition-colors duration-500"
                   aria-hidden
                 />
                 {banner.tituloPartes[1]}

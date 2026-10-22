@@ -1,0 +1,57 @@
+/* Página de prueba /demo-tarjeta: el <body> y .stage del prototipo tarjeta-electricidad-linea.html, tal cual. */
+
+.pagina {
+  --ink: #0b1d33;
+  --paper: #f3f6fa;
+  --muted: #a9bad0;
+  --f-mono: var(--font-plex-mono), ui-monospace, "SFMono-Regular", Menlo, monospace;
+  color-scheme: dark;
+  /* El prototipo no le quitaba al body el margen de 8px del navegador (pintado con el mismo fondo). Aquí es un borde
+     de 8px del mismo color: deja la tarjeta en el mismo sitio sin mostrar el gris de la tienda. */
+  border: 8px solid var(--ink);
+  min-height: calc(100dvh + 16px);
+  background: var(--ink);
+  color: var(--paper);
+  font-family: var(--f-mono);
+  line-height: normal;
+  -webkit-font-smoothing: auto;
+  -moz-osx-font-smoothing: auto;
+  text-rendering: auto;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 32px;
+  box-sizing: border-box;
+  display: grid;
+  place-items: center;
+}
+.stage {
+  display: grid;
+  gap: 20px;
+  justify-items: center;
+  width: 100%;
+}
+/* Las tarjetas lado a lado (en el teléfono, una debajo de la otra), con el mismo espacio que el prototipo. */
+.tarjetas {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 20px;
+  width: 100%;
+}
+/* El banner del casco mide como su prototipo: hasta 620px. */
+.banner {
+  width: min(620px, 100%);
+}
+.hint {
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin: 0;
+  text-align: center;
+  text-wrap: wrap;
+}
+.hint b {
+  color: var(--paper);
+  font-weight: 500;
+}

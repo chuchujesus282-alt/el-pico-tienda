@@ -1,6 +1,4 @@
-import IconoBloques from "@/components/icons/pico/IconoBloques";
 import IconoCasco from "@/components/icons/pico/IconoCasco";
-import IconoRodillo from "@/components/icons/pico/IconoRodillo";
 import IconoTornillo from "@/components/icons/pico/IconoTornillo";
 import type { ComponenteIcono } from "@/types/icono";
 import type { Banner, Producto } from "@/types/catalogo";
@@ -42,11 +40,12 @@ export const bannersPrincipales: BannerInicio[] = [
     imagen: null,
     alt: "Materiales de construcción en El Pico",
     href: "/categoria/construccion",
-    titulo: "Todo para tu obra en un solo lugar",
+    titulo: "Materiales para construir",
+    tituloPartes: ["Materiales para", "construir"],
     texto: "Cemento, bloques, pegos y más para construir sin paradas.",
     textoBoton: "Ver materiales",
     variante: "azul",
-    icono: IconoBloques,
+    // Sin ícono: en su lugar flota la paleta de bloques real sobre concreto (ObraEnConcreto).
   },
   {
     id: "herramientas",
@@ -66,10 +65,11 @@ export const bannersPrincipales: BannerInicio[] = [
     alt: "Pinturas en El Pico",
     href: "/categoria/pinturas",
     titulo: "Renueva tus espacios",
+    tituloPartes: ["Renueva tus", "espacios"],
     texto: "Pinturas, rodillos y brochas para darle color a tu casa.",
     textoBoton: "Ver pinturas",
-    variante: "azul",
-    icono: IconoRodillo,
+    // Todo el banner es la pared pintada del color de turno; un rodillo la repinta (PinturaEnMovimiento).
+    variante: "oscuro",
   },
 ];
 
@@ -82,8 +82,9 @@ export const bannersPromocionales: BannerInicio[] = [
     imagen: null,
     alt: "Seguridad industrial en El Pico",
     href: "/categoria/seguridad-industrial",
-    titulo: "Trabaja protegido",
-    texto: "Cascos, guantes, botas y mascarillas de seguridad industrial.",
+    // Se muestra con BannerTrabajaProtegido (el casco al que le caen cosas). El título es el nombre de la categoría.
+    titulo: "Seguridad industrial",
+    texto: "Cascos, guantes, botas y mascarillas.",
     textoBoton: "Ver seguridad",
     variante: "azul",
     icono: IconoCasco,

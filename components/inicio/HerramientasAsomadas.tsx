@@ -1,87 +1,15 @@
-"use client";
-
 import Image from "next/image";
-import { useEffect, useRef, useState } from "react";
 import { Montanas } from "@/components/layout/Logo";
 import type { CSSProperties } from "react";
 
-// Herramientas reales que asoman por los cuatro bordes del
-// banner "Herramientas que rinden" del carrusel, alrededor de un rotomartillo real que flota a la derecha (en lugar
-// del taladro de línea), sobre una cuadrícula tenue y un resplandor rojo. Solo la monta BannerInicio cuando
-// banner.id === "herramientas".
-// Fotos HD generadas con Higgsfield (GPT Image 2.5, calidad alta, 2K, fondo transparente) en public/herramientas/.
+// Escena del banner "Herramientas que rinden" del carrusel: un rotomartillo real que flota a la derecha sobre una
+// placa amarilla de obra, con una cuadrícula tenue. Solo la monta BannerInicio cuando banner.id === "herramientas".
+// Foto HD generada con Higgsfield (GPT Image 2.5, calidad alta, 2K, fondo transparente) en public/herramientas/.
 //
-// - Escritorio: entran al pasar el cursor (group-hover del enlace del banner), una tras otra con un rebote
-//   suave; se mecen mientras el cursor sigue encima y vuelven a salir al quitarlo. El carrusel ya se pausa solo
-//   con el cursor encima.
-// - Celular (sin hover): entran UNA sola vez cuando el banner se ve en pantalla y se quedan asomadas; el toque
-//   sigue llevando a la categoría. En el celular solo salen las marcadas `movil`.
-// - Movimiento reducido: aparecen ya en su sitio, sin desplazarse ni mecerse.
-// - Las fotos no se descargan hasta que el banner se ve en pantalla.
+// - Escritorio: al pasar el cursor el rotomartillo crece un poco y señala sus partes (desde 1280px).
+// - Movimiento reducido: queda quieto.
 
-type Borde = "arriba" | "abajo" | "izquierda" | "derecha";
-
-/** Tamaño real de cada foto (para next/image): HD, el lado mayor mide 640 px. */
-const FOTOS = {
-  taladro: [515, 640],
-  martillo: [640, 602],
-  "llave-ajustable": [640, 606],
-  destornillador: [640, 575],
-  serrucho: [640, 507],
-  "cinta-metrica": [640, 519],
-  alicate: [236, 640],
-  esmeril: [640, 308],
-  nivel: [640, 580],
-  rodillo: [563, 640],
-  brocha: [635, 640],
-  palustre: [640, 587],
-  cuter: [640, 532],
-  "llave-tubo": [640, 611],
-  "caja-herramientas": [640, 455],
-} as const;
-
-type Pieza = {
-  foto: keyof typeof FOTOS;
-  borde: Borde;
-  /** Posición a lo largo del borde, en % (de izquierda a derecha, o de arriba abajo). */
-  en: number;
-  /** Ancho en escritorio, en px (en tableta y celular se reduce con --escala). */
-  tam: number;
-  giro: number;
-  /** Fracción de la herramienta que queda dentro del banner (0–1). */
-  asoma: number;
-  /** Más pequeña, desenfocada y tenue para dar profundidad. */
-  fondo?: boolean;
-  /** También sale en el celular (ahí solo van unas pocas, para no tapar el título ni el rotomartillo). */
-  movil?: boolean;
-  /** Solo desde 1280px (en pantallas más angostas el rotomartillo llega hasta su borde). */
-  soloAncho?: boolean;
-};
-
-// Reparto EQUITATIVO alrededor de todo el recuadro, con espacios calculados, y nunca sobre el rotomartillo (que
-// ocupa del 57% al 93% del ancho) ni sobre sus etiquetas, el texto o las flechas del carrusel:
-// - Arriba: 5 piezas del 4% al 48%, cada 11%.
-// - Abajo: 4 piezas intercaladas con las de arriba (9,5 · 21 · 32,5 · 44%), así no se alinean.
-// - Izquierda: 2 piezas al 25% y 75% del alto (la flecha va al 50%).
-// - Derecha: 1 pieza al 20% del alto, sobre el rotomartillo (la flecha va al 50% y la etiqueta "Batería" al ~78%).
-// Todas entran desenfocadas (el rotomartillo, nítido, es el foco). Si cambias una, respeta esas distancias.
-const PIEZAS: Pieza[] = [
-  { foto: "brocha", borde: "arriba", en: 4, tam: 130, giro: 140, asoma: 0.36, fondo: true },
-  { foto: "taladro", borde: "arriba", en: 15, tam: 135, giro: 168, asoma: 0.34, fondo: true },
-  { foto: "rodillo", borde: "arriba", en: 26, tam: 125, giro: 160, asoma: 0.36, fondo: true },
-  { foto: "serrucho", borde: "arriba", en: 37, tam: 135, giro: 200, asoma: 0.34, fondo: true },
-  { foto: "cuter", borde: "arriba", en: 48, tam: 125, giro: 200, asoma: 0.36, fondo: true },
-  { foto: "cinta-metrica", borde: "abajo", en: 9.5, tam: 150, giro: 14, asoma: 0.42, fondo: true, movil: true },
-  { foto: "destornillador", borde: "abajo", en: 21, tam: 150, giro: -62, asoma: 0.36, fondo: true },
-  { foto: "llave-tubo", borde: "abajo", en: 32.5, tam: 160, giro: 26, asoma: 0.38, fondo: true, movil: true },
-  { foto: "alicate", borde: "abajo", en: 44, tam: 140, giro: 16, asoma: 0.36, fondo: true },
-  { foto: "llave-ajustable", borde: "izquierda", en: 25, tam: 160, giro: 32, asoma: 0.34, fondo: true },
-  { foto: "palustre", borde: "izquierda", en: 75, tam: 160, giro: -30, asoma: 0.34, fondo: true },
-  { foto: "esmeril", borde: "derecha", en: 20, tam: 200, giro: -24, asoma: 0.32, fondo: true, soloAncho: true },
-];
 const COLUMNA = { izquierda: 2, derecha: 104 };
-
-const RETRASO_MS = 28;
 
 /**
  * Partes del rotomartillo que se señalan al pasar el cursor. x/y: el punto, en % de su imagen. columna: dónde
@@ -93,26 +21,6 @@ const SENALES: { texto: string; x: number; y: number; lado: "izquierda" | "derec
   { texto: "Empuñadura auxiliar", x: 45, y: 58, lado: "izquierda" },
   { texto: "Batería", x: 77, y: 89, lado: "derecha" },
 ];
-
-/**
- * Transformación fuera del banner (escondida) y asomada, según el borde por el que entra. Afuera va más
- * pequeña y girada de más: al entrar "se clava" en su sitio con un giro corto, no solo se desliza.
- */
-function transformaciones({ borde, giro, asoma }: Pieza, i: number) {
-  const dentro = `${((1 - asoma) * 100).toFixed(1)}%`;
-  const r = `rotate(${giro}deg)`;
-  const rFuera = `rotate(${giro + (i % 2 ? 38 : -38)}deg) scale(0.7)`;
-  switch (borde) {
-    case "arriba":
-      return { fuera: `translate(-50%, -150%) ${rFuera}`, asomada: `translate(-50%, -${dentro}) ${r}` };
-    case "abajo":
-      return { fuera: `translate(-50%, 150%) ${rFuera}`, asomada: `translate(-50%, ${dentro}) ${r}` };
-    case "izquierda":
-      return { fuera: `translate(-150%, -50%) ${rFuera}`, asomada: `translate(-${dentro}, -50%) ${r}` };
-    case "derecha":
-      return { fuera: `translate(150%, -50%) ${rFuera}`, asomada: `translate(${dentro}, -50%) ${r}` };
-  }
-}
 
 // Cuadrícula técnica (plano de taller). Escrita completa para que Tailwind la encuentre.
 const CUADRICULA_BLANCA =
@@ -141,93 +49,14 @@ function FondoTaller() {
   );
 }
 
-function posicion({ borde, en }: Pieza): CSSProperties {
-  if (borde === "arriba") return { top: 0, left: `${en}%` };
-  if (borde === "abajo") return { bottom: 0, left: `${en}%` };
-  if (borde === "izquierda") return { left: 0, top: `${en}%` };
-  return { right: 0, top: `${en}%` };
-}
-
 export default function HerramientasAsomadas() {
-  const capa = useRef<HTMLDivElement>(null);
-  // visible: el banner ya se vio en pantalla (se descargan las fotos). asomadas: en celular, entran solas una vez.
-  const [visible, setVisible] = useState(false);
-  const [asomadas, setAsomadas] = useState(false);
-
-  useEffect(() => {
-    const el = capa.current;
-    if (!el) return;
-    // El carrusel recorta con overflow:hidden: un banner que no es el actual no cuenta como visible.
-    const observador = new IntersectionObserver(
-      ([entrada]) => {
-        if (!entrada.isIntersecting) return;
-        setVisible(true);
-        if (window.matchMedia("(hover: none)").matches) {
-          setAsomadas(true);
-          observador.disconnect();
-        }
-      },
-      { threshold: 0.6 },
-    );
-    observador.observe(el);
-    return () => observador.disconnect();
-  }, []);
-
   return (
-    <div
-      ref={capa}
-      data-asomadas={asomadas ? "si" : undefined}
-      className="group/capa pointer-events-none absolute inset-0 [--escala:0.45] md:[--escala:0.62] lg:[--escala:0.8] xl:[--escala:0.92] 2xl:[--escala:1]"
-      aria-hidden
-    >
+    <div className="pointer-events-none absolute inset-0" aria-hidden>
       <FondoTaller />
 
-      {visible &&
-        PIEZAS.map((pieza, i) => {
-          const [ancho, alto] = FOTOS[pieza.foto];
-          const { fuera, asomada } = transformaciones(pieza, i);
-          return (
-            <span
-              key={pieza.foto}
-              style={
-                {
-                  ...posicion(pieza),
-                  width: `calc(${pieza.tam}px * var(--escala))`,
-                  "--fuera": fuera,
-                  "--asomada": asomada,
-                  "--retraso": `${i * RETRASO_MS}ms`,
-                } as CSSProperties
-              }
-              // Escondida fuera del borde; al pasar el cursor (o en celular, al verse) entra rápido, girando y con un
-              // rebote corto, una tras otra. Al salir, todas a la vez. Con movimiento reducido solo aparece en su sitio.
-              className={`absolute block opacity-0 [transform:var(--fuera)] transition-[transform,opacity] duration-250 ease-in [transition-delay:0ms] group-hover:opacity-100 group-hover:[transform:var(--asomada)] group-hover:duration-450 group-hover:ease-[cubic-bezier(0.34,1.56,0.64,1)] group-hover:[transition-delay:var(--retraso)] group-data-[asomadas=si]/capa:opacity-100 group-data-[asomadas=si]/capa:[transform:var(--asomada)] group-data-[asomadas=si]/capa:duration-450 group-data-[asomadas=si]/capa:ease-[cubic-bezier(0.34,1.56,0.64,1)] group-data-[asomadas=si]/capa:[transition-delay:var(--retraso)] motion-reduce:[transform:var(--asomada)] motion-reduce:transition-opacity motion-reduce:duration-200 ${
-                pieza.soloAncho ? "hidden xl:block" : pieza.movil ? "" : "hidden md:block"
-              }`}
-            >
-              {/* Vaivén muy suave mientras están asomadas (pausado cuando están escondidas). */}
-              <span
-                className="block [animation-play-state:paused] group-hover:[animation-play-state:running] group-data-[asomadas=si]/capa:[animation-play-state:running] motion-safe:animate-flotar"
-                style={{ animationDelay: `-${(i * 0.7).toFixed(1)}s`, animationDuration: `${5 + (i % 4)}s` }}
-              >
-                <Image
-                  src={`/herramientas/${pieza.foto}.webp`}
-                  alt=""
-                  width={ancho}
-                  height={alto}
-                  sizes={`(min-width: 1536px) ${pieza.tam}px, (min-width: 1280px) ${Math.round(pieza.tam * 0.92)}px, (min-width: 1024px) ${Math.round(pieza.tam * 0.8)}px, (min-width: 768px) ${Math.round(pieza.tam * 0.62)}px, ${Math.round(pieza.tam * 0.45)}px`}
-                  className={`h-auto w-full drop-shadow-xl drop-shadow-pico-azul-oscuro/60 ${pieza.fondo ? "opacity-90 blur-[1.5px]" : ""}`}
-                />
-              </span>
-            </span>
-          );
-        })}
-
-      {/* Velo azul sobre las herramientas de la izquierda: el título, el texto y el botón siempre se leen. */}
-      <div className="absolute inset-y-0 left-0 w-[80%] bg-gradient-to-r from-pico-azul-oscuro/55 via-pico-azul-oscuro/25 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100 group-data-[asomadas=si]/capa:opacity-100 md:w-[52%]" />
-
-      {/* Protagonista: un rotomartillo real que flota a la derecha (reemplaza al taladro de línea). Se ve siempre;
-          al pasar el cursor crece un poco mientras las demás herramientas asoman alrededor. Flota solo en vertical
-          y los señaladores van DENTRO de lo que flota: así los puntos no se despegan de las piezas. */}
+      {/* Protagonista: un rotomartillo real que flota a la derecha. Se ve siempre; al pasar el cursor crece un poco.
+          Flota solo en vertical y los señaladores van DENTRO de lo que flota: así los puntos no se despegan de las
+          piezas. */}
       <div className="absolute top-1/2 right-[3%] w-[36%] max-w-[28rem] -translate-y-1/2 transition-transform duration-700 ease-[cubic-bezier(0.34,1.45,0.64,1)] group-hover:scale-[1.04] motion-reduce:transition-none md:right-[2%] md:w-[30%] lg:right-[7%] lg:w-[25%] xl:right-[8%] xl:w-[30%]">
         {/* Sombra en el "piso", para que se note que flota. */}
         <span className="absolute -bottom-[8%] left-1/2 h-[9%] w-[55%] -translate-x-1/2 rounded-chip bg-pico-azul-oscuro/45 blur-xl" />
