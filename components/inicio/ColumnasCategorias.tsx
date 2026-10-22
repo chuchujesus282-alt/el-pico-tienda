@@ -12,10 +12,14 @@ import { columnasCategorias } from "./contenidoInicio";
 const CUADRICULA =
   "bg-[linear-gradient(var(--color-pico-blanco)_1px,transparent_1px),linear-gradient(90deg,var(--color-pico-blanco)_1px,transparent_1px)] bg-[size:32px_32px]";
 
+// Las tarjetas animadas se levantan al pasar el mouse igual que las columnas (`Columna`).
+const LEVANTAR = "transition duration-300 ease-(--curva-suave) motion-safe:hover:-translate-y-1";
+
 /**
  * "Más categorías": las categorías que no tienen banner en el inicio, en columnas verticales (más altas que una
  * tarjeta de producto) para darle verticalidad a la página. 2×2 hasta 1024px (en tableta, 4 en fila quedan
- * demasiado angostas) y una fila de 4 desde ahí.
+ * demasiado angostas) y una fila de 4 desde ahí. Todas en 320:420, la proporción de las tarjetas animadas, para que
+ * midan lo mismo.
  * Foto y texto de cada una en `columnasCategorias`; sin foto, el plano técnico de su ícono sobre azul.
  */
 export default function ColumnasCategorias({ categorias }: { categorias: Categoria[] }) {
@@ -29,20 +33,24 @@ export default function ColumnasCategorias({ categorias }: { categorias: Categor
           <li key={categoria.slug}>
             {categoria.slug === "electricidad" ? (
               // Tarjeta aprobada (bombillo de línea que se enrosca y prende), escalada al ancho de la columna.
-              <CategoryCardElectricidad
-                titulo={categoria.nombre}
-                descripcion={columnasCategorias[categoria.slug]?.texto}
-                href={`/categoria/${categoria.slug}`}
-                escalar
-              />
+              <div className={LEVANTAR}>
+                <CategoryCardElectricidad
+                  titulo={categoria.nombre}
+                  descripcion={columnasCategorias[categoria.slug]?.texto}
+                  href={`/categoria/${categoria.slug}`}
+                  escalar
+                />
+              </div>
             ) : categoria.slug === "plomeria" ? (
               // Tarjeta aprobada (tubería de línea que se arma y por la que corre el agua), escalada al ancho de la columna.
-              <CategoryCardPlomeria
-                titulo={categoria.nombre}
-                descripcion={columnasCategorias[categoria.slug]?.texto}
-                href={`/categoria/${categoria.slug}`}
-                escalar
-              />
+              <div className={LEVANTAR}>
+                <CategoryCardPlomeria
+                  titulo={categoria.nombre}
+                  descripcion={columnasCategorias[categoria.slug]?.texto}
+                  href={`/categoria/${categoria.slug}`}
+                  escalar
+                />
+              </div>
             ) : (
               <Columna categoria={categoria} />
             )}
@@ -60,7 +68,7 @@ function Columna({ categoria }: { categoria: Categoria }) {
   return (
     <Link
       href={`/categoria/${categoria.slug}`}
-      className="group grupo-icono relative flex aspect-[4/5] flex-col justify-end overflow-hidden rounded-banner bg-gradient-to-b from-pico-azul to-pico-azul-oscuro shadow-tarjeta transition duration-300 ease-(--curva-suave) hover:shadow-tarjeta-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-pico-azul motion-safe:hover:-translate-y-1 lg:aspect-[3/4]"
+      className="group grupo-icono relative flex aspect-[320/420] flex-col justify-end overflow-hidden rounded-banner bg-gradient-to-b from-pico-azul to-pico-azul-oscuro shadow-tarjeta transition duration-300 ease-(--curva-suave) hover:shadow-tarjeta-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-pico-azul motion-safe:hover:-translate-y-1"
     >
       {imagen ? (
         <Image

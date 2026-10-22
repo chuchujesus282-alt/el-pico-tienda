@@ -10,8 +10,9 @@ import styles from "./CategoryCardElectricidad.module.css";
 // state(t), curvas, parpadeo, bucle, colores y CSS sin cambios. Reemplaza a la versión 3D (Three.js + GSAP).
 // Al pasar el mouse (o con el foco del teclado) baja el portalámparas, el bombillo se voltea, se enrosca y prende con
 // un parpadeo; en el teléfono, cada toque enciende o apaga.
-// Diferencias con el prototipo, acordadas: la tarjeta ya no es un enlace; el enlace es "Ver categoría →" (<Link>),
-// que enciende la tarjeta al recibir el foco y lleva a la categoría; sin window.__demo ni el texto de ayuda de arriba.
+// Diferencias con el prototipo, acordadas: toda la tarjeta es un <Link> que sí navega (en el teléfono el 1er toque
+// enciende y el 2º entra); cuadrícula de plano en el fondo, como la de Plomería; sin window.__demo ni el texto de
+// ayuda de arriba.
 
 type Props = {
   titulo?: string;
@@ -100,7 +101,7 @@ export default function CategoryCardElectricidad({
   const uid = useId().replace(/[^a-zA-Z0-9_-]/g, "");
   const ids = { glassOn: `glassOn-${uid}`, haloGrad: `haloGrad-${uid}`, blur3: `blur3-${uid}`, blur2: `blur2-${uid}` };
 
-  const cardRef = useRef<HTMLDivElement>(null);
+  const cardRef = useRef<HTMLAnchorElement>(null);
   const bulbRef = useRef<SVGGElement>(null);
   const socketRef = useRef<SVGGElement>(null);
   const filRef = useRef<SVGGElement>(null);
@@ -154,17 +155,14 @@ export default function CategoryCardElectricidad({
     }
 
     const finePointer = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
-    // Foco: el que entra es el de "Ver categoría" (focusin/focusout suben desde el enlace). Se apaga solo si el foco
-    // sale de la tarjeta.
     const onFocusOut = (e: FocusEvent) => {
       if (!card.contains(e.relatedTarget as Node | null)) turnOff();
     };
-    // Teléfono: cada toque enciende o apaga (como el prototipo). El toque en "Ver categoría" navega.
+    // Teléfono: el primer toque enciende; con la tarjeta encendida, el toque lleva a la categoría.
     const onClick = (e: MouseEvent) => {
-      if ((e.target as Element).closest("a")) return;
-      if (!finePointer) {
-        if (on) turnOff();
-        else turnOn();
+      if (!finePointer && !on) {
+        e.preventDefault();
+        turnOn();
       }
     };
     card.addEventListener("mouseenter", turnOn);
@@ -252,7 +250,12 @@ export default function CategoryCardElectricidad({
   }, []);
 
   const tarjeta = (
-    <div ref={cardRef} className={`${styles.card} ${escalar ? styles.escalable : ""} ${plexMono.variable}`}>
+    <Link
+      ref={cardRef}
+      href={href}
+      aria-label={`${titulo}: ${enFrase(descripcion)}`}
+      className={`${styles.card} ${escalar ? styles.escalable : ""} ${plexMono.variable}`}
+    >
       <div className={styles.dim} />
       <div className={styles.glow} />
 
@@ -391,11 +394,11 @@ export default function CategoryCardElectricidad({
         <div className={styles.rule} />
         <h2>{titulo}</h2>
         <p>{descripcion}</p>
-        <Link href={href} className={styles.cta} aria-label={`${titulo}: ${enFrase(descripcion)}`}>
+        <div className={styles.cta}>
           Ver categoría <span>→</span>
-        </Link>
+        </div>
       </div>
-    </div>
+    </Link>
   );
 
   // Para escalar, el ancho de referencia (100cqw) es el de este contenedor.
