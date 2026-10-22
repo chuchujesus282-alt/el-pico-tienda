@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useEffect, useId, useRef } from "react";
 import { plexMono } from "./fuentes";
+import { animarAlDesplazar } from "./tactil";
 import styles from "./CategoryCardPlomeria.module.css";
 
 // Tarjeta de categoría "Plomería", versión de LÍNEA: la tubería es un ícono de línea en SVG animado con JavaScript
@@ -10,10 +11,10 @@ import styles from "./CategoryCardPlomeria.module.css";
 // y colores sin cambios.
 // Al pasar el mouse (o con el foco del teclado) el codo se pega a la pared izquierda, las piezas entran de una en una
 // por la derecha, se abren las dos llaves y el agua recorre la red; al salir, todo se revierte.
-// Diferencias con el prototipo, acordadas: toda la tarjeta es un <Link> que sí navega (en el teléfono el 1er toque
-// arma y el 2º entra); en reposo el codo va CODO_REPOSO veces más grande (del tamaño del bombillo de Electricidad) y
-// las cotas del plano con él; al pegarse a la pared vuelve a su tamaño, así la red armada queda igual. Sin
-// window.__demo ni el texto de ayuda de arriba.
+// Diferencias con el prototipo, acordadas: toda la tarjeta es un <Link> que sí navega (en el teléfono anima el toque
+// que desplaza la página, ver tactil.ts); en reposo el codo va CODO_REPOSO veces más grande (del tamaño del bombillo
+// de Electricidad) y las cotas del plano con él; al pegarse a la pared vuelve a su tamaño, así la red armada queda
+// igual. Sin window.__demo ni el texto de ayuda de arriba.
 
 type Props = {
   titulo?: string;
@@ -131,18 +132,18 @@ export default function CategoryCardPlomeria({
     const onFocusOut = (e: FocusEvent) => {
       if (!card.contains(e.relatedTarget as Node | null)) turnOff();
     };
-    // Teléfono: el primer toque arma; con la tarjeta armada, el toque lleva a la categoría.
-    const onClick = (e: MouseEvent) => {
-      if (!finePointer && !on) {
-        e.preventDefault();
-        turnOn();
-      }
+    // Foco: solo el del teclado anima (en el teléfono, el toque también enfoca el enlace).
+    const onFocusIn = () => {
+      if (card.matches(":focus-visible")) turnOn();
     };
-    card.addEventListener("mouseenter", turnOn);
-    card.addEventListener("mouseleave", turnOff);
-    card.addEventListener("focusin", turnOn);
+    card.addEventListener("focusin", onFocusIn);
     card.addEventListener("focusout", onFocusOut);
-    card.addEventListener("click", onClick);
+    // Escritorio: anima el mouse encima. Teléfono: anima el toque que desplaza la página; el que no, entra sin animar.
+    const quitarTactil = finePointer ? null : animarAlDesplazar(card, turnOn, turnOff);
+    if (finePointer) {
+      card.addEventListener("mouseenter", turnOn);
+      card.addEventListener("mouseleave", turnOff);
+    }
 
     // ---------- bucle ----------
     let last = performance.now();
@@ -190,9 +191,9 @@ export default function CategoryCardPlomeria({
       cancelAnimationFrame(raf);
       card.removeEventListener("mouseenter", turnOn);
       card.removeEventListener("mouseleave", turnOff);
-      card.removeEventListener("focusin", turnOn);
+      card.removeEventListener("focusin", onFocusIn);
       card.removeEventListener("focusout", onFocusOut);
-      card.removeEventListener("click", onClick);
+      quitarTactil?.();
       card.classList.remove(styles.on);
       card.style.removeProperty("--f");
     };

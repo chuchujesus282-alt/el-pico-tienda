@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useEffect, useId, useRef } from "react";
 import { plexMono } from "./fuentes";
+import { animarAlDesplazar } from "./tactil";
 import styles from "./CategoryCardJardin.module.css";
 
 // Tarjeta de categoría "Hogar y jardín", versión de LÍNEA: la pala es un ícono de línea en SVG animado con JavaScript
@@ -12,8 +13,8 @@ import styles from "./CategoryCardJardin.module.css";
 // da tres paladas lanzando terrones arriba a la izquierda (la montaña baja con cada una) y se clava en el suelo. Al
 // salir NO se rebobina: la pala vuelve directo al centro y la escena se retira.
 // Diferencias con el prototipo, las mismas que en Electricidad y Plomería: toda la tarjeta es un <Link> que sí navega
-// (en el teléfono el 1er toque anima y el 2º entra) y la cuadrícula se difumina bajo el texto; sin window.__demo ni el
-// texto de ayuda de arriba.
+// (en el teléfono anima el toque que desplaza la página, ver tactil.ts) y la cuadrícula se difumina bajo el texto;
+// sin window.__demo ni el texto de ayuda de arriba.
 
 type Props = {
   titulo?: string;
@@ -254,18 +255,18 @@ export default function CategoryCardJardin({
     const onFocusOut = (e: FocusEvent) => {
       if (!card.contains(e.relatedTarget as Node | null)) turnOff();
     };
-    // Teléfono: el primer toque anima; con la animación en marcha, el toque lleva a la categoría.
-    const onClick = (e: MouseEvent) => {
-      if (!finePointer && mode !== "forward") {
-        e.preventDefault();
-        turnOn();
-      }
+    // Foco: solo el del teclado anima (en el teléfono, el toque también enfoca el enlace).
+    const onFocusIn = () => {
+      if (card.matches(":focus-visible")) turnOn();
     };
-    card.addEventListener("mouseenter", turnOn);
-    card.addEventListener("mouseleave", turnOff);
-    card.addEventListener("focusin", turnOn);
+    card.addEventListener("focusin", onFocusIn);
     card.addEventListener("focusout", onFocusOut);
-    card.addEventListener("click", onClick);
+    // Escritorio: anima el mouse encima. Teléfono: anima el toque que desplaza la página; el que no, entra sin animar.
+    const quitarTactil = finePointer ? null : animarAlDesplazar(card, turnOn, turnOff);
+    if (finePointer) {
+      card.addEventListener("mouseenter", turnOn);
+      card.addEventListener("mouseleave", turnOff);
+    }
 
     // ---------- bucle ----------
     let last = performance.now();
@@ -346,9 +347,9 @@ export default function CategoryCardJardin({
       cancelAnimationFrame(raf);
       card.removeEventListener("mouseenter", turnOn);
       card.removeEventListener("mouseleave", turnOff);
-      card.removeEventListener("focusin", turnOn);
+      card.removeEventListener("focusin", onFocusIn);
       card.removeEventListener("focusout", onFocusOut);
-      card.removeEventListener("click", onClick);
+      quitarTactil?.();
       for (const c of chunks) c.el.remove();
       chunks.length = 0;
       card.classList.remove(styles.on);
