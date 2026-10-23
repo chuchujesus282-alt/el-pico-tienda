@@ -1,0 +1,158 @@
+/*
+ * Ilustración del banner de Pinturas. Excepción a la regla de tokens del CLAUDE.md (como las tarjetas de categoría):
+ * colores escritos aquí, los del diseño aprobado. `--c` (color activo) y `--f-mono` vienen de BannerPlano.
+ * Activo = clase global `on` en la raíz del banner.
+ */
+
+.svg {
+  --linea: #c3ccd8;
+  --cota: rgba(190, 215, 245, 0.55);
+  font-family: var(--f-mono);
+}
+
+.linea {
+  fill: none;
+  stroke: var(--linea);
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.lineaFina {
+  fill: none;
+  stroke: var(--linea);
+  stroke-width: 1;
+  opacity: 0.6;
+}
+.trama {
+  stroke: rgba(190, 215, 245, 0.28);
+  stroke-width: 1;
+}
+.pisoRayado {
+  fill: none;
+  stroke: rgba(190, 215, 245, 0.35);
+  stroke-width: 1;
+}
+
+/* Muro */
+.rayado {
+  transition: opacity 0.6s ease;
+}
+:global(.on) .rayado {
+  opacity: 0.45;
+}
+.muroBorde {
+  fill: none;
+  stroke: var(--linea);
+  stroke-width: 1.5;
+  stroke-dasharray: 7 5;
+}
+.etiquetaMuro {
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  fill: var(--linea);
+}
+
+/* Cotas: se apagan al activarse. */
+.cota {
+  fill: none;
+  stroke: var(--cota);
+  stroke-width: 1;
+  transition: opacity 0.5s ease;
+}
+.cota text {
+  fill: var(--cota);
+  stroke: none;
+  font-size: 10px;
+  letter-spacing: 0.06em;
+}
+.cota .flecha {
+  fill: #e3262f;
+  stroke: none;
+}
+:global(.on) .cota {
+  opacity: 0.25;
+}
+
+/* Todo lo que es pintura: invisible en reposo. */
+.pintura {
+  opacity: 0;
+  transition:
+    opacity 0.6s ease,
+    fill 0.5s ease;
+}
+.conColor {
+  fill: var(--c);
+}
+:global(.on) .pintura {
+  opacity: 1;
+}
+
+/* Ficha: contorno en reposo, papel con texto oscuro al activarse. */
+.ficha {
+  fill: transparent;
+  stroke: var(--linea);
+  stroke-width: 1.5;
+  transition: fill 0.5s ease;
+}
+:global(.on) .ficha {
+  fill: #f3f6fa;
+}
+.chipBorde {
+  fill: none;
+  stroke: var(--linea);
+  stroke-width: 1;
+  stroke-dasharray: 4 3;
+}
+.fichaTexto {
+  font-size: 9px;
+  letter-spacing: 0.04em;
+  fill: var(--linea);
+  transition: fill 0.5s ease;
+}
+.fichaCodigo {
+  font-weight: 500;
+}
+.fichaNombre {
+  font-family: var(--font-chakra), system-ui, sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+}
+:global(.on) .fichaTexto {
+  fill: #0b1d33;
+}
+
+/* Brocha y mangos */
+.mango {
+  fill: #e3262f;
+  stroke: none;
+}
+.cerdas {
+  fill: #1b2b40;
+  stroke: var(--linea);
+  stroke-width: 1.5;
+  stroke-linejoin: round;
+}
+
+.galonTexto {
+  font-size: 9px;
+  letter-spacing: 0.08em;
+  fill: var(--linea);
+  transition: fill 0.5s ease;
+}
+:global(.on) .galonTexto {
+  fill: #f3f6fa;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pintura,
+  .ficha,
+  .fichaTexto {
+    transition-duration: 0.3s;
+  }
+}
+
+/* La base del muro cambia de color sin transición: se fija justo cuando la capa la cubre entera (si no, parpadea el
+   color anterior). Con "reducir movimiento" el motor le pone su propia transición. */
+.base {
+  transition: opacity 0.6s ease;
+}

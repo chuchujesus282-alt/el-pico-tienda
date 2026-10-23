@@ -5,8 +5,21 @@ import BannerJardin from "./BannerJardin";
 import BannerPinturas from "./BannerPinturas";
 import "./banner.css";
 
+/** Props de un banner que reemplaza al encabezado entero (ej. BannerPinturas, sobre components/categoria/banner-plano/). */
+export type PropsBannerPropio = {
+  nombre: string;
+  tituloPartes: [string, string];
+  texto: string;
+  kicker: string;
+};
+
 type ConfigBanner = {
-  Escena: ComponentType;
+  /** Escena dentro de EncabezadoPagina (banners con fotos). */
+  Escena?: ComponentType;
+  /** Banner "plano técnico" que reemplaza a EncabezadoPagina entero (ruta y h1 incluidos). */
+  Propio?: ComponentType<PropsBannerPropio>;
+  /** Texto chico en mono sobre el título (solo banners propios). */
+  kicker?: string;
   /** Frase + palabra clave sobre el sello rojo (como "Herramientas que RINDEN" del inicio). */
   tituloPartes: [string, string];
   /** Una línea bajo el título. */
@@ -14,12 +27,14 @@ type ConfigBanner = {
 };
 
 /**
- * Banner propio de cada categoría (escena con fotos reales a la derecha del encabezado). Las categorías sin entrada
+ * Banner propio de cada categoría: `Propio` (estilo plano técnico, reemplaza al encabezado; hoy Pinturas) o `Escena`
+ * (fotos reales a la derecha de EncabezadoPagina). Las categorías sin entrada
  * siguen con el plano y su ícono. Para sumar una: su componente en esta carpeta y una línea aquí.
  */
 const BANNERS: Record<string, ConfigBanner> = {
   pinturas: {
-    Escena: BannerPinturas,
+    Propio: BannerPinturas,
+    kicker: "LÁMINA 06 · ACABADOS",
     tituloPartes: ["Dale color con", "Pinturas"],
     texto: "Pinturas, brochas, rodillos y todo para pintar como un profesional.",
   },

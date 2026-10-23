@@ -66,23 +66,32 @@ export default async function PaginaCategoria({ params, searchParams }: PageProp
   );
 
   // Cambia con cada filtro/orden/página: la grilla se vuelve a montar y repite su animación de entrada.
-  // Banner propio de la categoría (fotos reales a la derecha); sin él, el plano con su ícono de siempre.
+  // Banner propio de la categoría (plano técnico que reemplaza al encabezado, o fotos reales a la derecha); sin él, el plano con su ícono de siempre.
   const banner = bannerDeCategoria(slug);
 
   const claveVista = hrefCategoria(slug, estado, { pagina: estado.pagina });
 
   return (
     <div>
-      <EncabezadoPagina
-        etiqueta="Categoría"
-        titulo={categoria.nombre}
-        descripcion={banner?.texto}
-        tituloPartes={banner?.tituloPartes}
-        ruta={[{ texto: categoria.nombre }]}
-        imagen={banner ? null : categoria.banner}
-        icono={iconoDeCategoria(slug)}
-        escena={banner && <banner.Escena />}
-      />
+      {banner?.Propio ? (
+        <banner.Propio
+          nombre={categoria.nombre}
+          tituloPartes={banner.tituloPartes}
+          texto={banner.texto}
+          kicker={banner.kicker ?? ""}
+        />
+      ) : (
+        <EncabezadoPagina
+          etiqueta="Categoría"
+          titulo={categoria.nombre}
+          descripcion={banner?.texto}
+          tituloPartes={banner?.tituloPartes}
+          ruta={[{ texto: categoria.nombre }]}
+          imagen={banner ? null : categoria.banner}
+          icono={iconoDeCategoria(slug)}
+          escena={banner?.Escena && <banner.Escena />}
+        />
+      )}
 
       <Contenedor className="py-6 md:py-10">
         <div className="lg:grid lg:grid-cols-[15rem_minmax(0,1fr)] lg:gap-8">

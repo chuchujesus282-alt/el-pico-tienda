@@ -1,0 +1,289 @@
+/*
+ * Banner de categoría "plano técnico" (base para todas las categorías). Excepción a la regla de tokens del CLAUDE.md,
+ * como en las tarjetas de categoría: los colores van escritos aquí, idénticos al diseño aprobado.
+ * El estado activo es la clase global `on` en la raíz (la ponen BannerPlano y la usan las escenas en su CSS).
+ * `--c` es el color activo: lo cambia el motor de cada escena.
+ */
+
+.banner {
+  --ink: #0b1d33;
+  --paper: #f3f6fa;
+  --muted: #a9bad0;
+  --signal: #e3262f;
+  --grid: rgba(150, 190, 235, 0.1);
+  --f-display: var(--font-chakra), "Rajdhani", "Segoe UI", system-ui, sans-serif;
+  --f-mono: var(--font-plex-mono), ui-monospace, "SFMono-Regular", Menlo, monospace;
+  --c: #a9431e;
+
+  position: relative;
+  isolation: isolate;
+  display: grid;
+  grid-template-columns: 44% 56%;
+  align-items: center;
+  min-height: 260px;
+  border-radius: 16px;
+  overflow: hidden;
+  color: var(--paper);
+  background:
+    linear-gradient(var(--grid) 1px, transparent 1px) 0 0 / 34px 34px,
+    linear-gradient(90deg, var(--grid) 1px, transparent 1px) 0 0 / 34px 34px,
+    linear-gradient(160deg, #0f2a4a, #0a1f38);
+  box-shadow:
+    0 0 0 1px rgba(150, 190, 235, 0.12),
+    0 26px 60px -22px rgba(11, 29, 51, 0.55);
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Brillo del color activo detrás de la ilustración. */
+.brillo {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background: radial-gradient(60% 120% at 72% 55%, color-mix(in srgb, var(--c) 70%, transparent), transparent 70%);
+  opacity: 0;
+  transition: opacity 0.6s ease;
+}
+:global(.on) > .brillo {
+  opacity: 0.55;
+}
+
+/* ---------- columna de texto ---------- */
+.texto {
+  position: relative;
+  min-width: 0;
+  padding: 28px 12px 30px 40px;
+}
+
+.ruta {
+  font-size: 13px;
+  color: rgba(243, 246, 250, 0.7);
+}
+.ruta ol {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px;
+}
+.ruta li {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.ruta a {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  border-radius: 2px;
+  transition: color 0.2s;
+}
+.ruta a:hover {
+  color: var(--paper);
+  text-decoration: underline;
+}
+.ruta a:focus-visible {
+  outline: 2px solid var(--paper);
+  outline-offset: 2px;
+}
+.ruta [aria-current] span {
+  font-weight: 500;
+  color: var(--paper);
+}
+
+.kicker {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 18px;
+  font-family: var(--f-mono);
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  color: var(--muted);
+}
+.kicker::before {
+  content: "";
+  width: 34px;
+  height: 3px;
+  flex: none;
+  background: var(--signal);
+}
+
+.titulo {
+  margin-top: 10px;
+  font-family: var(--f-display);
+  font-weight: 700;
+}
+.frase {
+  display: block;
+  font-size: clamp(1.25rem, 2.6vw, 2.25rem);
+  line-height: 1.05;
+  white-space: nowrap;
+}
+
+/* Etiqueta roja inclinada: el fondo va inclinado y la palabra derecha. */
+.etiqueta {
+  position: relative;
+  display: inline-block;
+  margin-top: 10px;
+  padding: 4px 14px 0;
+}
+.etiquetaFondo {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: 2px;
+  background: var(--signal);
+  transform: skewX(-12deg);
+}
+.palabra {
+  display: block;
+  font-size: clamp(2.2rem, 5.6vw, 4.6rem);
+  line-height: 0.92;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+/* Cuatro gotas del color activo que cuelgan de la etiqueta. */
+.gotas {
+  position: absolute;
+  top: 100%;
+  left: 18%;
+  display: flex;
+  gap: 14%;
+  width: 60%;
+  pointer-events: none;
+}
+.gotas span {
+  width: 7px;
+  height: 0;
+  border-radius: 0 0 4px 4px;
+  background: var(--c);
+  transition:
+    height 0.45s cubic-bezier(0.22, 1, 0.36, 1),
+    background-color 0.5s ease;
+}
+:global(.on) .gotas span {
+  transition:
+    height 0.7s cubic-bezier(0.22, 1, 0.36, 1),
+    background-color 0.5s ease;
+}
+:global(.on) .gotas span:nth-child(1) {
+  height: 14px;
+  transition-delay: 0.05s;
+}
+:global(.on) .gotas span:nth-child(2) {
+  height: 24px;
+  transition-delay: 0.2s;
+}
+:global(.on) .gotas span:nth-child(3) {
+  height: 9px;
+  transition-delay: 0.35s;
+}
+:global(.on) .gotas span:nth-child(4) {
+  height: 18px;
+  transition-delay: 0.5s;
+}
+
+.subtitulo {
+  max-width: 34ch;
+  margin-top: 30px;
+  font-family: var(--f-mono);
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--muted);
+}
+
+/* ---------- ilustración ---------- */
+.ilustracion {
+  position: relative;
+  min-width: 0;
+  align-self: stretch;
+  display: flex;
+  align-items: center;
+  padding: 8px 16px 8px 0;
+}
+.ilustracion > svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-height: 100%;
+  overflow: visible;
+}
+
+.lupa {
+  display: none;
+}
+
+/* ---------- teléfono y tableta: texto arriba, ilustración abajo ---------- */
+@media (max-width: 819.98px) {
+  .banner {
+    grid-template-columns: minmax(0, 1fr);
+    align-items: start;
+  }
+  .texto {
+    padding: 20px 20px 4px;
+  }
+  /* Hasta 210px de alto: el dibujo es apaisado (780×260), así que en el teléfono queda más bajo y sin hueco. */
+  .ilustracion {
+    max-height: 210px;
+    padding: 4px 12px 16px;
+    justify-content: center;
+  }
+  .ilustracion > svg {
+    width: 100%;
+    max-height: 190px;
+  }
+  .frase {
+    font-size: clamp(1.15rem, 4.8vw, 1.9rem);
+  }
+  .palabra {
+    font-size: clamp(2.1rem, 10vw, 3.6rem);
+  }
+  .subtitulo {
+    margin-top: 26px;
+  }
+}
+@media (max-width: 767.98px) {
+  .lupa {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    color: var(--paper);
+    background: rgba(255, 255, 255, 0.1);
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.15);
+  }
+  .lupa:focus-visible {
+    outline: 2px solid var(--paper);
+    outline-offset: 2px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gotas span,
+  :global(.on) .gotas span,
+  .brillo {
+    transition-duration: 0.01s !important;
+    transition-delay: 0s !important;
+  }
+}
+
+@media print {
+  .banner {
+    background: none;
+    color: #111;
+    box-shadow: none;
+  }
+  .ilustracion,
+  .brillo,
+  .lupa {
+    display: none;
+  }
+}
