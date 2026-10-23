@@ -25,8 +25,7 @@ const COLUMNAS: Record<number, string> = {
 };
 
 /**
- * "Más categorías": las categorías que no tienen banner en el inicio (y las marcadas con `aunqueTengaBanner`), en
- * columnas verticales (más altas que una tarjeta de producto) para darle verticalidad a la página. Las columnas
+ * "Más categorías": las categorías que no tienen banner en el inicio, en columnas verticales (más altas que una tarjeta de producto) para darle verticalidad a la página. Las columnas
  * por fila dependen de cuántas son (`COLUMNAS`). Todas en 320:470 (las animadas lo toman de `--alto-tarjeta` en el
  * <li>; su prototipo es 320:420 y el dibujo queda centrado en el alto extra), para que midan lo mismo.
  * Foto y texto de cada una en `columnasCategorias`; sin foto, el plano técnico de su ícono sobre azul.

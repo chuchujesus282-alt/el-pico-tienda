@@ -27,11 +27,14 @@
      obra. Solo para esa placa y su franja de seguridad; el texto encima va en azul marino (≥4,5:1). */
   --color-amarillo-obra: #f2b705;
   --color-amarillo-obra-oscuro: #d99a00;
-  /* Azul cobalto de plano de obra (cianotipo): SOLO para la tira de calculadoras del inicio (paleta ganadora del
-     concurso de colores, "Plano de obra"). Más vivo que el marino de la marca para que no se confunda con el pie. */
-  --color-plano: #164a90;
-  --color-plano-oscuro: #113a74;
-  --color-plano-claro: #184c94;
+  /* Latón y acero del banner de Cerrajería del carrusel (CerraduraSegura): el candado, la bisagra del corte y la
+     placa de acero. Solo para esa escena. */
+  --color-laton: #c9a43a;
+  --color-laton-claro: #f1d98a;
+  --color-laton-oscuro: #86661a;
+  --color-acero: #b4bec9;
+  --color-acero-claro: #eef2f6;
+  --color-acero-oscuro: #6c7886;
   /* Colores de las latas reales del banner de Pinturas (public/banners/pinturas/), medidos sobre cada foto. SOLO para
      ese banner: la placa de la derecha y la ficha de color toman el de la lata de turno. */
   --color-pintura-azul: #0b3fae;
@@ -665,16 +668,17 @@ p {
 }
 
 /* Tira de calculadoras del inicio (components/inicio/BannerCalculadorasInicio.tsx). */
-/* El plano: degradado cobalto, luz de mesa de dibujo detrás de la libreta y cuadrícula de tiza (maestra cada 120px). */
+/* El plano: el mismo azul marino de los demás banners (de pico-azul a pico-azul-oscuro), luz de mesa de dibujo detrás
+   de la libreta y cuadrícula de tiza (maestra cada 120px). También lo usa el encabezado de /calculadoras. */
 .tira-plano {
-  background-color: var(--color-plano);
+  background-color: var(--color-pico-azul);
   background-image:
     radial-gradient(ellipse 30% 130% at 60% 50%, color-mix(in srgb, var(--color-pico-blanco) 10%, transparent), transparent 70%),
     repeating-linear-gradient(0deg, color-mix(in srgb, var(--color-pico-blanco) 8%, transparent) 0 1px, transparent 1px 120px),
     repeating-linear-gradient(90deg, color-mix(in srgb, var(--color-pico-blanco) 8%, transparent) 0 1px, transparent 1px 120px),
     repeating-linear-gradient(0deg, color-mix(in srgb, var(--color-pico-blanco) 4%, transparent) 0 1px, transparent 1px 24px),
     repeating-linear-gradient(90deg, color-mix(in srgb, var(--color-pico-blanco) 4%, transparent) 0 1px, transparent 1px 24px),
-    linear-gradient(105deg, var(--color-plano-oscuro), var(--color-plano) 45%, var(--color-plano-claro));
+    linear-gradient(to bottom right, var(--color-pico-azul), var(--color-pico-azul) 50%, var(--color-pico-azul-oscuro));
 }
 .tira-subrayado {
   fill: none;

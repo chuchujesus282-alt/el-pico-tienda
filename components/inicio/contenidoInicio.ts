@@ -71,6 +71,18 @@ export const bannersPrincipales: BannerInicio[] = [
     // Todo el banner es la pared pintada del color de turno; un rodillo la repinta (PinturaEnMovimiento).
     variante: "oscuro",
   },
+  {
+    id: "cerrajeria",
+    imagen: null,
+    alt: "Cerrajería en El Pico",
+    href: "/categoria/cerrajeria",
+    titulo: "Cerrajería que protege",
+    tituloPartes: ["Cerrajería que", "protege"],
+    texto: "Candados, cerraduras, cilindros y bisagras para tu casa o tu negocio.",
+    textoBoton: "Ver cerrajería",
+    variante: "azul",
+    // Sin ícono: en su lugar flota un candado de latón que se abre al pasar el mouse (CerraduraSegura).
+  },
 ];
 
 /** Mensaje con el que se abre WhatsApp desde "¿No sabes qué necesitas?". */
@@ -117,12 +129,10 @@ export function marcasDeProductos(productos: Producto[], limite = 12): Marca[] {
 /**
  * Columnas de "Más categorías" (las categorías que no tienen banner salen solas, en el orden del catálogo). Aquí
  * solo se les pone foto y texto corto. Foto: vertical (3:4, idealmente 900×1200) en public/categorias/; sin foto
- * se ve el plano técnico del ícono de la categoría. `aunqueTengaBanner`: sale en columna aunque ya tenga banner
- * en el inicio (Tornillería: así las columnas quedan en 6, una cuadrícula pareja en todos los anchos).
+ * se ve el plano técnico del ícono de la categoría. Una categoría nunca sale dos veces: si tiene banner en el
+ * inicio (carrusel o promocional), no va en columna.
  */
-export const columnasCategorias: Record<string, { imagen: string | null; texto?: string; aunqueTengaBanner?: boolean }> = {
-  tornilleria: { imagen: null, texto: "Tornillos, pernos, clavos y anclajes.", aunqueTengaBanner: true },
-  cerrajeria: { imagen: null, texto: "Candados, cerraduras, cilindros y bisagras." },
+export const columnasCategorias: Record<string, { imagen: string | null; texto?: string }> = {
   electricidad: { imagen: null, texto: "Cables, breakers, tomas e iluminación." },
   plomeria: { imagen: null, texto: "Tuberías, conexiones, llaves y grifería." },
   "hogar-y-jardin": { imagen: null, texto: "Mangueras, herramientas de jardín y más para tu casa." },

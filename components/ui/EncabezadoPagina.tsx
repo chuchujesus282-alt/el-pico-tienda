@@ -33,7 +33,7 @@ type Props = {
   compacto?: boolean;
   /** Capa decorativa detrás del texto (la pieza decide su posición con `absolute`). Se recorta a la tarjeta. */
   fondo?: ReactNode;
-  /** "plano": azul cobalto de plano de obra con cuadrícula (el de la tira de calculadoras del inicio). Por defecto, marino. */
+  /** "plano": el mismo azul marino con la cuadrícula de tiza de un plano de obra (el de la tira de calculadoras del inicio). Por defecto, marino liso. */
   tono?: "marino" | "plano";
   /**
    * Escena a la derecha (banner de cada categoría, components/categoria/banner/): una capa a todo el recuadro donde la

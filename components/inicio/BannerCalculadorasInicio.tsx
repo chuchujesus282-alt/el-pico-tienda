@@ -4,8 +4,8 @@ import { RUTA_CALCULADORAS } from "@/components/calculadoras/rutas";
 import LibretaMateriales from "@/components/calculadoras/LibretaMateriales";
 
 /**
- * Tira del inicio que lleva a /calculadoras: azul cobalto de plano de obra con su cuadrícula de tiza (la paleta
- * ganadora del concurso de colores, "Plano de obra"), la pregunta en grande con subrayado amarillo, la libreta
+ * Tira del inicio que lleva a /calculadoras: el azul marino de los demás banners con la cuadrícula de tiza de un
+ * plano de obra, la pregunta en grande con subrayado amarillo, la libreta
  * amarilla al centro (más alta que la tira: sobresale como pegada encima) y el botón blanco con letra roja.
  * El de las categorías es components/calculadoras/BannerCalculadoras.
  */

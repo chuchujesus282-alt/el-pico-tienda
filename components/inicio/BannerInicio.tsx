@@ -4,6 +4,7 @@ import { ChevronRight } from "lucide-react";
 import type { ReactNode } from "react";
 import Plano from "@/components/icons/pico/Plano";
 import type { BannerInicio as DatosBanner, VarianteBanner } from "./contenidoInicio";
+import CerraduraSegura from "./CerraduraSegura";
 import HerramientasAsomadas from "./HerramientasAsomadas";
 import ObraEnConcreto from "./ObraEnConcreto";
 import PinturaEnMovimiento from "./PinturaEnMovimiento";
@@ -122,6 +123,8 @@ export default function BannerInicio({ banner, sizes, tamano = "normal", priorit
           {grande && banner.id === "obra" && <ObraEnConcreto prioritario={prioritario} />}
           {/* Pared blanca con un rodillo que pinta una franja de color, solo en el banner de pinturas del carrusel. */}
           {grande && banner.id === "pinturas" && <PinturaEnMovimiento />}
+          {/* Placa de acero con un candado de latón que se abre, solo en el banner de cerrajería del carrusel. */}
+          {grande && banner.id === "cerrajeria" && <CerraduraSegura />}
           {grande && banner.tituloPartes ? (
             // Título en dos tiempos: la frase en una línea y la palabra clave enorme, en mayúsculas, sobre un
             // bloque rojo inclinado (el filete de la marca hecho sello). Al pasar el mouse crecen juntos, barra y palabra,
