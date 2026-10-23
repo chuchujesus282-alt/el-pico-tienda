@@ -69,7 +69,8 @@ type PropsPildora = {
 };
 
 /**
- * Píldora de la tasa BCV: círculo rojo "Bs" (el mismo rojo del círculo de "Pregúntanos") + la cifra.
+ * Píldora de la tasa BCV: círculo rojo "Bs" (el mismo rojo del círculo de "Pregúntanos"), grande y en negrita
+ * porque es el que dice la moneda, + la cifra sola (sin repetir "Bs.").
  * Crece con la cifra y nunca la corta (`whitespace-nowrap`, sin ancho fijo); dígitos de ancho parejo
  * (`tabular-nums`) para que no salte al actualizarse. La fecha sale al pasar el mouse o enfocar. Mide lo mismo que el buscador (alto, borde y redondeo).
  */
@@ -82,7 +83,7 @@ export function PildoraTasa({ tasa, cargando = false, className = "" }: PropsPil
         aria-label="Cargando la tasa BCV"
         role="status"
       >
-        <span className="flex size-9 shrink-0 items-center justify-center rounded-chip bg-pico-rojo/25 text-xs font-bold text-pico-blanco">Bs</span>
+        <span className="flex size-10 shrink-0 items-center justify-center rounded-chip bg-pico-rojo/25 text-[15px] leading-none font-extrabold tracking-tight text-pico-blanco">Bs</span>
         <span className="flex flex-1 flex-col gap-1.5">
           <span className="hidden h-1.5 w-12 rounded-chip bg-gris-borde lg:block" />
           <span className="h-2.5 w-14 rounded-chip bg-gris-borde" />
@@ -92,7 +93,8 @@ export function PildoraTasa({ tasa, cargando = false, className = "" }: PropsPil
     );
   }
 
-  const cifra = tasa ? `Bs. ${formatoTasa.format(tasa.tasa)}` : null;
+  // A la vista, solo el monto: la bola roja ya dice "Bs". El lector de pantalla sí lo oye con la moneda.
+  const cifra = tasa ? formatoTasa.format(tasa.tasa) : null;
   const detalle = !tasa
     ? "Tasa no disponible por ahora"
     : tasa.fecha
@@ -103,10 +105,10 @@ export function PildoraTasa({ tasa, cargando = false, className = "" }: PropsPil
     <span
       tabIndex={0}
       className={`group/tasa relative flex h-12 w-auto shrink-0 cursor-default items-center gap-2.5 rounded-chip border-2 border-gris-borde bg-pico-blanco py-1 pr-5 pl-1.5 whitespace-nowrap shadow-tarjeta transition duration-200 hover:border-pico-azul/25 hover:shadow-tarjeta-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-pico-azul ${className}`}
-      aria-label={cifra ? `Tasa BCV: ${cifra}. ${detalle}` : "Tasa BCV no disponible por ahora"}
+      aria-label={cifra ? `Tasa BCV: Bs. ${cifra}. ${detalle}` : "Tasa BCV no disponible por ahora"}
     >
       <span
-        className={`flex size-9 shrink-0 items-center justify-center rounded-chip text-xs font-bold text-pico-blanco transition-transform duration-300 motion-safe:group-hover/tasa:scale-110 ${
+        className={`flex size-10 shrink-0 items-center justify-center rounded-chip text-[15px] leading-none font-extrabold tracking-tight text-pico-blanco shadow-boton-hover transition-transform duration-300 motion-safe:group-hover/tasa:scale-110 ${
           cifra ? "bg-pico-rojo" : "bg-gris-texto/40"
         }`}
         aria-hidden
