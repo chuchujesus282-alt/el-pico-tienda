@@ -9,7 +9,12 @@ const formatoFecha = new Intl.DateTimeFormat("es-VE", { dateStyle: "long", timeS
 
 function esTasa(dato: unknown): dato is DatosTasa {
   const d = dato as DatosTasa | null;
-  return !!d && typeof d.tasa === "number" && Number.isFinite(d.tasa) && typeof d.fecha === "string";
+  return (
+    !!d &&
+    typeof d.tasa === "number" &&
+    Number.isFinite(d.tasa) &&
+    (d.fecha === undefined || typeof d.fecha === "string")
+  );
 }
 
 function leerGuardada(): DatosTasa | null {
@@ -88,7 +93,11 @@ export function PildoraTasa({ tasa, cargando = false, className = "" }: PropsPil
   }
 
   const cifra = tasa ? `Bs. ${formatoTasa.format(tasa.tasa)}` : null;
-  const detalle = tasa ? `Actualizada el ${textoFecha(tasa.fecha)}` : "Tasa no disponible por ahora";
+  const detalle = !tasa
+    ? "Tasa no disponible por ahora"
+    : tasa.fecha
+      ? `Actualizada el ${textoFecha(tasa.fecha)}`
+      : "Tasa oficial del BCV";
 
   return (
     <span

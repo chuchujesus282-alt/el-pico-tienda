@@ -1,13 +1,13 @@
 import "server-only";
 import type { TasaBCV } from "@/types/tasa";
 
-// ÚNICA puerta de entrada a la tasa BCV. La tasa NO vive en el código: viene de la base de datos
-// por un endpoint que responde { "tasa": 245.8, "fecha": "2026-10-12T13:00:00-04:00" }.
+// ÚNICA puerta de entrada a la tasa BCV. La tasa NO vive en el código: viene de un endpoint que responde
+// { "tasa": 886.23 } y, si la tiene, la fecha: { "tasa": 886.23, "fecha": "2026-10-23T13:00:00-04:00" }.
 //
-// >>> PENDIENTE: definir TASA_BCV_API_URL en .env.local (y en Vercel) con la URL de ese endpoint. <<<
-// Mientras no exista, getTasaBCV() devuelve null y el header muestra un guion.
+// La URL va en TASA_BCV_API_URL o en TASA_API_URL (cualquiera de las dos; en .env.local y en Vercel).
+// Sin ella, o si el endpoint falla, getTasaBCV() devuelve null y el header muestra un guion.
 
-const API_URL = process.env.TASA_BCV_API_URL;
+const API_URL = process.env.TASA_BCV_API_URL || process.env.TASA_API_URL;
 // Mismo token que el catálogo: la consulta sale del servidor de Next, nunca del navegador.
 const API_TOKEN = process.env.CATALOGO_API_TOKEN;
 const REVALIDAR_SEGUNDOS = 600;
@@ -23,8 +23,8 @@ export async function getTasaBCV(): Promise<TasaBCV | null> {
     if (!respuesta.ok) return null;
     const datos = (await respuesta.json()) as Partial<TasaBCV>;
     const tasa = Number(datos.tasa);
-    if (!Number.isFinite(tasa) || tasa <= 0 || typeof datos.fecha !== "string") return null;
-    return { tasa, fecha: datos.fecha };
+    if (!Number.isFinite(tasa) || tasa <= 0) return null;
+    return typeof datos.fecha === "string" ? { tasa, fecha: datos.fecha } : { tasa };
   } catch {
     return null;
   }
