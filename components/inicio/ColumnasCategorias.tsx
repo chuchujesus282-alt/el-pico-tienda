@@ -17,10 +17,17 @@ const CUADRICULA =
 // Las tarjetas animadas se levantan al pasar el mouse igual que las columnas (`Columna`).
 const LEVANTAR = "transition duration-300 ease-(--curva-suave) motion-safe:hover:-translate-y-1";
 
+// Columnas por cantidad de categorías, para que nunca quede una sola en la última fila. Con 6: 2×3 en el teléfono,
+// 3×2 desde 768px y una fila de 6 desde 1536px (antes, 6 en fila quedan demasiado angostas).
+const COLUMNAS: Record<number, string> = {
+  4: "lg:grid-cols-4",
+  6: "md:grid-cols-3 2xl:grid-cols-6",
+};
+
 /**
- * "Más categorías": las categorías que no tienen banner en el inicio, en columnas verticales (más altas que una
- * tarjeta de producto) para darle verticalidad a la página. 2×2 hasta 1024px (en tableta, 4 en fila quedan
- * demasiado angostas) y una fila de 4 desde ahí. Todas en 320:470 (las animadas lo toman de `--alto-tarjeta` en el
+ * "Más categorías": las categorías que no tienen banner en el inicio (y las marcadas con `aunqueTengaBanner`), en
+ * columnas verticales (más altas que una tarjeta de producto) para darle verticalidad a la página. Las columnas
+ * por fila dependen de cuántas son (`COLUMNAS`). Todas en 320:470 (las animadas lo toman de `--alto-tarjeta` en el
  * <li>; su prototipo es 320:420 y el dibujo queda centrado en el alto extra), para que midan lo mismo.
  * Foto y texto de cada una en `columnasCategorias`; sin foto, el plano técnico de su ícono sobre azul.
  */
@@ -30,7 +37,7 @@ export default function ColumnasCategorias({ categorias }: { categorias: Categor
   return (
     // Sin título a la vista (más espontáneo); el nombre queda para lectores de pantalla.
     <section aria-label="Más categorías">
-      <ul className={`grid grid-cols-2 gap-3 md:gap-4 ${categorias.length >= 4 ? "lg:grid-cols-4" : "lg:grid-cols-3"}`}>
+      <ul className={`grid grid-cols-2 gap-3 md:gap-4 ${COLUMNAS[categorias.length] ?? "lg:grid-cols-3"}`}>
         {categorias.map((categoria) => (
           <li key={categoria.slug} className="[--alto-tarjeta:470]">
             {categoria.slug === "electricidad" ? (

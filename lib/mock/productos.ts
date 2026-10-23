@@ -107,19 +107,29 @@ export const productosMock: Producto[] = [
     ["00605522", 'RIEL METALICO DRYWALL 2 1/2" X 3.05M', "PANELVEN", 3.1, "Drywall", 120],
     ["00605548", "MASILLA PARA DRYWALL GALON 5KG", "PANELVEN", 6.9, "Drywall", 84],
     ["00605564", "CINTA DE PAPEL PARA JUNTAS DRYWALL 75MTS", "PANELVEN", 3.3, "Drywall", 66],
+    // Venía de la antigua "Ferretería" (por eso su código empieza en 007).
+    ["00706087", "SILICON TRANSPARENTE CARTUCHO 280ML", "SELLAMAX", 4.95, "Selladores", 105],
   ]),
-  ...crear("ferreteria", [
+  ...crear("tornilleria", [
     ["00706008", "TORNILLO DRYWALL 6X1\" CAJA 100 UNIDADES", "FIJATEC", 3.4, "Tornillos", 240],
     ["00706024", 'CLAVO DE ACERO 2" CAJA 1KG', "FIJATEC", 4.15, "Clavos", 130],
     ["00706049", 'TARUGO PLASTICO 1/4" BOLSA 50 UNIDADES', "ANCLAPLUS", 1.8, "Anclajes", 280],
     ["00706063", 'PERNO HEXAGONAL GALVANIZADO 3/8" X 2"', "FIJATEC", 0.55, "Pernos", 200],
-    ["00706087", "SILICON TRANSPARENTE CARTUCHO 280ML", "SELLAMAX", 4.95, "Selladores", 105],
     ["00706102", 'TORNILLO AUTORROSCANTE 1/4" X 2" BOLSA 50 UNIDADES', "FIJATEC", 2.75, "Tornillos", 330],
     ["00706128", 'TORNILLOS PARA MADERA 1/4" X 1 1/2" CAJA 100 UNIDADES', "FIJATEC", 4.1, "Tornillos", 190],
     ["00706144", 'TORNILLO HEXAGONAL 3/8" X 3" GALVANIZADO', "FIJATEC", 0.7, "Tornillos", 145],
     ["00706160", 'RAMPLUG PLASTICO 3/8" BOLSA 25 UNIDADES', "ANCLAPLUS", 1.5, "Anclajes", 165],
     // Materiales de las calculadoras de proyectos (precios de prueba, referenciales del mercado venezolano).
     ["00706186", 'TORNILLO AUTOPERFORANTE PARA TECHO 2 1/2" CON ARANDELA BOLSA 100 UNIDADES', "FIJATEC", 9.5, "Tornillos", 58],
+  ]),
+  ...crear("cerrajeria", [
+    ["01110016", "CANDADO DE LATON 40MM 3 LLAVES", "CERROX", 6.9, "Candados", 96],
+    ["01110032", "CANDADO DE BRONCE MACIZO 50MM", "CERROX", 11.5, "Candados", 54],
+    ["01110058", "CILINDRO DE LATON 60MM 5 LLAVES", "CERROX", 9.8, "Cilindros", 47],
+    ["01110074", "CERRADURA DE POMO PARA BAÑO CON SEGURO", "LLAVETEC", 12.6, "Cerraduras", 38],
+    ["01110090", "CERRADURA DE MANILLA ACERO INOXIDABLE CON LLAVE", "LLAVETEC", 24.9, "Cerraduras", 22],
+    ["01110115", 'BISAGRA DE ACERO 3" X 3" PAR', "CERROX", 2.4, "Bisagras", 180],
+    ["01110131", 'PORTACANDADO GALVANIZADO 4"', "CERROX", 3.2, "Portacandados", 75],
   ]),
   ...crear("hogar-y-jardin", [
     ["00807012", 'TIJERA PODAR 22" MANGO TUBULAR', "VERDEPRO", 17.24, "Herramientas de jardín", 23],

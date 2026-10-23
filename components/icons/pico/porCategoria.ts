@@ -1,6 +1,7 @@
 import type { ComponenteIcono } from "@/types/icono";
 import IconoBloques from "./IconoBloques";
 import IconoBombillo from "./IconoBombillo";
+import IconoCandado from "./IconoCandado";
 import IconoCasco from "./IconoCasco";
 import IconoLlanta from "./IconoLlanta";
 import IconoPala from "./IconoPala";
@@ -13,7 +14,8 @@ import IconoTuberia from "./IconoTuberia";
 const POR_CATEGORIA: Record<string, ComponenteIcono> = {
   herramientas: IconoTaladro,
   construccion: IconoBloques,
-  ferreteria: IconoTornillo,
+  tornilleria: IconoTornillo,
+  cerrajeria: IconoCandado,
   electricidad: IconoBombillo,
   plomeria: IconoTuberia,
   pinturas: IconoRodillo,

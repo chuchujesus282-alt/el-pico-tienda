@@ -1,6 +1,6 @@
 import IconoBase, { type PropsIcono } from "./IconoBase";
 
-/** Ferretería: tornillo con la ranura roja en la cabeza; gira. */
+/** Tornillería: tornillo con la ranura roja en la cabeza; gira. */
 export default function IconoTornillo(props: PropsIcono) {
   return (
     <IconoBase {...props}>

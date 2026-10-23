@@ -3,7 +3,8 @@ import type { Categoria } from "@/types/catalogo";
 export const categoriasMock: Categoria[] = [
   { slug: "herramientas", nombre: "Herramientas", banner: null },
   { slug: "construccion", nombre: "Construcción", banner: null },
-  { slug: "ferreteria", nombre: "Ferretería", banner: null },
+  { slug: "tornilleria", nombre: "Tornillería", banner: null },
+  { slug: "cerrajeria", nombre: "Cerrajería", banner: null },
   { slug: "electricidad", nombre: "Electricidad", banner: null },
   { slug: "plomeria", nombre: "Plomería", banner: null },
   { slug: "pinturas", nombre: "Pinturas", banner: null },

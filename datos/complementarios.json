@@ -28,6 +28,11 @@
     "esmeril": ["disco", "lentes de seguridad", "guantes"],
     "manguera jardin": ["aspersor"],
     "pala": ["carretilla", "guantes"],
-    "aceite motor": ["guantes"]
+    "aceite motor": ["guantes"],
+    "cerradura": ["cilindro", "bisagra", "tornillo", "destornillador"],
+    "cilindro": ["cerradura", "destornillador"],
+    "bisagra": ["tornillo", "destornillador", "taladro"],
+    "portacandado": ["candado", "tornillo", "destornillador"],
+    "candado": ["portacandado"]
   }
 }

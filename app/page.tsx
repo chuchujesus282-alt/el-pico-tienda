@@ -11,6 +11,7 @@ import SeccionCategoria from "@/components/inicio/SeccionCategoria";
 import {
   bannersPrincipales,
   bannersPromocionales,
+  columnasCategorias,
   marcasDeProductos,
   seccionesCategoria,
 } from "@/components/inicio/contenidoInicio";
@@ -69,7 +70,9 @@ export default async function Inicio() {
   const promocionales = soloCategoriasExistentes(bannersPromocionales, categorias);
   // Las categorías que no tienen banner van en columnas: así todas quedan a la vista en el primer tramo.
   const conBanner = new Set([...principales, ...promocionales].map(slugDeBanner));
-  const sinBanner = categorias.filter((c) => !conBanner.has(c.slug));
+  const sinBanner = categorias.filter(
+    (c) => !conBanner.has(c.slug) || columnasCategorias[c.slug]?.aunqueTengaBanner,
+  );
 
   const secciones = seccionesCategoria.flatMap((seccion, i) => {
     const categoria = categorias.find((c) => c.slug === seccion.slug);

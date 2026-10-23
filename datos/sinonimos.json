@@ -18,6 +18,9 @@
     ["breaker", "braker", "interruptor termico"],
     ["tomacorriente", "enchufe hembra"],
     ["lentes de seguridad", "gafas de seguridad", "lentes de proteccion"],
-    ["cinta metrica", "metro", "flexometro"]
+    ["cinta metrica", "metro", "flexometro"],
+    ["cerradura", "chapa"],
+    ["cilindro", "bombin"],
+    ["portacandado", "porta candado"]
   ]
 }

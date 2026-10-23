@@ -19,7 +19,7 @@ import { getCategorias, getProductosPorCategoria } from "@/lib/catalogo";
 // Si el catálogo falla, el error llega a error.tsx; mientras carga se muestra loading.tsx.
 
 /** Categorías que muestran el banner de las calculadoras de obra al final. */
-const CON_CALCULADORAS = new Set(["construccion", "pinturas", "ferreteria"]);
+const CON_CALCULADORAS = new Set(["construccion", "pinturas", "tornilleria"]);
 
 async function buscarCategoria(slug: string) {
   const categorias = await getCategorias();

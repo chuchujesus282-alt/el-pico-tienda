@@ -35,6 +35,7 @@ import IconoRuta from "./IconoRuta";
 import IconoRayo from "./IconoRayo";
 import IconoTaladro from "./IconoTaladro";
 import IconoTornillo from "./IconoTornillo";
+import IconoCandado from "./IconoCandado";
 import IconoBombillo from "./IconoBombillo";
 import IconoTuberia from "./IconoTuberia";
 import IconoPala from "./IconoPala";
@@ -84,7 +85,8 @@ export const ICONOS_PICO: FichaIcono[] = [
   { nombre: "Ruta", grupo: "Tienda", descripcion: "Cómo llegar: ruta roja que se dibuja desde un punto hasta el pin.", Componente: IconoRuta },
   { nombre: "Rayo", grupo: "Tienda", descripcion: "Comprar ahora: rayo rojo, directo al pedido.", Componente: IconoRayo },
   { nombre: "Taladro", grupo: "Categorías", descripcion: "Herramientas: taladro con la broca roja, que vibra.", Componente: IconoTaladro },
-  { nombre: "Tornillo", grupo: "Categorías", descripcion: "Ferretería: tornillo con la ranura roja en la cabeza; gira.", Componente: IconoTornillo },
+  { nombre: "Tornillo", grupo: "Categorías", descripcion: "Tornillería: tornillo con la ranura roja en la cabeza; gira.", Componente: IconoTornillo },
+  { nombre: "Candado", grupo: "Categorías", descripcion: "Cerrajería: candado con el ojo de la llave rojo; el arco salta como al abrirse.", Componente: IconoCandado },
   { nombre: "Bombillo", grupo: "Categorías", descripcion: "Electricidad: bombillo con el filamento rojo encendido y sus rayos.", Componente: IconoBombillo },
   { nombre: "Tuberia", grupo: "Categorías", descripcion: "Plomería: codo de tubería con la llave de paso roja que gira.", Componente: IconoTuberia },
   { nombre: "Pala", grupo: "Categorías", descripcion: "Hogar y jardín: pala con la hoja roja que cava.", Componente: IconoPala },
@@ -132,6 +134,7 @@ export {
   IconoRayo,
   IconoTaladro,
   IconoTornillo,
+  IconoCandado,
   IconoBombillo,
   IconoTuberia,
   IconoPala,

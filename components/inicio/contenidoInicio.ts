@@ -93,7 +93,7 @@ export const bannersPromocionales: BannerInicio[] = [
     id: "tornilleria",
     imagen: null,
     alt: "Tornillería en El Pico",
-    href: "/categoria/ferreteria",
+    href: "/categoria/tornilleria",
     titulo: "Tornillería de todas las medidas",
     texto: "Tornillos, tuercas, anclajes y fijaciones.",
     textoBoton: "Ver tornillería",
@@ -117,9 +117,12 @@ export function marcasDeProductos(productos: Producto[], limite = 12): Marca[] {
 /**
  * Columnas de "Más categorías" (las categorías que no tienen banner salen solas, en el orden del catálogo). Aquí
  * solo se les pone foto y texto corto. Foto: vertical (3:4, idealmente 900×1200) en public/categorias/; sin foto
- * se ve el plano técnico del ícono de la categoría.
+ * se ve el plano técnico del ícono de la categoría. `aunqueTengaBanner`: sale en columna aunque ya tenga banner
+ * en el inicio (Tornillería: así las columnas quedan en 6, una cuadrícula pareja en todos los anchos).
  */
-export const columnasCategorias: Record<string, { imagen: string | null; texto?: string }> = {
+export const columnasCategorias: Record<string, { imagen: string | null; texto?: string; aunqueTengaBanner?: boolean }> = {
+  tornilleria: { imagen: null, texto: "Tornillos, pernos, clavos y anclajes.", aunqueTengaBanner: true },
+  cerrajeria: { imagen: null, texto: "Candados, cerraduras, cilindros y bisagras." },
   electricidad: { imagen: null, texto: "Cables, breakers, tomas e iluminación." },
   plomeria: { imagen: null, texto: "Tuberías, conexiones, llaves y grifería." },
   "hogar-y-jardin": { imagen: null, texto: "Mangueras, herramientas de jardín y más para tu casa." },

@@ -99,3 +99,10 @@ Cuando la API entregue las imágenes reales, esta carpeta se puede borrar.
 | 00605548.webp | MASILLA PARA DRYWALL GALON 5KG | Tomwsulcer | CC0 | [Kitchen renovation spackling to cover holes and tape between sheetrock boards.JP](https://commons.wikimedia.org/wiki/File:Kitchen_renovation_spackling_to_cover_holes_and_tape_between_sheetrock_boards.JPG) |
 | 00605564.webp | CINTA DE PAPEL PARA JUNTAS DRYWALL 75MTS | Timothyjosephwood | CC BY-SA 4.0 | [Drywall and tools.jpg](https://commons.wikimedia.org/wiki/File:Drywall_and_tools.jpg) |
 | 00706186.webp | TORNILLO AUTOPERFORANTE PARA TECHO 2 1/2" CON ARANDELA BOLSA 100 UNIDADES | SecretDisc | CC BY-SA 3.0 | [Screw Anaglyph.jpg](https://commons.wikimedia.org/wiki/File:Screw_Anaglyph.jpg) |
+| 01110016.webp | CANDADO DE LATON 40MM 3 LLAVES | Shillings1005 | CC BY-SA 4.0 | [Brass padlock with key.jpg](https://commons.wikimedia.org/wiki/File:Brass_padlock_with_key.jpg) |
+| 01110032.webp | CANDADO DE BRONCE MACIZO 50MM | R. Henrik Nilsson | CC BY 4.0 | [Mid 20th century brass padlock model 3030 by Abloy Finland.jpg](https://commons.wikimedia.org/wiki/File:Mid_20th_century_brass_padlock_model_3030_by_Abloy_Finland.jpg) |
+| 01110058.webp | CILINDRO DE LATON 60MM 5 LLAVES | ItalianLocksmith | CC BY-SA 3.0 | [DOM Security Lock and Key.JPG](https://commons.wikimedia.org/wiki/File:DOM_Security_Lock_and_Key.JPG) |
+| 01110074.webp | CERRADURA DE POMO PARA BAÑO CON SEGURO | Stilfehler | Public domain | [Door Knob with Lock USA.jpg](https://commons.wikimedia.org/wiki/File:Door_Knob_with_Lock_USA.jpg) |
+| 01110090.webp | CERRADURA DE MANILLA ACERO INOXIDABLE CON LLAVE | Shixart1985 | CC BY 2.0 | [Close-up of a door knob and locking mechanism.jpg](https://commons.wikimedia.org/wiki/File:Close-up_of_a_door_knob_and_locking_mechanism.jpg) |
+| 01110115.webp | BISAGRA DE ACERO 3" X 3" PAR | Ronak45 | CC0 | [Stainless Steel Butt-Hinges 5" long Tni.png](https://commons.wikimedia.org/wiki/File:Stainless_Steel_Butt-Hinges_5%22_long_Tni.png) |
+| 01110131.webp | PORTACANDADO GALVANIZADO 4" | Nino Barbieri | CC BY-SA 2.5 | [- Padlock -.jpg](https://commons.wikimedia.org/wiki/File:-_Padlock_-.jpg) |
