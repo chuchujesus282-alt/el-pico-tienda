@@ -20,9 +20,6 @@ export type Motor = {
 type Props = {
   /** Nombre de la categoría: va en la ruta (Inicio › Pinturas) y es el título (h1) en la etiqueta roja. */
   nombre: string;
-  /** Texto chico en mono sobre el título (ej. "LÁMINA 06 · ACABADOS"). */
-  kicker: string;
-  texto: string;
   /** aria-label de la sección. */
   ariaLabel: string;
   /** Color activo de arranque (`--c`). */
@@ -45,7 +42,7 @@ type Props = {
 
 /**
  * Banner de categoría estilo "plano técnico" (familia de las tarjetas de categoría animadas): contenedor azul con
- * cuadrícula, columna de texto (ruta, kicker, nombre de la categoría en la etiqueta roja con gotas, subtítulo) e
+ * cuadrícula, columna de texto (ruta y el nombre de la categoría en la etiqueta roja con gotas; nada más, a propósito) e
  * ilustración a la derecha. Compacto a propósito: es el encabezado de una sección, no un anuncio (la ilustración se
  * escala para caber en su alto máximo).
  * Reposo = plano frío; activo (mouse encima; en táctil, al tocar) = clase `on` y la escena corre su motor.
@@ -53,8 +50,6 @@ type Props = {
  */
 export default function BannerPlano({
   nombre,
-  kicker,
-  texto,
   ariaLabel,
   colorInicial,
   children,
@@ -144,8 +139,6 @@ export default function BannerPlano({
             </ol>
           </nav>
 
-          <p className={styles.kicker}>{kicker}</p>
-
           <h1 className={styles.titulo}>
             <span className={styles.etiqueta}>
               <span className={styles.etiquetaFondo} aria-hidden />
@@ -162,8 +155,6 @@ export default function BannerPlano({
               )}
             </span>
           </h1>
-
-          <p className={styles.subtitulo}>{texto}</p>
         </div>
 
         <div className={styles.ilustracion}>{children}</div>

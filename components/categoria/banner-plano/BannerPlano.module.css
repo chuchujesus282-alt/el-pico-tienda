@@ -89,26 +89,10 @@
   color: var(--paper);
 }
 
-.kicker {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-top: 12px;
-  font-family: var(--f-mono);
-  font-size: 11px;
-  letter-spacing: 0.18em;
-  color: var(--muted);
-}
-.kicker::before {
-  content: "";
-  width: 34px;
-  height: 3px;
-  flex: none;
-  background: var(--signal);
-}
-
+/* margin-bottom: lugar para las gotas (hasta 24px) y la cinta que cuelgan de la etiqueta. */
 .titulo {
-  margin-top: 10px;
+  margin-top: 14px;
+  margin-bottom: 26px;
   /* deja la etiqueta inclinada sin recortar a la izquierda */
   padding-left: 4px;
   font-family: var(--f-display);
@@ -198,16 +182,6 @@
   transform: skewX(-12deg) scaleX(1);
 }
 
-.subtitulo {
-  max-width: 46ch;
-  /* deja lugar a las gotas (hasta 24px) y a la cinta que cuelgan de la etiqueta */
-  margin-top: 26px;
-  font-family: var(--f-mono);
-  font-size: 13px;
-  line-height: 1.55;
-  color: var(--muted);
-}
-
 /* ---------- ilustración ---------- */
 .ilustracion {
   position: relative;
@@ -239,10 +213,6 @@
   .texto {
     padding: 18px 20px 0;
   }
-  /* El kicker es decorativo: en el teléfono se quita para que el encabezado no crezca. */
-  .kicker {
-    display: none;
-  }
   .titulo {
     margin-top: 12px;
   }
@@ -257,9 +227,6 @@
   }
   .palabra {
     font-size: clamp(var(--palabra-movil-min, 1.8rem), var(--palabra-movil-vw, 8.6vw), var(--palabra-movil-max, 2.6rem));
-  }
-  .subtitulo {
-    margin-top: 24px;
   }
 }
 @media (max-width: 767.98px) {

@@ -243,12 +243,10 @@ function crearMotor(raiz: HTMLElement): Motor {
   };
 }
 
-export default function BannerConstruccion({ nombre, texto, kicker }: PropsBannerPropio) {
+export default function BannerConstruccion({ nombre }: PropsBannerPropio) {
   return (
     <BannerPlano
       nombre={nombre}
-      kicker={kicker}
-      texto={texto}
       ariaLabel={`Categoría ${nombre}`}
       colorInicial="#F2A900"
       crearMotor={crearMotor}

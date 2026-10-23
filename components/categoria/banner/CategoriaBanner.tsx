@@ -9,8 +9,6 @@ import "./banner.css";
 export type PropsBannerPropio = {
   /** Nombre de la categoría: es el título del banner. */
   nombre: string;
-  texto: string;
-  kicker: string;
 };
 
 type ConfigBanner = {
@@ -18,12 +16,10 @@ type ConfigBanner = {
   Escena?: ComponentType;
   /** Banner "plano técnico" que reemplaza a EncabezadoPagina entero (ruta y h1 incluidos). */
   Propio?: ComponentType<PropsBannerPropio>;
-  /** Texto chico en mono sobre el título (solo banners propios). */
-  kicker?: string;
   /** Frase + palabra clave sobre el sello rojo (solo banners con Escena; los propios muestran el nombre). */
   tituloPartes?: [string, string];
-  /** Una línea bajo el título. */
-  texto: string;
+  /** Una línea bajo el título (solo banners con Escena; los propios muestran solo el nombre). */
+  texto?: string;
 };
 
 /**
@@ -34,13 +30,9 @@ type ConfigBanner = {
 const BANNERS: Record<string, ConfigBanner> = {
   pinturas: {
     Propio: BannerPinturas,
-    kicker: "LÁMINA 06 · ACABADOS",
-    texto: "Pinturas, brochas, rodillos y todo para pintar como un profesional.",
   },
   construccion: {
     Propio: BannerConstruccion,
-    kicker: "LÁMINA 02 · OBRA GRIS",
-    texto: "Cemento, bloques, cabillas y todo lo que tu obra necesita.",
   },
   herramientas: {
     Escena: BannerHerramientas,

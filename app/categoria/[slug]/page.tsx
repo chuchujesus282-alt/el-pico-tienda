@@ -74,11 +74,7 @@ export default async function PaginaCategoria({ params, searchParams }: PageProp
   return (
     <div>
       {banner?.Propio ? (
-        <banner.Propio
-          nombre={categoria.nombre}
-          texto={banner.texto}
-          kicker={banner.kicker ?? ""}
-        />
+        <banner.Propio nombre={categoria.nombre} />
       ) : (
         <EncabezadoPagina
           etiqueta="Categoría"
