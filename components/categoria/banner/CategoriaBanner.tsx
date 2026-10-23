@@ -27,7 +27,7 @@ type ConfigBanner = {
 };
 
 /**
- * Banner propio de cada categoría: `Propio` (estilo plano técnico, reemplaza al encabezado; hoy Pinturas) o `Escena`
+ * Banner propio de cada categoría: `Propio` (estilo plano técnico, reemplaza al encabezado; hoy Pinturas y Construcción) o `Escena`
  * (fotos reales a la derecha de EncabezadoPagina). Las categorías sin entrada
  * siguen con el plano y su ícono. Para sumar una: su componente en esta carpeta y una línea aquí.
  */
@@ -39,7 +39,8 @@ const BANNERS: Record<string, ConfigBanner> = {
     texto: "Pinturas, brochas, rodillos y todo para pintar como un profesional.",
   },
   construccion: {
-    Escena: BannerConstruccion,
+    Propio: BannerConstruccion,
+    kicker: "LÁMINA 02 · OBRA GRIS",
     tituloPartes: ["Materiales de", "Construcción"],
     texto: "Cemento, bloques, cabillas y todo lo que tu obra necesita.",
   },

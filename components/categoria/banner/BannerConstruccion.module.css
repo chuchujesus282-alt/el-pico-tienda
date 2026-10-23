@@ -1,0 +1,137 @@
+/*
+ * Ilustración del banner de Construcción, portada TAL CUAL de banner-construccion-v1.html (prototipo aprobado). No
+ * cambies valores sin acordarlo. Excepción a la regla de tokens del CLAUDE.md (como las tarjetas de categoría): los
+ * colores van escritos aquí, idénticos al prototipo. `--c` (amarillo de seguridad) y `--f-mono` vienen de BannerPlano.
+ * Activo = clase global `on` en la raíz del banner.
+ */
+
+.svg {
+  --deep: #0a1f38;
+  --stroke: #c3ccd8;
+  --trace: rgba(190, 215, 245, 0.55);
+  --concreto: #8b97a6;
+  --concreto-luz: #a7b2bf;
+}
+.svg text {
+  font-family: var(--f-mono);
+  fill: var(--trace);
+  font-size: 9px;
+  letter-spacing: 0.08em;
+}
+
+.ln {
+  fill: none;
+  stroke: var(--stroke);
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.cota {
+  fill: none;
+  stroke: var(--trace);
+  stroke-width: 1;
+}
+.dash {
+  fill: none;
+  stroke: var(--trace);
+  stroke-width: 1;
+  stroke-dasharray: 3 4;
+}
+.bp {
+  transition: opacity 0.6s;
+}
+:global(.on) .bp {
+  opacity: 0.3;
+}
+
+/* bloques: contorno de plano en reposo, concreto real cuando se activa */
+.blq .f {
+  fill: var(--deep);
+  stroke: var(--stroke);
+  stroke-width: 1.5;
+  transition: fill 0.5s;
+}
+.blq .h {
+  fill: none;
+  stroke: rgba(190, 215, 245, 0.28);
+  stroke-width: 1;
+}
+:global(.on) .blq .f {
+  fill: var(--concreto);
+}
+:global(.on) .blq .h {
+  stroke: rgba(11, 29, 51, 0.35);
+}
+.blq.plan .f {
+  fill: none !important;
+  stroke: var(--trace);
+  stroke-dasharray: 3 3;
+  stroke-width: 1;
+}
+.blq.plan .h {
+  display: none;
+}
+.blq.nuevo .f {
+  fill: var(--concreto-luz) !important;
+}
+
+/* saco de cemento */
+.saco {
+  fill: var(--deep);
+  transition: fill 0.5s;
+}
+:global(.on) .saco {
+  fill: #9a7b4f;
+}
+.svg .sacoT {
+  transition: fill 0.5s;
+}
+:global(.on) .svg .sacoT {
+  fill: #2a2116;
+}
+
+.pz {
+  fill: none;
+  opacity: 0;
+  transition: opacity 0.5s;
+}
+:global(.on) .pz {
+  opacity: 1;
+}
+
+/* grúa */
+.carro {
+  fill: var(--deep);
+  stroke: var(--stroke);
+  stroke-width: 1.5;
+}
+.rueda {
+  fill: var(--stroke);
+}
+.cable {
+  stroke: var(--stroke);
+  stroke-width: 1.5;
+}
+.gancho {
+  fill: #e3262f;
+  stroke: var(--stroke);
+  stroke-width: 1;
+}
+.eslinga {
+  fill: none;
+  stroke: var(--c);
+  stroke-width: 1.5;
+}
+.polvo {
+  fill: var(--concreto-luz);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bp,
+  .blq .f,
+  .saco,
+  .svg .sacoT,
+  .pz {
+    transition-duration: 0.01s !important;
+  }
+}

@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { ChevronRight, House, Search } from "lucide-react";
-import { useEffect, useRef, type ReactNode } from "react";
+import { useEffect, useRef, type CSSProperties, type ReactNode } from "react";
 import { plexMono } from "@/components/tarjetas-categoria/fuentes";
 import styles from "./BannerPlano.module.css";
 
@@ -33,6 +33,16 @@ type Props = {
   children: ReactNode;
   /** Crea el motor de la escena con la raíz del banner. */
   crearMotor: (raiz: HTMLElement) => Motor;
+  /**
+   * Lo que cuelga de la etiqueta roja al activarse: las 4 gotas del color activo (Pinturas) o la cinta de seguridad
+   * a rayas del color activo y azul tinta (Construcción).
+   */
+  decoracion?: "gotas" | "cinta";
+  /**
+   * Variables CSS propias de cada banner (ver BannerPlano.module.css): --brillo, --brillo-on, --palabra-min/-vw/-max,
+   * --palabra-movil-min/-vw/-max, --etiqueta-pad, --etiqueta-sombra. Sin ellas, los valores de Pinturas.
+   */
+  variables?: CSSProperties;
 };
 
 /**
@@ -41,7 +51,18 @@ type Props = {
  * Reposo = plano frío; activo (mouse encima; en táctil, al tocar) = clase `on` y la escena corre su motor.
  * Para otra categoría: su componente arma la ilustración y su motor, y monta este con sus textos.
  */
-export default function BannerPlano({ nombre, kicker, tituloPartes, texto, ariaLabel, colorInicial, children, crearMotor }: Props) {
+export default function BannerPlano({
+  nombre,
+  kicker,
+  tituloPartes,
+  texto,
+  ariaLabel,
+  colorInicial,
+  children,
+  crearMotor,
+  decoracion = "gotas",
+  variables,
+}: Props) {
   const raizRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
@@ -99,7 +120,7 @@ export default function BannerPlano({ nombre, kicker, tituloPartes, texto, ariaL
         ref={raizRef}
         aria-label={ariaLabel}
         className={`${styles.banner} ${plexMono.variable}`}
-        style={{ "--c": colorInicial } as React.CSSProperties}
+        style={{ ...variables, "--c": colorInicial } as CSSProperties}
       >
         <div className={styles.brillo} aria-hidden />
 
@@ -131,12 +152,16 @@ export default function BannerPlano({ nombre, kicker, tituloPartes, texto, ariaL
             <span className={styles.etiqueta}>
               <span className={styles.etiquetaFondo} aria-hidden />
               <span className={styles.palabra}>{tituloPartes[1]}</span>
-              <span className={styles.gotas} aria-hidden>
-                <span />
-                <span />
-                <span />
-                <span />
-              </span>
+              {decoracion === "cinta" ? (
+                <span className={styles.cinta} aria-hidden />
+              ) : (
+                <span className={styles.gotas} aria-hidden>
+                  <span />
+                  <span />
+                  <span />
+                  <span />
+                </span>
+              )}
             </span>
           </h1>
 

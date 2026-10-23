@@ -1,226 +1,384 @@
 "use client";
 
-import Image from "next/image";
-import { useEffect, useRef, useState } from "react";
 import type { CSSProperties } from "react";
-import { Montanas } from "@/components/layout/Logo";
+import BannerPlano, { type Motor } from "@/components/categoria/banner-plano/BannerPlano";
+import type { PropsBannerPropio } from "./CategoriaBanner";
+import styles from "./BannerConstruccion.module.css";
 
 /**
- * Banner de la categoría Construcción (va en `EncabezadoPagina` con la prop `escena`). Misma familia que el de
- * Pinturas: azul marino con el título a la izquierda y, a la derecha, una placa de concreto real cuyo borde es el
- * dentado de una pared de bloques a medio levantar. Encima, una grúa (el gancho cuelga de un cable que sale por arriba)
- * lleva bloques, uno por uno, de la paleta a un muro en construcción que ya va por la cuarta hilada, y la completa.
- * Al terminar, se quitan esos bloques y vuelve a empezar.
- * - Solo mientras el banner se ve y nunca con "reducir movimiento" (ahí se muestra la pila ya armada, quieta).
- * - Clic / Enter / toque: pausa o sigue la grúa (al terminar el paso en curso).
- * Las medidas de la escena van en `cqh` (% del alto del escenario, que es un contenedor): así las posiciones de la
- * grúa, la paleta y la pila calzan igual en cualquier ancho. Fotos en public/banners/construccion/; gancho y bloque
- * son dos capas sacadas de una misma foto (mismo lienzo de 397×900: encimadas calzan exactas).
+ * Banner de la categoría Construcción, estilo "plano técnico". Portado TAL CUAL del prototipo aprobado
+ * banner-construccion-v1.html: SVG (pluma, muro de 7 hiladas trabadas, cabillas, saco, paleta 4×4, grúa), tiempos de
+ * la grúa (moveX 600/850, moveY 400/450/350, vuelta 700), polvo y colores sin cambios.
+ * Reposo: el muro es plano (3 hiladas hechas, las de arriba punteadas). Activo (mouse encima; en táctil, al tocar): la
+ * grúa toma bloques de la paleta y levanta el muro hilada por hilada (contador 23 / 53). Al salir termina el bloque que
+ * lleva, vuelve a su sitio y el muro regresa al plano.
+ * Diferencias con el prototipo: la base (contenedor, texto, cinta, reposo/activo) es BannerPlano; el muro y la paleta
+ * se dibujan en JSX y se reinician quitando clases en vez de rehacerse; si el muro se completa con el banner activo, la
+ * grúa se queda en su sitio (el prototipo repetía la vuelta en vacío); con "reducir movimiento" la grúa no se mueve y
+ * el muro aparece completo.
  */
 
-const C = "/banners/construccion/";
+// ---------- geometría (del prototipo) ----------
+const ROWS = 7;
+const BASE_ROWS = 3;
+const TX0 = 560; // grúa en reposo
+const HY0 = 60;
+const SAFE = 34; // altura de traslado
 
-/*
- * Geometría en cqh, medida desde la esquina de abajo a la derecha del escenario. `x`: distancia del borde derecho del
- * lienzo del gancho/bloque (ancho ANCHO) al borde derecho del escenario; `y`: altura de la base del bloque sobre el piso.
- */
-const ANCHO = 16;
-/** Paleta: a 4 del borde derecho y del piso, 63 de alto (y de ancho). */
-const PALETA = { derecha: 4, abajo: 4, alto: 63 };
-/** Dónde engancha: el centro de la cara de arriba de la paleta. */
-const RECOGER = { x: 27.5, y: 57 };
-/** Altura a la que viaja (la base del bloque, por encima de la paleta). */
-const VIAJE = 69;
-/**
- * Muro en construcción, en la MISMA perspectiva que la foto del bloque (medida sobre su lienzo de 397×900: a lo largo
- * avanza 309px a la derecha y sube 77; el frente mide 220px de alto). Cada hilada pone 4 bloques uno tras otro a lo
- * largo (los de atrás quedan detrás) y las hiladas impares van corridas medio bloque (trabado, con el borde dentado).
- * Arranca con 3 hiladas y un bloque de la cuarta; la grúa pone los 3 que faltan y, al terminar, se quitan y vuelve.
- * --hueco: en tableta -9cqh (se arrima a la paleta; si no, cruza el corte); desde 1280px 14cqh (en medio de la placa).
- */
-const LARGO = { x: (309 / 397) * ANCHO, y: (77 / 397) * ANCHO };
-const HILADA = (220 / 397) * ANCHO + 0.5; // el frente del bloque + la junta de mortero
-const ORIGEN = { x: 116, y: 4 };
-const MURO = Array.from({ length: 16 }, (_, i) => {
-  const hilada = Math.floor(i / 4);
-  const k = (i % 4) + (hilada % 2 ? 0.5 : 0);
-  return { x: ORIGEN.x - k * LARGO.x, y: ORIGEN.y + k * LARGO.y + hilada * HILADA, z: hilada * 10 + (9 - (i % 4)), base: hilada === 0 };
-});
-const INICIALES = 13;
+type Bloque = { x: number; y: number; w: number; r: number; slot?: number; media?: boolean };
 
-type Paso = { x?: number; y?: number; enPila?: boolean; ms: number; viaje?: boolean; cargar?: boolean; soltar?: boolean };
+/** Muro: 7 hiladas, aparejo trabado; desde la 4ª son espacios (slots) que llena la grúa. */
+const MURO: Bloque[] = (() => {
+  const lista: Bloque[] = [];
+  let slot = 0;
+  for (let r = 0; r < ROWS; r++) {
+    const y = 236 - 20 * (r + 1),
+      odd = r % 2 === 1;
+    if (odd) {
+      lista.push({ x: 100, y, w: 20, r, media: true });
+      lista.push({ x: 400, y, w: 20, r, media: true });
+    }
+    const n = odd ? 7 : 8,
+      x0 = odd ? 120 : 100;
+    for (let i = 0; i < n; i++) lista.push({ x: x0 + 40 * i, y, w: 40, r, slot: r >= BASE_ROWS ? slot++ : undefined });
+  }
+  return lista;
+})();
 
-/** Los 8 pasos de la grúa para el bloque n. */
-function pasos(n: number): Paso[] {
-  const destino = MURO[n];
-  return [
-    { x: RECOGER.x, enPila: false, y: VIAJE, ms: 1200, viaje: true },
-    { y: RECOGER.y, ms: 800 },
-    { cargar: true, ms: 220 },
-    { y: VIAJE, ms: 800 },
-    { x: destino.x, enPila: true, ms: 1300, viaje: true },
-    { y: destino.y, ms: 900 },
-    { soltar: true, ms: 260 },
-    { y: VIAJE, ms: 700 },
-  ];
+/** Paleta 4×4; la fila de arriba (r = 3) es la que toma la grúa. */
+const PALETA = Array.from({ length: 16 }, (_, k) => ({ r: Math.floor(k / 4), c: k % 4 }));
+
+const CELOSIA = Array.from({ length: 37 }, (_, k) => `M${40 + k * 20} 20L${50 + k * 20} 8L${60 + k * 20} 20`).join("");
+const RAYADO_PISO = Array.from({ length: 41 }, (_, k) => `M${48 + k * 18} 236l-8 8`).join("");
+const CABILLAS = [86, 92, 428, 434];
+const rayasCabilla = (x: number) => Array.from({ length: 21 }, (_, k) => `M${x - 2.5} ${74 + k * 8 + 3}l5 -3`).join("");
+
+function BloqueSvg({ x, y, w, className, ...data }: { x: number; y: number; w: number; className: string } & Record<`data-${string}`, string | number>) {
+  return (
+    <g className={className} {...data}>
+      <rect className={styles.f} x={x} y={y} width={w} height={20} rx={1.5} />
+      {w === 40 ? (
+        <>
+          <rect className={styles.h} x={x + 5} y={y + 4} width={12} height={12} rx={2} />
+          <rect className={styles.h} x={x + 23} y={y + 4} width={12} height={12} rx={2} />
+        </>
+      ) : (
+        <rect className={styles.h} x={x + 4} y={y + 4} width={12} height={12} rx={2} />
+      )}
+    </g>
+  );
 }
 
-export default function BannerConstruccion() {
-  const raiz = useRef<HTMLDivElement>(null);
-  const [grua, setGrua] = useState({ x: RECOGER.x, y: VIAJE, enPila: false, ms: 0, viaje: 0 });
-  const [cargando, setCargando] = useState(false);
-  const [colocados, setColocados] = useState(INICIALES);
-  const [despejando, setDespejando] = useState(false);
-  const [reducido, setReducido] = useState(false);
-  const [visible, setVisible] = useState(false);
-  const [pausa, setPausa] = useState(false);
-  const [tocado, setTocado] = useState(false);
-  const puntero = useRef("");
-  const pausaRef = useRef(false);
-  // Dónde va la grúa: bloque n y paso dentro de su recorrido (sobrevive a pausas y a salir de pantalla).
-  const avance = useRef({ n: INICIALES, paso: 0 });
+const ease = (t: number) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
+const NS = "http://www.w3.org/2000/svg";
 
-  useEffect(() => {
-    const el = raiz.current;
-    if (!el) return;
-    const obs = new IntersectionObserver(([e]) => setVisible(e.isIntersecting), { threshold: 0.4 });
-    obs.observe(el);
-    const consulta = window.matchMedia("(prefers-reduced-motion: reduce)");
-    const alCambiar = () => setReducido(consulta.matches);
-    alCambiar();
-    consulta.addEventListener("change", alCambiar);
-    return () => {
-      obs.disconnect();
-      consulta.removeEventListener("change", alCambiar);
-    };
-  }, []);
+function crearMotor(raiz: HTMLElement): Motor {
+  const q = <T extends Element>(sel: string) => raiz.querySelector<T>(sel)!;
+  const trolley = q<SVGGElement>('[data-p="trolley"]'),
+    hook = q<SVGGElement>('[data-p="hook"]'),
+    cable = q<SVGLineElement>('[data-p="cable"]'),
+    carry = q<SVGGElement>('[data-p="carry"]'),
+    dust = q<SVGGElement>('[data-p="dust"]'),
+    count = q<SVGTextElement>('[data-p="count"]');
+  const slots = Array.from(raiz.querySelectorAll<SVGGElement>("[data-slot]"))
+    .map((g) => ({ g, i: Number(g.dataset.slot), x: Number(g.dataset.x) + 20, y: Number(g.dataset.y), r: Number(g.dataset.r) }))
+    .sort((a, b) => a.i - b.i);
+  const medias = Array.from(raiz.querySelectorAll<SVGGElement>("[data-media]"));
+  const palTop = Array.from(raiz.querySelectorAll<SVGGElement>("[data-pal]"))
+    .map((g) => ({ g, c: Number(g.dataset.pal), x: 610 + 40 * Number(g.dataset.pal), y: 146 }))
+    .sort((a, b) => a.c - b.c);
+  const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-  useEffect(() => {
-    if (!visible || reducido) return;
-    let vivo = true;
-    const esperar = (ms: number) => new Promise((r) => window.setTimeout(r, ms));
-    (async () => {
-      while (vivo) {
-        // La pausa (o el foco del teclado dentro) se respeta entre paso y paso.
-        if (pausaRef.current || raiz.current?.closest("header")?.matches(":has(:focus-visible)")) {
-          await esperar(300);
-          continue;
-        }
-        const a = avance.current;
-        if (a.n >= MURO.length) {
-          await esperar(1400);
-          if (!vivo) return;
-          setDespejando(true);
-          await esperar(700);
-          setColocados(INICIALES);
-          setDespejando(false);
-          avance.current = { n: INICIALES, paso: 0 };
-          continue;
-        }
-        const p = pasos(a.n)[a.paso];
-        if (p.cargar) setCargando(true);
-        if (p.soltar) {
-          setCargando(false);
-          setColocados(a.n + 1);
-        }
-        if (p.x !== undefined || p.y !== undefined) {
-          setGrua((g) => ({ x: p.x ?? g.x, y: p.y ?? g.y, enPila: p.enPila ?? g.enPila, ms: p.ms, viaje: p.viaje ? g.viaje + 1 : g.viaje }));
-        }
-        await esperar(p.ms + 40);
-        if (!vivo) return;
-        avance.current = a.paso === 7 ? { n: a.n + 1, paso: 0 } : { n: a.n, paso: a.paso + 1 };
+  let tx = TX0,
+    hy = HY0,
+    ang = 0;
+  let active = false,
+    running = false,
+    destruido = false,
+    placed = 0,
+    picked = 0;
+  const rafs = new Set<number>();
+  const timers = new Set<number>();
+  const later = (fn: () => void, ms: number) => {
+    const id = window.setTimeout(() => {
+      timers.delete(id);
+      fn();
+    }, ms);
+    timers.add(id);
+  };
+
+  function draw() {
+    trolley.setAttribute("transform", `translate(${tx} 0)`);
+    hook.setAttribute("transform", `rotate(${ang} 0 29) translate(0 ${hy})`);
+    cable.setAttribute("y2", String(hy));
+  }
+  const tween = (d: number, f: (p: number, t: number) => void) =>
+    new Promise<void>((r) => {
+      const s = performance.now();
+      const k = (n: number) => {
+        if (destruido) return r();
+        const t = Math.min(1, (n - s) / d);
+        f(ease(t), t);
+        if (t < 1) {
+          const id = requestAnimationFrame((m) => {
+            rafs.delete(id);
+            k(m);
+          });
+          rafs.add(id);
+        } else r();
+      };
+      k(s);
+    });
+  const moveX = (to: number, d: number) => {
+    const f = tx;
+    return tween(d, (p, t) => {
+      tx = f + (to - f) * p;
+      ang = (-(to - f) / Math.abs(to - f || 1)) * 5 * Math.sin(Math.PI * t);
+      draw();
+    });
+  };
+  const moveY = (to: number, d: number) => {
+    const f = hy;
+    return tween(d, (p) => {
+      hy = f + (to - f) * p;
+      draw();
+    });
+  };
+
+  function puff(x: number, y: number) {
+    if (reduce) return;
+    for (let i = 0; i < 9; i++) {
+      const c = document.createElementNS(NS, "circle");
+      c.setAttribute("cx", String(x + (Math.random() * 40 - 20)));
+      c.setAttribute("cy", String(y));
+      c.setAttribute("r", String(1.5 + Math.random() * 2));
+      dust.appendChild(c);
+      const dx = (Math.random() - 0.5) * 50,
+        dy = -6 - Math.random() * 14;
+      c.animate(
+        [
+          { transform: "translate(0,0)", opacity: 0.9 },
+          { transform: `translate(${dx}px,${dy}px)`, opacity: 0 },
+        ],
+        { duration: 700 + Math.random() * 400, easing: "ease-out" },
+      ).onfinish = () => c.remove();
+    }
+  }
+
+  const setCount = () => (count.textContent = `${23 + placed} / 53`);
+
+  /** Coloca el bloque del slot: el muro lo muestra en concreto (y las medias piezas de su hilada). */
+  function colocar(dst: (typeof slots)[number], destello: boolean) {
+    medias.filter((m) => Number(m.dataset.media) === dst.r).forEach((m) => m.classList.remove(styles.plan));
+    dst.g.classList.remove(styles.plan);
+    if (destello) {
+      dst.g.classList.add(styles.nuevo);
+      later(() => dst.g.classList.remove(styles.nuevo), 500);
+    }
+  }
+
+  /** Vuelve el muro al plano y la paleta llena (en el prototipo, buildWall + buildPallet). */
+  function reiniciar() {
+    placed = 0;
+    picked = 0;
+    slots.forEach((s) => s.g.classList.add(styles.plan));
+    medias.forEach((m) => m.classList.add(styles.plan));
+    palTop.forEach((b) => (b.g.style.visibility = ""));
+    setCount();
+  }
+
+  async function loop() {
+    if (running) return;
+    running = true;
+    while (active && placed < slots.length && !destruido) {
+      const src = palTop[picked % 4],
+        dst = slots[placed];
+      await moveX(src.x, 600);
+      if (!active) break;
+      await moveY(src.y - 26, 400);
+      src.g.style.visibility = "hidden";
+      carry.style.display = "";
+      picked++;
+      if (palTop.every((b) => b.g.style.visibility === "hidden")) later(() => palTop.forEach((b) => (b.g.style.visibility = "")), 900);
+      await moveY(SAFE, 450);
+      await moveX(dst.x, 850);
+      await moveY(dst.y - 26, 450);
+      carry.style.display = "none";
+      colocar(dst, true);
+      puff(dst.x, dst.y + 20);
+      placed++;
+      setCount();
+      await moveY(SAFE, 350);
+    }
+    if (destruido) return;
+    // reposo: la grúa vuelve y el muro regresa al plano
+    carry.style.display = "none";
+    await Promise.all([moveX(TX0, 700), moveY(HY0, 700)]);
+    if (!active && !destruido) reiniciar();
+    running = false;
+    if (active && placed < slots.length) void loop();
+  }
+
+  return {
+    encender() {
+      active = true;
+      if (reduce) {
+        slots.forEach((s) => colocar(s, false));
+        placed = slots.length;
+        setCount();
+        return;
       }
-    })();
-    return () => {
-      vivo = false;
-    };
-  }, [visible, reducido]);
+      void loop();
+    },
+    apagar() {
+      active = false;
+      if (reduce) reiniciar();
+    },
+    destruir() {
+      destruido = true;
+      rafs.forEach((id) => cancelAnimationFrame(id));
+      timers.forEach((id) => clearTimeout(id));
+      dust.replaceChildren();
+    },
+  };
+}
 
-  // Con "reducir movimiento" la pila se muestra ya armada.
-  const bloquesEnPila = reducido ? MURO.length : colocados;
-  const lienzo = (x: number, y: number, ms = 0, enPila = false): CSSProperties => ({
-    transform: enPila ? `translate(calc(${-x}cqh - var(--hueco)), ${-y}cqh)` : `translate(${-x}cqh, ${-y}cqh)`,
-    transitionDuration: `${ms}ms`,
-  });
-
+export default function BannerConstruccion({ nombre, tituloPartes, texto, kicker }: PropsBannerPropio) {
   return (
-    <div ref={raiz} className="bp absolute inset-0 overflow-hidden" data-activo={tocado || undefined}>
-      {/* Placa de concreto con el corte difuminado. */}
-      <div className="absolute inset-0 drop-shadow-xl drop-shadow-pico-azul-oscuro/60">
-        <div
-          className="bp-placa bp-difumina absolute -inset-y-6 -right-24 left-[56%] overflow-hidden md:left-[51%] xl:left-[49%]"
-        >
-          <div className="absolute inset-0 skew-x-12 scale-125 bg-[url(/banners/construccion/concreto.webp)] bg-[size:520px_auto] bg-repeat" />
-          <div className="absolute inset-0 bg-[linear-gradient(170deg,color-mix(in_srgb,var(--color-amarillo-obra)_14%,transparent)_0%,transparent_40%,color-mix(in_srgb,var(--color-pico-azul-oscuro)_60%,transparent)_100%)]" />
-          <div className="absolute inset-0 bg-pico-azul-oscuro/25 mix-blend-multiply" />
-          <div className="absolute inset-x-0 bottom-0 h-[40%] bg-gradient-to-t from-pico-azul-oscuro/55 to-transparent" />
-          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_70%_35%,transparent_30%,color-mix(in_srgb,var(--color-pico-azul-oscuro)_40%,transparent)_100%)]" />
-          <Montanas className="absolute -right-6 -bottom-10 w-[115%] skew-x-12 fill-pico-azul-oscuro/[0.08]" />
-          {/* Piso de la obra: una losa más oscura con su canto iluminado, donde se apoyan la paleta y el muro. */}
-          <div className="absolute inset-x-0 bottom-0 h-[30%] border-t border-pico-blanco/15 bg-gradient-to-b from-pico-azul-oscuro/35 to-pico-azul-oscuro/70" />
-          <div className="bp-funde absolute inset-y-0 left-0" />
-        </div>
-      </div>
+    <BannerPlano
+      nombre={nombre}
+      kicker={kicker}
+      tituloPartes={tituloPartes}
+      texto={texto}
+      ariaLabel={`Categoría ${nombre}`}
+      colorInicial="#F2A900"
+      crearMotor={crearMotor}
+      decoracion="cinta"
+      variables={
+        {
+          "--brillo": "radial-gradient(55% 120% at 70% 60%, color-mix(in srgb, var(--c) 32%, transparent), transparent 70%)",
+          "--brillo-on": "0.6",
+          "--palabra-min": "36px",
+          "--palabra-vw": "4.2vw",
+          "--palabra-max": "58px",
+          "--palabra-movil-min": "1.9rem",
+          "--palabra-movil-vw": "8.6vw",
+          "--palabra-movil-max": "3.2rem",
+          "--etiqueta-pad": "2px 26px 0",
+          "--etiqueta-sombra": "0 10px 24px -10px rgba(227, 38, 47, 0.6)",
+        } as CSSProperties
+      }
+    >
+      <svg viewBox="0 0 780 260" preserveAspectRatio="xMidYMid meet" aria-hidden focusable="false" className={styles.svg}>
+        {/* pluma de la grúa (celosía) */}
+        <g>
+          <path className={styles.ln} d="M40 8H780M40 20H780" style={{ strokeWidth: 1.5 }} />
+          <path className={styles.cota} d={CELOSIA} />
+          <text x="44" y="5" style={{ fontSize: 7 }}>
+            PLUMA · 12 m
+          </text>
+        </g>
 
+        {/* cotas del muro */}
+        <g className={styles.bp}>
+          <path className={styles.cota} d="M66 96V236M61 96h10M61 236h10" />
+          <text transform="translate(58 182) rotate(-90)">1.40 m</text>
+          <path className={styles.cota} d="M100 254H420M100 249v10M420 249v10" />
+          <path d="M104 254l-5 -3v6z" fill="#e3262f" />
+          <text x="242" y="251">
+            3.20 m
+          </text>
+        </g>
+        <text x="100" y="88">
+          MURO B · BLOQUE 15×20×40
+        </text>
+        <text data-p="count" x="420" y="88" textAnchor="end">
+          23 / 53
+        </text>
 
-      {/* En el teléfono: solo la paleta (la lupa ocupa la esquina de arriba y no cabe la grúa). */}
-      <span className="absolute right-[4%] bottom-[4%] block aspect-[820/813] h-[54%] md:hidden">
-        <Image src={`${C}paleta-bloques.webp`} alt="" width={820} height={813} sizes="130px" className="size-full object-contain drop-shadow-xl drop-shadow-pico-azul-oscuro/40" />
-      </span>
-
-      <button
-        type="button"
-        aria-label={pausa ? "Seguir con la grúa" : "Pausar la grúa"}
-        aria-pressed={pausa}
-        onPointerDown={(e) => (puntero.current = e.pointerType)}
-        onClick={() => {
-          if (puntero.current === "touch") setTocado(true);
-          puntero.current = "";
-          pausaRef.current = !pausaRef.current;
-          setPausa(pausaRef.current);
-        }}
-        className="absolute inset-y-0 right-0 left-[55%] hidden cursor-pointer focus-visible:outline-none md:left-[50%] md:block"
-      >
-        {/* Escenario: contenedor del alto del banner; todo adentro se mide en cqh. */}
-        <span className="bc-escenario absolute inset-0 block [--hueco:-9cqh] xl:[--hueco:14cqh]">
-          {/* Paleta de bloques (de donde sale cada bloque). */}
-          <span className="absolute block aspect-[820/813]" style={{ right: `${PALETA.derecha}cqh`, bottom: `${PALETA.abajo}cqh`, height: `${PALETA.alto}cqh` }}>
-            <span className="absolute -bottom-[4%] left-1/2 h-[10%] w-[96%] -translate-x-1/2 rounded-[50%] bg-pico-azul-oscuro/55 blur-md" />
-            <Image src={`${C}paleta-bloques.webp`} alt="" width={820} height={813} priority sizes="(min-width: 1280px) 180px, 150px" className="relative size-full object-contain drop-shadow-xl drop-shadow-pico-azul-oscuro/40" />
-          </span>
-
-          {/* Pila nueva: los bloques que ya dejó la grúa. */}
-          {MURO.slice(0, bloquesEnPila).map((s, i) => (
-            <span
-              key={i}
-              className={`absolute right-0 bottom-0 block transition-opacity duration-700 ${despejando && i >= INICIALES ? "opacity-0" : "opacity-100"}`}
-              style={{ ...lienzo(s.x, s.y, 0, true), width: `${ANCHO}cqh`, zIndex: s.z }}
-            >
-              {s.base && <span className="absolute -bottom-[1%] left-1/2 h-[4%] w-[110%] -translate-x-1/2 rounded-[50%] bg-pico-azul-oscuro/55 blur-sm" />}
-              <Image src={`${C}bloque.webp`} alt="" width={397} height={900} sizes="60px" className="relative h-auto w-full drop-shadow-md drop-shadow-pico-azul-oscuro/50" />
-              {i === bloquesEnPila - 1 && i >= INICIALES && !reducido && <span className="bc-polvo absolute bottom-[-2%] left-1/2 block h-[8%] w-[150%] rounded-[50%] bg-[radial-gradient(closest-side,color-mix(in_srgb,var(--color-pico-blanco)_70%,transparent),transparent)]" />}
-            </span>
+        {/* cabillas de las columnas */}
+        <g>
+          {CABILLAS.map((x) => (
+            <g key={x}>
+              <line x1={x} y1={236} x2={x} y2={70} className={styles.ln} style={{ strokeWidth: 1.5 }} />
+              <path d={rayasCabilla(x)} className={styles.cota} />
+            </g>
           ))}
+          <rect x="80" y="96" width="20" height="140" className={styles.dash} />
+          <rect x="420" y="96" width="20" height="140" className={styles.dash} />
+        </g>
 
-          {/* Grúa: el cable sale por arriba del banner y el gancho (con o sin bloque) se mueve con transiciones. */}
-          <span
-            className="absolute right-0 bottom-0 z-50 block ease-[cubic-bezier(0.45,0,0.25,1)] [transition-property:transform]"
-            style={{ ...lienzo(grua.x, grua.y, grua.ms, grua.enPila), width: `${ANCHO}cqh` }}
-          >
-            <span key={grua.viaje} className={`bc-gancho absolute bottom-0 left-0 flex h-[300cqh] w-full flex-col ${grua.viaje > 0 ? "bc-viaje" : ""}`}>
-              <span className="mx-auto w-[3px] flex-1 bg-gradient-to-r from-gris-texto via-gris-borde to-gris-texto" />
-              <span className="relative block">
-                <Image src={`${C}bloque.webp`} alt="" width={397} height={900} sizes="60px" className={`absolute inset-0 h-auto w-full drop-shadow-md drop-shadow-pico-azul-oscuro/50 ${cargando ? "opacity-100" : "opacity-0"}`} />
-                <Image src={`${C}gancho.webp`} alt="" width={397} height={900} sizes="60px" className="relative h-auto w-full" />
-              </span>
-            </span>
-          </span>
-        </span>
-      </button>
+        {/* muro: bloques */}
+        <g>
+          {MURO.map((b) => {
+            const plan = b.r >= BASE_ROWS;
+            const cls = `${styles.blq} ${plan ? styles.plan : ""}`;
+            if (b.media) return <BloqueSvg key={`m${b.r}-${b.x}`} x={b.x} y={b.y} w={b.w} className={cls} data-media={b.r} />;
+            if (b.slot !== undefined)
+              return (
+                <BloqueSvg key={`s${b.slot}`} x={b.x} y={b.y} w={b.w} className={cls} data-slot={b.slot} data-x={b.x} data-y={b.y} data-r={b.r} />
+              );
+            return <BloqueSvg key={`b${b.r}-${b.x}`} x={b.x} y={b.y} w={b.w} className={cls} />;
+          })}
+        </g>
 
-      <span className="sr-only" aria-live="polite">
-        {pausa ? "Grúa en pausa" : ""}
-      </span>
-    </div>
+        {/* piso */}
+        <path className={styles.cota} d="M40 236H780" />
+        <path className={styles.cota} d={RAYADO_PISO} />
+
+        {/* saco de cemento */}
+        <g transform="translate(510 0)">
+          <path className={`${styles.ln} ${styles.saco}`} d="M6 236L2 196Q2 186 12 186H52Q62 186 62 196L58 236Z" />
+          <path className={styles.dash} d="M8 192H56" />
+          <text className={styles.sacoT} x="10" y="212" style={{ fontSize: 8 }}>
+            CEMENTO
+          </text>
+          <text className={styles.sacoT} x="14" y="224" style={{ fontSize: 8 }}>
+            42.5 kg
+          </text>
+        </g>
+
+        {/* paleta de bloques */}
+        <g>
+          {PALETA.map(({ r, c }) => (
+            <BloqueSvg
+              key={`p${r}-${c}`}
+              x={590 + 40 * c}
+              y={226 - 20 * (r + 1)}
+              w={40}
+              className={styles.blq}
+              {...(r === 3 ? { "data-pal": c } : {})}
+            />
+          ))}
+        </g>
+        <g>
+          <path className={styles.ln} d="M586 226H754M586 236H754" style={{ stroke: "#c9a878" }} />
+          <path className={styles.ln} d="M594 226v10M670 226v10M746 226v10" style={{ stroke: "#c9a878" }} />
+          <path className={styles.pz} d="M598 146V226M742 146V226" stroke="#e3262f" strokeWidth="2.5" />
+        </g>
+        <text className={styles.bp} x="604" y="254" style={{ fontSize: 8 }}>
+          PALETA · 90 u
+        </text>
+
+        {/* trolley + gancho + bloque cargado */}
+        <g data-p="trolley" transform={`translate(${TX0} 0)`}>
+          <rect x="-13" y="20" width="26" height="9" rx="2" className={styles.carro} />
+          <circle cx="-6" cy="20" r="2.5" className={styles.rueda} />
+          <circle cx="6" cy="20" r="2.5" className={styles.rueda} />
+          <line data-p="cable" x1="0" y1="29" x2="0" y2={HY0} className={styles.cable} />
+          <g data-p="hook" transform={`rotate(0 0 29) translate(0 ${HY0})`}>
+            <rect x="-6" y="0" width="12" height="7" rx="1.5" className={styles.gancho} />
+            <path d="M0 7v5a4 4 0 1 1-4 4" fill="none" stroke="#e3262f" strokeWidth="2.5" strokeLinecap="round" />
+            <g data-p="carry" style={{ display: "none" }}>
+              <path d="M0 14L-18 26M0 14L18 26" className={styles.eslinga} />
+              <BloqueSvg x={-20} y={26} w={40} className={styles.blq} />
+            </g>
+          </g>
+        </g>
+
+        {/* polvo */}
+        <g data-p="dust" className={styles.polvo} />
+      </svg>
+    </BannerPlano>
   );
 }

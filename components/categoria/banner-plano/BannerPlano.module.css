@@ -40,12 +40,12 @@
   inset: 0;
   z-index: -1;
   pointer-events: none;
-  background: radial-gradient(60% 120% at 72% 55%, color-mix(in srgb, var(--c) 70%, transparent), transparent 70%);
+  background: var(--brillo, radial-gradient(60% 120% at 72% 55%, color-mix(in srgb, var(--c) 70%, transparent), transparent 70%));
   opacity: 0;
   transition: opacity 0.6s ease;
 }
 :global(.on) > .brillo {
-  opacity: 0.55;
+  opacity: var(--brillo-on, 0.55);
 }
 
 /* ---------- columna de texto ---------- */
@@ -125,7 +125,7 @@
   position: relative;
   display: inline-block;
   margin-top: 10px;
-  padding: 4px 14px 0;
+  padding: var(--etiqueta-pad, 4px 14px 0);
 }
 .etiquetaFondo {
   position: absolute;
@@ -134,10 +134,11 @@
   border-radius: 2px;
   background: var(--signal);
   transform: skewX(-12deg);
+  box-shadow: var(--etiqueta-sombra, none);
 }
 .palabra {
   display: block;
-  font-size: clamp(2.2rem, 5.6vw, 4.6rem);
+  font-size: clamp(var(--palabra-min, 2.2rem), var(--palabra-vw, 5.6vw), var(--palabra-max, 4.6rem));
   line-height: 0.92;
   letter-spacing: -0.02em;
   text-transform: uppercase;
@@ -183,6 +184,24 @@
 :global(.on) .gotas span:nth-child(4) {
   height: 18px;
   transition-delay: 0.5s;
+}
+
+/* Cinta de seguridad (Construcción): se despliega de izquierda a derecha bajo la etiqueta. */
+.cinta {
+  position: absolute;
+  top: calc(100% + 5px);
+  left: 8px;
+  right: -10px;
+  height: 8px;
+  border-radius: 1px;
+  background: repeating-linear-gradient(-45deg, var(--c) 0 9px, var(--ink) 9px 18px);
+  transform: skewX(-12deg) scaleX(0);
+  transform-origin: left;
+  transition: transform 0.7s cubic-bezier(0.3, 0.7, 0.2, 1) 0.1s;
+  pointer-events: none;
+}
+:global(.on) .cinta {
+  transform: skewX(-12deg) scaleX(1);
 }
 
 .subtitulo {
@@ -238,7 +257,7 @@
     font-size: clamp(1.15rem, 4.8vw, 1.9rem);
   }
   .palabra {
-    font-size: clamp(2.1rem, 10vw, 3.6rem);
+    font-size: clamp(var(--palabra-movil-min, 2.1rem), var(--palabra-movil-vw, 10vw), var(--palabra-movil-max, 3.6rem));
   }
   .subtitulo {
     margin-top: 26px;
@@ -269,6 +288,7 @@
 @media (prefers-reduced-motion: reduce) {
   .gotas span,
   :global(.on) .gotas span,
+  .cinta,
   .brillo {
     transition-duration: 0.01s !important;
     transition-delay: 0s !important;
