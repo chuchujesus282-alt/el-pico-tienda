@@ -7,8 +7,8 @@ import "./banner.css";
 
 /** Props de un banner que reemplaza al encabezado entero (ej. BannerPinturas, sobre components/categoria/banner-plano/). */
 export type PropsBannerPropio = {
+  /** Nombre de la categoría: es el título del banner. */
   nombre: string;
-  tituloPartes: [string, string];
   texto: string;
   kicker: string;
 };
@@ -20,8 +20,8 @@ type ConfigBanner = {
   Propio?: ComponentType<PropsBannerPropio>;
   /** Texto chico en mono sobre el título (solo banners propios). */
   kicker?: string;
-  /** Frase + palabra clave sobre el sello rojo (como "Herramientas que RINDEN" del inicio). */
-  tituloPartes: [string, string];
+  /** Frase + palabra clave sobre el sello rojo (solo banners con Escena; los propios muestran el nombre). */
+  tituloPartes?: [string, string];
   /** Una línea bajo el título. */
   texto: string;
 };
@@ -35,13 +35,11 @@ const BANNERS: Record<string, ConfigBanner> = {
   pinturas: {
     Propio: BannerPinturas,
     kicker: "LÁMINA 06 · ACABADOS",
-    tituloPartes: ["Dale color con", "Pinturas"],
     texto: "Pinturas, brochas, rodillos y todo para pintar como un profesional.",
   },
   construccion: {
     Propio: BannerConstruccion,
     kicker: "LÁMINA 02 · OBRA GRIS",
-    tituloPartes: ["Materiales de", "Construcción"],
     texto: "Cemento, bloques, cabillas y todo lo que tu obra necesita.",
   },
   herramientas: {

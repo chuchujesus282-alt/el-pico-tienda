@@ -191,7 +191,7 @@ function crearMotor(raiz: HTMLElement): Motor {
 /** Rayado del piso: trazos cortos cada 14 unidades. */
 const RAYADO_PISO = Array.from({ length: 53 }, (_, k) => `M${30 + k * 14} 240 l-8 10`).join(" ");
 
-export default function BannerPinturas({ nombre, tituloPartes, texto, kicker }: PropsBannerPropio) {
+export default function BannerPinturas({ nombre, texto, kicker }: PropsBannerPropio) {
   const id = useId().replace(/:/g, "");
   const rayado = `rayado-${id}`;
   const c0 = COLORES[0];
@@ -200,9 +200,8 @@ export default function BannerPinturas({ nombre, tituloPartes, texto, kicker }: 
     <BannerPlano
       nombre={nombre}
       kicker={kicker}
-      tituloPartes={tituloPartes}
       texto={texto}
-      ariaLabel={`${tituloPartes[0]} ${tituloPartes[1]}`}
+      ariaLabel={`Categoría ${nombre}`}
       colorInicial={c0.hex}
       crearMotor={crearMotor}
     >

@@ -18,12 +18,10 @@ export type Motor = {
 };
 
 type Props = {
-  /** Nombre de la categoría para la ruta (Inicio › Pinturas). */
+  /** Nombre de la categoría: va en la ruta (Inicio › Pinturas) y es el título (h1) en la etiqueta roja. */
   nombre: string;
   /** Texto chico en mono sobre el título (ej. "LÁMINA 06 · ACABADOS"). */
   kicker: string;
-  /** "Dale color con" + "Pinturas" (la palabra va en la etiqueta roja). El h1 se lee completo. */
-  tituloPartes: [string, string];
   texto: string;
   /** aria-label de la sección. */
   ariaLabel: string;
@@ -47,14 +45,15 @@ type Props = {
 
 /**
  * Banner de categoría estilo "plano técnico" (familia de las tarjetas de categoría animadas): contenedor azul con
- * cuadrícula, columna de texto (ruta, kicker, frase, etiqueta roja con gotas, subtítulo) e ilustración a la derecha.
+ * cuadrícula, columna de texto (ruta, kicker, nombre de la categoría en la etiqueta roja con gotas, subtítulo) e
+ * ilustración a la derecha. Compacto a propósito: es el encabezado de una sección, no un anuncio (la ilustración se
+ * escala para caber en su alto máximo).
  * Reposo = plano frío; activo (mouse encima; en táctil, al tocar) = clase `on` y la escena corre su motor.
  * Para otra categoría: su componente arma la ilustración y su motor, y monta este con sus textos.
  */
 export default function BannerPlano({
   nombre,
   kicker,
-  tituloPartes,
   texto,
   ariaLabel,
   colorInicial,
@@ -148,10 +147,9 @@ export default function BannerPlano({
           <p className={styles.kicker}>{kicker}</p>
 
           <h1 className={styles.titulo}>
-            <span className={styles.frase}>{tituloPartes[0]} </span>
             <span className={styles.etiqueta}>
               <span className={styles.etiquetaFondo} aria-hidden />
-              <span className={styles.palabra}>{tituloPartes[1]}</span>
+              <span className={styles.palabra}>{nombre}</span>
               {decoracion === "cinta" ? (
                 <span className={styles.cinta} aria-hidden />
               ) : (

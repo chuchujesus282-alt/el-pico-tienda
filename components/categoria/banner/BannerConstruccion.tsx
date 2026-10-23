@@ -243,12 +243,11 @@ function crearMotor(raiz: HTMLElement): Motor {
   };
 }
 
-export default function BannerConstruccion({ nombre, tituloPartes, texto, kicker }: PropsBannerPropio) {
+export default function BannerConstruccion({ nombre, texto, kicker }: PropsBannerPropio) {
   return (
     <BannerPlano
       nombre={nombre}
       kicker={kicker}
-      tituloPartes={tituloPartes}
       texto={texto}
       ariaLabel={`Categoría ${nombre}`}
       colorInicial="#F2A900"
@@ -258,12 +257,12 @@ export default function BannerConstruccion({ nombre, tituloPartes, texto, kicker
         {
           "--brillo": "radial-gradient(55% 120% at 70% 60%, color-mix(in srgb, var(--c) 32%, transparent), transparent 70%)",
           "--brillo-on": "0.6",
-          "--palabra-min": "36px",
-          "--palabra-vw": "4.2vw",
-          "--palabra-max": "58px",
-          "--palabra-movil-min": "1.9rem",
-          "--palabra-movil-vw": "8.6vw",
-          "--palabra-movil-max": "3.2rem",
+          "--palabra-min": "30px",
+          "--palabra-vw": "3.4vw",
+          "--palabra-max": "46px",
+          "--palabra-movil-min": "1.5rem",
+          "--palabra-movil-vw": "6.8vw",
+          "--palabra-movil-max": "2.4rem",
           "--etiqueta-pad": "2px 26px 0",
           "--etiqueta-sombra": "0 10px 24px -10px rgba(227, 38, 47, 0.6)",
         } as CSSProperties
