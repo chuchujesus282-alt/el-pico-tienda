@@ -41,11 +41,10 @@ export const bannersPrincipales: BannerInicio[] = [
     alt: "Materiales de construcción en El Pico",
     href: "/categoria/construccion",
     titulo: "Materiales para construir",
-    tituloPartes: ["Materiales para", "construir"],
     texto: "Cemento, bloques, pegos y más para construir sin paradas.",
     textoBoton: "Ver materiales",
     variante: "azul",
-    // Sin ícono: en su lugar flota la paleta de bloques real sobre concreto (ObraEnConcreto).
+    // Provisional a propósito: solo el texto sobre el azul, sin escena ni ícono (la escena se quitó el 2026-10-23).
   },
   {
     id: "herramientas",
@@ -77,11 +76,10 @@ export const bannersPrincipales: BannerInicio[] = [
     alt: "Cerrajería en El Pico",
     href: "/categoria/cerrajeria",
     titulo: "Cerrajería que protege",
-    tituloPartes: ["Cerrajería que", "protege"],
     texto: "Candados, cerraduras, cilindros y bisagras para tu casa o tu negocio.",
     textoBoton: "Ver cerrajería",
     variante: "azul",
-    // Sin ícono: en su lugar flota un candado de latón que se abre al pasar el mouse (CerraduraSegura).
+    // Provisional a propósito: solo el texto sobre el azul, sin escena ni ícono.
   },
 ];
 

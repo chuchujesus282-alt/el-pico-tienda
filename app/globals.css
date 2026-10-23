@@ -27,14 +27,6 @@
      obra. Solo para esa placa y su franja de seguridad; el texto encima va en azul marino (≥4,5:1). */
   --color-amarillo-obra: #f2b705;
   --color-amarillo-obra-oscuro: #d99a00;
-  /* Latón y acero del banner de Cerrajería del carrusel (CerraduraSegura): el candado, la bisagra del corte y la
-     placa de acero. Solo para esa escena. */
-  --color-laton: #c9a43a;
-  --color-laton-claro: #f1d98a;
-  --color-laton-oscuro: #86661a;
-  --color-acero: #b4bec9;
-  --color-acero-claro: #eef2f6;
-  --color-acero-oscuro: #6c7886;
   /* Colores de las latas reales del banner de Pinturas (public/banners/pinturas/), medidos sobre cada foto. SOLO para
      ese banner: la placa de la derecha y la ficha de color toman el de la lata de turno. */
   --color-pintura-azul: #0b3fae;
