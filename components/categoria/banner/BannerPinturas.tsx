@@ -238,6 +238,7 @@ export default function BannerPinturas({ nombre }: PropsBannerPropio) {
         <path d={RAYADO_PISO} className={styles.pisoRayado} />
 
         {/* ---------- ficha de color ---------- */}
+        <g className={styles.flota}>
         <g transform="translate(540 22) rotate(-5)">
           <rect width="104" height="96" rx="3" className={styles.ficha} />
           <rect x="8" y="8" width="88" height="44" rx="2" className={styles.chipBorde} />
@@ -252,14 +253,17 @@ export default function BannerPinturas({ nombre }: PropsBannerPropio) {
             {c0.hex}
           </text>
         </g>
+        </g>
 
         {/* ---------- brocha ---------- */}
+        <g className={styles.mece}>
         <g transform="translate(736 18) rotate(30)">
           <rect x="-5" y="0" width="10" height="40" rx="4" className={styles.mango} />
           <rect x="-9" y="40" width="18" height="16" rx="1.5" className={styles.linea} />
           <path d="M-9 46h18M-9 51h18" className={styles.lineaFina} />
           <path d="M-10 56h20l1 30h-22z" className={styles.cerdas} />
           <path d="M-10.5 74h21l.5 12h-22z" className={`${styles.pintura} ${styles.conColor}`} />
+        </g>
         </g>
 
         {/* ---------- galón grande (con su cota) y tapa apoyada ---------- */}

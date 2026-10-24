@@ -160,3 +160,28 @@
     animation: none;
   }
 }
+
+/* La grama se mece con la brisa, muy suave (pedido de persona B, 2026-10-24); sigue al activarse. Sin ella con
+   "reducir movimiento". */
+.grama path {
+  animation: brisa 3.6s ease-in-out infinite alternate;
+}
+.grama path:nth-child(3n) {
+  animation-delay: -1.2s;
+}
+.grama path:nth-child(3n + 1) {
+  animation-delay: -2.4s;
+}
+@keyframes brisa {
+  from {
+    transform: rotate(-6deg);
+  }
+  to {
+    transform: rotate(6deg);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .grama path {
+    animation: none;
+  }
+}

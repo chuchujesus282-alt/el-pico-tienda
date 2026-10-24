@@ -407,6 +407,7 @@ export default function BannerElectricidad({ nombre }: PropsBannerPropio) {
                 <circle data-l="halo" cx={L.cx} cy={L.y + 46} r="92" fill={`url(#${halo})`} opacity="0" />
                 {/* bombillo */}
                 <g data-l="b" transform={`translate(${L.cx} ${L.y + DROP})`}>
+                  <g className={styles.flota} style={{ animationDelay: `${-i * 1.3}s` }}>
                   <path
                     data-l="glass"
                     d="M-7 14C-7 22 -24 28 -24 46A24 24 0 0 0 24 46C24 28 7 22 7 14Z"
@@ -431,6 +432,7 @@ export default function BannerElectricidad({ nombre }: PropsBannerPropio) {
                     {RAYOS.map((r, k) => (
                       <line key={k} {...r} />
                     ))}
+                  </g>
                   </g>
                 </g>
               </g>

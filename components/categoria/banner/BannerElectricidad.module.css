@@ -110,3 +110,25 @@
     animation: none;
   }
 }
+
+/* Reposo: movimiento muy sutil mientras nadie lo activa (pedido de persona B, 2026-10-24). Se detiene al activarse y
+   con "reducir movimiento". */
+.flota {
+  animation: flotar 3.6s ease-in-out infinite alternate;
+}
+:global(.on) .flota {
+  animation: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  .flota {
+    animation: none;
+  }
+}
+@keyframes flotar {
+  from {
+    transform: translateY(1.5px);
+  }
+  to {
+    transform: translateY(-2px);
+  }
+}

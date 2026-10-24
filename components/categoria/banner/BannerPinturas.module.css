@@ -156,3 +156,47 @@
 .base {
   transition: opacity 0.6s ease;
 }
+
+/* Reposo: movimiento muy sutil mientras nadie lo activa (pedido de persona B, 2026-10-24). Se detiene al activarse y
+   con "reducir movimiento". */
+.flota {
+  animation: flotar 4.2s ease-in-out infinite alternate;
+}
+:global(.on) .flota {
+  animation: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  .flota {
+    animation: none;
+  }
+}
+@keyframes flotar {
+  to {
+    transform: translateY(-3px);
+  }
+}
+.mece {
+  transform-origin: 736px 18px;
+}
+
+/* Reposo: movimiento muy sutil mientras nadie lo activa (pedido de persona B, 2026-10-24). Se detiene al activarse y
+   con "reducir movimiento". */
+.mece {
+  animation: mecer 3.4s ease-in-out infinite alternate;
+}
+:global(.on) .mece {
+  animation: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  .mece {
+    animation: none;
+  }
+}
+@keyframes mecer {
+  from {
+    transform: rotate(-2.5deg);
+  }
+  to {
+    transform: rotate(2.5deg);
+  }
+}

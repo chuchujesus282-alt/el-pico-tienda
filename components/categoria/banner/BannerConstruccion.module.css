@@ -135,3 +135,31 @@
     transition-duration: 0.01s !important;
   }
 }
+
+/* el péndulo cuelga del carro: gira desde el borde de arriba del cable */
+.vaiven {
+  transform-box: fill-box;
+  transform-origin: 50% 0;
+}
+
+/* Reposo: movimiento muy sutil mientras nadie lo activa (pedido de persona B, 2026-10-24). Se detiene al activarse y
+   con "reducir movimiento". */
+.vaiven {
+  animation: vaiven 3s ease-in-out infinite alternate;
+}
+:global(.on) .vaiven {
+  animation: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  .vaiven {
+    animation: none;
+  }
+}
+@keyframes vaiven {
+  from {
+    transform: rotate(-2.2deg);
+  }
+  to {
+    transform: rotate(2.2deg);
+  }
+}

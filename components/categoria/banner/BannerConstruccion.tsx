@@ -362,6 +362,7 @@ export default function BannerConstruccion({ nombre }: PropsBannerPropio) {
           <rect x="-13" y="20" width="26" height="9" rx="2" className={styles.carro} />
           <circle cx="-6" cy="20" r="2.5" className={styles.rueda} />
           <circle cx="6" cy="20" r="2.5" className={styles.rueda} />
+          <g className={styles.vaiven}>
           <line data-p="cable" x1="0" y1="29" x2="0" y2={HY0} className={styles.cable} />
           <g data-p="hook" transform={`rotate(0 0 29) translate(0 ${HY0})`}>
             <rect x="-6" y="0" width="12" height="7" rx="1.5" className={styles.gancho} />
@@ -370,6 +371,7 @@ export default function BannerConstruccion({ nombre }: PropsBannerPropio) {
               <path d="M0 14L-18 26M0 14L18 26" className={styles.eslinga} />
               <BloqueSvg x={-20} y={26} w={40} className={styles.blq} />
             </g>
+          </g>
           </g>
         </g>
 

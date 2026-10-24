@@ -18,6 +18,12 @@ import styles from "./BannerHogarJardin.module.css";
  * Clases globales en la raíz: `on` (BannerPlano), `riego` (corre el agua) y `vivo` (la planta se mece).
  */
 
+/**
+ * Rapidez de toda la secuencia: 0.7 = 30% más rápida que la primera versión (pedido de persona B, 2026-10-24).
+ * tween y wait la aplican solos; la pausa entre paladas de abono queda en 3,8 s reales.
+ */
+const RAPIDEZ = 0.7;
+
 const PX = 134; // pala en reposo: punta de la hoja clavada junto al montón
 const PY = 214;
 const NIVEL_ALTO = 44; // alto del matero (de 162 a 206)
@@ -74,9 +80,10 @@ function crearMotor(raiz: HTMLElement): Motor {
     const g = gen;
     return new Promise<boolean>((r) => {
       const s = performance.now();
+      const dur = d * RAPIDEZ;
       const k = (n: number) => {
         if (g !== gen || destruido) return r(false);
-        const t = Math.min(1, (n - s) / d);
+        const t = Math.min(1, (n - s) / dur);
         f(e(t), t);
         if (t < 1) {
           const id = requestAnimationFrame((m) => {
@@ -95,7 +102,7 @@ function crearMotor(raiz: HTMLElement): Motor {
       const id = window.setTimeout(() => {
         timers.delete(id);
         r(g === gen && !destruido);
-      }, ms);
+      }, ms * RAPIDEZ);
       timers.add(id);
     });
   };
@@ -130,7 +137,7 @@ function crearMotor(raiz: HTMLElement): Motor {
       gotas.appendChild(c);
       c.animate(
         [{ transform: "translate(0,0)" }, { transform: `translate(${Math.random() * 14 - 7}px,${hastaY - y + Math.random() * 4}px)`, opacity: 0.3 }],
-        { duration: 420 + Math.random() * 180, easing: "ease-in", delay: i * 25 },
+        { duration: (420 + Math.random() * 180) * RAPIDEZ, easing: "ease-in", delay: i * 25 * RAPIDEZ },
       ).onfinish = () => c.remove();
     }
   }
@@ -240,7 +247,7 @@ function crearMotor(raiz: HTMLElement): Motor {
     raiz.classList.add("vivo");
     // de vez en cuando, otra palada para abonar (el montón ya no baja)
     while (g === gen) {
-      if (!(await wait(3800))) return;
+      if (!(await wait(3800 / RAPIDEZ))) return;
       if (!(await palada(0, 0))) return;
     }
   }
