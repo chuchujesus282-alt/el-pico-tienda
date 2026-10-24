@@ -29,10 +29,11 @@ type Props = {
   /** Crea el motor de la escena con la raíz del banner. */
   crearMotor: (raiz: HTMLElement) => Motor;
   /**
-   * Lo que cuelga de la etiqueta roja al activarse: las 4 gotas del color activo (Pinturas) o la cinta de seguridad
-   * a rayas del color activo y azul tinta (Construcción).
+   * Lo que cuelga de la etiqueta roja al activarse: las 4 gotas del color activo (Pinturas), la cinta de seguridad
+   * a rayas del color activo y azul tinta (Construcción) o el cable con chispa (Electricidad; la chispa corre con la
+   * clase global `spark` y el cable se calienta con `lit`, las dos las pone su motor).
    */
-  decoracion?: "gotas" | "cinta";
+  decoracion?: "gotas" | "cinta" | "cable";
   /**
    * Variables CSS propias de cada banner (ver BannerPlano.module.css): --brillo, --brillo-on, --palabra-min/-vw/-max,
    * --palabra-movil-min/-vw/-max, --etiqueta-pad, --etiqueta-sombra. Sin ellas, los valores de Pinturas.
@@ -116,6 +117,7 @@ export default function BannerPlano({
         className={`${styles.banner} ${plexMono.variable}`}
         style={{ ...variables, "--c": colorInicial } as CSSProperties}
       >
+        <div className={styles.velo} aria-hidden />
         <div className={styles.brillo} aria-hidden />
 
         {/* Lupa solo en el teléfono, como en EncabezadoPagina: ahí el buscador del header no sale. */}
@@ -145,6 +147,8 @@ export default function BannerPlano({
               <span className={styles.palabra}>{nombre}</span>
               {decoracion === "cinta" ? (
                 <span className={styles.cinta} aria-hidden />
+              ) : decoracion === "cable" ? (
+                <span className={styles.cable} aria-hidden />
               ) : (
                 <span className={styles.gotas} aria-hidden>
                   <span />

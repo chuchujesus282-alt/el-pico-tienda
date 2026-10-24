@@ -47,6 +47,31 @@
   opacity: var(--brillo-on, 0.55);
 }
 
+/*
+ * Estado "encendido" (clase global `lit`, la pone el motor de Electricidad cuando prende la luz): la sala se oscurece
+ * (velo), el brillo cálido aparece aunque --brillo-on sea 0, la ruta toma un tono cálido y la etiqueta irradia luz.
+ */
+.velo {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background: rgba(4, 12, 24, 0.45);
+  opacity: 0;
+  transition: opacity 0.8s;
+}
+:global(.lit) > .velo {
+  opacity: 1;
+}
+:global(.lit) > .brillo {
+  opacity: var(--brillo-lit, 1);
+  transition-duration: 1s;
+}
+:global(.lit) .ruta,
+:global(.lit) .ruta a {
+  color: #d8c4a6;
+}
+
 /* ---------- columna de texto ---------- */
 .texto {
   position: relative;
@@ -113,6 +138,12 @@
   background: var(--signal);
   transform: skewX(-12deg);
   box-shadow: var(--etiqueta-sombra, none);
+  transition: box-shadow 0.8s;
+}
+:global(.lit) .etiquetaFondo {
+  box-shadow:
+    var(--etiqueta-sombra, 0 0 0 transparent),
+    0 0 36px -6px rgba(255, 207, 135, 0.55);
 }
 .palabra {
   display: block;
@@ -180,6 +211,56 @@
 }
 :global(.on) .cinta {
   transform: skewX(-12deg) scaleX(1);
+}
+
+/* Cable con chispa (Electricidad): siempre visible; con `spark` lo recorre una chispa y con `lit` queda caliente. */
+.cable {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 6px;
+  right: -12px;
+  height: 2px;
+  background: rgba(190, 215, 245, 0.35);
+  transform: skewX(-12deg);
+  transition: background 0.6s;
+  pointer-events: none;
+}
+.cable::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 8px;
+  height: 8px;
+  margin: -4px 0 0 -4px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow:
+    0 0 6px 2px #ffcf87,
+    0 0 16px 4px rgba(255, 207, 135, 0.6);
+  opacity: 0;
+}
+:global(.spark) .cable::after {
+  animation: chispa 0.9s cubic-bezier(0.5, 0, 0.3, 1) forwards;
+}
+:global(.lit) .cable {
+  background: linear-gradient(90deg, #ffcf87, rgba(255, 207, 135, 0.4));
+}
+@keyframes chispa {
+  0% {
+    left: 0;
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  90% {
+    opacity: 1;
+  }
+  100% {
+    left: 100%;
+    opacity: 0;
+  }
 }
 
 /* ---------- ilustración ---------- */
@@ -255,9 +336,18 @@
   .gotas span,
   :global(.on) .gotas span,
   .cinta,
+  .cable,
+  .velo,
+  .etiquetaFondo,
   .brillo {
     transition-duration: 0.01s !important;
     transition-delay: 0s !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :global(.spark) .cable::after {
+    animation: none;
   }
 }
 

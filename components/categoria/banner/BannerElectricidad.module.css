@@ -1,0 +1,112 @@
+/*
+ * Ilustración del banner de Electricidad, portada TAL CUAL de banner-electricidad-v1.html (prototipo aprobado). No
+ * cambies valores sin acordarlo. Excepción a la regla de tokens del CLAUDE.md (como las tarjetas de categoría): los
+ * colores van escritos aquí, idénticos al prototipo. `--f-mono` viene de BannerPlano.
+ * Clases globales en la raíz del banner: `on` (activo), `lit` (luz encendida).
+ */
+
+.svg {
+  --deep: #0a1f38;
+  --card: #0f2a4a;
+  --stroke: #c3ccd8;
+  --trace: rgba(190, 215, 245, 0.55);
+  --warm: #ffcf87;
+}
+.svg text {
+  font-family: var(--f-mono);
+  fill: var(--trace);
+  font-size: 9px;
+  letter-spacing: 0.08em;
+}
+
+.ln {
+  fill: none;
+  stroke: var(--stroke);
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.cota {
+  fill: none;
+  stroke: var(--trace);
+  stroke-width: 1;
+}
+.dash {
+  fill: none;
+  stroke: var(--trace);
+  stroke-width: 1;
+  stroke-dasharray: 3 4;
+}
+.caja {
+  fill: var(--deep);
+  stroke: var(--stroke);
+  stroke-width: 2;
+}
+.breaker {
+  fill: #071526;
+  stroke: var(--stroke);
+  stroke-width: 1.5;
+}
+.pantalla {
+  fill: #071526;
+  stroke: var(--trace);
+}
+.fondoDeep {
+  fill: var(--deep);
+}
+.fondoCard {
+  fill: var(--card);
+}
+
+/* plano de los bombillos: se va al activarse; textos auxiliares a media luz */
+.bp {
+  transition: opacity 0.5s;
+}
+:global(.on) .bp {
+  opacity: 0;
+}
+.half {
+  transition: opacity 0.6s;
+}
+:global(.on) .half {
+  opacity: 0.3;
+}
+
+/* corriente circulando por el cable */
+.flow {
+  fill: none;
+  stroke: var(--warm);
+  stroke-width: 2;
+  stroke-dasharray: 3 11;
+  opacity: 0;
+  transition: opacity 0.4s;
+}
+:global(.lit) .flow {
+  opacity: 0.9;
+  animation: fluye 0.7s linear infinite;
+}
+@keyframes fluye {
+  to {
+    stroke-dashoffset: -14;
+  }
+}
+
+.svg .lcd {
+  font: 500 10px var(--f-mono);
+  fill: #5d7390;
+  letter-spacing: normal;
+}
+:global(.lit) .svg .lcd {
+  fill: var(--warm);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bp,
+  .half,
+  .flow {
+    transition-duration: 0.01s !important;
+  }
+  :global(.lit) .flow {
+    animation: none;
+  }
+}
