@@ -17,6 +17,21 @@ export type Motor = {
   destruir: () => void;
 };
 
+/** Número pseudoaleatorio fijo (0..1): igual en el servidor y en el navegador, así no cambia al hidratar. */
+export const azar = (i: number, k: number) => {
+  const v = Math.sin(i * 12.9898 + k * 78.233) * 43758.5453;
+  return v - Math.floor(v);
+};
+
+/** 34 hojas de pasto bajo la etiqueta (prototipo banner-jardin-v1.html). */
+const HOJAS_PASTO = Array.from({ length: 34 }, (_, i) => {
+  const x = 4 + i * 8.8,
+    h = 7 + azar(i, 1) * 9,
+    l = azar(i, 2) * 4 - 2;
+  const f = (n: number) => n.toFixed(2);
+  return `M${f(x - 2)} 16Q${f(x + l)} ${f(16 - h)} ${f(x + l * 1.6)} ${f(16 - h - 1)}Q${f(x + 1)} ${f(16 - h * 0.5)} ${f(x + 2)} 16Z`;
+});
+
 type Props = {
   /** Nombre de la categoría: va en la ruta (Inicio › Pinturas) y es el título (h1) en la etiqueta roja. */
   nombre: string;
@@ -31,9 +46,10 @@ type Props = {
   /**
    * Lo que cuelga de la etiqueta roja al activarse: las 4 gotas del color activo (Pinturas), la cinta de seguridad
    * a rayas del color activo y azul tinta (Construcción) o el cable con chispa (Electricidad; la chispa corre con la
-   * clase global `spark` y el cable se calienta con `lit`, las dos las pone su motor).
+   * clase global `spark` y el cable se calienta con `lit`, las dos las pone su motor) o el pasto que brota (Hogar y
+   * jardín).
    */
-  decoracion?: "gotas" | "cinta" | "cable";
+  decoracion?: "gotas" | "cinta" | "cable" | "pasto";
   /**
    * Variables CSS propias de cada banner (ver BannerPlano.module.css): --brillo, --brillo-on, --palabra-min/-vw/-max,
    * --palabra-movil-min/-vw/-max, --etiqueta-pad, --etiqueta-sombra. Sin ellas, los valores de Pinturas.
@@ -149,6 +165,12 @@ export default function BannerPlano({
                 <span className={styles.cinta} aria-hidden />
               ) : decoracion === "cable" ? (
                 <span className={styles.cable} aria-hidden />
+              ) : decoracion === "pasto" ? (
+                <svg className={styles.pasto} viewBox="0 0 300 16" preserveAspectRatio="none" aria-hidden>
+                  {HOJAS_PASTO.map((d, i) => (
+                    <path key={i} d={d} style={{ transitionDelay: `${i * 18}ms` }} />
+                  ))}
+                </svg>
               ) : (
                 <span className={styles.gotas} aria-hidden>
                   <span />

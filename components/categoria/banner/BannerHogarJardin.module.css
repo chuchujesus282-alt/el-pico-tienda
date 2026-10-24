@@ -1,0 +1,162 @@
+/*
+ * Ilustración del banner de Hogar y jardín, portada de banner-jardin-v1.html (prototipo aprobado). No cambies valores
+ * sin acordarlo. Excepción a la regla de tokens del CLAUDE.md (como las tarjetas de categoría): los colores van
+ * escritos aquí, idénticos al prototipo. `--f-mono` viene de BannerPlano.
+ * Clases globales en la raíz del banner: `on` (activo), `riego` (corre el agua), `vivo` (la planta se mece).
+ */
+
+.svg {
+  --deep: #0a1f38;
+  --stroke: #c3ccd8;
+  --trace: rgba(190, 215, 245, 0.55);
+  --verde: #5fbf5a;
+  --verde-osc: #2f7d3a;
+  --agua: #6fd0ff;
+  --tierra: #6b4a2b;
+  --tierra-luz: #8a6340;
+  --barro: #b5562f;
+}
+.svg text {
+  font-family: var(--f-mono);
+  fill: var(--trace);
+  font-size: 9px;
+  letter-spacing: 0.08em;
+}
+
+.ln {
+  fill: none;
+  stroke: var(--stroke);
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.cota {
+  fill: none;
+  stroke: var(--trace);
+  stroke-width: 1;
+}
+.dash {
+  fill: none;
+  stroke: var(--trace);
+  stroke-width: 1;
+  stroke-dasharray: 3 4;
+}
+.bp {
+  transition: opacity 0.6s;
+}
+:global(.on) .bp {
+  opacity: 0.25;
+}
+.pz {
+  opacity: 0;
+  transition: opacity 0.6s;
+}
+:global(.on) .pz {
+  opacity: 1;
+}
+.terrones {
+  fill: var(--tierra-luz);
+}
+.piedras {
+  fill: none;
+  stroke: var(--tierra-luz);
+  stroke-width: 1.5;
+}
+
+/* rellenos: plano en reposo, materiales reales al activarse */
+.fTierra,
+.fMatero,
+.fMang {
+  transition: fill 0.6s;
+}
+.monton {
+  fill: var(--deep);
+  stroke: var(--stroke);
+  stroke-width: 1.5;
+}
+.fMatero,
+.fMang {
+  fill: var(--deep);
+}
+:global(.on) .fTierra {
+  fill: rgba(107, 74, 43, 0.62);
+}
+:global(.on) .monton {
+  fill: var(--tierra);
+}
+:global(.on) .fMatero {
+  fill: var(--barro);
+}
+:global(.on) .fMang {
+  fill: var(--verde-osc);
+}
+
+/* tierra dentro del matero (sube con cada palada) y su superficie al llenarse */
+.tierraMatero {
+  fill: var(--tierra);
+}
+.superficie {
+  fill: var(--tierra);
+}
+
+.grama path {
+  fill: none;
+  stroke: var(--trace);
+  stroke-width: 1.3;
+  stroke-linecap: round;
+  transform-box: fill-box;
+  transform-origin: 50% 100%;
+  transition:
+    stroke 0.6s,
+    transform 0.6s;
+}
+:global(.on) .grama path {
+  stroke: var(--verde);
+}
+
+/* agua */
+.agua {
+  fill: none;
+  stroke: var(--agua);
+  stroke-width: 2.5;
+  stroke-linecap: round;
+  stroke-dasharray: 5 9;
+}
+:global(.riego) .agua {
+  animation: fluye 0.5s linear infinite;
+}
+@keyframes fluye {
+  to {
+    stroke-dashoffset: -14;
+  }
+}
+
+/* la planta se mece */
+:global(.vivo) .planta {
+  animation: mecer 3.2s ease-in-out infinite;
+  transform-origin: 400px 156px;
+}
+@keyframes mecer {
+  0%,
+  100% {
+    transform: rotate(-2deg);
+  }
+  50% {
+    transform: rotate(2.5deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bp,
+  .pz,
+  .fTierra,
+  .fMatero,
+  .fMang,
+  .grama path {
+    transition-duration: 0.01s !important;
+  }
+  :global(.riego) .agua,
+  :global(.vivo) .planta {
+    animation: none;
+  }
+}

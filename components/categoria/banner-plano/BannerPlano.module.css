@@ -263,6 +263,28 @@
   }
 }
 
+/* Pasto que brota bajo la etiqueta (Hogar y jardín). */
+.pasto {
+  position: absolute;
+  top: calc(100% - 2px);
+  left: 4px;
+  right: -6px;
+  width: calc(100% + 2px);
+  height: 16px;
+  overflow: visible;
+  pointer-events: none;
+}
+.pasto path {
+  fill: #5fbf5a;
+  transform-box: fill-box;
+  transform-origin: 50% 100%;
+  transform: scaleY(0);
+  transition: transform 0.5s cubic-bezier(0.3, 1.5, 0.5, 1);
+}
+:global(.on) .pasto path {
+  transform: scaleY(1);
+}
+
 /* ---------- ilustración ---------- */
 .ilustracion {
   position: relative;
@@ -337,6 +359,7 @@
   :global(.on) .gotas span,
   .cinta,
   .cable,
+  .pasto path,
   .velo,
   .etiquetaFondo,
   .brillo {

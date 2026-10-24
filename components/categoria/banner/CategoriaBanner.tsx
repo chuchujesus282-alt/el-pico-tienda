@@ -2,7 +2,7 @@ import type { ComponentType } from "react";
 import BannerConstruccion from "./BannerConstruccion";
 import BannerElectricidad from "./BannerElectricidad";
 import BannerHerramientas from "./BannerHerramientas";
-import BannerJardin from "./BannerJardin";
+import BannerHogarJardin from "./BannerHogarJardin";
 import BannerPinturas from "./BannerPinturas";
 import "./banner.css";
 
@@ -24,7 +24,7 @@ type ConfigBanner = {
 };
 
 /**
- * Banner propio de cada categoría: `Propio` (estilo plano técnico, reemplaza al encabezado; hoy Pinturas, Construcción y Electricidad) o `Escena`
+ * Banner propio de cada categoría: `Propio` (estilo plano técnico, reemplaza al encabezado; hoy Pinturas, Construcción, Electricidad y Hogar y jardín) o `Escena`
  * (fotos reales a la derecha de EncabezadoPagina). Las categorías sin entrada
  * siguen con el plano y su ícono. Para sumar una: su componente en esta carpeta y una línea aquí.
  */
@@ -44,9 +44,7 @@ const BANNERS: Record<string, ConfigBanner> = {
     texto: "Taladros, esmeriles, martillos y todo para cada trabajo.",
   },
   "hogar-y-jardin": {
-    Escena: BannerJardin,
-    tituloPartes: ["Hogar y", "jardín"],
-    texto: "Mangueras, palas, materos y todo para tu casa y tu jardín.",
+    Propio: BannerHogarJardin,
   },
 };
 
