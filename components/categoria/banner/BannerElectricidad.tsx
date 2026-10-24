@@ -8,14 +8,21 @@ import styles from "./BannerElectricidad.module.css";
 /**
  * Banner de la categoría Electricidad, estilo "plano técnico". Portado TAL CUAL del prototipo aprobado
  * banner-electricidad-v1.html: SVG (techo, circuito C1, tablero con 4 breakers y voltímetro, toma, bobina y 3
- * bombillos con su plano), secuencia (bajan los portalámparas, los bombillos suben girando y se enroscan, se suben los
+ * bombillos con su plano), secuencia (30% más rápida que el prototipo, ver RAPIDEZ: bajan los portalámparas, los bombillos suben girando y se enroscan, se suben los
  * breakers, la chispa corre por el cable de la etiqueta, el pulso recorre el circuito y prende cada bombillo al pasar,
- * parpadeo ocasional) y tiempos sin cambios.
+ * parpadeo ocasional) sin otros cambios.
  * Clases globales en la raíz: `on` (la pone BannerPlano; el motor la sostiene hasta que termina de apagar, como el
  * prototipo), `spark` (chispa del cable) y `lit` (luz encendida: velo, brillo cálido, corriente en el cable).
  * Diferencias con el prototipo: solo el nombre de la categoría en la etiqueta (sin "Energía para tu", kicker ni
  * subtítulo, como todos los banners propios) y la base (contenedor, texto, cable, reposo/activo) es BannerPlano.
  */
+
+/**
+ * Rapidez de la secuencia respecto al prototipo: 0.7 = 30% más rápida (pedido de persona B, 2026-10-23). Afecta
+ * todos los tiempos de encender y apagar; el parpadeo ocasional queda como en el prototipo.
+ */
+const RAPIDEZ = 0.7;
+const ms = (x: number) => x * RAPIDEZ;
 
 const DROP = 28;
 const LAMPS = [
@@ -132,11 +139,11 @@ function crearMotor(raiz: HTMLElement): Motor {
     // 1. bajan los portalámparas
     await Promise.all(
       lamps.map((l, i) =>
-        wait(i * 120).then(
+        wait(ms(i * 120)).then(
           (ok) =>
             ok &&
             tween(
-              650,
+              ms(650),
               (p) => {
                 l.sy = -60 + 60 * p;
                 drawLamp(l);
@@ -150,10 +157,10 @@ function crearMotor(raiz: HTMLElement): Motor {
     // 2. el bombillo sube girando y se enrosca
     await Promise.all(
       lamps.map((l, i) =>
-        wait(i * 140).then(
+        wait(ms(i * 140)).then(
           (ok) =>
             ok &&
-            tween(reduce ? 10 : 900, (p) => {
+            tween(reduce ? 10 : ms(900), (p) => {
               l.by = l.y + DROP - DROP * p;
               l.spin = 2.5 * p;
               drawLamp(l);
@@ -165,7 +172,7 @@ function crearMotor(raiz: HTMLElement): Motor {
     // 3. se suben los breakers
     for (let i = 0; i < 4; i++) {
       setBrk(i, true);
-      if (!(await wait(110))) return;
+      if (!(await wait(ms(110)))) return;
     }
     volt.textContent = "120 V";
     ledToma.setAttribute("fill", "#7CFC9A");
@@ -175,7 +182,7 @@ function crearMotor(raiz: HTMLElement): Motor {
     const hit = lamps.map((l) => (46 + (l.cx - 85)) / PL);
     let n = 0;
     await tween(
-      reduce ? 10 : 1000,
+      reduce ? 10 : ms(1000),
       (p) => {
         pulse.setAttribute("stroke-dashoffset", String(36 - p * (PL + 36)));
         lamps.forEach((l, i) => {
@@ -183,7 +190,7 @@ function crearMotor(raiz: HTMLElement): Motor {
             n++;
             carga.textContent = `CARGA ${n * 12} W`;
             void tween(
-              380,
+              ms(380),
               (qq) => {
                 l.lit = Math.min(1, qq * 1.15) * (qq < 0.35 ? (qq < 0.15 ? 1 : 0.3) : 1);
                 drawLamp(l);
@@ -230,7 +237,7 @@ function crearMotor(raiz: HTMLElement): Motor {
       drawLamp(l);
     });
     const s = lamps.map((l) => ({ sy: l.sy, by: l.by, spin: l.spin }));
-    await tween(550, (p) =>
+    await tween(ms(550), (p) =>
       lamps.forEach((l, i) => {
         l.sy = s[i].sy + (-60 - s[i].sy) * p;
         l.by = s[i].by + (l.y + DROP - s[i].by) * p;
@@ -270,6 +277,7 @@ export default function BannerElectricidad({ nombre }: PropsBannerPropio) {
           "--brillo": "radial-gradient(48% 110% at 70% 40%, rgba(255,207,135,.30), rgba(255,170,90,.10) 45%, transparent 72%)",
           "--brillo-on": "0",
           "--brillo-lit": "1",
+          "--chispa-dur": `${0.9 * RAPIDEZ}s`,
           "--palabra-min": "30px",
           "--palabra-vw": "3.4vw",
           "--palabra-max": "46px",
