@@ -1,7 +1,7 @@
 import Link from "next/link";
 import BuscadorConSugerencias from "@/components/busqueda/BuscadorConSugerencias";
 import IconoCalculadora from "@/components/icons/pico/IconoCalculadora";
-import IconoUsuario from "@/components/icons/pico/IconoUsuario";
+import EnlaceCuenta from "@/components/cuenta/EnlaceCuenta";
 import SelectorDireccion from "@/components/direcciones/SelectorDireccion";
 import EnlaceFavoritos from "@/components/favoritos/EnlaceFavoritos";
 import Contenedor from "@/components/ui/Contenedor";
@@ -48,13 +48,7 @@ export default function Header() {
           </Link>
           {/* Favoritos, Mi cuenta y el carrito: en el teléfono viven en la barra inferior (BarraInferiorMovil). */}
           <EnlaceFavoritos className="hidden md:flex" />
-          <Link
-            href="/iniciar-sesion"
-            className="group grupo-icono hidden items-center md:flex gap-2 rounded-boton p-2.5 text-sm font-semibold text-pico-azul transition-colors hover:bg-pico-azul-claro focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-pico-azul"
-          >
-            <IconoUsuario className="size-7" />
-            <span className="sr-only lg:not-sr-only">Mi cuenta</span>
-          </Link>
+          <EnlaceCuenta className="hidden md:flex" />
           <BotonCarrito />
         </div>
       </Contenedor>
