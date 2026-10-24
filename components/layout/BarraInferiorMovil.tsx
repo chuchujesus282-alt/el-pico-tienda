@@ -6,7 +6,7 @@ import { usePathname } from "next/navigation";
 import { House, LayoutGrid } from "lucide-react";
 import IconoCarrito from "@/components/icons/pico/IconoCarrito";
 import IconoCorazon from "@/components/icons/pico/IconoCorazon";
-import IconoUsuario from "@/components/icons/pico/IconoUsuario";
+import FotoCuenta, { usePrimerNombre } from "@/components/cuenta/FotoCuenta";
 import type { ComponenteIcono } from "@/types/icono";
 import { useCarrito } from "@/components/carrito/ProveedorCarrito";
 import { useFavoritos } from "@/components/favoritos/almacenFavoritos";
@@ -95,6 +95,7 @@ export default function BarraInferiorMovil() {
   const ruta = usePathname();
   const { cantidadTotal } = useCarrito();
   const { cantidad: cantidadFavoritos } = useFavoritos();
+  const nombre = usePrimerNombre();
 
   const enCuenta = ruta.startsWith("/iniciar-sesion") || ruta.startsWith("/crear-cuenta");
   const activa =
@@ -124,7 +125,8 @@ export default function BarraInferiorMovil() {
     { id: "categorias", href: "/categorias", icono: LayoutGrid, texto: "Categorías" },
     { id: "carrito", href: "/carrito", icono: IconoCarrito, texto: "Carrito", contador: cantidadTotal, destinoCarrito: true },
     { id: "favoritos", href: "/favoritos", icono: IconoCorazon, texto: "Favoritos", contador: cantidadFavoritos, rellenoActivo: true },
-    { id: "entrar", href: "/iniciar-sesion", icono: IconoUsuario, texto: "Entrar" },
+    // Con la sesión de Google abierta: la foto del cliente y "Mi cuenta".
+    { id: "entrar", href: "/iniciar-sesion", icono: FotoCuenta, texto: nombre ? "Mi cuenta" : "Entrar" },
   ];
 
   /** Tocar la pestaña de la página en la que ya estás lleva al principio (reemplaza a la flecha de subir). */

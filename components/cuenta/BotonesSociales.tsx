@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { SessionProvider, signIn, signOut, useSession } from "next-auth/react";
+import { signIn, signOut, useSession } from "next-auth/react";
 import { useState } from "react";
 import type { ProveedorSocial } from "@/types/cuenta";
 
@@ -26,16 +26,9 @@ const claseBorde =
  * Fila de botones redondos para entrar con Google, Facebook o Apple (cada logo con sus colores oficiales).
  * Google entra de verdad con Auth.js (auth.ts); Facebook y Apple siguen pasando por `onElegir` (lib/cuenta.ts).
  * Con la sesión de Google abierta, en lugar de la fila se ve la foto, el nombre y "Cerrar sesión".
+ * La sesión viene de `ProveedorSesion` (app/layout.tsx).
  */
-export default function BotonesSociales(props: Props) {
-  return (
-    <SessionProvider>
-      <Contenido {...props} />
-    </SessionProvider>
-  );
-}
-
-function Contenido({ onElegir, disabled, cascada }: Props) {
+export default function BotonesSociales({ onElegir, disabled, cascada }: Props) {
   const { data: sesion, status } = useSession();
   const [saliendo, setSaliendo] = useState(false);
   const usuario = sesion?.user;
