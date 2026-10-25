@@ -73,6 +73,7 @@
   height: 4px;
   background: var(--signal);
   border-radius: 2px;
+  transition: width 0.3s ease;
 }
 .copy h2 {
   margin: 4px 0 0;
@@ -105,15 +106,33 @@
   border-radius: 8px;
   transition:
     transform 0.2s ease,
-    box-shadow 0.2s ease;
-}
-.banner:hover .btn {
-  transform: translateY(-1px);
-  box-shadow: 0 6px 16px -8px rgba(0, 0, 0, 0.5);
+    box-shadow 0.2s ease,
+    background-color 0.2s ease;
 }
 .btn svg {
   width: 14px;
   height: 14px;
+  transition: transform 0.3s ease;
+}
+
+/* Al pasar el mouse, igual que el banner de Tornillería (BannerInicio): la raya roja se alarga, el botón se tiñe de
+   azul claro, sube 2px con la sombra de botón y la flecha avanza. El banner se levanta desde BannersPromocionales. */
+@media (hover: hover) {
+  .banner:hover .rule {
+    width: 64px;
+  }
+  .banner:hover .btn {
+    background: var(--color-pico-azul-claro);
+    box-shadow: var(--shadow-boton-hover);
+  }
+  .banner:hover .btn svg {
+    transform: translateX(4px);
+  }
+}
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  .banner:hover .btn {
+    transform: translateY(-2px);
+  }
 }
 
 .art {
@@ -158,6 +177,11 @@
   }
   .rule {
     width: 40px;
+  }
+  @media (hover: hover) {
+    .banner:hover .rule {
+      width: 56px;
+    }
   }
   .copy h2 {
     margin: 2px 0 0;
