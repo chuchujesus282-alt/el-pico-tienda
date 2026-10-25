@@ -2,9 +2,6 @@
 
 export type TipoPersona = "natural" | "juridica";
 
-/** Cuentas de otros servicios con las que se puede entrar. */
-export type ProveedorSocial = "google" | "facebook" | "apple";
-
 /** V venezolano, E extranjero, P pasaporte (personas); J jurídico, G gobierno (empresas). */
 export type PrefijoDocumento = "V" | "E" | "P" | "J" | "G";
 
@@ -24,5 +21,8 @@ export type NuevaCuenta = {
   aceptaPoliticas: boolean; // marcó que leyó las políticas de privacidad
 };
 
-/** Respuesta de las acciones de cuenta: o todo bien, o un mensaje para mostrarle al cliente. */
-export type ResultadoCuenta = { ok: true } | { ok: false; mensaje: string };
+/**
+ * Respuesta de las acciones de cuenta: o todo bien (con un `aviso` si el cliente tiene que hacer algo más, ej.
+ * confirmar su correo), o un mensaje para mostrarle al cliente.
+ */
+export type ResultadoCuenta = { ok: true; aviso?: string } | { ok: false; mensaje: string };

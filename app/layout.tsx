@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import ProveedorCarrito from "@/components/carrito/ProveedorCarrito";
-import ProveedorSesion from "@/components/cuenta/ProveedorSesion";
 import BarraInferior from "@/components/layout/BarraInferior";
 import Footer from "@/components/layout/Footer";
 import Header from "@/components/layout/Header";
@@ -23,22 +22,20 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="es-VE" className={chakra.variable}>
       <body className="flex min-h-dvh flex-col">
-        <ProveedorSesion>
-          <ProveedorCarrito>
-            <OcultarEnRutas prefijos={RUTAS_PANTALLA_COMPLETA}>
-              <HeaderSoloInicioMovil>
-                <Header />
-              </HeaderSoloInicioMovil>
-            </OcultarEnRutas>
-            <NavCategorias />
-            <main className="flex-1">{children}</main>
-            {/* Páginas de pantalla completa (iniciar sesión): sin header, footer ni barra inferior. */}
-            <OcultarEnRutas prefijos={RUTAS_PANTALLA_COMPLETA}>
-              <Footer />
-              <BarraInferior />
-            </OcultarEnRutas>
-          </ProveedorCarrito>
-        </ProveedorSesion>
+        <ProveedorCarrito>
+          <OcultarEnRutas prefijos={RUTAS_PANTALLA_COMPLETA}>
+            <HeaderSoloInicioMovil>
+              <Header />
+            </HeaderSoloInicioMovil>
+          </OcultarEnRutas>
+          <NavCategorias />
+          <main className="flex-1">{children}</main>
+          {/* Páginas de pantalla completa (iniciar sesión): sin header, footer ni barra inferior. */}
+          <OcultarEnRutas prefijos={RUTAS_PANTALLA_COMPLETA}>
+            <Footer />
+            <BarraInferior />
+          </OcultarEnRutas>
+        </ProveedorCarrito>
       </body>
     </html>
   );

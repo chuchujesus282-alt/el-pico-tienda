@@ -3,9 +3,9 @@
 import { useState, useTransition } from "react";
 import type { FormEvent } from "react";
 import { useRouter } from "next/navigation";
-import { accionIniciarSesion, accionIniciarSesionCon } from "@/app/iniciar-sesion/acciones";
+import { accionIniciarSesion } from "@/app/iniciar-sesion/acciones";
 import Boton from "@/components/ui/Boton";
-import type { ProveedorSocial } from "@/types/cuenta";
+import { authCliente } from "@/lib/authCliente";
 import BotonesSociales from "./BotonesSociales";
 import { Aviso, Campo, CampoContrasena, Separador } from "./Campos";
 import { correoValido } from "./datosFiscales";
@@ -19,8 +19,11 @@ export default function FormularioInicioSesion() {
   const [enviando, iniciar] = useTransition();
 
   const responder = (resultado: Awaited<ReturnType<typeof accionIniciarSesion>>) => {
-    if (resultado.ok) router.push("/");
-    else setMensaje(resultado.mensaje);
+    if (resultado.ok) {
+      // La cookie ya viene puesta: se avisa al header (useSession) para que muestre la cuenta sin recargar.
+      authCliente.$store.notify("$sessionSignal");
+      router.push("/");
+    } else setMensaje(resultado.mensaje);
   };
 
   const enviar = (evento: FormEvent<HTMLFormElement>) => {
@@ -37,11 +40,6 @@ export default function FormularioInicioSesion() {
     if (Object.keys(nuevos).length > 0) return;
 
     iniciar(async () => responder(await accionIniciarSesion(correo, contrasena)));
-  };
-
-  const conProveedor = (proveedor: ProveedorSocial) => {
-    setMensaje(null);
-    iniciar(async () => responder(await accionIniciarSesionCon(proveedor)));
   };
 
   return (
@@ -72,7 +70,7 @@ export default function FormularioInicioSesion() {
       </form>
 
       <Separador texto="o continúa con" />
-      <BotonesSociales onElegir={conProveedor} disabled={enviando} />
+      <BotonesSociales disabled={enviando} />
     </div>
   );
 }

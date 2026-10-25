@@ -1,8 +1,10 @@
 "use client";
 
 import Image from "next/image";
-import { useSession } from "next-auth/react";
 import IconoUsuario from "@/components/icons/pico/IconoUsuario";
+import { authCliente } from "@/lib/authCliente";
+
+const { useSession } = authCliente;
 
 /** Primer nombre del cliente con sesión abierta ("María José Pérez" → "María"), o null sin sesión. */
 export function usePrimerNombre(): string | null {

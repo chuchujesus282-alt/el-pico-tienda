@@ -6,9 +6,8 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Building2, CircleCheck, LoaderCircle, User } from "lucide-react";
 import { accionCrearCuenta } from "@/app/crear-cuenta/acciones";
-import { accionIniciarSesionCon } from "@/app/iniciar-sesion/acciones";
 import Boton from "@/components/ui/Boton";
-import type { NuevaCuenta, PrefijoDocumento, ProveedorSocial, TipoPersona } from "@/types/cuenta";
+import type { NuevaCuenta, PrefijoDocumento, TipoPersona } from "@/types/cuenta";
 import BotonesSociales from "./BotonesSociales";
 import { Aviso, Campo, CampoContrasena, Separador } from "./Campos";
 import {
@@ -32,7 +31,7 @@ function texto(datos: FormData, campo: string) {
   return String(datos.get(campo) ?? "").trim();
 }
 
-/** A dónde va el cliente con su cuenta nueva: a guardar sus direcciones, saludado por su nombre. */
+/** A dónde lleva el enlace del correo de confirmación (ya con la sesión abierta): a guardar sus direcciones, saludado por su nombre. */
 function rutaBienvenida(nombre: string) {
   return `/mis-direcciones?bienvenida=${encodeURIComponent(nombre.trim().split(/\s+/)[0] ?? "")}`;
 }
@@ -60,18 +59,10 @@ export default function FormularioCrearCuenta() {
     setErrores((e) => ({ ...e, nombre: undefined, numeroDocumento: undefined }));
   };
 
-  const conProveedor = (proveedor: ProveedorSocial) => {
-    setMensaje(null);
-    iniciar(async () => {
-      const resultado = await accionIniciarSesionCon(proveedor);
-      if (resultado.ok) router.push("/mis-direcciones");
-      else setMensaje(resultado.mensaje);
-    });
-  };
-
   const enviar = (evento: FormEvent<HTMLFormElement>) => {
     evento.preventDefault();
-    const datos = new FormData(evento.currentTarget);
+    const formulario = evento.currentTarget;
+    const datos = new FormData(formulario);
 
     const cuenta: NuevaCuenta = {
       correo: texto(datos, "correo"),
@@ -97,9 +88,15 @@ export default function FormularioCrearCuenta() {
     }
 
     iniciar(async () => {
-      const resultado = await accionCrearCuenta(cuenta);
-      if (resultado.ok) router.push(rutaBienvenida(cuenta.fiscales.nombre));
-      else setMensaje(resultado.mensaje);
+      const resultado = await accionCrearCuenta(cuenta, rutaBienvenida(cuenta.fiscales.nombre));
+      if (!resultado.ok) return setMensaje(resultado.mensaje);
+      // Hay que confirmar el correo antes de entrar: se avisa aquí y se limpia el formulario.
+      if (resultado.aviso) {
+        formulario.reset();
+        setClaves({ contrasena: "", confirmacion: "" });
+        return setMensaje(resultado.aviso);
+      }
+      router.push(rutaBienvenida(cuenta.fiscales.nombre));
     });
   };
 
@@ -108,7 +105,7 @@ export default function FormularioCrearCuenta() {
   return (
     // Campos grandes, como en iniciar sesión (los de crear cuenta normal en otras pantallas no cambian).
     <div className="flex flex-col gap-7 [&_input:not([type=checkbox])]:h-14 [&_input:not([type=checkbox])]:pl-4 [&_input:not([type=checkbox])]:text-base [&_label]:text-[15px]">
-      <BotonesSociales onElegir={conProveedor} disabled={enviando} cascada={250} />
+      <BotonesSociales disabled={enviando} cascada={250} volverA="/mis-direcciones" />
       <div className="motion-safe:animate-aparecer [animation-delay:420ms]">
         <Separador texto="o con tu correo" />
       </div>
