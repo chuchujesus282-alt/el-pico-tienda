@@ -2,7 +2,7 @@ import MiniSearch from "minisearch";
 import type { SearchOptions, SearchResult } from "minisearch";
 import type { Producto } from "@/types/catalogo";
 import { esMedida, palabrasClave, raiz, sinAcentos } from "./normalizar";
-import { masVendidos, prepararCatalogo, ventas } from "./productos";
+import { masVendidos, prepararCatalogo, prepararCatalogoPorPartes, respirar, TANDA, ventas } from "./productos";
 import type { ProductoIndexado } from "./tipos";
 
 // Búsqueda inteligente. Librería: MiniSearch (índice invertido por palabra, ~7 KB): tolera errores de tipeo
@@ -38,43 +38,73 @@ const PESOS = { tipo: 2, nombre: 1, marca: 0.8, categoria: 0.4 };
 
 const cache = new WeakMap<Producto[], IndiceBusqueda>();
 
+const nuevoMotor = () =>
+  new MiniSearch<Documento>({
+    fields: ["nombre", "tipo", "marca", "categoria"],
+    tokenize: separar,
+    processTerm: igual,
+    searchOptions: { tokenize: separar, processTerm: igual },
+  });
+
+const documento = ({ producto, tokens, tipo }: ProductoIndexado): Documento => ({
+  id: producto.id,
+  nombre: tokens.join(" "),
+  tipo,
+  marca: producto.marca ? palabrasClave(producto.marca).join(" ") : "",
+  categoria: palabrasClave(`${producto.subcategoria ?? ""} ${producto.categoriaSlug.replace(/-/g, " ")}`).join(" "),
+});
+
+function sumarAlVocabulario(vocabulario: IndiceBusqueda["vocabulario"], { producto, tokens }: ProductoIndexado) {
+  // Palabra original del nombre para cada raíz ("tornill" ← "tornillos"), para mostrarla bien escrita.
+  const originales = new Map<string, string>();
+  for (const o of sinAcentos(producto.nombre).split(/[^a-z]+/)) if (o && !originales.has(raiz(o))) originales.set(raiz(o), o);
+  for (const token of new Set(tokens)) {
+    if (esMedida(token)) continue;
+    const entrada = vocabulario.get(token) ?? { veces: 0, mostrar: token };
+    entrada.veces += 1;
+    const original = originales.get(token);
+    if (original && (entrada.mostrar === token || original.length < entrada.mostrar.length)) entrada.mostrar = original;
+    vocabulario.set(token, entrada);
+  }
+}
+
 /** Arma el índice de búsqueda (una vez por lista de productos). */
 export function crearIndice(productos: Producto[]): IndiceBusqueda {
   const guardado = cache.get(productos);
   if (guardado) return guardado;
 
   const { lista, porId } = prepararCatalogo(productos);
-  const motor = new MiniSearch<Documento>({
-    fields: ["nombre", "tipo", "marca", "categoria"],
-    tokenize: separar,
-    processTerm: igual,
-    searchOptions: { tokenize: separar, processTerm: igual },
-  });
-  motor.addAll(
-    lista.map(({ producto, tokens, tipo }) => ({
-      id: producto.id,
-      nombre: tokens.join(" "),
-      tipo,
-      marca: producto.marca ? palabrasClave(producto.marca).join(" ") : "",
-      categoria: palabrasClave(`${producto.subcategoria ?? ""} ${producto.categoriaSlug.replace(/-/g, " ")}`).join(" "),
-    })),
-  );
-
+  const motor = nuevoMotor();
+  motor.addAll(lista.map(documento));
   const vocabulario: IndiceBusqueda["vocabulario"] = new Map();
-  for (const { producto, tokens } of lista) {
-    // Palabra original del nombre para cada raíz ("tornill" ← "tornillos"), para mostrarla bien escrita.
-    const originales = new Map<string, string>();
-    for (const o of sinAcentos(producto.nombre).split(/[^a-z]+/)) if (o && !originales.has(raiz(o))) originales.set(raiz(o), o);
-    for (const token of new Set(tokens)) {
-      if (esMedida(token)) continue;
-      const entrada = vocabulario.get(token) ?? { veces: 0, mostrar: token };
-      entrada.veces += 1;
-      const original = originales.get(token);
-      if (original && (entrada.mostrar === token || original.length < entrada.mostrar.length)) entrada.mostrar = original;
-      vocabulario.set(token, entrada);
-    }
+  for (const item of lista) sumarAlVocabulario(vocabulario, item);
+
+  const indice = { motor, porId, productos, vocabulario };
+  cache.set(productos, indice);
+  return indice;
+}
+
+/**
+ * Igual que crearIndice (mismo índice, misma caché), pero por tandas y cediendo el turno entre una y otra. Es la que
+ * usa el navegador: con miles de productos, armar el índice de un tirón congelaba la página un momento (~200 ms con
+ * 4000 en una PC, más en un teléfono) justo cuando el cliente empieza a escribir.
+ */
+export async function crearIndicePorPartes(productos: Producto[]): Promise<IndiceBusqueda> {
+  const guardado = cache.get(productos);
+  if (guardado) return guardado;
+
+  const { lista, porId } = await prepararCatalogoPorPartes(productos);
+  const motor = nuevoMotor();
+  const vocabulario: IndiceBusqueda["vocabulario"] = new Map();
+  for (let i = 0; i < lista.length; i += TANDA) {
+    const tanda = lista.slice(i, i + TANDA);
+    motor.addAll(tanda.map(documento));
+    for (const item of tanda) sumarAlVocabulario(vocabulario, item);
+    if (i + TANDA < lista.length) await respirar();
   }
 
+  const yaHecho = cache.get(productos);
+  if (yaHecho) return yaHecho;
   const indice = { motor, porId, productos, vocabulario };
   cache.set(productos, indice);
   return indice;

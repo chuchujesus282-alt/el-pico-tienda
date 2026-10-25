@@ -119,10 +119,34 @@ export async function getProducto(id: string): Promise<Producto | null> {
 // --- Búsqueda y recomendaciones (lib/recomendaciones/) ---
 // Los algoritmos reciben los productos de estas funciones: al conectar el SQL solo cambia este archivo.
 
+/*
+ * El catálogo completo se guarda en memoria del servidor el mismo tiempo que la caché de la API (5 min).
+ * Por qué: con miles de productos, cada respuesta de la API llega como una lista NUEVA, y la búsqueda y los
+ * relacionados (lib/recomendaciones/) solo reutilizan su preparación (~200 ms con 4000 productos) si reciben la MISMA
+ * lista. Así se prepara una vez cada 5 minutos y no en cada visita. Además: varias visitas a la vez comparten un solo
+ * pedido, y si la API falla se sigue usando la última lista buena (la página no se cae). Si la lista pesa más de 2 MB,
+ * la caché de fetch de Next no la guarda; esta memoria sí.
+ */
+let indiceGuardado: { productos: Producto[]; vence: number } | null = null;
+let indicePedido: Promise<Producto[]> | null = null;
+
 /** Todos los productos del catálogo, para buscar y recomendar (en la API: GET /productos/indice). */
 export async function getIndiceProductos(): Promise<Producto[]> {
   if (!API_URL) return productosMock;
-  return pedirApi<Producto[]>("/productos/indice");
+  if (indiceGuardado && indiceGuardado.vence > Date.now()) return indiceGuardado.productos;
+  indicePedido ??= pedirApi<Producto[]>("/productos/indice")
+    .then((productos) => {
+      indiceGuardado = { productos, vence: Date.now() + REVALIDAR_SEGUNDOS * 1000 };
+      return productos;
+    })
+    .catch((error: unknown) => {
+      if (indiceGuardado) return indiceGuardado.productos;
+      throw error;
+    })
+    .finally(() => {
+      indicePedido = null;
+    });
+  return indicePedido;
 }
 
 /** Los más vendidos, de toda la tienda o de una categoría. */

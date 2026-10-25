@@ -1,5 +1,5 @@
 import type { Producto } from "@/types/catalogo";
-import { crearIndice } from "@/lib/recomendaciones/busqueda";
+import { crearIndicePorPartes } from "@/lib/recomendaciones/busqueda";
 import type { IndiceBusqueda } from "@/lib/recomendaciones/busqueda";
 
 // Catálogo e índice de búsqueda en el navegador. Se piden una sola vez (la primera vez que el cliente
@@ -20,5 +20,6 @@ export function cargarProductos(): Promise<Producto[]> {
 
 export async function cargarIndice(): Promise<IndiceBusqueda | null> {
   const productos = await cargarProductos();
-  return productos.length ? crearIndice(productos) : null;
+  // Por partes: con miles de productos, armarlo de un tirón congelaba la página un momento.
+  return productos.length ? crearIndicePorPartes(productos) : null;
 }

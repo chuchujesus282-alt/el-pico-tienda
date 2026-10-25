@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { productosMock } from "@/lib/mock/productos";
 import type { Producto } from "@/types/catalogo";
-import { buscar, crearIndice, sugerir } from "../busqueda";
+import { buscar, crearIndice, crearIndicePorPartes, sugerir } from "../busqueda";
 import { tePuedeInteresar } from "../interesar";
 import { relacionados } from "../relacionados";
 
@@ -47,6 +47,31 @@ describe("rendimiento con 2000 productos", () => {
     );
     expect(armado).toBeLessThan(500); // ~150 ms en una PC modesta; se arma una sola vez
     expect(promedio).toBeLessThan(5);
+  });
+
+  it("el índice por partes (navegador) da lo mismo que el de un tirón y nunca bloquea más de 150 ms seguidos", async () => {
+    const grande = catalogoGrande(4000);
+    const deUnTiron = crearIndice(grande.map((p) => ({ ...p }))); // otra lista: sin caché compartida
+    // Mide el tramo más largo sin ceder el turno: un reloj que intenta correr cada 0 ms anota los huecos.
+    let ultimo = performance.now(),
+      hueco = 0,
+      corriendo = true;
+    const reloj = () => {
+      const ahora = performance.now();
+      hueco = Math.max(hueco, ahora - ultimo);
+      ultimo = ahora;
+      if (corriendo) setTimeout(reloj, 0);
+    };
+    setTimeout(reloj, 0);
+    const porPartes = await crearIndicePorPartes(grande);
+    corriendo = false;
+    console.info(`Índice por partes (4000): tramo más largo sin ceder el turno ${hueco.toFixed(0)} ms`);
+    expect(hueco).toBeLessThan(150);
+    for (const q of CONSULTAS) {
+      expect(buscar(porPartes, q).productos.map((p) => p.id)).toEqual(buscar(deUnTiron, q).productos.map((p) => p.id));
+      expect(sugerir(porPartes, q.slice(0, 5)).map((p) => p.id)).toEqual(sugerir(deUnTiron, q.slice(0, 5)).map((p) => p.id));
+    }
+    expect(crearIndice(grande)).toBe(porPartes); // misma caché: no se vuelve a armar
   });
 
   it("relacionados y 'Te puede interesar' responden rápido", () => {

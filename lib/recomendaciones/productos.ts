@@ -27,14 +27,34 @@ export type CatalogoPreparado = {
 // Se prepara una sola vez por lista de productos (la misma lista no se vuelve a normalizar).
 const cache = new WeakMap<Producto[], CatalogoPreparado>();
 
-export function prepararCatalogo(productos: Producto[]): CatalogoPreparado {
-  let preparado = cache.get(productos);
-  if (!preparado) {
-    const lista = productos.map(indexarProducto);
-    preparado = { lista, porId: new Map(lista.map((p) => [p.producto.id, p])) };
-    cache.set(productos, preparado);
-  }
+function guardar(productos: Producto[], lista: ProductoIndexado[]): CatalogoPreparado {
+  const preparado = { lista, porId: new Map(lista.map((p) => [p.producto.id, p])) };
+  cache.set(productos, preparado);
   return preparado;
+}
+
+export function prepararCatalogo(productos: Producto[]): CatalogoPreparado {
+  return cache.get(productos) ?? guardar(productos, productos.map(indexarProducto));
+}
+
+/** Cuántos productos se procesan seguidos antes de dejar respirar al navegador (ver prepararCatalogoPorPartes). */
+export const TANDA = 250;
+/** Cede el turno al navegador (clics, teclado, animaciones) y sigue después. */
+export const respirar = () => new Promise<void>((listo) => setTimeout(listo, 0));
+
+/**
+ * Igual que prepararCatalogo, pero por tandas, cediendo el turno entre una y otra: en el navegador, con miles de
+ * productos, así no se congela la página. Mismo resultado y misma caché.
+ */
+export async function prepararCatalogoPorPartes(productos: Producto[]): Promise<CatalogoPreparado> {
+  const guardado = cache.get(productos);
+  if (guardado) return guardado;
+  const lista: ProductoIndexado[] = [];
+  for (let i = 0; i < productos.length; i += TANDA) {
+    for (const p of productos.slice(i, i + TANDA)) lista.push(indexarProducto(p));
+    if (i + TANDA < productos.length) await respirar();
+  }
+  return cache.get(productos) ?? guardar(productos, lista);
 }
 
 export const ventas = (p: Producto) => p.ventas ?? 0;
