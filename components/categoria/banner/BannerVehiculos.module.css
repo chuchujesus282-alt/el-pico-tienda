@@ -1,0 +1,151 @@
+/*
+ * Ilustración del banner de Vehículos, portada TAL CUAL de banner-vehiculos-v1.html (prototipo aprobado). No cambies
+ * valores sin acordarlo. Excepción a la regla de tokens del CLAUDE.md (como las tarjetas de categoría): los colores
+ * van escritos aquí, idénticos al prototipo. `--f-mono` viene de BannerPlano.
+ * Clases globales en la raíz del banner: `on` (activo) y `vivo` (el triángulo destella).
+ */
+
+.svg {
+  --deep: #0a1f38;
+  --stroke: #c3ccd8;
+  --trace: rgba(190, 215, 245, 0.55);
+  --c: #ff8a1f;
+  --carton: #b8895a;
+  --aceite: #e0a526;
+  --goma: #1b2230;
+}
+.svg text {
+  font-family: var(--f-mono);
+  fill: var(--trace);
+  font-size: 9px;
+  letter-spacing: 0.08em;
+}
+
+.ln {
+  stroke: var(--stroke);
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.ln:not(.fill) {
+  fill: none;
+}
+.cota {
+  fill: none;
+  stroke: var(--trace);
+  stroke-width: 1;
+}
+.dash {
+  fill: none;
+  stroke: var(--trace);
+  stroke-width: 1;
+  stroke-dasharray: 3 4;
+}
+.bp {
+  transition: opacity 0.6s;
+}
+:global(.on) .bp {
+  opacity: 0.25;
+}
+
+/* rellenos: plano en reposo, material real al activarse */
+.fill {
+  fill: var(--deep);
+  transition: fill 0.6s;
+}
+:global(.on) .fCarton {
+  fill: var(--carton);
+}
+:global(.on) .fAceite {
+  fill: var(--aceite);
+}
+:global(.on) .fRojo {
+  fill: #e3262f;
+}
+:global(.on) .fNaranja {
+  fill: var(--c);
+}
+:global(.on) .fGoma {
+  fill: var(--goma);
+}
+:global(.on) .fMadera {
+  fill: #9c7447;
+}
+.svg .fTxt {
+  transition: fill 0.6s;
+}
+:global(.on) .svg .fTxt {
+  fill: rgba(11, 29, 51, 0.75);
+}
+
+/* franja de seguridad del piso */
+.franja {
+  opacity: 0;
+  transition: opacity 0.6s;
+}
+:global(.on) .franja {
+  opacity: 0.9;
+}
+
+/* triángulo reflectivo: en reposo destella apenas (pedido de persona B); activo, apagado; `vivo`, el destello del
+   prototipo */
+.refl {
+  opacity: 0;
+  animation: destello 3.4s ease-in-out infinite;
+}
+:global(.on) .refl {
+  animation: none;
+}
+:global(.vivo) .refl {
+  animation: refleja 1.6s ease-in-out infinite;
+}
+@keyframes destello {
+  0%,
+  100% {
+    opacity: 0;
+  }
+  50% {
+    opacity: 0.35;
+  }
+}
+@keyframes refleja {
+  0%,
+  100% {
+    opacity: 0.15;
+  }
+  50% {
+    opacity: 0.95;
+  }
+}
+
+/* Reposo: el caucho se balancea apenas (pedido de persona B). Se detiene al activarse. */
+.balanceo {
+  transform-box: fill-box;
+  transform-origin: 50% 50%;
+  animation: balanceo 3.2s ease-in-out infinite alternate;
+}
+:global(.on) .balanceo {
+  animation: none;
+}
+@keyframes balanceo {
+  from {
+    transform: rotate(-4deg);
+  }
+  to {
+    transform: rotate(4deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bp,
+  .fill,
+  .svg .fTxt,
+  .franja {
+    transition-duration: 0.01s !important;
+  }
+  .refl,
+  :global(.vivo) .refl,
+  .balanceo {
+    animation: none;
+  }
+}

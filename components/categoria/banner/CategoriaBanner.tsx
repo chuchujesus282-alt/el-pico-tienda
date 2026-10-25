@@ -4,6 +4,7 @@ import BannerElectricidad from "./BannerElectricidad";
 import BannerHerramientas from "./BannerHerramientas";
 import BannerHogarJardin from "./BannerHogarJardin";
 import BannerPinturas from "./BannerPinturas";
+import BannerVehiculos from "./BannerVehiculos";
 import "./banner.css";
 
 /** Props de un banner que reemplaza al encabezado entero (ej. BannerPinturas, sobre components/categoria/banner-plano/). */
@@ -24,7 +25,7 @@ type ConfigBanner = {
 };
 
 /**
- * Banner propio de cada categoría: `Propio` (estilo plano técnico, reemplaza al encabezado; hoy Pinturas, Construcción, Electricidad y Hogar y jardín) o `Escena`
+ * Banner propio de cada categoría: `Propio` (estilo plano técnico, reemplaza al encabezado; hoy Pinturas, Construcción, Electricidad, Hogar y jardín y Vehículos) o `Escena`
  * (fotos reales a la derecha de EncabezadoPagina). Las categorías sin entrada
  * siguen con el plano y su ícono. Para sumar una: su componente en esta carpeta y una línea aquí.
  */
@@ -45,6 +46,9 @@ const BANNERS: Record<string, ConfigBanner> = {
   },
   "hogar-y-jardin": {
     Propio: BannerHogarJardin,
+  },
+  vehiculos: {
+    Propio: BannerVehiculos,
   },
 };
 

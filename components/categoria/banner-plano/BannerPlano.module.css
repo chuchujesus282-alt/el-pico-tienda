@@ -263,6 +263,51 @@
   }
 }
 
+/* Banda transportadora (Vehículos): se despliega bajo la etiqueta y sus marcas avanzan mientras está activa. */
+.banda {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 8px;
+  right: -10px;
+  height: 9px;
+  background:
+    repeating-linear-gradient(90deg, transparent 0 4px, var(--c) 4px 7px, transparent 7px 12px) 0 0 / 12px 100%,
+    color-mix(in srgb, var(--c) 14%, transparent);
+  -webkit-mask: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent);
+  mask: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent);
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+  transform: skewX(-12deg) scaleX(0);
+  transform-origin: left;
+  transition: transform 0.6s cubic-bezier(0.3, 0.7, 0.2, 1) 0.1s;
+  pointer-events: none;
+}
+.banda::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    repeating-linear-gradient(135deg, transparent 0 5px, color-mix(in srgb, var(--c) 90%, transparent) 5px 7px, transparent 7px 12px),
+    repeating-linear-gradient(45deg, transparent 0 5px, color-mix(in srgb, var(--c) 90%, transparent) 5px 7px, transparent 7px 12px);
+  background-size: 12px 50%;
+  background-repeat: repeat-x;
+  background-position:
+    0 0,
+    0 100%;
+}
+:global(.on) .banda {
+  transform: skewX(-12deg) scaleX(1);
+}
+:global(.on) .banda::before {
+  animation: avanza 0.6s linear infinite;
+}
+@keyframes avanza {
+  to {
+    background-position:
+      12px 0,
+      12px 100%;
+  }
+}
+
 /* Pasto que brota bajo la etiqueta (Hogar y jardín). */
 .pasto {
   position: absolute;
@@ -359,6 +404,7 @@
   :global(.on) .gotas span,
   .cinta,
   .cable,
+  .banda,
   .pasto path,
   .velo,
   .etiquetaFondo,
@@ -369,7 +415,8 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  :global(.spark) .cable::after {
+  :global(.spark) .cable::after,
+  :global(.on) .banda::before {
     animation: none;
   }
 }
