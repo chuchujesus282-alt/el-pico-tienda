@@ -6,7 +6,8 @@ import EncabezadoPagina from "@/components/ui/EncabezadoPagina";
 import IconoCorazon from "@/components/icons/pico/IconoCorazon";
 
 // Favoritos — responsable: persona A (rama `inicio`). Se guardan en el navegador del cliente
-// (components/favoritos/almacenFavoritos.ts); cuando haya cuentas, podrán viajar con ella.
+// (components/favoritos/almacenFavoritos.ts) y, con la sesión abierta, también en su cuenta
+// (components/cuenta/SincronizarCuenta.tsx).
 
 export const metadata: Metadata = {
   title: "Mis favoritos",

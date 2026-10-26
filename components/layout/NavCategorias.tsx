@@ -21,6 +21,7 @@ const SIN_BARRA = [
   "/recuperar-contrasena",
   "/nueva-contrasena",
   "/verificar-correo",
+  "/mi-cuenta",
   "/finalizar-pedido",
   "/mis-direcciones",
 ];

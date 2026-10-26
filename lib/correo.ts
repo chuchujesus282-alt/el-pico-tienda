@@ -1,7 +1,5 @@
 import "server-only";
 
-import { LOGO_CORREO_PNG } from "./logoCorreo";
-
 // ÚNICA puerta de salida de los correos de la tienda (verificar el correo, recuperar la contraseña, avisos de cuenta).
 // - Con RESEND_API_KEY: se envían de verdad por Resend (API HTTP, sin librería), desde CORREO_REMITENTE o, si falta,
 //   desde no-responder@centroferreteroelpico.com (dominio verificado en Resend).
@@ -46,7 +44,12 @@ const AZUL_CLARO = "#e7eef5";
 const GRIS = "#5b6b7c";
 const LETRA = "Arial,Helvetica,sans-serif";
 const LETRA_TITULO = "'Chakra Petch',Arial,Helvetica,sans-serif";
-const ID_LOGO = "logo-el-pico";
+const EMPRESA = "Centro Ferretero El Pico, C.A. · RIF J-30440607-0 · Caracas, Venezuela";
+
+// El logo se carga desde el sitio publicado (public/correo/logo-el-pico.png: variante para fondo oscuro, PNG a 480 px
+// para verse nítido a 240). Siempre desde producción, también en pruebas: los programas de correo no ven localhost.
+// VERCEL_PROJECT_PRODUCTION_URL pasa sola a centroferreteroelpico.com cuando se conecte el dominio.
+const LOGO = `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL || "el-pico-tienda.vercel.app"}/correo/logo-el-pico.png`;
 
 /** HTML de tabla, con estilos en línea: es lo único que respetan Gmail, Outlook y los correos del teléfono. */
 export function htmlCorreo({ asunto, vistaPrevia, titulo, parrafos, boton, nota, pie }: Correo): string {
@@ -64,7 +67,7 @@ export function htmlCorreo({ asunto, vistaPrevia, titulo, parrafos, boton, nota,
 <tr><td align="center" style="padding:32px 12px">
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width:560px">
   <tr><td bgcolor="${AZUL}" style="background:${AZUL};background-image:linear-gradient(135deg,${AZUL},${AZUL_OSCURO});border-radius:14px 14px 0 0;padding:26px 32px">
-    <img src="cid:${ID_LOGO}" width="199" height="42" alt="Centro Ferretero El Pico" style="display:block;border:0;font-family:${LETRA};font-size:18px;font-weight:bold;color:#ffffff">
+    <img src="${LOGO}" width="240" height="47" alt="Centro Ferretero El Pico" style="display:block;border:0;font-family:${LETRA};font-size:18px;font-weight:bold;color:#ffffff">
   </td></tr>
   <tr><td bgcolor="${ROJO}" style="background:${ROJO};height:4px;line-height:4px;font-size:0">&nbsp;</td></tr>
   <tr><td bgcolor="#ffffff" style="background:#ffffff;padding:36px 32px 12px">
@@ -81,9 +84,8 @@ export function htmlCorreo({ asunto, vistaPrevia, titulo, parrafos, boton, nota,
     </tr></table>
     ${nota ? `<p style="margin:14px 0 0;font-family:${LETRA};font-size:14px;line-height:1.5;color:${GRIS}">${escapar(nota)}</p>` : ""}
   </td></tr>
-  <tr><td bgcolor="#ffffff" style="background:#ffffff;padding:20px 32px 0">
-    <p style="margin:0;font-family:${LETRA};font-size:13px;line-height:1.5;color:${GRIS}">¿El botón no funciona? Copia y pega este enlace en tu navegador:<br>
-    <a href="${escapar(boton.url)}" style="color:${AZUL};word-break:break-all">${escapar(boton.url)}</a></p>
+  <tr><td bgcolor="#ffffff" style="background:#ffffff;padding:16px 32px 0">
+    <p style="margin:0;font-family:${LETRA};font-size:12px;line-height:1.5;color:${GRIS}">¿El botón no funciona? Abre <a href="${escapar(boton.url)}" style="color:${GRIS};text-decoration:underline">este enlace</a>.</p>
   </td></tr>`
       : ""
   }
@@ -95,7 +97,7 @@ export function htmlCorreo({ asunto, vistaPrevia, titulo, parrafos, boton, nota,
     }
   </td></tr>
   <tr><td align="center" style="padding:24px 16px 0;font-family:${LETRA};font-size:12px;line-height:1.6;color:${GRIS}">
-    <strong style="color:${AZUL}">Centro Ferretero El Pico</strong> · Caracas, Venezuela<br>
+    ${EMPRESA}<br>
     Este es un correo automático: por favor, no lo respondas.
   </td></tr>
 </table>
@@ -111,7 +113,7 @@ export function textoCorreo({ titulo, parrafos, boton, nota, pie }: Correo): str
     boton && `${boton.texto}: ${boton.url}`,
     nota,
     pie,
-    "—\nCentro Ferretero El Pico · Caracas, Venezuela\nEste es un correo automático: por favor, no lo respondas.",
+    `—\n${EMPRESA}\nEste es un correo automático: por favor, no lo respondas.`,
   ]
     .filter(Boolean)
     .join("\n\n");
@@ -140,8 +142,6 @@ export async function enviarCorreo(correo: Correo): Promise<void> {
       subject: correo.asunto,
       html: htmlCorreo(correo),
       text: textoCorreo(correo),
-      // El logo va adjunto dentro del correo y el HTML lo muestra con cid:.
-      attachments: [{ filename: "logo-el-pico.png", content: LOGO_CORREO_PNG, content_id: ID_LOGO }],
     }),
   });
   if (!respuesta.ok) {

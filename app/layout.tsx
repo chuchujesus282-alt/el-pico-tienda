@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import ProveedorCarrito from "@/components/carrito/ProveedorCarrito";
+import SincronizarCuenta from "@/components/cuenta/SincronizarCuenta";
 import BarraInferior from "@/components/layout/BarraInferior";
 import Footer from "@/components/layout/Footer";
 import Header from "@/components/layout/Header";
@@ -23,6 +24,8 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     <html lang="es-VE" className={chakra.variable}>
       <body className="flex min-h-dvh flex-col">
         <ProveedorCarrito>
+          {/* Con la sesión abierta, el carrito y los favoritos se guardan también en la cuenta. */}
+          <SincronizarCuenta />
           <OcultarEnRutas prefijos={RUTAS_PANTALLA_COMPLETA}>
             <HeaderSoloInicioMovil>
               <Header />

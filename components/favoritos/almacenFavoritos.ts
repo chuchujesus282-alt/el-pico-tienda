@@ -59,6 +59,9 @@ function guardar(nuevos: string[]) {
   avisar();
 }
 
+// Para copiar los favoritos a la cuenta (components/cuenta/SincronizarCuenta.tsx).
+export { suscribir as suscribirFavoritos, obtenerIds as obtenerFavoritos, guardar as reemplazarFavoritos };
+
 /** Favoritos del cliente: la lista de códigos y cómo marcarlos o quitarlos. */
 export function useFavoritos() {
   const lista = useSyncExternalStore(suscribir, obtenerIds, obtenerIdsServidor);

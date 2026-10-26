@@ -2,7 +2,7 @@
 // Cambiar algo aquí exige una migración nueva: `npm run db:generate` (crea el SQL en drizzle/) y `npm run db:migrate`.
 // En TypeScript los campos van en camelCase (así los pide Better Auth); en la base de datos, en snake_case.
 
-import { bigint, boolean, index, integer, pgTable, text, timestamp, uniqueIndex } from "drizzle-orm/pg-core";
+import { bigint, boolean, index, integer, pgTable, primaryKey, text, timestamp, uniqueIndex } from "drizzle-orm/pg-core";
 
 const creadoEn = () => timestamp("created_at", { withTimezone: true }).notNull().defaultNow();
 const actualizadoEn = () =>
@@ -102,6 +102,41 @@ export const perfil = pgTable("perfil", {
   createdAt: creadoEn(),
   updatedAt: actualizadoEn(),
 });
+
+/**
+ * Favoritos de la cuenta: solo el código del producto (nombre, precio y foto salen del catálogo al mostrarlos).
+ * `posicion` 0 = el más reciente (como los muestra /favoritos). En el navegador viven en localStorage (components/favoritos/).
+ */
+export const favorito = pgTable(
+  "favorito",
+  {
+    userId: text("user_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    productoId: text("producto_id").notNull(),
+    posicion: integer("posicion").notNull(),
+    createdAt: creadoEn(),
+  },
+  (t) => [primaryKey({ columns: [t.userId, t.productoId] })],
+);
+
+/**
+ * Carrito de la cuenta: código y cantidad, en el orden en que se agregó (`posicion`). NO guarda precio ni tasa:
+ * el precio sale siempre del catálogo y la tasa BCV se fija solo al enviar el pedido.
+ */
+export const carritoItem = pgTable(
+  "carrito_item",
+  {
+    userId: text("user_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    productoId: text("producto_id").notNull(),
+    cantidad: integer("cantidad").notNull(),
+    posicion: integer("posicion").notNull(),
+    updatedAt: actualizadoEn(),
+  },
+  (t) => [primaryKey({ columns: [t.userId, t.productoId] })],
+);
 
 /**
  * Intentos para el límite propio (lib/limiteIntentos.ts): una fila por clave, ej. "entrar:correo+ip:…" o

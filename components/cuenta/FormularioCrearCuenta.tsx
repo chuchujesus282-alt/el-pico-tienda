@@ -4,11 +4,12 @@ import { useState, useTransition } from "react";
 import type { FormEvent } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Building2, CircleCheck, LoaderCircle, User } from "lucide-react";
+import { CircleCheck, LoaderCircle } from "lucide-react";
 import { accionCrearCuenta } from "@/app/crear-cuenta/acciones";
 import Boton from "@/components/ui/Boton";
 import type { NuevaCuenta, PrefijoDocumento, TipoPersona } from "@/types/cuenta";
 import BotonesSociales from "./BotonesSociales";
+import CamposFiscales from "./CamposFiscales";
 import { Aviso, Campo, CampoContrasena, Separador } from "./Campos";
 import {
   LARGO_MINIMO_CONTRASENA,
@@ -18,11 +19,6 @@ import {
   validarNuevaCuenta,
   type ErroresCuenta,
 } from "./datosFiscales";
-
-const TIPOS: { valor: TipoPersona; titulo: string; detalle: string; Icono: typeof User }[] = [
-  { valor: "natural", titulo: "Persona", detalle: "La factura sale a tu nombre, con tu cédula o RIF.", Icono: User },
-  { valor: "juridica", titulo: "Empresa", detalle: "La factura sale a nombre de la empresa, con su RIF.", Icono: Building2 },
-];
 
 /** Orden en que se revisan los campos: el primero con error recibe el foco. */
 const ORDEN: (keyof ErroresCuenta)[] = ["nombre", "numeroDocumento", "telefono", "correo", "contrasena", "confirmacion", "aceptaPoliticas"];
@@ -100,8 +96,6 @@ export default function FormularioCrearCuenta() {
     });
   };
 
-  const actual = TIPOS.find((t) => t.valor === tipo)!;
-
   return (
     // Campos grandes, como en iniciar sesión (los de crear cuenta normal en otras pantallas no cambian).
     <div className="flex flex-col gap-7 [&_input:not([type=checkbox])]:h-14 [&_input:not([type=checkbox])]:pl-4 [&_input:not([type=checkbox])]:text-base [&_label]:text-[15px]">
@@ -119,121 +113,7 @@ export default function FormularioCrearCuenta() {
         noValidate
         className="flex flex-col gap-5"
       >
-        {/* Persona o empresa: dos mitades de un mismo control, la elegida en blanco. */}
-        <fieldset className="motion-safe:animate-aparecer [animation-delay:480ms]">
-          <legend className="sr-only">¿Para quién es la cuenta?</legend>
-          <div className="relative grid grid-cols-2 gap-1 rounded-tarjeta bg-gris-fondo p-1">
-            {/* La píldora blanca se desliza hacia la opción elegida. */}
-            <span
-              className={`absolute inset-y-1 left-1 w-[calc(50%-0.375rem)] rounded-boton bg-pico-blanco shadow-tarjeta transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${
-                empresa ? "translate-x-[calc(100%+0.25rem)]" : "translate-x-0"
-              }`}
-              aria-hidden
-            />
-            {TIPOS.map(({ valor, titulo, Icono }) => {
-              const marcado = tipo === valor;
-              return (
-                <label
-                  key={valor}
-                  className={`relative flex h-12 cursor-pointer items-center justify-center gap-2 rounded-boton text-[15px] font-semibold transition-colors duration-300 has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-pico-azul ${
-                    marcado ? "text-pico-azul" : "text-gris-texto hover:text-pico-azul"
-                  }`}
-                >
-                  <input
-                    type="radio"
-                    name="tipoPersona"
-                    value={valor}
-                    checked={marcado}
-                    onChange={() => cambiarTipo(valor)}
-                    className="sr-only"
-                  />
-                  <Icono
-                    key={marcado ? "si" : "no"}
-                    className={`size-5 ${marcado ? "motion-safe:animate-latido" : ""}`}
-                    strokeWidth={marcado ? 2.25 : 1.75}
-                    aria-hidden
-                  />
-                  {titulo}
-                </label>
-              );
-            })}
-          </div>
-          <p key={tipo} className="mt-2 text-center text-[13px] text-gris-texto motion-safe:animate-aparecer">
-            {actual.detalle}
-          </p>
-        </fieldset>
-
-        <Campo
-          id="nombre"
-          etiqueta={empresa ? "Razón social" : "Nombre y apellido"}
-          autoComplete={empresa ? "organization" : "name"}
-          placeholder={empresa ? "Ej. Construcciones Ávila, C.A." : "Ej. María Pérez"}
-          error={errores.nombre}
-          className="motion-safe:animate-aparecer [animation-delay:540ms]"
-        />
-
-        <div className="grid gap-5 sm:grid-cols-2 sm:gap-4 motion-safe:animate-aparecer [animation-delay:600ms]">
-          <div className="flex flex-col gap-1.5">
-            <label htmlFor="numeroDocumento" className="text-sm font-semibold text-pico-azul">
-              {empresa ? "RIF" : "Cédula o RIF"}
-            </label>
-            <div className="flex gap-2">
-              <label htmlFor="prefijo" className="sr-only">
-                Tipo de documento
-              </label>
-              <select
-                id="prefijo"
-                value={prefijo}
-                onChange={(e) => setPrefijo(e.target.value as PrefijoDocumento)}
-                className="h-14 w-16 shrink-0 cursor-pointer rounded-boton border border-gris-borde bg-pico-blanco px-2 text-base font-semibold text-pico-azul outline-none focus:border-pico-azul focus:ring-4 focus:ring-pico-azul-claro"
-              >
-                {PREFIJOS[tipo].map((p) => (
-                  <option key={p.valor} value={p.valor}>
-                    {p.etiqueta}
-                  </option>
-                ))}
-              </select>
-              <input
-                id="numeroDocumento"
-                name="numeroDocumento"
-                inputMode={prefijo === "P" ? "text" : "numeric"}
-                placeholder={empresa ? "12345678-9" : prefijo === "P" ? "Pasaporte" : "12345678"}
-                aria-invalid={errores.numeroDocumento ? true : undefined}
-                aria-describedby={errores.numeroDocumento ? "numeroDocumento-nota" : undefined}
-                className={`w-full min-w-0 rounded-boton border bg-pico-blanco text-texto outline-none transition-shadow placeholder:text-gris-texto focus:ring-4 ${
-                  errores.numeroDocumento
-                    ? "border-pico-rojo focus:border-pico-rojo focus:ring-pico-rojo/15"
-                    : "border-gris-borde focus:border-pico-azul focus:ring-pico-azul-claro"
-                }`}
-              />
-            </div>
-            {errores.numeroDocumento && (
-              <p id="numeroDocumento-nota" className="text-[13px] text-pico-rojo">
-                {errores.numeroDocumento}
-              </p>
-            )}
-          </div>
-
-          <Campo
-            id="telefono"
-            etiqueta="Teléfono"
-            type="tel"
-            autoComplete="tel-national"
-            inputMode="tel"
-            placeholder="0412-1234567"
-            error={errores.telefono}
-          />
-        </div>
-
-        {empresa && (
-          <label className="flex cursor-pointer items-start gap-3 rounded-tarjeta bg-gris-fondo px-4 py-3 motion-safe:animate-aparecer">
-            <input type="checkbox" name="contribuyenteEspecial" value="si" className="mt-1 size-4 shrink-0 cursor-pointer accent-pico-azul" />
-            <span>
-              <span className="block font-semibold text-pico-azul">Somos contribuyente especial</span>
-              <span className="block text-[13px] text-gris-texto">Si la empresa es agente de retención de IVA.</span>
-            </span>
-          </label>
-        )}
+        <CamposFiscales tipo={tipo} prefijo={prefijo} onTipo={cambiarTipo} onPrefijo={setPrefijo} errores={errores} />
 
         <Campo
           id="correo"

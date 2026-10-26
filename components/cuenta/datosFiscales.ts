@@ -50,9 +50,38 @@ export function normalizarTelefono(telefono: string): string | null {
 
 export type ErroresCuenta = Partial<Record<keyof DatosFiscales | "correo" | "contrasena" | "confirmacion" | "numeroDocumento" | "aceptaPoliticas", string>>;
 
+/** "V-12345678" → { prefijo: "V", numero: "12345678" } (para volver a llenar el formulario con lo guardado). */
+export function separarDocumento(documento: string): { prefijo: PrefijoDocumento; numero: string } | null {
+  const [prefijo, ...resto] = documento.split("-");
+  if (!["V", "E", "P", "J", "G"].includes(prefijo) || resto.length === 0) return null;
+  return { prefijo: prefijo as PrefijoDocumento, numero: resto.join("-") };
+}
+
+/** ¿El documento ya normalizado es válido para ese tipo de persona? (V/E/P personas; J/G empresas.) */
+function documentoValido(tipo: TipoPersona, documento: string): boolean {
+  const partes = separarDocumento(documento);
+  // PREFIJOS[tipo] no existe si el tipo llegó inventado desde el navegador.
+  if (!partes || !PREFIJOS[tipo]?.some((p) => p.valor === partes.prefijo)) return false;
+  return normalizarDocumento(partes.prefijo, partes.numero) === documento;
+}
+
+/** Revisa los datos para la factura (crear cuenta y Mi cuenta). Sin errores, el objeto viene vacío. */
+export function validarDatosFiscales(f: DatosFiscales): ErroresCuenta {
+  const errores: ErroresCuenta = {};
+  const empresa = f.tipoPersona === "juridica";
+  if (f.tipoPersona !== "natural" && !empresa) errores.nombre = "Elige si la cuenta es de una persona o de una empresa.";
+  if (typeof f.nombre !== "string" || f.nombre.trim().length < 3 || f.nombre.length > 120)
+    errores.nombre = empresa ? "Escribe la razón social." : "Escribe tu nombre y apellido.";
+  if (typeof f.documento !== "string" || !documentoValido(f.tipoPersona, f.documento))
+    errores.numeroDocumento = empresa ? "El RIF lleva 9 dígitos, ej. 12345678-9." : "Revisa el número: la cédula lleva de 6 a 8 dígitos.";
+  if (typeof f.telefono !== "string" || normalizarTelefono(f.telefono) !== f.telefono)
+    errores.telefono = "Escribe un teléfono de 11 dígitos, ej. 0412-1234567.";
+  return errores;
+}
+
 /** Revisa la cuenta nueva completa. Sin errores, el objeto viene vacío. */
 export function validarNuevaCuenta(cuenta: NuevaCuenta, confirmacion?: string): ErroresCuenta {
-  const { correo, contrasena, fiscales: f } = cuenta;
+  const { correo, contrasena } = cuenta;
   const errores: ErroresCuenta = {};
 
   if (!correoValido(correo)) errores.correo = "Escribe un correo válido, ej. nombre@correo.com.";
@@ -60,12 +89,7 @@ export function validarNuevaCuenta(cuenta: NuevaCuenta, confirmacion?: string): 
     errores.contrasena = `Usa al menos ${LARGO_MINIMO_CONTRASENA} caracteres.`;
   if (confirmacion !== undefined && confirmacion !== contrasena) errores.confirmacion = "Las contraseñas no coinciden.";
 
-  if (f.nombre.trim().length < 3)
-    errores.nombre = f.tipoPersona === "juridica" ? "Escribe la razón social." : "Escribe tu nombre y apellido.";
-  if (!f.documento) errores.numeroDocumento = f.tipoPersona === "juridica"
-    ? "El RIF lleva 9 dígitos, ej. 12345678-9."
-    : "Revisa el número: la cédula lleva de 6 a 8 dígitos.";
-  if (!f.telefono) errores.telefono = "Escribe un teléfono de 11 dígitos, ej. 0412-1234567.";
+  Object.assign(errores, validarDatosFiscales(cuenta.fiscales));
   if (!cuenta.aceptaPoliticas) errores.aceptaPoliticas = "Marca la casilla para continuar.";
 
   return errores;

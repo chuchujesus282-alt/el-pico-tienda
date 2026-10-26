@@ -8,6 +8,13 @@
       "when": 1792948371511,
       "tag": "0000_cuentas",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1792974796768,
+      "tag": "0001_favoritos_carrito",
+      "breakpoints": true
     }
   ]
 }

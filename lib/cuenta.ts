@@ -1,13 +1,18 @@
 import "server-only";
 
-import { and, eq, gte } from "drizzle-orm";
+import { and, asc, eq, gte } from "drizzle-orm";
+import type { BatchItem } from "drizzle-orm/batch";
 import { isAPIError } from "better-auth/api";
 import { headers } from "next/headers";
+import { validarDatosFiscales } from "@/components/cuenta/datosFiscales";
 import { auth } from "@/lib/auth";
+import { getIndiceProductos } from "@/lib/catalogo";
 import { correosDisponibles } from "@/lib/correo";
 import { db } from "@/lib/db";
-import { perfil, user } from "@/lib/db/esquema";
-import type { NuevaCuenta, ResultadoCuenta } from "@/types/cuenta";
+import { carritoItem, favorito, perfil, user } from "@/lib/db/esquema";
+import { limpiarCarrito, limpiarFavoritos, mezclarCarrito, mezclarFavoritos, type LineaCarrito } from "@/lib/mezclaCuenta";
+import type { ItemCarrito } from "@/types/carrito";
+import type { DatosCuenta, DatosFiscales, NuevaCuenta, PerfilCuenta, ResultadoCuenta } from "@/types/cuenta";
 
 // ÚNICA puerta de entrada a las cuentas de cliente desde el servidor (registro e inicio con correo y contraseña,
 // recuperar la contraseña y reenviar el enlace para confirmar el correo).
@@ -60,6 +65,10 @@ const sinCorreos = "Por ahora no podemos enviar correos. Mientras tanto, entra c
 
 export async function haySesion(): Promise<boolean> {
   return Boolean(await auth.api.getSession({ headers: await headers() }));
+}
+
+async function usuarioActual() {
+  return (await auth.api.getSession({ headers: await headers() }))?.user ?? null;
 }
 
 export async function iniciarSesion(correo: string, contrasena: string): Promise<ResultadoCuenta> {
@@ -166,4 +175,152 @@ export async function reenviarConfirmacion(correo: string, volverA?: string): Pr
     ok: true,
     aviso: `Si ${correo} tiene una cuenta sin confirmar, te enviamos un enlace nuevo. Vale por 24 horas (revisa también la carpeta de spam).`,
   };
+}
+
+/* ---------- Mi cuenta: datos para la factura ---------- */
+
+/** Lo que muestra /mi-cuenta. null sin sesión. */
+export async function leerPerfil(): Promise<PerfilCuenta | null> {
+  const cliente = await usuarioActual();
+  if (!cliente) return null;
+  const [fila] = await db.select().from(perfil).where(eq(perfil.userId, cliente.id));
+  return {
+    correo: cliente.email,
+    nombre: cliente.name,
+    foto: cliente.image ?? null,
+    fiscales: fila
+      ? {
+          tipoPersona: fila.tipoPersona,
+          nombre: fila.nombre,
+          documento: fila.documento,
+          telefono: fila.telefono,
+          contribuyenteEspecial: fila.contribuyenteEspecial,
+        }
+      : null,
+  };
+}
+
+/**
+ * Guarda los datos para la factura. Quien entró con Google no los tiene todavía: la primera vez debe aceptar las
+ * políticas de privacidad (`aceptaPoliticas`), como en el registro.
+ */
+export async function guardarPerfil(fiscales: DatosFiscales, aceptaPoliticas: boolean): Promise<ResultadoCuenta> {
+  const cliente = await usuarioActual();
+  if (!cliente) return { ok: false, mensaje: "Tu sesión se cerró. Vuelve a iniciar sesión." };
+  if (Object.keys(validarDatosFiscales(fiscales)).length > 0) {
+    return { ok: false, mensaje: "Revisa los datos marcados e inténtalo de nuevo." };
+  }
+  const datos = {
+    tipoPersona: fiscales.tipoPersona,
+    nombre: fiscales.nombre.trim(),
+    documento: fiscales.documento,
+    telefono: fiscales.telefono,
+    contribuyenteEspecial: fiscales.tipoPersona === "juridica" && fiscales.contribuyenteEspecial === true,
+  };
+  try {
+    const [existente] = await db.select({ userId: perfil.userId }).from(perfil).where(eq(perfil.userId, cliente.id));
+    if (existente) {
+      await db.update(perfil).set(datos).where(eq(perfil.userId, cliente.id));
+    } else {
+      if (!aceptaPoliticas) return { ok: false, mensaje: "Marca la casilla de las políticas de privacidad para continuar." };
+      await db.insert(perfil).values({ userId: cliente.id, ...datos, aceptoPoliticasEn: new Date() });
+    }
+  } catch (error) {
+    console.error("[cuenta] No se pudo guardar el perfil:", error);
+    return { ok: false, mensaje: "No pudimos guardar tus datos. Inténtalo de nuevo en unos minutos." };
+  }
+  return { ok: true, aviso: "Listo, guardamos tus datos." };
+}
+
+/* ---------- Carrito y favoritos en la cuenta ---------- */
+// En el navegador siguen en localStorage (components/carrito/, components/favoritos/); con la sesión abierta,
+// components/cuenta/SincronizarCuenta.tsx los copia a la cuenta. Al ENTRAR se juntan (lib/mezclaCuenta.ts); después,
+// en cada visita manda lo de la cuenta (así lo que quitaste en otro dispositivo no reaparece).
+
+async function leerLineas(userId: string): Promise<{ carrito: LineaCarrito[]; favoritos: string[] }> {
+  const [carrito, favoritos] = await Promise.all([
+    db
+      .select({ id: carritoItem.productoId, cantidad: carritoItem.cantidad })
+      .from(carritoItem)
+      .where(eq(carritoItem.userId, userId))
+      .orderBy(asc(carritoItem.posicion)),
+    db.select({ id: favorito.productoId }).from(favorito).where(eq(favorito.userId, userId)).orderBy(asc(favorito.posicion)),
+  ]);
+  return { carrito, favoritos: favoritos.map((f) => f.id) };
+}
+
+/** Reemplaza el carrito y/o los favoritos de la cuenta, cada uno en una sola transacción (borrar + insertar). */
+async function escribir(userId: string, { carrito, favoritos }: { carrito?: LineaCarrito[]; favoritos?: string[] }) {
+  const consultas: BatchItem<"pg">[] = [];
+  if (carrito) {
+    consultas.push(db.delete(carritoItem).where(eq(carritoItem.userId, userId)));
+    if (carrito.length > 0) {
+      consultas.push(db.insert(carritoItem).values(carrito.map(({ id, cantidad }, posicion) => ({ userId, productoId: id, cantidad, posicion }))));
+    }
+  }
+  if (favoritos) {
+    consultas.push(db.delete(favorito).where(eq(favorito.userId, userId)));
+    if (favoritos.length > 0) {
+      consultas.push(db.insert(favorito).values(favoritos.map((productoId, posicion) => ({ userId, productoId, posicion }))));
+    }
+  }
+  if (consultas.length > 0) await db.batch(consultas as [BatchItem<"pg">, ...BatchItem<"pg">[]]);
+}
+
+/** Pone nombre, precio y foto de hoy (del catálogo) a cada línea. Lo que ya no está en el catálogo se deja fuera. */
+async function conProductos(lineas: LineaCarrito[]): Promise<ItemCarrito[]> {
+  if (lineas.length === 0) return [];
+  const porId = new Map((await getIndiceProductos()).map((p) => [p.id, p]));
+  return lineas.flatMap(({ id, cantidad }) => {
+    const producto = porId.get(id);
+    return producto ? [{ producto, cantidad }] : [];
+  });
+}
+
+/**
+ * Al entrar: junta lo del navegador con lo de la cuenta, lo guarda y devuelve el resultado para el navegador.
+ * null si no hay sesión o algo falló (el navegador se queda con lo suyo y lo vuelve a intentar en la próxima visita).
+ */
+export async function sincronizarAlEntrar(navegador: { carrito: unknown; favoritos: unknown }): Promise<DatosCuenta | null> {
+  const cliente = await usuarioActual();
+  if (!cliente) return null;
+  try {
+    const cuenta = await leerLineas(cliente.id);
+    const carrito = mezclarCarrito(limpiarCarrito(navegador.carrito), cuenta.carrito);
+    const favoritos = mezclarFavoritos(limpiarFavoritos(navegador.favoritos), cuenta.favoritos);
+    await escribir(cliente.id, { carrito, favoritos });
+    return { carrito: await conProductos(carrito), favoritos };
+  } catch (error) {
+    console.error("[cuenta] No se pudo sincronizar el carrito y los favoritos:", error);
+    return null;
+  }
+}
+
+/** En las visitas siguientes: lo que hay en la cuenta (manda sobre lo del navegador). */
+export async function leerDatosCuenta(): Promise<DatosCuenta | null> {
+  const cliente = await usuarioActual();
+  if (!cliente) return null;
+  try {
+    const { carrito, favoritos } = await leerLineas(cliente.id);
+    return { carrito: await conProductos(carrito), favoritos };
+  } catch (error) {
+    console.error("[cuenta] No se pudo leer el carrito y los favoritos:", error);
+    return null;
+  }
+}
+
+/** Guarda en la cuenta el carrito y/o los favoritos tal como quedaron en el navegador. */
+export async function guardarDatosCuenta(datos: { carrito?: unknown; favoritos?: unknown }): Promise<boolean> {
+  const cliente = await usuarioActual();
+  if (!cliente) return false;
+  try {
+    await escribir(cliente.id, {
+      carrito: datos.carrito === undefined ? undefined : limpiarCarrito(datos.carrito),
+      favoritos: datos.favoritos === undefined ? undefined : limpiarFavoritos(datos.favoritos),
+    });
+    return true;
+  } catch (error) {
+    console.error("[cuenta] No se pudo guardar el carrito o los favoritos:", error);
+    return false;
+  }
 }

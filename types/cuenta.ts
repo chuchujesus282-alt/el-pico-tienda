@@ -1,5 +1,7 @@
 // Cuenta del cliente y sus datos fiscales (para la factura). Si cambia, avisa al compañero.
 
+import type { ItemCarrito } from "./carrito";
+
 export type TipoPersona = "natural" | "juridica";
 
 /** V venezolano, E extranjero, P pasaporte (personas); J jurídico, G gobierno (empresas). */
@@ -26,3 +28,14 @@ export type NuevaCuenta = {
  * confirmar su correo), o un mensaje para mostrarle al cliente.
  */
 export type ResultadoCuenta = { ok: true; aviso?: string } | { ok: false; mensaje: string };
+
+/** Lo que muestra /mi-cuenta. `fiscales` es null si entró con Google y todavía no los llenó. */
+export type PerfilCuenta = {
+  correo: string;
+  nombre: string;
+  foto: string | null;
+  fiscales: DatosFiscales | null;
+};
+
+/** Carrito (con los datos de hoy del catálogo) y favoritos (códigos, lo más reciente primero) guardados en la cuenta. */
+export type DatosCuenta = { carrito: ItemCarrito[]; favoritos: string[] };

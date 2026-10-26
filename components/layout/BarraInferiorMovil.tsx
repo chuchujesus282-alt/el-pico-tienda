@@ -97,7 +97,7 @@ export default function BarraInferiorMovil() {
   const { cantidad: cantidadFavoritos } = useFavoritos();
   const nombre = usePrimerNombre();
 
-  const enCuenta = ruta.startsWith("/iniciar-sesion") || ruta.startsWith("/crear-cuenta");
+  const enCuenta = ruta.startsWith("/iniciar-sesion") || ruta.startsWith("/crear-cuenta") || ruta.startsWith("/mi-cuenta");
   const activa =
     ruta === "/"
       ? "inicio"
@@ -125,8 +125,8 @@ export default function BarraInferiorMovil() {
     { id: "categorias", href: "/categorias", icono: LayoutGrid, texto: "Categorías" },
     { id: "carrito", href: "/carrito", icono: IconoCarrito, texto: "Carrito", contador: cantidadTotal, destinoCarrito: true },
     { id: "favoritos", href: "/favoritos", icono: IconoCorazon, texto: "Favoritos", contador: cantidadFavoritos, rellenoActivo: true },
-    // Con la sesión de Google abierta: la foto del cliente y "Mi cuenta".
-    { id: "entrar", href: "/iniciar-sesion", icono: FotoCuenta, texto: nombre ? "Mi cuenta" : "Entrar" },
+    // Con la sesión abierta: la foto del cliente y "Mi cuenta" (lleva a /mi-cuenta).
+    { id: "entrar", href: nombre ? "/mi-cuenta" : "/iniciar-sesion", icono: FotoCuenta, texto: nombre ? "Mi cuenta" : "Entrar" },
   ];
 
   /** Tocar la pestaña de la página en la que ya estás lleva al principio (reemplaza a la flecha de subir). */
