@@ -18,6 +18,9 @@ const SIN_BARRA = [
   "/politicas-de-privacidad",
   "/iniciar-sesion",
   "/crear-cuenta",
+  "/recuperar-contrasena",
+  "/nueva-contrasena",
+  "/verificar-correo",
   "/finalizar-pedido",
   "/mis-direcciones",
 ];

@@ -1,5 +1,6 @@
 import "server-only";
 
+import { eq } from "drizzle-orm";
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { APIError, createAuthMiddleware, getIP } from "better-auth/api";
@@ -42,6 +43,12 @@ const URL_RESPALDO =
   process.env.BETTER_AUTH_URL ??
   (process.env.VERCEL_PROJECT_PRODUCTION_URL ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}` : "http://localhost:3000");
 
+/** "Hola, María:" con el primer nombre (o solo "Hola:" si la cuenta no tiene nombre). */
+const saludo = (nombre?: string | null) => {
+  const primero = nombre?.trim().split(/\s+/)[0];
+  return primero ? `Hola, ${primero}:` : "Hola:";
+};
+
 /* ---------- Límite de intentos (ver lib/limiteIntentos.ts) ---------- */
 const LIMITADAS: Record<string, AccionLimitada> = {
   "/sign-in/email": "entrar",
@@ -49,8 +56,11 @@ const LIMITADAS: Record<string, AccionLimitada> = {
   "/request-password-reset": "enlace",
   "/send-verification-email": "enlace",
 };
-/** Registro y entrada con contraseña solo por los formularios de la tienda (lib/cuenta.ts), nunca llamando a /api/auth directo. */
-const SOLO_DESDE_EL_SERVIDOR = ["/sign-in/email", "/sign-up/email"];
+/**
+ * Registro, entrada con contraseña y pedidos de enlaces solo por los formularios de la tienda (lib/cuenta.ts), nunca
+ * llamando a /api/auth directo. Los enlaces de los correos (GET /verify-email y /reset-password/:token) sí van directo.
+ */
+const SOLO_DESDE_EL_SERVIDOR = ["/sign-in/email", "/sign-up/email", "/request-password-reset", "/reset-password", "/send-verification-email"];
 
 export const auth = betterAuth({
   appName: "Centro Ferretero El Pico",
@@ -68,13 +78,23 @@ export const auth = betterAuth({
     // Sin forma de entregar el enlace (producción sin Resend), no se abren cuentas con contraseña: solo Google.
     disableSignUp: !correosDisponibles(),
     revokeSessionsOnPasswordReset: true,
+    // El enlace para cambiar la contraseña llega al correo: si lo usó, el correo es suyo (queda confirmado).
+    onPasswordReset: async ({ user: cliente }) => {
+      if (!cliente.emailVerified) await db.update(user).set({ emailVerified: true }).where(eq(user.id, cliente.id));
+    },
     sendResetPassword: async ({ user: cliente, url }) => {
       await enviarCorreo({
         para: cliente.email,
-        asunto: "Cambia tu contraseña",
-        texto: "Recibimos un pedido para cambiar la contraseña de tu cuenta en El Pico. El enlace vale por 1 hora.",
-        boton: { texto: "Elegir una contraseña nueva", url },
-        pie: "Si no fuiste tú, ignora este correo: tu contraseña sigue igual.",
+        asunto: "Cambia tu contraseña de El Pico",
+        vistaPrevia: "Usa este enlace para elegir una contraseña nueva. Vale por 1 hora.",
+        titulo: "Elige una contraseña nueva",
+        parrafos: [
+          saludo(cliente.name),
+          "Recibimos una solicitud para cambiar la contraseña de tu cuenta en Centro Ferretero El Pico. Toca el botón para elegir una nueva.",
+        ],
+        boton: { texto: "Cambiar mi contraseña", url },
+        nota: "El enlace vale por 1 hora y se puede usar una sola vez.",
+        pie: "Si no lo pediste tú, ignora este mensaje: tu contraseña sigue igual y nadie más puede cambiarla sin este enlace.",
       });
     },
     // Si alguien intenta registrarse con un correo que ya tiene cuenta, la pantalla responde igual que siempre
@@ -83,10 +103,15 @@ export const auth = betterAuth({
       await enviarCorreo({
         para: cliente.email,
         asunto: "Ya tienes una cuenta en El Pico",
-        texto:
-          "Alguien intentó crear una cuenta con este correo, pero ya tienes una. Si fuiste tú, inicia sesión (con tu contraseña o con Google) o recupera tu contraseña.",
+        vistaPrevia: "Alguien intentó crear una cuenta nueva con este correo.",
+        titulo: "Ya tienes una cuenta",
+        parrafos: [
+          saludo(cliente.name),
+          "Alguien intentó crear una cuenta nueva en Centro Ferretero El Pico con este correo, pero ya tienes una.",
+          "Si fuiste tú, inicia sesión con tu contraseña o con Google. Si no recuerdas la contraseña, toca «¿Olvidaste tu contraseña?» en la página para iniciar sesión.",
+        ],
         boton: { texto: "Iniciar sesión", url: `${URL_RESPALDO}/iniciar-sesion` },
-        pie: "Si no fuiste tú, no tienes que hacer nada.",
+        pie: "Si no fuiste tú, no tienes que hacer nada: tu cuenta sigue igual.",
       });
     },
   },
@@ -100,10 +125,16 @@ export const auth = betterAuth({
     sendVerificationEmail: async ({ user: cliente, url }) => {
       await enviarCorreo({
         para: cliente.email,
-        asunto: "Confirma tu correo",
-        texto: `Hola, ${cliente.name.split(" ")[0]}. Toca el botón para confirmar que este correo es tuyo y activar tu cuenta en El Pico. El enlace vale por 24 horas.`,
+        asunto: "Confirma tu correo en El Pico",
+        vistaPrevia: "Un paso más: confirma tu correo para activar tu cuenta.",
+        titulo: "Confirma tu correo",
+        parrafos: [
+          saludo(cliente.name),
+          "Gracias por crear tu cuenta en Centro Ferretero El Pico. Para activarla, confirma que este correo es tuyo tocando el botón.",
+        ],
         boton: { texto: "Confirmar mi correo", url },
-        pie: "Si no creaste una cuenta en El Pico, ignora este correo.",
+        nota: "El enlace vale por 24 horas.",
+        pie: "Si no creaste una cuenta en El Pico, ignora este mensaje: la cuenta no se activará.",
       });
     },
   },

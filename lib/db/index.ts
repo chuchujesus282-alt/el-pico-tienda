@@ -1,8 +1,12 @@
 import "server-only";
 
-import { neon } from "@neondatabase/serverless";
+import { neon, neonConfig } from "@neondatabase/serverless";
 import { drizzle } from "drizzle-orm/neon-http";
 import * as esquema from "./esquema";
+import { fetchConReintentos } from "./reintentos";
+
+// Hasta 3 intentos si Neon está dormida y no responde a tiempo (ver lib/db/reintentos.ts).
+neonConfig.fetchFunction = fetchConReintentos((url, init) => fetch(url, init));
 
 // Conexión a Neon por HTTP (la recomendada en Vercel: no deja conexiones abiertas entre visitas).
 // DATABASE_URL es la cadena "con pooling" (su host dice -pooler). Las migraciones usan DATABASE_URL_UNPOOLED

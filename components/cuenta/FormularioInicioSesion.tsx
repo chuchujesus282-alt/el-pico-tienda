@@ -2,6 +2,7 @@
 
 import { useState, useTransition } from "react";
 import type { FormEvent } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { accionIniciarSesion } from "@/app/iniciar-sesion/acciones";
 import Boton from "@/components/ui/Boton";
@@ -61,6 +62,12 @@ export default function FormularioInicioSesion() {
           autoComplete="current-password"
           error={errores.contrasena}
         />
+        <Link
+          href="/recuperar-contrasena"
+          className="-mt-2 self-end text-sm font-semibold text-pico-azul underline-offset-4 hover:underline"
+        >
+          ¿Olvidaste tu contraseña?
+        </Link>
 
         {mensaje && <Aviso tipo="info">{mensaje}</Aviso>}
 

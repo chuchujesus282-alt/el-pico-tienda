@@ -9,7 +9,8 @@ import { db } from "@/lib/db";
 import { perfil, user } from "@/lib/db/esquema";
 import type { NuevaCuenta, ResultadoCuenta } from "@/types/cuenta";
 
-// ÚNICA puerta de entrada a las cuentas de cliente desde el servidor (registro e inicio con correo y contraseña).
+// ÚNICA puerta de entrada a las cuentas de cliente desde el servidor (registro e inicio con correo y contraseña,
+// recuperar la contraseña y reenviar el enlace para confirmar el correo).
 // Las pantallas no saben de Better Auth: llaman a estas funciones por sus acciones (app/*/acciones.ts).
 // Google, la sesión y cerrar sesión van por el navegador (lib/authCliente.ts).
 
@@ -31,6 +32,8 @@ function mensajeDeError(error: unknown, correo: string): string {
       return "Revisa tu contraseña: debe tener al menos 8 caracteres.";
     case "EMAIL_PASSWORD_SIGN_UP_DISABLED":
       return "El registro con correo estará disponible muy pronto. Mientras tanto, entra con Google.";
+    case "INVALID_TOKEN":
+      return "Este enlace ya se usó o venció. Pide uno nuevo.";
     default:
       console.error("[cuenta]", error.body?.code, error.message);
       return "Algo salió mal. Inténtalo de nuevo en unos minutos.";
@@ -38,12 +41,35 @@ function mensajeDeError(error: unknown, correo: string): string {
 }
 
 /** Solo rutas de la propia tienda ("/algo"); cualquier otra cosa vuelve al inicio. */
-const rutaSegura = (ruta?: string) => (ruta && ruta.startsWith("/") && !ruta.startsWith("//") ? ruta : "/");
+export const rutaSegura = (ruta?: string) => (ruta && ruta.startsWith("/") && !ruta.startsWith("//") ? ruta : "/");
+
+/**
+ * A dónde lleva el enlace para confirmar el correo: /verificar-correo, que con la sesión ya abierta sigue a `volverA`
+ * y, si el enlace venció o no sirve, explica qué pasó y deja pedir otro.
+ */
+const rutaConfirmacion = (volverA?: string) => `/verificar-correo?volverA=${encodeURIComponent(rutaSegura(volverA))}`;
+
+/** Datos de la visita sin la cookie de sesión: los pedidos de enlaces responden igual haya sesión abierta o no. */
+async function visitaSinSesion(): Promise<Headers> {
+  const visita = new Headers(await headers());
+  visita.delete("cookie");
+  return visita;
+}
+
+const sinCorreos = "Por ahora no podemos enviar correos. Mientras tanto, entra con Google.";
+
+export async function haySesion(): Promise<boolean> {
+  return Boolean(await auth.api.getSession({ headers: await headers() }));
+}
 
 export async function iniciarSesion(correo: string, contrasena: string): Promise<ResultadoCuenta> {
   try {
     // nextCookies (lib/auth.ts) deja puesta la cookie de la sesión en la respuesta de la acción.
-    await auth.api.signInEmail({ body: { email: correo, password: contrasena }, headers: await headers() });
+    // callbackURL: a dónde lleva el enlace que se reenvía si todavía no confirmó su correo.
+    await auth.api.signInEmail({
+      body: { email: correo, password: contrasena, callbackURL: rutaConfirmacion() },
+      headers: await headers(),
+    });
     return { ok: true };
   } catch (error) {
     return { ok: false, mensaje: mensajeDeError(error, correo) };
@@ -63,7 +89,7 @@ export async function crearCuenta(cuenta: NuevaCuenta, volverA?: string): Promis
   const desde = new Date(Date.now() - 1000);
   try {
     await auth.api.signUpEmail({
-      body: { name: fiscales.nombre, email: correo, password: contrasena, callbackURL: rutaSegura(volverA) },
+      body: { name: fiscales.nombre, email: correo, password: contrasena, callbackURL: rutaConfirmacion(volverA) },
       headers: await headers(),
     });
   } catch (error) {
@@ -94,5 +120,50 @@ export async function crearCuenta(cuenta: NuevaCuenta, volverA?: string): Promis
   return {
     ok: true,
     aviso: `Te enviamos un enlace a ${correo} para confirmar tu correo. Ábrelo para activar tu cuenta (revisa también la carpeta de spam).`,
+  };
+}
+
+/**
+ * "¿Olvidaste tu contraseña?": manda un enlace (vale 1 hora) para elegir una nueva. Responde lo mismo exista o no la
+ * cuenta, para que no se pueda averiguar qué correos están registrados. También sirve para que quien entró con
+ * Google le ponga una contraseña a su cuenta.
+ */
+export async function pedirCambioContrasena(correo: string): Promise<ResultadoCuenta> {
+  if (!correosDisponibles()) return { ok: false, mensaje: sinCorreos };
+  try {
+    await auth.api.requestPasswordReset({ body: { email: correo, redirectTo: "/nueva-contrasena" }, headers: await visitaSinSesion() });
+  } catch (error) {
+    return { ok: false, mensaje: mensajeDeError(error, correo) };
+  }
+  return {
+    ok: true,
+    aviso: `Si hay una cuenta con ${correo}, te enviamos un enlace para elegir una contraseña nueva. Vale por 1 hora (revisa también la carpeta de spam).`,
+  };
+}
+
+/** Guarda la contraseña nueva con el `token` del enlace. Cierra todas las sesiones abiertas de esa cuenta. */
+export async function cambiarContrasena(token: string, contrasena: string): Promise<ResultadoCuenta> {
+  try {
+    await auth.api.resetPassword({ body: { token, newPassword: contrasena }, headers: await visitaSinSesion() });
+  } catch (error) {
+    return { ok: false, mensaje: mensajeDeError(error, "") };
+  }
+  return { ok: true, aviso: "Listo, ya cambiaste tu contraseña. Inicia sesión con la nueva." };
+}
+
+/** Manda otro enlace para confirmar el correo (si la cuenta existe y no lo ha confirmado; si no, responde igual). */
+export async function reenviarConfirmacion(correo: string, volverA?: string): Promise<ResultadoCuenta> {
+  if (!correosDisponibles()) return { ok: false, mensaje: sinCorreos };
+  try {
+    await auth.api.sendVerificationEmail({
+      body: { email: correo, callbackURL: rutaConfirmacion(volverA) },
+      headers: await visitaSinSesion(),
+    });
+  } catch (error) {
+    return { ok: false, mensaje: mensajeDeError(error, correo) };
+  }
+  return {
+    ok: true,
+    aviso: `Si ${correo} tiene una cuenta sin confirmar, te enviamos un enlace nuevo. Vale por 24 horas (revisa también la carpeta de spam).`,
   };
 }
