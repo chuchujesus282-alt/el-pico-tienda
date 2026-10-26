@@ -47,9 +47,10 @@ type Props = {
    * Lo que cuelga de la etiqueta roja al activarse: las 4 gotas del color activo (Pinturas), la cinta de seguridad
    * a rayas del color activo y azul tinta (Construcción) o el cable con chispa (Electricidad; la chispa corre con la
    * clase global `spark` y el cable se calienta con `lit`, las dos las pone su motor) o el pasto que brota (Hogar y
-   * jardín) o la banda transportadora que avanza con el color activo (Vehículos).
+   * jardín) o la banda transportadora que avanza con el color activo (Vehículos) o las 5 casillas que se marcan
+   * (Seguridad industrial; su motor les pone la clase global `ok` a las que tienen `data-casilla`).
    */
-  decoracion?: "gotas" | "cinta" | "cable" | "pasto" | "banda";
+  decoracion?: "gotas" | "cinta" | "cable" | "pasto" | "banda" | "casillas";
   /**
    * Variables CSS propias de cada banner (ver BannerPlano.module.css): --brillo, --brillo-on, --palabra-min/-vw/-max,
    * --palabra-movil-min/-vw/-max, --etiqueta-pad, --etiqueta-sombra. Sin ellas, los valores de Pinturas.
@@ -62,7 +63,9 @@ type Props = {
  * cuadrícula, columna de texto (ruta y el nombre de la categoría en la etiqueta roja con gotas; nada más, a propósito) e
  * ilustración a la derecha. Compacto a propósito: es el encabezado de una sección, no un anuncio (la ilustración se
  * escala para caber en su alto máximo).
- * Reposo = plano frío; activo (mouse encima; en táctil, al tocar) = clase `on` y la escena corre su motor.
+ * Reposo = plano frío; activo = clase `on` y la escena corre su motor. Con mouse: activo mientras está encima. En el
+ * teléfono (pantalla táctil sin mouse): se activa solo al verse la mitad del banner (pedido de persona B: casi nadie
+ * lo toca) y un toque lo apaga o lo vuelve a prender.
  * Para otra categoría: su componente arma la ilustración y su motor, y monta este con sus textos.
  */
 export default function BannerPlano({
@@ -104,10 +107,15 @@ export default function BannerPlano({
       if (activo) apagar();
       else encender();
     };
-    // Fuera de la pantalla vuelve a reposo.
-    const observador = new IntersectionObserver(([entrada]) => {
-      if (!entrada.isIntersecting) apagar();
-    });
+    // Fuera de la pantalla vuelve a reposo. En el teléfono, al verse la mitad, arranca solo (en la PC, con el mouse).
+    const tactil = window.matchMedia("(hover: none) and (pointer: coarse)").matches;
+    const observador = new IntersectionObserver(
+      ([entrada]) => {
+        if (!entrada.isIntersecting) apagar();
+        else if (tactil && entrada.intersectionRatio >= 0.5) encender();
+      },
+      { threshold: [0, 0.5] },
+    );
 
     raiz.addEventListener("pointerenter", onEnter);
     raiz.addEventListener("pointerleave", onLeave);
@@ -167,6 +175,12 @@ export default function BannerPlano({
                 <span className={styles.cable} aria-hidden />
               ) : decoracion === "banda" ? (
                 <span className={styles.banda} aria-hidden />
+              ) : decoracion === "casillas" ? (
+                <span className={styles.casillas} aria-hidden>
+                  {[0, 1, 2, 3, 4].map((i) => (
+                    <span key={i} data-casilla={i} />
+                  ))}
+                </span>
               ) : decoracion === "pasto" ? (
                 <svg className={styles.pasto} viewBox="0 0 300 16" preserveAspectRatio="none" aria-hidden>
                   {HOJAS_PASTO.map((d, i) => (

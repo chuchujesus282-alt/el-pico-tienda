@@ -308,6 +308,62 @@
   }
 }
 
+/* Cinco casillas bajo la etiqueta (Seguridad industrial): aparecen al activarse y el motor marca cada una (`ok`). */
+.casillas {
+  position: absolute;
+  top: calc(100% + 7px);
+  left: 14px;
+  display: flex;
+  gap: 7px;
+  pointer-events: none;
+}
+.casillas span {
+  position: relative;
+  width: 13px;
+  height: 13px;
+  border: 1.5px solid rgba(190, 215, 245, 0.45);
+  border-radius: 3px;
+  opacity: 0;
+  transform: translateY(-4px);
+  transition:
+    opacity 0.3s,
+    transform 0.3s,
+    background-color 0.25s,
+    border-color 0.25s;
+}
+:global(.on) .casillas span {
+  opacity: 1;
+  transform: none;
+}
+.casillas span:nth-child(2) {
+  transition-delay: 0.04s;
+}
+.casillas span:nth-child(3) {
+  transition-delay: 0.08s;
+}
+.casillas span:nth-child(4) {
+  transition-delay: 0.12s;
+}
+.casillas span:nth-child(5) {
+  transition-delay: 0.16s;
+}
+.casillas span:global(.ok) {
+  background: var(--c);
+  border-color: var(--c);
+  transition-delay: 0s;
+}
+.casillas span:global(.ok)::after {
+  content: "";
+  position: absolute;
+  left: 3px;
+  top: 0;
+  width: 4px;
+  height: 7px;
+  border: solid var(--ink);
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+
 /* Pasto que brota bajo la etiqueta (Hogar y jardín). */
 .pasto {
   position: absolute;
@@ -405,6 +461,7 @@
   .cinta,
   .cable,
   .banda,
+  .casillas span,
   .pasto path,
   .velo,
   .etiquetaFondo,

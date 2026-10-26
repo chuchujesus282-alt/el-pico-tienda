@@ -1,0 +1,201 @@
+/*
+ * Ilustración del banner de Seguridad industrial, portada de banner-seguridad-v1.html (prototipo aprobado). Excepción
+ * a la regla de tokens del CLAUDE.md (como las tarjetas de categoría): colores escritos aquí, idénticos al prototipo.
+ * `--c` (verde de seguridad) y `--f-mono`/`--f-display` vienen de BannerPlano.
+ * Clases globales en la raíz del banner: `on` (activo), `apto` (las 5 piezas puestas) y `ok` en cada fila marcada.
+ */
+
+.svg {
+  --deep: #0a1f38;
+  --stroke: #c3ccd8;
+  --trace: rgba(190, 215, 245, 0.55);
+  --paper: #f3f6fa;
+  --ink: #0b1d33;
+}
+.svg text {
+  font-family: var(--f-mono);
+  fill: var(--trace);
+  font-size: 9px;
+  letter-spacing: 0.08em;
+}
+
+.ln {
+  stroke: var(--stroke);
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.ln:not(.fill) {
+  fill: none;
+}
+.w1 {
+  stroke-width: 1;
+}
+.w12 {
+  stroke-width: 1.2;
+}
+.w15 {
+  stroke-width: 1.5;
+}
+.cota {
+  fill: none;
+  stroke: var(--trace);
+  stroke-width: 1;
+}
+.dash {
+  fill: none;
+  stroke: var(--trace);
+  stroke-width: 1;
+  stroke-dasharray: 3 4;
+}
+.bp {
+  transition: opacity 0.5s;
+}
+:global(.on) .bp {
+  opacity: 0.2;
+}
+
+/* Trabajador: silueta discontinua en reposo, trazo firme al activarse. */
+.figura > * {
+  fill: none;
+  stroke: var(--trace);
+  stroke-width: 1.5;
+  stroke-dasharray: 4 4;
+  stroke-linecap: round;
+  transition: stroke 0.5s;
+}
+:global(.on) .figura > * {
+  stroke: var(--stroke);
+  stroke-dasharray: none;
+  fill: rgba(10, 31, 56, 0.55);
+}
+
+/* Materiales: plano en reposo, material real al activarse. */
+.fill {
+  fill: var(--deep);
+  transition: fill 0.5s;
+}
+:global(.on) .fCasco {
+  fill: #f5c400;
+}
+:global(.on) .fCarnaza {
+  fill: #c99a5b;
+}
+:global(.on) .fBota {
+  fill: #2a2f38;
+}
+:global(.on) .fMica {
+  fill: rgba(111, 208, 255, 0.35);
+}
+:global(.on) .fN95 {
+  fill: #e9eef4;
+}
+:global(.on) .fAcero {
+  fill: #9aa6b4;
+}
+
+/* Checklist */
+/* Espaciado más apretado que el prototipo (.08em): ahí "MASCARILLA N95" tocaba el borde del recuadro. */
+.svg .fila text {
+  letter-spacing: 0.04em;
+  transition: fill 0.3s;
+}
+.fila:global(.ok) text {
+  fill: var(--paper);
+}
+.caja {
+  fill: none;
+  stroke: var(--trace);
+  stroke-width: 1.2;
+  transition:
+    fill 0.25s,
+    stroke 0.25s;
+}
+.fila:global(.ok) .caja {
+  fill: var(--c);
+  stroke: var(--c);
+}
+.tick {
+  fill: none;
+  stroke: var(--ink);
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 14;
+  stroke-dashoffset: 14;
+  transition: stroke-dashoffset 0.25s 0.08s;
+}
+.fila:global(.ok) .tick {
+  stroke-dashoffset: 0;
+}
+
+.estado {
+  transition: opacity 0.2s;
+}
+:global(.apto) .estado {
+  opacity: 0;
+}
+.sello {
+  opacity: 0;
+  transform-box: fill-box;
+  transform-origin: center;
+  transform: rotate(-8deg) scale(1.8);
+  transition:
+    opacity 0.2s,
+    transform 0.35s cubic-bezier(0.3, 1.6, 0.5, 1);
+}
+:global(.apto) .sello {
+  opacity: 1;
+  transform: rotate(-8deg) scale(1);
+}
+.svg .selloTexto {
+  font: 700 9px var(--f-display);
+  fill: var(--c);
+  letter-spacing: 0.04em;
+}
+
+/* Brillo verde detrás del checklist cuando queda "apto". */
+.brilloApto {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.8s;
+  background: radial-gradient(54% 90% at 86% 50%, rgba(47, 210, 122, 0.22), transparent 70%);
+}
+:global(.apto) .brilloApto {
+  opacity: 1;
+}
+
+/* Reposo: las piezas flotan apenas (como los demás banners plano técnico). Va en un grupo interno sin `transform`
+   propio: el de afuera lo mueve el motor con el atributo. Se detiene al activarse y con "reducir movimiento". */
+.flota {
+  animation: flotar 3.6s ease-in-out infinite alternate;
+}
+:global(.on) .flota {
+  animation: none;
+}
+@keyframes flotar {
+  to {
+    transform: translateY(-2.5px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .flota {
+    animation: none;
+  }
+  .bp,
+  .figura > *,
+  .fill,
+  .fila text,
+  .caja,
+  .tick,
+  .sello,
+  .estado,
+  .brilloApto {
+    transition-duration: 0.01s;
+    transition-delay: 0s;
+  }
+}
