@@ -1,0 +1,194 @@
+/*
+ * Portado TAL CUAL de banner-tornilleria.html (prototipo aprobado). No cambies valores sin acordarlo.
+ * Excepción a la regla de tokens del CLAUDE.md: los colores van escritos aquí, idénticos al prototipo. Las variables
+ * que en el prototipo vivían en :root van en .banner (un CSS Module no admite :root).
+ *
+ * Diferencias con el prototipo: el banner llena el ancho de quien lo contiene (el prototipo medía hasta 620px) y su
+ * alto (para igualar al banner de al lado en el inicio); al pasar el mouse por el banner, el botón sube con la sombra
+ * de botón, como el banner de Tornillería anterior (el banner se levanta desde BannersPromocionales); y con el banner
+ * angosto (≤560px) el tornillo queda al lado en vez de subir (ver el @container del final).
+ */
+
+/* Contenedor: el banner se adapta a SU ancho (ver el @container del final), no al de la pantalla. */
+.contenedor {
+  container-type: inline-size;
+  height: 100%;
+}
+
+.banner {
+  --page: #dfe5ee;
+  --card: #f6f8fb;
+  --card-deep: #e8edf4;
+  --grid: rgba(15, 42, 74, 0.05);
+  --trace: rgba(60, 82, 112, 0.6);
+  --navy: #0f2a4a;
+  --ink-2: #33455d;
+  --steel: #8794a6;
+  --signal: #e3262f;
+  --f-display: var(--font-chakra), "Rajdhani", "Segoe UI", system-ui, sans-serif;
+  --f-mono: var(--font-plex-mono), ui-monospace, "SFMono-Regular", Menlo, monospace;
+  color-scheme: light;
+
+  --f: 1;
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 280px;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  min-height: 290px;
+  border-radius: 14px;
+  overflow: hidden;
+  color: var(--navy);
+  background:
+    linear-gradient(var(--grid) 1px, transparent 1px) 0 0 / 32px 32px,
+    linear-gradient(90deg, var(--grid) 1px, transparent 1px) 0 0 / 32px 32px,
+    linear-gradient(160deg, var(--card) 0%, var(--card-deep) 100%);
+  box-shadow:
+    0 18px 40px -24px rgba(10, 31, 56, 0.45),
+    0 0 0 1px rgba(15, 42, 74, 0.06);
+  isolation: isolate;
+
+  /* En el prototipo el banner heredaba esto del body; aquí se fija para no tomar lo de la tienda. */
+  font-family: var(--f-display);
+  line-height: normal;
+  -webkit-font-smoothing: auto;
+  -moz-osx-font-smoothing: auto;
+  text-rendering: auto;
+  -webkit-tap-highlight-color: transparent;
+}
+.copy {
+  padding: 36px 8px 36px 44px;
+  display: grid;
+  gap: 14px;
+  justify-items: start;
+  position: relative;
+  z-index: 2;
+  min-width: 0;
+}
+.rule {
+  width: 46px;
+  height: 4px;
+  background: var(--signal);
+  border-radius: 2px;
+}
+.copy h2 {
+  margin: 4px 0 0;
+  font-weight: 700;
+  font-size: 34px;
+  line-height: 1.12;
+  letter-spacing: 0.01em;
+  text-wrap: balance;
+}
+.copy p {
+  margin: 0;
+  font-size: 16px;
+  line-height: 1.55;
+  color: var(--ink-2);
+  max-width: 34ch;
+  /* La tienda pone text-wrap: pretty a todo <p>; el prototipo no. */
+  text-wrap: wrap;
+}
+.btn {
+  margin-top: 10px;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--navy);
+  color: #fff;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 15px;
+  padding: 13px 22px;
+  border-radius: 8px;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+.btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 18px -10px rgba(15, 42, 74, 0.7);
+}
+.btn:focus-visible {
+  outline: 2px solid var(--signal);
+  outline-offset: 3px;
+}
+.btn svg {
+  width: 14px;
+  height: 14px;
+  transition: transform 0.3s ease;
+}
+
+/* Efectos del banner de Tornillería anterior (BannerInicio), que se mantienen: al pasar el mouse por el banner, el
+   botón sube 2px con la sombra de botón y la flecha avanza. */
+@media (hover: hover) {
+  .banner:hover .btn {
+    box-shadow: var(--shadow-boton-hover);
+  }
+  .banner:hover .btn svg {
+    transform: translateX(4px);
+  }
+}
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  .banner:hover .btn {
+    transform: translateY(-2px);
+  }
+}
+
+.art {
+  position: relative;
+  height: 290px;
+}
+.art svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+.blueprint {
+  opacity: var(--f);
+}
+.blueprint text {
+  font-family: var(--f-mono);
+  font-size: 9px;
+  fill: var(--trace);
+  letter-spacing: 0.06em;
+}
+
+/* Banner angosto (teléfono y media columna hasta 1279px), acordado con persona A: en vez de subir la ilustración
+   arriba con la PANTALLA ≤560px (prototipo), con el BANNER ≤560px el tornillo queda al lado, más chico, y el texto pasa
+   a la misma escala que el banner del casco (BannerTrabajaProtegido), para que los dos de la fila midan y se vean igual.
+   El SVG escala solo (viewBox, meet). */
+@container (max-width: 560px) {
+  .banner {
+    grid-template-columns: minmax(0, 1fr) 44%;
+    min-height: 12rem;
+  }
+  .art {
+    height: auto;
+    align-self: stretch;
+  }
+  .copy {
+    padding: 24px 0 24px 24px;
+    gap: 10px;
+  }
+  .rule {
+    width: 40px;
+  }
+  .copy h2 {
+    margin: 2px 0 0;
+    /* crece con el banner: 26px en el teléfono, hasta 36px en media columna (como el título del casco ahí) */
+    font-size: clamp(26px, 7.6cqw, 36px);
+  }
+  .copy p {
+    font-size: 14px;
+    line-height: 1.45;
+  }
+  .btn {
+    margin-top: 4px;
+    gap: 6px;
+    padding: 0 16px;
+    height: 40px;
+    font-size: 14px;
+  }
+}

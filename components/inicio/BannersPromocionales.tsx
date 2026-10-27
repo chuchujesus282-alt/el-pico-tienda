@@ -1,10 +1,16 @@
 import BannerInicio from "./BannerInicio";
+import BannerTornilleria from "./BannerTornilleria";
 import BannerTrabajaProtegido from "./BannerTrabajaProtegido";
 import type { BannerInicio as DatosBanner } from "./contenidoInicio";
 
+// Se levantan igual que el banner de Tornillería anterior (BannerInicio): 4px y sombra de tarjeta, en 200 ms.
+const LEVANTAR =
+  "h-full rounded-[14px] shadow-tarjeta transition duration-200 hover:shadow-tarjeta-hover motion-safe:hover:-translate-y-1";
+
 /**
  * Fila de banners promocionales del mismo tamaño; cada uno lleva a una categoría. El de seguridad es el banner animado
- * del casco (`BannerTrabajaProtegido`, con los textos de `contenidoInicio`); los demás, `BannerInicio`.
+ * del casco (`BannerTrabajaProtegido`) y el de tornillería, el del tornillo que se atornilla (`BannerTornilleria`),
+ * los dos con los textos de `contenidoInicio`; los demás, `BannerInicio`.
  */
 export default function BannersPromocionales({ banners }: { banners: DatosBanner[] }) {
   if (banners.length === 0) return null;
@@ -14,12 +20,17 @@ export default function BannersPromocionales({ banners }: { banners: DatosBanner
     <div className="grid auto-rows-fr gap-3 md:grid-cols-2 md:gap-4">
       {banners.map((banner) =>
         banner.id === "seguridad" ? (
-          // Se levanta igual que BannerInicio (Tornillería): 4px y sombra de tarjeta, en 200 ms.
-          <div
-            key={banner.id}
-            className="h-full rounded-[14px] shadow-tarjeta transition duration-200 hover:shadow-tarjeta-hover motion-safe:hover:-translate-y-1"
-          >
+          <div key={banner.id} className={LEVANTAR}>
             <BannerTrabajaProtegido
+              titulo={banner.titulo}
+              descripcion={banner.texto}
+              textoBoton={banner.textoBoton}
+              href={banner.href}
+            />
+          </div>
+        ) : banner.id === "tornilleria" ? (
+          <div key={banner.id} className={LEVANTAR}>
+            <BannerTornilleria
               titulo={banner.titulo}
               descripcion={banner.texto}
               textoBoton={banner.textoBoton}
