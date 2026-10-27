@@ -115,4 +115,5 @@ Fotos que pasó persona B para PROBAR los grupos de medidas (`lib/agrupaciones.t
 |---|---|
 | grupos/llave-combinada-cromada.webp | Grupo "Llave combinada Acesa" (todas sus medidas). Ojo: la llave de la foto tiene grabada la marca WESTWARD |
 | grupos/dado-cromado.webp | SOLO el grupo "Dado Acesa" (recortada de la foto original); los demás dados van sin foto |
+| grupos/dado-largo-stanley.webp | Grupos "Dado de estría largo Stanley" y "Dado hexagonal largo Stanley" (foto de un dado largo 12 mm con su empaque Stanley, recortada) |
 | 3M0015.webp | 3M MOPA PULIDO AZUL DOBLE CARA 8" PASO 3 (la foto trae la marca 3M en el empaque) |
