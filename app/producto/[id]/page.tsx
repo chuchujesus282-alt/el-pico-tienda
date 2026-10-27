@@ -11,15 +11,16 @@ import BotonFavorito from "@/components/favoritos/BotonFavorito";
 import { FORMAS_RETIRO, type FormaRetiro } from "@/components/finalizar-pedido/pedido";
 import { CalificacionesProducto, EstrellasProducto } from "@/components/opiniones/CalificacionesVivas";
 import AccionesCompra from "@/components/producto-detalle/AccionesCompra";
+import BloquePrecio from "@/components/producto-detalle/BloquePrecio";
 import CodigoCompartir from "@/components/producto-detalle/CodigoCompartir";
+import CompraConVariantes from "@/components/producto-detalle/CompraConVariantes";
 import GaleriaZoom from "@/components/producto-detalle/GaleriaZoom";
 import ProductosRelacionados from "@/components/recomendaciones/ProductosRelacionados";
 import RegistrarSenal from "@/components/recomendaciones/RegistrarSenal";
 import Contenedor from "@/components/ui/Contenedor";
 import EncabezadoPagina from "@/components/ui/EncabezadoPagina";
-import Precio from "@/components/ui/Precio";
-import { getCategorias, getProducto } from "@/lib/catalogo";
-import { formatearBs, tituloProducto } from "@/lib/formato";
+import { getCategorias, getGrupo, getProducto } from "@/lib/catalogo";
+import { tituloProducto } from "@/lib/formato";
 import { getOpiniones } from "@/lib/opiniones";
 import type { Categoria } from "@/types/catalogo";
 
@@ -46,10 +47,19 @@ export async function generateMetadata({ params }: PageProps<"/producto/[id]">):
 
 const ICONOS_RETIRO: Record<FormaRetiro, ComponenteIcono> = { pickup: IconoTienda, delivery: IconoMoto, flete: IconoCamion };
 
-export default async function PaginaProducto({ params }: PageProps<"/producto/[id]">) {
+export default async function PaginaProducto({ params, searchParams }: PageProps<"/producto/[id]">) {
   const { id } = await params;
-  const producto = await getProducto(id);
-  if (!producto) notFound();
+  const { medida } = await searchParams;
+  const [encontrado, conGrupo] = await Promise.all([getProducto(id), getGrupo(id)]);
+  if (!encontrado) notFound();
+
+  // Producto con medidas (lib/agrupaciones.ts): la página es la del grupo y se elige la medida. Se abre marcada la
+  // medida de la dirección (?medida=CODIGO), o la del código pedido, o la primera.
+  const grupo = conGrupo?.grupo;
+  const pedida = typeof medida === "string" && grupo?.variantes.some((v) => v.id === medida) ? medida : undefined;
+  const seleccion = pedida ?? conGrupo?.seleccion;
+  const producto = grupo ? grupo.tarjeta : encontrado;
+  const elegida = grupo?.variantes.find((v) => v.id === seleccion)?.producto ?? encontrado;
 
   const [categoria, opiniones] = await Promise.all([
     buscarCategoria(producto.categoriaSlug),
@@ -79,8 +89,17 @@ export default async function PaginaProducto({ params }: PageProps<"/producto/[i
                     {producto.marca}
                   </span>
                 )}
-                <CodigoCompartir codigo={producto.id} titulo={titulo} />
-                <BotonFavorito productoId={producto.id} titulo={titulo} variante="chip" />
+                {grupo ? (
+                  // Código y favorito van con la medida elegida (CompraConVariantes).
+                  <span className="rounded-chip bg-logo-marino-claro px-3 py-1 text-xs font-semibold text-logo-marino">
+                    {grupo.variantes.length} medidas
+                  </span>
+                ) : (
+                  <>
+                    <CodigoCompartir codigo={producto.id} titulo={titulo} />
+                    <BotonFavorito productoId={producto.id} titulo={titulo} variante="chip" />
+                  </>
+                )}
               </div>
               <h1 className="font-titulo text-[1.75rem] leading-tight font-bold text-logo-marino md:text-4xl">{titulo}</h1>
               <EstrellasProducto productoId={producto.id} opiniones={opiniones} />
@@ -93,24 +112,15 @@ export default async function PaginaProducto({ params }: PageProps<"/producto/[i
               </div>
             )}
 
-            {/* Precio limpio: la cifra manda, sin caja ni franja; la nota en una línea debajo. */}
-            <div className="border-y border-gris-borde py-4">
-              <Precio valor={producto.precio} tamano="grande" tono="logo" className="text-4xl tracking-tight tabular-nums md:text-5xl" />
-              {/* Productos de Saint: también en bolívares (con IVA), con la tasa BCV que usó Saint. */}
-              {producto.precioBs !== undefined && producto.tasa !== undefined && (
-                <p className="mt-1 text-base font-semibold text-texto tabular-nums">
-                  {formatearBs(producto.precioBs)}{" "}
-                  <span className="text-[13px] font-normal text-gris-texto">
-                    · Tasa BCV {new Intl.NumberFormat("es-VE", { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(producto.tasa)} Bs/$
-                  </span>
-                </p>
-              )}
-              <p className="mt-1.5 text-[13px] text-gris-texto">
-                {producto.precioBs !== undefined ? "Precio referencial, IVA incluido" : "Precio referencial en dólares"} · No cobramos en la web.
-              </p>
-            </div>
-
-            <AccionesCompra producto={producto} />
+            {grupo && seleccion ? (
+              // Precio de la medida elegida + barra de medidas + cantidad y "Agregar al carrito".
+              <CompraConVariantes variantes={grupo.variantes} seleccionInicial={seleccion} />
+            ) : (
+              <>
+                <BloquePrecio producto={producto} />
+                <AccionesCompra producto={producto} />
+              </>
+            )}
 
             {/* Cómo lo recibes: las mismas tres formas que se eligen al finalizar el pedido. */}
             <ul className="grid grid-cols-3 gap-2 sm:gap-3" aria-label="Formas de recibir tu pedido">
@@ -152,11 +162,12 @@ export default async function PaginaProducto({ params }: PageProps<"/producto/[i
 
         {/* "También te puede servir": complementarios + similares (lib/recomendaciones/). */}
         <ProductosRelacionados
-          producto={producto}
+          producto={elegida}
           href={categoria ? `/categoria/${categoria.slug}` : undefined}
           className="mt-10 md:mt-14"
         />
-        <RegistrarSenal senales={[{ tipo: "visto", id: producto.id }]} />
+        {/* En un grupo cuenta como vista la medida que se abrió (es la que existe en el catálogo). */}
+        <RegistrarSenal senales={[{ tipo: "visto", id: elegida.id }]} />
       </Contenedor>
     </div>
   );

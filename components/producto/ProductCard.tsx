@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { ChevronRight } from "lucide-react";
 import BotonFavorito from "@/components/favoritos/BotonFavorito";
 import Precio from "@/components/ui/Precio";
 import { tituloProducto } from "@/lib/formato";
@@ -17,6 +18,8 @@ type Props = {
  * La única tarjeta de producto del sitio. Foto en su marco, la marca en versalitas, el nombre en dos líneas
  * de alto fijo (así todos los precios quedan alineados) y abajo el precio con "Agregar" al lado.
  * Toda la tarjeta enlaza al producto, excepto los botones.
+ * Tarjeta de un grupo de medidas (`producto.variantes`, lib/agrupaciones.ts): "Desde" + el precio más bajo y, en vez de
+ * "Agregar" y el corazón, "N medidas ›" (lleva a su página, donde se elige la medida y se marca favorita).
  */
 export default function ProductCard({ producto, prioritario = false, className = "" }: Props) {
   const titulo = tituloProducto(producto);
@@ -47,12 +50,34 @@ export default function ProductCard({ producto, prioritario = false, className =
         <p className="h-4 truncate text-[11px] leading-4 font-semibold tracking-[0.14em] text-gris-texto uppercase">{producto.marca ?? ""}</p>
         <h3 className="mt-1 line-clamp-2 h-10 text-sm leading-5 font-medium text-texto transition-colors group-hover:text-pico-azul">{titulo}</h3>
       </Link>
-      <div className="mt-3 flex items-center justify-between gap-2">
-        <Precio valor={producto.precio} className="text-lg tabular-nums sm:text-xl" />
-        <BotonAgregar producto={producto} />
-      </div>
-      {/* Fuera del enlace (un botón no puede ir dentro de <a>), encima de la esquina de la foto. */}
-      <BotonFavorito productoId={producto.id} titulo={titulo} />
+      {producto.variantes ? (
+        // Grupo de medidas (lib/agrupaciones.ts): "Desde" el más barato y se elige la medida en su página.
+        <div className="mt-3 flex items-end justify-between gap-2">
+          <div className="flex flex-col">
+            <span className="text-[11px] leading-none font-semibold text-gris-texto">Desde</span>
+            <Precio valor={producto.precio} className="text-lg tabular-nums sm:text-xl" />
+          </div>
+          <Link
+            href={`/producto/${producto.id}`}
+            tabIndex={-1}
+            aria-hidden
+            className="inline-flex h-10 shrink-0 items-center gap-1 rounded-chip border-2 border-pico-rojo bg-pico-blanco px-3 text-sm font-semibold text-pico-rojo transition duration-300 ease-(--curva-suave) hover:bg-pico-rojo hover:text-pico-blanco sm:rounded-xl"
+          >
+            <span className="sm:hidden">{producto.variantes}</span>
+            <span className="hidden sm:inline">{producto.variantes} medidas</span>
+            <ChevronRight className="size-4" aria-hidden />
+          </Link>
+        </div>
+      ) : (
+        <>
+          <div className="mt-3 flex items-center justify-between gap-2">
+            <Precio valor={producto.precio} className="text-lg tabular-nums sm:text-xl" />
+            <BotonAgregar producto={producto} />
+          </div>
+          {/* Fuera del enlace (un botón no puede ir dentro de <a>), encima de la esquina de la foto. */}
+          <BotonFavorito productoId={producto.id} titulo={titulo} />
+        </>
+      )}
     </article>
   );
 }

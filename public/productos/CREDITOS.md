@@ -106,3 +106,13 @@ Cuando la API entregue las imágenes reales, esta carpeta se puede borrar.
 | 01110090.webp | CERRADURA DE MANILLA ACERO INOXIDABLE CON LLAVE | Shixart1985 | CC BY 2.0 | [Close-up of a door knob and locking mechanism.jpg](https://commons.wikimedia.org/wiki/File:Close-up_of_a_door_knob_and_locking_mechanism.jpg) |
 | 01110115.webp | BISAGRA DE ACERO 3" X 3" PAR | Ronak45 | CC0 | [Stainless Steel Butt-Hinges 5" long Tni.png](https://commons.wikimedia.org/wiki/File:Stainless_Steel_Butt-Hinges_5%22_long_Tni.png) |
 | 01110131.webp | PORTACANDADO GALVANIZADO 4" | Nino Barbieri | CC BY-SA 2.5 | [- Padlock -.jpg](https://commons.wikimedia.org/wiki/File:-_Padlock_-.jpg) |
+
+## Fotos de prueba de productos de Saint (2026-10-26, persona B)
+
+Fotos que pasó persona B para PROBAR los grupos de medidas (`lib/agrupaciones.ts`). No se conoce su autor ni su licencia: **confirmar que se pueden usar (o reemplazarlas por fotos propias) antes de publicar en producción.**
+
+| Archivo | Producto |
+|---|---|
+| grupos/llave-combinada.webp | Grupo "Llave combinada Acesa" (todas sus medidas) |
+| grupos/dado.webp | Todos los grupos de dados |
+| 3M0015.webp | 3M MOPA PULIDO AZUL DOBLE CARA 8" PASO 3 (la foto trae la marca 3M en el empaque) |

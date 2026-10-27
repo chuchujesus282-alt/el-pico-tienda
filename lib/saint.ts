@@ -3,6 +3,7 @@ import "server-only";
 import type { Producto } from "@/types/catalogo";
 import { CATEGORIAS_SAINT, codigoSaint } from "@/lib/categoriasSaint";
 import { nombreLegible } from "@/lib/nombresSaint";
+import { agrupar, type Grupo } from "@/lib/agrupaciones";
 
 // Productos REALES de Saint, por categoría (las del mapa de lib/categoriasSaint.ts). Solo se usa desde lib/catalogo.ts
 // y lib/tasa.ts. Responsable: persona A.
@@ -36,10 +37,18 @@ export class ErrorSaint extends Error {
 
 export type CategoriaSaint = {
   tasa: number;
+  /** Todos los productos (cada medida de un grupo por separado, con su nombre claro): buscador, carrito, favoritos. */
   productos: Producto[];
   /** Texto normalizado (sin acentos, minúsculas) de código + nombre + marca, en el mismo orden que productos. */
   claves: string[];
-  /** Con su nombre legible y la cantidad de productos que trae Saint. */
+  /** Para la lista de la categoría: cada grupo de medidas es una sola tarjeta (lib/agrupaciones.ts). */
+  listado: Producto[];
+  /** Como `claves`, para `listado` (la tarjeta de un grupo junta las de todas sus medidas). */
+  clavesListado: string[];
+  /** Grupos de medidas por id, y de cada código su grupo. */
+  grupos: Map<string, Grupo>;
+  grupoDe: Map<string, string>;
+  /** Con su nombre legible y la cantidad de productos que trae Saint (un grupo cuenta como uno). */
   subcategorias: { nombre: string; cantidad: number }[];
 };
 
@@ -72,8 +81,7 @@ function convertir(slug: string, crudo: unknown): CategoriaSaint {
     subcategorias.push({ nombre: legible, cantidad: Math.max(0, Math.trunc(numero(cantidad)) || 0) });
   }
 
-  const productos: Producto[] = [];
-  const claves: string[] = [];
+  const crudos: Producto[] = [];
   const vistos = new Set<string>();
   for (const fila of datos.productos) {
     const { codigo, nombre, marca, codSubcategoria, subcategoria, precioBs, precioUsd } = (fila ?? {}) as Record<string, unknown>;
@@ -99,11 +107,32 @@ function convertir(slug: string, crudo: unknown): CategoriaSaint {
       subcategoria:
         nombrePorCodigo.get(String(codSubcategoria)) ?? (esTexto(subcategoria) ? nombreLegible(subcategoria) : null),
     };
-    productos.push(producto);
-    claves.push(normalizar(`${id} ${nombreLimpio} ${producto.titulo} ${marcaReal ?? ""}`));
+    crudos.push(producto);
   }
 
-  return { tasa: Number.isFinite(tasa) && tasa > 0 ? tasa : 0, productos, claves, subcategorias };
+  // Medidas del mismo producto (llaves combinadas Acesa, dados…): un grupo con su foto (lib/agrupaciones.ts, persona B).
+  const { productos, listado, grupos, grupoDe } = agrupar(crudos);
+  const clave = (p: Producto) => normalizar(`${p.id} ${p.nombre} ${p.titulo ?? ""} ${p.marca ?? ""}`);
+  const claves = productos.map(clave);
+  const clavesListado = listado.map((p) =>
+    grupos.has(p.id) ? [clave(p), ...grupos.get(p.id)!.variantes.map((v) => clave(v.producto))].join(" ") : clave(p),
+  );
+  // En el filtro, cada grupo cuenta como un producto (como se ve en la lista).
+  for (const g of grupos.values()) {
+    const sub = subcategorias.find((s) => s.nombre === g.tarjeta.subcategoria);
+    if (sub) sub.cantidad = Math.max(1, sub.cantidad - (g.variantes.length - 1));
+  }
+
+  return {
+    tasa: Number.isFinite(tasa) && tasa > 0 ? tasa : 0,
+    productos,
+    claves,
+    listado,
+    clavesListado,
+    grupos,
+    grupoDe,
+    subcategorias,
+  };
 }
 
 async function pedir(slug: string, codigo: number): Promise<CategoriaSaint> {

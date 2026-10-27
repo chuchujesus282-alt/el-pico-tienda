@@ -13,6 +13,7 @@ export type Producto = {
   subcategoria: string | null;
   descripcion?: string | null; // texto largo para la página de producto; llegará de la base de datos
   ventas?: number; // unidades vendidas en los últimos 90 días; ordena los "más vendidos" (opcional)
+  variantes?: number; // solo la tarjeta de un GRUPO (lib/agrupaciones.ts): cuántas medidas agrupa; precio = el más bajo
 };
 
 export type Categoria = {

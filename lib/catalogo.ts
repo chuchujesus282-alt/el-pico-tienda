@@ -11,6 +11,7 @@ import { categoriasMock } from "@/lib/mock/categorias";
 import { destacadosMock, productosMock } from "@/lib/mock/productos";
 import { masVendidos } from "@/lib/recomendaciones/productos";
 import { type CategoriaSaint, esCategoriaSaint, getCategoriaSaint, getTodosSaint, normalizar } from "@/lib/saint";
+import { esIdGrupo, type Grupo } from "@/lib/agrupaciones";
 
 // ÚNICA puerta de entrada a los datos de productos (ver docs/datos.md).
 // - Las categorías del mapa lib/categoriasSaint.ts (hoy: Herramientas) traen sus productos REALES de Saint
@@ -115,7 +116,8 @@ export async function getProductosPorCategoria(
     // Si Saint no responde y no hay lista guardada, el error llega a app/categoria/[slug]/error.tsx.
     const saint = await getCategoriaSaint(slug);
     return {
-      ...filtrarYPaginar(saint.productos, saint.claves, opciones),
+      // La lista agrupada: cada grupo de medidas (lib/agrupaciones.ts) es una sola tarjeta.
+      ...filtrarYPaginar(saint.listado, saint.clavesListado, opciones),
       marcas: [], // por ahora sin filtro de marca en las categorías de Saint
       subcategorias: saint.subcategorias.map((s) => s.nombre),
       cantidades: Object.fromEntries(saint.subcategorias.map((s) => [s.nombre, s.cantidad])),
@@ -153,6 +155,20 @@ function buscarEnSaint(lista: CategoriaSaint, id: string): Producto | undefined 
   return mapa.get(id);
 }
 
+/**
+ * Grupo de medidas de un producto (lib/agrupaciones.ts), por el id del grupo o por el código de cualquiera de sus
+ * medidas. `seleccion`: el código de la medida que se abre marcada (la pedida, o la primera). null: no es de un grupo.
+ */
+export async function getGrupo(id: string): Promise<{ grupo: Grupo; seleccion: string } | null> {
+  if (productosEjemplo.some((p) => p.id === id)) return null; // los de ejemplo nunca van agrupados
+  const { listas } = await getTodosSaint();
+  for (const lista of listas) {
+    const grupo = lista.grupos.get(esIdGrupo(id) ? id : (lista.grupoDe.get(id) ?? ""));
+    if (grupo) return { grupo, seleccion: esIdGrupo(id) ? grupo.variantes[0].id : id };
+  }
+  return null;
+}
+
 export async function getProducto(id: string): Promise<Producto | null> {
   if (!API_URL) {
     const ejemplo = productosEjemplo.find((p) => p.id === id);
@@ -161,6 +177,9 @@ export async function getProducto(id: string): Promise<Producto | null> {
 
   const { listas, completo } = await getTodosSaint();
   for (const lista of listas) {
+    // La tarjeta de un grupo de medidas (su página elige la medida).
+    const grupo = esIdGrupo(id) ? lista.grupos.get(id) : undefined;
+    if (grupo) return grupo.tarjeta;
     const producto = buscarEnSaint(lista, id);
     if (producto) return producto;
   }
