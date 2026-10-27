@@ -66,6 +66,8 @@ describe("clasificar", () => {
   it("genéricos: mechas, repuestos y herramientas de mano", () => {
     expect(clasificar("MECHA PARA HIERRO HSS 10,5 mm", "TORNERIA")).toMatchObject({ grupo: "mecha-hierro-hss", etiqueta: "10,5 mm" });
     expect(clasificar("MECHAS WIDIA 12mm O 1/2", "TORNERIA")).toMatchObject({ grupo: "mecha-widia", etiqueta: '12 mm / 1/2"' });
+    expect(clasificar('MECHA WIDIA 3/16"', "TORNERIA")).toMatchObject({ grupo: "mecha-widia", etiqueta: '3/16"' }); // en singular
+    expect(clasificar('CUCHARA P/ALBANIL PTA. CUADRADA 9"', null)).toMatchObject({ grupo: "cuchara-albanil", etiqueta: '9"' });
     expect(clasificar('MECHA P/CONCRETO 1/2" LARGA ECONOMICA', "TORNERIA")).toMatchObject({ etiqueta: '1/2"', seccion: "Económica" });
     expect(clasificar("ROLINERA MOD 6309.ZZ.C3", "TORNERIA")).toMatchObject({ grupo: "rolinera", etiqueta: "6309 ZZ C3", seccion: "Serie 63" });
     expect(clasificar("RETEN 472-052 472-050", null)).toMatchObject({ grupo: "reten", etiqueta: "472-052 / 472-050" });

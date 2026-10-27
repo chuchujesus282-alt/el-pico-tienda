@@ -97,7 +97,8 @@ export function clasificarGenerico(n: string, marca: string | null, leer: Leer):
     return con("mecha-concreto-larga", leer(m[1]), m[2] === "ECONOMICA" ? "Económica" : "De calidad");
   if (/^MECHA P\/CONCRETO /.test(n)) return null; // SDS Milwaukee y demás: sueltas
   if ((m = n.match(/^MECHA COBALTO (.+)$/))) return con("mecha-cobalto", varias(m[1], leer));
-  if ((m = n.match(/^MECHAS WIDIA (.+)$/))) return con("mecha-widia", varias(m[1], leer));
+  // En Saint vienen "MECHAS WIDIA …" y también "MECHA WIDIA 3/16"" (en singular).
+  if ((m = n.match(/^MECHAS? WIDIA (.+)$/))) return con("mecha-widia", varias(m[1], leer));
   if ((m = n.match(/^MECHA P\/VIDRIO (.+)$/))) return con("mecha-vidrio", varias(m[1], leer));
   if ((m = n.match(/^MECHA REDUCIDA HSS (.+)$/))) return con("mecha-reducida", leer(m[1]));
   if ((m = n.match(/^MECHA EXTRA LARGA (\S+) X (\d+)MM$/))) return con("mecha-extra-larga", `${leer(m[1])} × ${m[2]} mm`);
@@ -127,7 +128,8 @@ export function clasificarGenerico(n: string, marca: string | null, leer: Leer):
   // ---- Herramientas de mano
   if ((m = n.match(/^LIMA TRIANGULAR (.+)$/))) return excluida ? null : con("lima-triangular", varias(m[1], leer));
   if ((m = n.match(/^LIMA REDONDA (.+)$/))) return excluida ? null : con("lima-redonda", varias(m[1], leer));
-  if ((m = n.match(/^CUCHARA PARA ALBANIL PTA\.? (REDONDA|CUADRADA|RED Y CUADR) (\d+)"$/))) {
+  // "CUCHARA PARA ALBANIL …" y también abreviado: "CUCHARA P/ALBANIL …".
+  if ((m = n.match(/^CUCHARA (?:PARA |P\/)ALBA[NÑ]IL PTA\.? (REDONDA|CUADRADA|RED Y CUADR) (\d+)"$/))) {
     const punta = m[1] === "REDONDA" ? "Punta redonda" : m[1] === "CUADRADA" ? "Punta cuadrada" : "Punta redonda y cuadrada";
     return con("cuchara-albanil", `${m[2]}"`, punta);
   }
