@@ -64,7 +64,7 @@ export default function FormularioOpinion({ productoId, alPublicar }: Props) {
     <section
       id="escribir"
       aria-labelledby="titulo-escribir"
-      className="scroll-mt-6 rounded-banner border border-gris-borde bg-pico-blanco p-5 shadow-tarjeta md:p-6"
+      className="scroll-mt-30 rounded-banner border border-gris-borde bg-pico-blanco p-5 shadow-tarjeta md:p-6"
     >
       <h2 id="titulo-escribir" className="font-titulo text-xl font-bold text-logo-marino">
         Escribe tu opinión

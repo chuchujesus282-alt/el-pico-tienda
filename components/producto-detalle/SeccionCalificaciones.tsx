@@ -16,7 +16,7 @@ export default function SeccionCalificaciones({ resumen, acciones, className = "
     <section
       id="calificaciones"
       aria-labelledby="titulo-calificaciones"
-      className={`scroll-mt-6 rounded-banner border border-gris-borde bg-pico-blanco p-5 shadow-tarjeta md:p-8 ${className}`}
+      className={`scroll-mt-30 rounded-banner border border-gris-borde bg-pico-blanco p-5 shadow-tarjeta md:p-8 ${className}`}
     >
       <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
         <h2 id="titulo-calificaciones" className="font-titulo text-xl font-bold text-logo-marino md:text-2xl">

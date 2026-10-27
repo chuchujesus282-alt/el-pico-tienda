@@ -25,7 +25,7 @@ export default function BuscarEnCategoria({ slug, nombre, estado }: Props) {
         defaultValue={estado.q ?? ""}
         maxLength={80}
         placeholder={`Buscar en ${nombre}: nombre, código o marca`}
-        className="h-11 w-full rounded-boton border border-gris-borde bg-pico-blanco pr-24 pl-10 text-sm text-texto shadow-tarjeta transition placeholder:text-gris-texto focus:border-logo-marino focus:outline-2 focus:outline-offset-1 focus:outline-logo-marino/30"
+        className="h-11 w-full rounded-boton border border-gris-borde bg-pico-blanco pr-24 pl-10 text-sm text-texto shadow-tarjeta transition placeholder:text-gris-texto focus:border-logo-marino focus:ring-4 focus:ring-logo-marino/15 focus:outline-none"
       />
       {estado.subcategoria && <input type="hidden" name="subcategoria" value={estado.subcategoria} />}
       {estado.marca && <input type="hidden" name="marca" value={estado.marca} />}

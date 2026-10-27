@@ -246,8 +246,16 @@ html {
   scrollbar-width: thin;
   scrollbar-color: color-mix(in srgb, var(--color-pico-azul) 35%, transparent) transparent;
   -webkit-tap-highlight-color: transparent;
-  /* Los saltos a un ancla (#…) no quedan tapados por el header. */
-  scroll-padding-top: 6rem;
+}
+
+/* Los saltos a un ancla (#…) no quedan tapados por el header fijo: el margen va en el destino (:target), NO como
+   scroll-padding-top en html. Con scroll-padding, al escribir en el buscador del header con la página abajo, Chrome
+   subía la página ~60px con CADA tecla (creía el buscador tapado; el header fijo no se mueve, así que nunca "llegaba").
+   En @layer base para que un destino con su propio scroll-mt-* (clase de Tailwind) lo pueda cambiar. */
+@layer base {
+  :target {
+    scroll-margin-top: 6rem;
+  }
 }
 
 @media (prefers-reduced-motion: no-preference) {
@@ -272,6 +280,11 @@ body {
 :where(a, button, input, select, textarea, summary, [tabindex]):focus-visible {
   outline: 2px solid color-mix(in srgb, var(--color-pico-azul) 60%, transparent);
   outline-offset: 2px;
+}
+/* Los buscadores marcan el foco en su propia caja (halo azul): sin esto, el anillo de arriba dibujaba un rectángulo
+   alrededor del texto, dentro de la caja redonda. Va aquí porque este archivo gana a las clases de Tailwind. */
+:where(input[type="search"]):focus-visible {
+  outline: none;
 }
 
 /* Títulos con las líneas equilibradas y párrafos sin una palabra sola al final. */
