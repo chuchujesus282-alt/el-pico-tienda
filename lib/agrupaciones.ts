@@ -11,8 +11,8 @@ import type { Producto } from "@/types/catalogo";
 // Un grupo con un solo producto no se arma: ese producto sale suelto, como siempre.
 
 /** Foto de cada familia (public/productos/grupos/). */
-const FOTO_LLAVE = "/productos/grupos/llave-combinada.webp";
-const FOTO_DADO = "/productos/grupos/dado.webp";
+const FOTO_LLAVE = "/productos/grupos/llave-combinada-cromada.webp";
+const FOTO_DADO = "/productos/grupos/dado-cromado.webp";
 
 /** Fotos sueltas por código de Saint (public/productos/{codigo}.webp). */
 export const FOTOS_SAINT: Record<string, string> = {
