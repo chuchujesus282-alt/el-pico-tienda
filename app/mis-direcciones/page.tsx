@@ -2,8 +2,6 @@ import type { Metadata } from "next";
 
 import ListaDirecciones from "@/components/direcciones/ListaDirecciones";
 import Contenedor from "@/components/ui/Contenedor";
-import EncabezadoPagina from "@/components/ui/EncabezadoPagina";
-import IconoUbicacion from "@/components/icons/pico/IconoUbicacion";
 
 // Mis direcciones — responsable: persona B. Las direcciones viven en el navegador del cliente
 // (components/direcciones/almacenDirecciones.ts); cuando haya cuentas, viajarán con ella.
@@ -25,12 +23,8 @@ export default async function PaginaMisDirecciones({ searchParams }: PageProps<"
   const { bienvenida } = await searchParams;
   return (
     <>
-      <EncabezadoPagina
-        titulo="Mis direcciones"
-        ruta={[{ texto: "Mis direcciones" }]}
-        icono={IconoUbicacion}
-        descripcion="Guarda los lugares donde recibes tus pedidos y elige uno en cada compra."
-      />
+      {/* Sin EncabezadoPagina (pedido de persona B): el título queda solo para lectores de pantalla. */}
+      <h1 className="sr-only">Mis direcciones</h1>
       <Contenedor className="py-6 md:py-10">
         <ListaDirecciones bienvenida={nombreBienvenida(bienvenida)} />
       </Contenedor>

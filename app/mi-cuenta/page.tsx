@@ -3,9 +3,7 @@ import { redirect } from "next/navigation";
 import { Aviso } from "@/components/cuenta/Campos";
 import FormularioPerfil from "@/components/cuenta/FormularioPerfil";
 import TarjetaCuenta from "@/components/cuenta/TarjetaCuenta";
-import IconoUsuario from "@/components/icons/pico/IconoUsuario";
 import Contenedor from "@/components/ui/Contenedor";
-import EncabezadoPagina from "@/components/ui/EncabezadoPagina";
 import { leerPerfil } from "@/lib/cuenta";
 
 // Mi cuenta — responsable: persona A. Solo con la sesión abierta (si no, a iniciar sesión).
@@ -20,12 +18,8 @@ export default async function PaginaMiCuenta() {
 
   return (
     <>
-      <EncabezadoPagina
-        titulo="Mi cuenta"
-        ruta={[{ texto: "Mi cuenta" }]}
-        icono={IconoUsuario}
-        descripcion="Tus datos para la factura, tus favoritos, tu carrito y tus direcciones, en todos tus dispositivos."
-      />
+      {/* Sin EncabezadoPagina (pedido de persona B): el título queda solo para lectores de pantalla. */}
+      <h1 className="sr-only">Mi cuenta</h1>
       <Contenedor className="py-6 md:py-10">
         <div className="grid gap-6 lg:grid-cols-[minmax(0,22rem)_minmax(0,1fr)] lg:items-start xl:gap-10">
           <TarjetaCuenta nombre={cuenta.fiscales?.nombre ?? cuenta.nombre} correo={cuenta.correo} />
