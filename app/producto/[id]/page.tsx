@@ -17,6 +17,7 @@ import CompraConVariantes from "@/components/producto-detalle/CompraConVariantes
 import GaleriaZoom from "@/components/producto-detalle/GaleriaZoom";
 import ProductosRelacionados from "@/components/recomendaciones/ProductosRelacionados";
 import RegistrarSenal from "@/components/recomendaciones/RegistrarSenal";
+import RegistrarEvento from "@/components/eventos/RegistrarEvento";
 import Contenedor from "@/components/ui/Contenedor";
 import EncabezadoPagina from "@/components/ui/EncabezadoPagina";
 import { getCategorias, getGrupo, getProducto } from "@/lib/catalogo";
@@ -168,6 +169,8 @@ export default async function PaginaProducto({ params, searchParams }: PageProps
         />
         {/* En un grupo cuenta como vista la medida que se abrió (es la que existe en el catálogo). */}
         <RegistrarSenal senales={[{ tipo: "visto", id: elegida.id }]} />
+        {/* Evento para análisis (persona A, lib/eventos/): no dibuja nada. En un grupo, la medida que se abrió. */}
+        <RegistrarEvento evento={{ tipo: "producto_visto", producto: elegida.id }} />
       </Contenedor>
     </div>
   );

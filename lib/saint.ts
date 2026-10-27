@@ -48,8 +48,8 @@ export type CategoriaSaint = {
   /** Grupos de medidas por id, y de cada código su grupo. */
   grupos: Map<string, Grupo>;
   grupoDe: Map<string, string>;
-  /** Con su nombre legible y la cantidad de productos que trae Saint (un grupo cuenta como uno). */
-  subcategorias: { nombre: string; cantidad: number }[];
+  /** Con su código de Saint, su nombre legible y la cantidad de productos que trae Saint (un grupo cuenta como uno). */
+  subcategorias: { codigo: string; nombre: string; cantidad: number }[];
 };
 
 type Guardada = { datos: CategoriaSaint; texto: string; revisar: number };
@@ -78,7 +78,7 @@ function convertir(slug: string, crudo: unknown): CategoriaSaint {
     if (!esTexto(nombre)) continue;
     const legible = nombreLegible(nombre);
     nombrePorCodigo.set(String(codigo), legible);
-    subcategorias.push({ nombre: legible, cantidad: Math.max(0, Math.trunc(numero(cantidad)) || 0) });
+    subcategorias.push({ codigo: String(codigo), nombre: legible, cantidad: Math.max(0, Math.trunc(numero(cantidad)) || 0) });
   }
 
   const crudos: Producto[] = [];

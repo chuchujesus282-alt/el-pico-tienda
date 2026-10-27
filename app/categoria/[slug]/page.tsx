@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import BannerCalculadoras from "@/components/calculadoras/BannerCalculadoras";
 import BuscarEnCategoria from "@/components/categoria/BuscarEnCategoria";
+import RegistrarEvento from "@/components/eventos/RegistrarEvento";
 import FiltrosActivos from "@/components/categoria/FiltrosActivos";
 import FiltrosCategoria from "@/components/categoria/FiltrosCategoria";
 import Paginacion from "@/components/categoria/Paginacion";
@@ -115,6 +116,8 @@ export default async function PaginaCategoria({ params, searchParams }: PageProp
   return (
     <div>
       <EncabezadoCategoria slug={slug} nombre={categoria.nombre} banner={categoria.banner} />
+      {/* Evento para análisis (persona A, lib/eventos/): no dibuja nada. */}
+      <RegistrarEvento evento={{ tipo: "categoria_vista", categoria: slug, subcategoria: estado.subcategoria }} />
 
       <Contenedor className="py-6 md:py-10">
         <div className="lg:grid lg:grid-cols-[15rem_minmax(0,1fr)] lg:gap-8">

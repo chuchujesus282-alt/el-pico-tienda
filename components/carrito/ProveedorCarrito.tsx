@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import type { Producto } from "@/types/catalogo";
 import type { ItemCarrito } from "@/types/carrito";
 import { registrarSenal } from "@/lib/recomendaciones/almacenPerfil";
+import { registrarEvento } from "@/lib/eventos/cliente";
 import { totalCarrito } from "@/lib/whatsapp";
 import { guardarItems, obtenerItems, obtenerItemsServidor, suscribir } from "./almacenCarrito";
 import PanelCarrito from "./PanelCarrito";
@@ -46,6 +47,7 @@ export default function ProveedorCarrito({ children }: { children: ReactNode }) 
     );
     // No abre el panel: el cliente sigue comprando; "¡Agregado!" y el contador que late le confirman.
     registrarSenal({ tipo: "carrito", id: producto.id }); // perfil de "Te puede interesar"
+    registrarEvento({ tipo: "carrito", producto: producto.id }); // análisis (lib/eventos/), en segundo plano
   }, []);
 
   const quitar = useCallback((id: string) => {

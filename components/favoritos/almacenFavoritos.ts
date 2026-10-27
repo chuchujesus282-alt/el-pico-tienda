@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useSyncExternalStore } from "react";
+import { registrarEvento } from "@/lib/eventos/cliente";
 
 // Favoritos del cliente en el navegador (localStorage), leídos con useSyncExternalStore.
 // Solo guarda los códigos de producto (lo más reciente primero): nombre, precio y foto se piden
@@ -73,6 +74,7 @@ export function useFavoritos() {
     const actuales = obtenerIds();
     const estaba = actuales.includes(id);
     guardar(estaba ? actuales.filter((i) => i !== id) : [id, ...actuales]);
+    if (!estaba) registrarEvento({ tipo: "favorito", producto: id }); // análisis (lib/eventos/), solo al marcar
     return !estaba;
   }, []);
 

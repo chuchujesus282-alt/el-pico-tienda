@@ -92,6 +92,19 @@ cambia**: solo cambia dónde corre.
       "Te puede interesar" en el inicio; Favoritos; y comprobar en la pestaña de red que **nada** descarga el catálogo.
     - Medir tiempos (PC y teléfono simulado) y reportarlos al dueño **antes de subir a `main`**.
 
+## Eventos para análisis: no romperlos (agregado el 2026-10-27)
+
+Desde la fase 4 de cuentas hay eventos para análisis (`lib/eventos/`, `docs/eventos.md`). Es una pieza aparte: el
+buscador solo la "llama". Al mover el buscador al servidor:
+- El evento de búsqueda vive en **`app/buscar/page.tsx`**: `<RegistrarEvento evento={{ tipo: "busqueda", termino:
+  consulta, resultados: cantidad }} />`. Si esa página cambia, **conserva esa línea** (con la cantidad real de
+  resultados que muestra).
+- **`/api/sugerencias` NO debe registrar eventos**: cada letra que se escribe no es una búsqueda. Si algún día se
+  quiere medir qué sugerencia se tocó, se agrega un tipo nuevo con `registrarEvento()` (ver "Agregar un evento nuevo"
+  en `docs/eventos.md`), sin tocar `/api/eventos`.
+- "Te puede interesar" y Favoritos no registran eventos; `ProveedorCarrito.agregar` y `useFavoritos().alternar` sí:
+  no los quites si tocas esos archivos.
+
 ## Estado actual (2026-10-26)
 
 **En `main`:**

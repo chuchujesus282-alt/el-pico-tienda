@@ -4,6 +4,7 @@ import Link from "next/link";
 import SinResultados from "@/components/busqueda/SinResultados";
 import GrillaProductos from "@/components/producto/GrillaProductos";
 import RegistrarSenal from "@/components/recomendaciones/RegistrarSenal";
+import RegistrarEvento from "@/components/eventos/RegistrarEvento";
 import Contenedor from "@/components/ui/Contenedor";
 import EncabezadoPagina from "@/components/ui/EncabezadoPagina";
 import { getCategorias, getIndiceProductos } from "@/lib/catalogo";
@@ -58,6 +59,8 @@ export default async function PaginaBuscar({ searchParams }: PageProps<"/buscar"
       />
     <Contenedor className="space-y-6 py-6 md:py-10">
       {consulta && <RegistrarSenal senales={[{ tipo: "busqueda", termino: consulta }]} />}
+      {/* Evento para análisis (lib/eventos/). "resultados" llega hasta 60 (el tope de buscar()): 60 = "60 o más". */}
+      {consulta && <RegistrarEvento evento={{ tipo: "busqueda", termino: consulta, resultados: cantidad }} />}
 
       {resultado.tipo === "parcial" && (
         <p className="rounded-boton bg-pico-azul-claro px-4 py-3 text-sm text-texto">
