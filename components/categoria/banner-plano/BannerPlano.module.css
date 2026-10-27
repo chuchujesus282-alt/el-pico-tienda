@@ -364,6 +364,91 @@
   transform: rotate(45deg);
 }
 
+/* Cinta métrica (Herramientas): se extiende bajo la etiqueta, del color activo (amarillo), con sus marcas y el gancho. */
+.metro {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 6px;
+  right: -14px;
+  height: 11px;
+  border-radius: 1px;
+  background:
+    repeating-linear-gradient(90deg, var(--ink) 0 1px, transparent 1px 5px) 0 0 / 100% 4px no-repeat,
+    repeating-linear-gradient(90deg, var(--ink) 0 1.5px, transparent 1.5px 25px) 0 0 / 100% 7px no-repeat,
+    var(--c);
+  transform: skewX(-12deg) scaleX(0);
+  transform-origin: left;
+  transition: transform 0.7s cubic-bezier(0.2, 0.9, 0.25, 1.05) 0.1s;
+  pointer-events: none;
+}
+.metro::after {
+  content: "";
+  position: absolute;
+  right: -4px;
+  top: -2px;
+  width: 5px;
+  height: 15px;
+  border-radius: 1px;
+  background: #aab5c3;
+}
+:global(.on) .metro {
+  transform: skewX(-12deg) scaleX(1);
+}
+
+/* Tubo (Plomería): siempre visible; con `agua` se llena del color activo y con `vivo` gotea por la punta. */
+.tubo {
+  position: absolute;
+  top: calc(100% + 7px);
+  left: 8px;
+  right: -6px;
+  height: 8px;
+  border: 1.5px solid rgba(190, 215, 245, 0.45);
+  border-radius: 4px;
+  transform: skewX(-12deg);
+  pointer-events: none;
+}
+.tubo::before {
+  content: "";
+  position: absolute;
+  inset: 1px;
+  border-radius: 2px;
+  background: var(--c);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+:global(.agua) .tubo::before {
+  transform: scaleX(1);
+}
+.tubo::after {
+  content: "";
+  position: absolute;
+  right: -1px;
+  top: 100%;
+  width: 6px;
+  height: 8px;
+  border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+  background: var(--c);
+  opacity: 0;
+}
+:global(.vivo) .tubo::after {
+  animation: gotaTubo 1.4s ease-in infinite;
+}
+@keyframes gotaTubo {
+  0% {
+    transform: translateY(-3px) scale(0.4);
+    opacity: 0;
+  }
+  25% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  100% {
+    transform: translateY(26px) scale(0.8);
+    opacity: 0;
+  }
+}
+
 /* Pasto que brota bajo la etiqueta (Hogar y jardín). */
 .pasto {
   position: absolute;
@@ -462,6 +547,8 @@
   .cable,
   .banda,
   .casillas span,
+  .metro,
+  .tubo::before,
   .pasto path,
   .velo,
   .etiquetaFondo,
@@ -473,6 +560,7 @@
 
 @media (prefers-reduced-motion: reduce) {
   :global(.spark) .cable::after,
+  :global(.vivo) .tubo::after,
   :global(.on) .banda::before {
     animation: none;
   }

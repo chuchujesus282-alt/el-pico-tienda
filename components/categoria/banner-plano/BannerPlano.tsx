@@ -48,9 +48,11 @@ type Props = {
    * a rayas del color activo y azul tinta (Construcción) o el cable con chispa (Electricidad; la chispa corre con la
    * clase global `spark` y el cable se calienta con `lit`, las dos las pone su motor) o el pasto que brota (Hogar y
    * jardín) o la banda transportadora que avanza con el color activo (Vehículos) o las 5 casillas que se marcan
-   * (Seguridad industrial; su motor les pone la clase global `ok` a las que tienen `data-casilla`).
+   * (Seguridad industrial; su motor les pone la clase global `ok` a las que tienen `data-casilla`) o la cinta métrica
+   * que se extiende (Herramientas) o el tubo que se llena de agua con la clase global `agua` y gotea con `vivo`
+   * (Plomería; las dos las pone su motor).
    */
-  decoracion?: "gotas" | "cinta" | "cable" | "pasto" | "banda" | "casillas";
+  decoracion?: "gotas" | "cinta" | "cable" | "pasto" | "banda" | "casillas" | "metro" | "tubo";
   /**
    * Variables CSS propias de cada banner (ver BannerPlano.module.css): --brillo, --brillo-on, --palabra-min/-vw/-max,
    * --palabra-movil-min/-vw/-max, --etiqueta-pad, --etiqueta-sombra. Sin ellas, los valores de Pinturas.
@@ -175,6 +177,10 @@ export default function BannerPlano({
                 <span className={styles.cable} aria-hidden />
               ) : decoracion === "banda" ? (
                 <span className={styles.banda} aria-hidden />
+              ) : decoracion === "metro" ? (
+                <span className={styles.metro} aria-hidden />
+              ) : decoracion === "tubo" ? (
+                <span className={styles.tubo} aria-hidden />
               ) : decoracion === "casillas" ? (
                 <span className={styles.casillas} aria-hidden>
                   {[0, 1, 2, 3, 4].map((i) => (

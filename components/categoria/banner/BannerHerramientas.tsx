@@ -1,158 +1,337 @@
 "use client";
 
-import Image from "next/image";
-import { useEffect, useRef, useState } from "react";
-import type { CSSProperties } from "react";
+import { useId, type CSSProperties } from "react";
+import BannerPlano, { type Motor } from "@/components/categoria/banner-plano/BannerPlano";
+import type { PropsBannerPropio } from "./CategoriaBanner";
+import styles from "./BannerHerramientas.module.css";
 
 /**
- * Banner de la categoría Herramientas (va en `EncabezadoPagina` con la prop `escena`). Misma familia que Pinturas y
- * Construcción: azul marino con el título a la izquierda y, a la derecha, cortado en diagonal, el tablero perforado de un
- * taller (con su perfil de aluminio atornillado en el corte). Del tablero cuelgan herramientas reales en sus ganchos y,
- * al frente, un taladro real apoyado en el piso.
- * - Solo (cada pocos segundos, mientras se ve; nunca con "reducir movimiento"): el exhibidor se repone. Una herramienta
- *   se descuelga y en su gancho cae otra, que se mece hasta quedarse quieta.
- * - Clic / Enter / toque: repone una al instante.
- * - Mouse encima o foco con teclado: el taladro vibra como si estuviera encendido.
- * Fotos en public/banners/herramientas/ (las de mano, ya verticales) y public/herramientas/. Animaciones en banner.css.
+ * Banner de la categoría Herramientas, estilo "plano técnico" (reemplaza al de fotos con el tablero que se reponía).
+ * Portado del prototipo aprobado banner-herramientas-v1.html: tablero perforado con 6 ganchos y la silueta punteada de
+ * cada herramienta (esmeril 4½", martillo, llave 10", serrucho, nivel 24" y taladro 20V), repisa y cota.
+ * Activo: cada herramienta cae en su silueta (110 ms entre una y otra) y se balancea en el gancho, la burbuja del nivel
+ * se centra y arrancan el esmeril (el disco gira y echa chispas) y el taladro (la broca gira): clase global `vivo`,
+ * RPM 0 → 1.500. Al salir suben y se desvanecen (380 ms). Tiempos y colores del prototipo.
+ * Diferencias con el prototipo: las herramientas se dibujan en JSX (el prototipo las armaba con innerHTML), solo el
+ * nombre en la etiqueta (sin "Herramientas para", kicker ni subtítulo) y, en reposo, las siluetas se mecen apenas en
+ * su gancho. Con "reducir movimiento", sin chispas.
  */
 
-const CADA_MS = 5000;
-const B = "/banners/herramientas/";
-const H = "/herramientas/";
+const XS = [92, 196, 292, 392, 486, 650];
+const ETIQUETAS = ['ESMERIL 4½"', "MARTILLO", 'LLAVE 10"', "SERRUCHO", 'NIVEL 24"', "TALADRO 20V"];
+const ACERO = "#aab5c3";
+/** Dientes del serrucho: 14 dientes, como el prototipo. */
+const DIENTES = "M-20 48" + "l-4 6l3 3".repeat(14) + "l-1 2";
 
-/**
- * Las clásicas, para colgar (fotos verticales; ancho × alto reales; el esmeril cuelga de su cable). `largo`: cuánto mide
- * colgada, en % del alto del banner. Se van rotando por los ganchos.
- */
-const COLGABLES = [
-  { id: "martillo", ancho: 260, alto: 640, largo: 54 },
-  { id: "esmeril", ancho: 308, alto: 640, largo: 48 },
-  { id: "serrucho", ancho: 150, alto: 640, largo: 68 },
-  { id: "llave-tubo", ancho: 176, alto: 640, largo: 64 },
-  { id: "llave-ajustable", ancho: 150, alto: 640, largo: 56 },
-  { id: "nivel", ancho: 117, alto: 640, largo: 68 },
-] as const;
-type Colgable = (typeof COLGABLES)[number]["id"];
+const out = (t: number) => 1 - Math.pow(1 - t, 3);
+const ease = (t: number) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
 
-/**
- * Ganchos del tablero: x en % del área de la escena desde 1280px (`xMd`: entre 768 y 1279px, donde solo caben 2;
- * sin él, ese gancho solo sale desde 1280px). Medidos para la herramienta MÁS ANCHA (el esmeril, que va rotando por
- * todos): arriba, el corte diagonal se mete ~25cqh en la escena, así que el primer gancho va lejos del perfil; el último
- * deja aire antes del taladro.
- */
-const GANCHOS = [
-  { x: 14, xMd: null },
-  { x: 26, xMd: 18 },
-  { x: 38, xMd: 34 },
-  { x: 50, xMd: null },
-];
-/** Orden en que se reponen los ganchos (salteado, para que no parezca una fila que avanza). */
-const ORDEN = [1, 3, 0, 2];
+function crearMotor(raiz: HTMLElement): Motor {
+  const q = <T extends Element>(p: string) => raiz.querySelector<T>(`[data-p="${p}"]`)!;
+  const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const rpm = q<SVGTextElement>("rpm"),
+    burbuja = q<SVGCircleElement>("burbuja"),
+    chispas = q<SVGGElement>("chispas");
+  const tools = XS.map((x, i) => ({ x, g: q<SVGGElement>(`t${i}`), y: -260, a: 0 }));
+  const draw = (t: (typeof tools)[number]) =>
+    t.g.setAttribute("transform", `translate(${t.x} ${(40 + t.y).toFixed(1)}) rotate(${t.a.toFixed(2)})`);
 
-const datos = (id: Colgable) => COLGABLES.find((c) => c.id === id)!;
-
-export default function BannerHerramientas() {
-  const raiz = useRef<HTMLDivElement>(null);
-  const [colgadas, setColgadas] = useState<Colgable[]>(["martillo", "esmeril", "serrucho", "llave-tubo"]);
-  // Herramienta que se está descolgando (sigue dibujada un momento, saliendo).
-  const [saliente, setSaliente] = useState<{ gancho: number; id: Colgable; vez: number } | null>(null);
-  const [vez, setVez] = useState(0);
-  const [tocado, setTocado] = useState(false);
-  const [visible, setVisible] = useState(false);
-  const [espera, setEspera] = useState(0);
-  const puntero = useRef("");
-
-  useEffect(() => {
-    const el = raiz.current;
-    if (!el) return;
-    const obs = new IntersectionObserver(([e]) => setVisible(e.isIntersecting), { threshold: 0.4 });
-    obs.observe(el);
-    return () => obs.disconnect();
-  }, []);
-
-  /** Repone un gancho: la herramienta que tenía se descuelga y cae la siguiente que no esté colgada. */
-  const reponer = () => {
-    const gancho = ORDEN[vez % ORDEN.length];
-    const actual = colgadas[gancho];
-    const libres = COLGABLES.map((c) => c.id).filter((id) => !colgadas.includes(id));
-    const nueva = libres[vez % libres.length];
-    setSaliente({ gancho, id: actual, vez });
-    setColgadas((c) => c.map((id, i) => (i === gancho ? nueva : id)));
-    setVez((v) => v + 1);
+  // ---------- tiempo: cada encender/apagar sube `gen` y corta lo anterior ----------
+  let gen = 0,
+    destruido = false,
+    chisporroteo = 0;
+  const rafs = new Set<number>();
+  const timers = new Set<number>();
+  const tween = (d: number, f: (p: number, t: number) => void, e: (t: number) => number = ease) => {
+    const g = gen;
+    const dur = reduce ? 10 : d;
+    return new Promise<boolean>((r) => {
+      const s = performance.now();
+      const k = (n: number) => {
+        if (g !== gen || destruido) return r(false);
+        const t = Math.min(1, (n - s) / dur);
+        f(e(t), t);
+        if (t < 1) {
+          const id = requestAnimationFrame((m) => {
+            rafs.delete(id);
+            k(m);
+          });
+          rafs.add(id);
+        } else r(true);
+      };
+      k(s);
+    });
+  };
+  const wait = (ms: number) => {
+    const g = gen;
+    return new Promise<boolean>((r) => {
+      const id = window.setTimeout(
+        () => {
+          timers.delete(id);
+          r(g === gen && !destruido);
+        },
+        reduce ? 10 : ms,
+      );
+      timers.add(id);
+    });
+  };
+  const pararChispas = () => {
+    clearInterval(chisporroteo);
+    chisporroteo = 0;
   };
 
-  useEffect(() => {
-    if (!visible || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-    const t = window.setTimeout(() => {
-      if (raiz.current?.closest("header")?.matches(":has(:focus-visible)")) setEspera((e) => e + 1);
-      else reponer();
-    }, CADA_MS);
-    return () => window.clearTimeout(t);
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- `vez` marca cada reposición; reponer() lee el estado al día.
-  }, [vez, visible, espera]);
+  /** Una chispa del esmeril: sale del disco hacia la izquierda y abajo, y se borra sola. */
+  function chispa() {
+    const c = document.createElementNS("http://www.w3.org/2000/svg", "line");
+    c.setAttribute("x1", "74");
+    c.setAttribute("y1", "196");
+    c.setAttribute("x2", "68");
+    c.setAttribute("y2", "201");
+    chispas.appendChild(c);
+    const dx = -26 - Math.random() * 46,
+      dy = 4 + Math.random() * 26;
+    c.animate(
+      [
+        { transform: "translate(0,0)", opacity: 1 },
+        { transform: `translate(${dx}px,${dy}px)`, opacity: 0 },
+      ],
+      { duration: 320 + Math.random() * 200, easing: "ease-out" },
+    ).onfinish = () => c.remove();
+  }
 
+  async function activar() {
+    const g = ++gen;
+    raiz.classList.add("on");
+    // 1. cada herramienta cae en su silueta del tablero y se balancea en el gancho
+    const jobs = tools.map((t, i) =>
+      wait(i * 110).then(async (ok) => {
+        if (!ok) return false;
+        t.g.style.opacity = "1";
+        if (!(await tween(460, (p) => ((t.y = -260 * (1 - p)), draw(t)), out))) return false;
+        const amp = (i % 2 ? -1 : 1) * (7 + Math.random() * 3);
+        return tween(800, (_, u) => ((t.a = amp * Math.exp(-4.5 * u) * Math.sin(u * 16)), draw(t)), (x) => x);
+      }),
+    );
+    if (!(await Promise.all(jobs)).every(Boolean)) return;
+    // 2. la burbuja del nivel se centra
+    if (!(await tween(420, (p) => burbuja.setAttribute("cy", (81 + 8 * p).toFixed(2))))) return;
+    // 3. arrancan el esmeril y el taladro
+    raiz.classList.add("vivo");
+    if (!reduce)
+      chisporroteo = window.setInterval(() => {
+        if (g !== gen || destruido) return pararChispas();
+        chispa();
+        chispa();
+        chispa();
+      }, 45);
+    await tween(700, (p) => (rpm.textContent = `RPM ${Math.round(1500 * p).toLocaleString("es")}`), out);
+  }
+
+  async function reposo() {
+    const g = ++gen;
+    pararChispas();
+    // `on` se queda hasta que suben (BannerPlano ya la quitó; el prototipo la quita al final).
+    raiz.classList.add("on");
+    raiz.classList.remove("vivo");
+    rpm.textContent = "RPM 0";
+    burbuja.setAttribute("cy", "81");
+    const s = tools.map((t) => ({ y: t.y, a: t.a }));
+    const ok = await tween(
+      380,
+      (p) =>
+        tools.forEach((t, i) => {
+          t.y = s[i].y - 200 * p;
+          t.a = s[i].a * (1 - p);
+          t.g.style.opacity = String(1 - p);
+          draw(t);
+        }),
+      (t) => t * t,
+    );
+    if (!ok || g !== gen) return;
+    raiz.classList.remove("on");
+    tools.forEach((t) => {
+      t.y = -260;
+      draw(t);
+    });
+  }
+
+  return {
+    encender: () => void activar(),
+    apagar: () => void reposo(),
+    destruir() {
+      destruido = true;
+      gen++;
+      pararChispas();
+      rafs.forEach((id) => cancelAnimationFrame(id));
+      timers.forEach((id) => clearTimeout(id));
+      raiz.classList.remove("vivo");
+    },
+  };
+}
+
+/** Dibujo de cada herramienta (origen = su gancho). `real`: la que cae (con sus piezas animadas); si no, la silueta. */
+function Herramienta({ i, real, clip }: { i: number; real: boolean; clip: string }) {
+  const s = styles;
+  const f = (c: string) => `${s.f} ${c}`;
+  switch (i) {
+    case 0: // esmeril
+      return (
+        <>
+          <rect className={f(s.fRojo)} x="-14" y="8" width="28" height="88" rx="12" />
+          <path className={s.no} d="M-7 22V40M0 22V40M7 22V40" />
+          <rect className={f(s.fNegro)} x="-6" y="52" width="12" height="16" rx="2" />
+          <rect className={f(s.fAcero)} x="-10" y="96" width="20" height="18" rx="2" />
+          <g className={real ? s.disco : undefined}>
+            <circle className={f(s.fNegro)} cx="0" cy="142" r="26" />
+            <circle className={f(s.fAcero)} cx="0" cy="142" r="6" />
+            <path className={s.no} d="M0 120V128M0 156V164M-22 142H-14M14 142H22" style={{ stroke: ACERO }} />
+          </g>
+          <path className={f(s.fAcero)} d="M-30 142A30 30 0 0 1 30 142H24A24 24 0 0 0 -24 142Z" />
+        </>
+      );
+    case 1: // martillo
+      return (
+        <>
+          <rect className={f(s.fMadera)} x="-5" y="24" width="10" height="146" rx="3" />
+          <rect className={f(s.fRojo)} x="-7" y="110" width="14" height="62" rx="4" />
+          <path className={f(s.fAcero)} d="M-32 10H20Q38 12 44 30L36 30Q32 20 20 22H-32Z" />
+          <rect className={f(s.fAcero)} x="-34" y="8" width="12" height="16" rx="2" />
+        </>
+      );
+    case 2: // llave
+      return (
+        <>
+          <path className={f(s.fAcero)} d="M-20 10H20V34H7V22H-7V34H-20Z" />
+          <rect className={f(s.fAcero)} x="-7" y="34" width="14" height="128" rx="5" />
+          <rect className={f(s.fRojo)} x="-8" y="104" width="16" height="58" rx="5" />
+          <circle className={s.hole} cx="0" cy="150" r="3" />
+        </>
+      );
+    case 3: // serrucho
+      return (
+        <>
+          <path className={f(s.fAcero)} d="M-20 48H20L14 168H-8Z" />
+          <path className={s.no} d={DIENTES} />
+          <rect className={f(s.fRojo)} x="-24" y="8" width="48" height="42" rx="12" />
+          <rect className={s.hole} x="-13" y="18" width="26" height="20" rx="7" />
+        </>
+      );
+    case 4: // nivel
+      return (
+        <>
+          <rect className={f(s.fAcero)} x="-10" y="8" width="20" height="160" rx="3" />
+          <rect className={f(s.fRojo)} x="-10" y="8" width="20" height="14" rx="3" />
+          <rect className={f(s.fRojo)} x="-10" y="154" width="20" height="14" rx="3" />
+          <rect className={f(s.fVial)} x="-6" y="76" width="12" height="26" rx="6" />
+          <path className={s.no} d="M-6 84H6M-6 94H6" style={{ stroke: "#0b1d33", strokeWidth: 1 }} />
+          <circle data-p={real ? "burbuja" : undefined} cx="0" cy="81" r="3.6" fill="#fff" style={{ stroke: "none" }} />
+        </>
+      );
+    default: // taladro
+      return (
+        <>
+          <rect className={f(s.fRojo)} x="-52" y="10" width="84" height="34" rx="15" />
+          <path className={s.no} d="M8 18V36M14 18V36M20 18V36" />
+          <path className={f(s.fAcero)} d="M-66 18H-52V36H-66L-70 32V22Z" />
+          <g clipPath={`url(#${clip})`}>
+            <rect className={f(s.fAcero)} x="-112" y="24" width="46" height="7" />
+            <g className={real ? s.estrias : undefined}>
+              <path
+                className={s.no}
+                d="M-120 31L-114 24M-112 31L-106 24M-104 31L-98 24M-96 31L-90 24M-88 31L-82 24M-80 31L-74 24M-72 31L-66 24M-64 31L-58 24"
+                style={{ stroke: "#0b1d33", strokeWidth: 1.2 }}
+              />
+            </g>
+          </g>
+          <path className={f(s.fNegro)} d="M-8 44L2 114H30L24 44Z" />
+          <rect className={f(s.fRojo)} x="-10" y="50" width="8" height="15" rx="2" />
+          <rect className={f(s.fNegro)} x="-6" y="114" width="48" height="24" rx="4" />
+          <rect className={f(s.fRojo)} x="-6" y="122" width="48" height="5" />
+          <text x="4" y="135" style={{ fontSize: 7, stroke: "none" }}>
+            20V
+          </text>
+        </>
+      );
+  }
+}
+
+export default function BannerHerramientas({ nombre }: PropsBannerPropio) {
+  const id = useId().replace(/:/g, "");
+  const huecos = `huecos-${id}`,
+    clip = `broca-${id}`;
+  const s = styles;
   return (
-    <div ref={raiz} className="bp absolute inset-0 overflow-hidden" data-activo={tocado || undefined}>
-      {/* Tablero perforado cortado en diagonal: masonite con sus agujeros en cuadrícula, la luz de una lámpara de taller
-          arriba, los bordes en penumbra y abajo el mesón de trabajo donde se apoya el taladro. */}
-      <div className="bp-placa bp-difumina bh-tablero absolute -inset-y-6 -right-24 left-[56%] overflow-hidden md:left-[51%] xl:left-[49%]">
-        <div className="bh-lampara absolute inset-0" />
-        <div className="absolute inset-0 bg-[linear-gradient(170deg,color-mix(in_srgb,var(--color-pico-blanco)_10%,transparent)_0%,transparent_40%,color-mix(in_srgb,var(--color-pico-azul-oscuro)_45%,transparent)_100%)]" />
-        <div className="bh-meson absolute inset-x-0 bottom-0 h-[20%]" />
-        <div className="bp-funde absolute inset-y-0 left-0" />
-      </div>
+    <BannerPlano
+      nombre={nombre}
+      ariaLabel={`Categoría ${nombre}`}
+      colorInicial="#f5c400"
+      crearMotor={crearMotor}
+      decoracion="metro"
+      variables={
+        {
+          "--brillo":
+            "radial-gradient(55% 120% at 70% 50%, rgba(227,38,47,.16), rgba(255,170,80,.06) 45%, transparent 72%)",
+          "--brillo-on": "1",
+          "--etiqueta-pad": "2px 26px 0",
+          "--etiqueta-sombra": "0 10px 24px -10px rgba(227, 38, 47, 0.6)",
+        } as CSSProperties
+      }
+    >
+      <svg viewBox="0 0 780 260" preserveAspectRatio="xMidYMid meet" aria-hidden focusable="false" className={s.svg}>
+        <defs>
+          <pattern id={huecos} width="22" height="22" patternUnits="userSpaceOnUse">
+            <circle cx="11" cy="11" r="1.8" fill="rgba(190,215,245,.28)" />
+          </pattern>
+          <clipPath id={clip}>
+            <rect x="-112" y="24" width="46" height="7" rx="2" />
+          </clipPath>
+        </defs>
 
-      <button
-        type="button"
-        aria-label="Reponer una herramienta del tablero"
-        onPointerDown={(e) => (puntero.current = e.pointerType)}
-        onClick={() => {
-          if (puntero.current === "touch") setTocado(true);
-          puntero.current = "";
-          reponer();
-        }}
-        className="bh-escena absolute inset-y-0 right-0 left-[55%] cursor-pointer focus-visible:outline-none md:left-[50%]"
-      >
-        {/* Ganchos con su herramienta (desde 768px; en el teléfono solo va el taladro). */}
-        {GANCHOS.map((g, i) => {
-          const id = colgadas[i];
-          const d = datos(id);
-          const sale = saliente?.gancho === i ? saliente : null;
-          return (
-            <span
-              key={i}
-              className={`absolute top-[9%] hidden left-(--x-md) xl:left-(--x) ${g.xMd === null ? "xl:block" : "md:block"}`}
-              style={{ "--x": `${g.x}%`, "--x-md": `${g.xMd ?? g.x}%` } as CSSProperties}
-            >
-              {/* Gancho: la pieza de alambre que sale del tablero. */}
-              <span className="bh-gancho absolute -top-[3px] left-1/2 block h-3 w-1.5 -translate-x-1/2 rounded-b-full border-x-2 border-b-2 border-gris-borde" />
-              {sale && (
-                <span key={`sale-${sale.vez}`} className="bh-descolgar absolute top-1 left-1/2 block" style={{ height: `${datos(sale.id).largo}cqh` }}>
-                  <Image src={`${B}${sale.id}.webp`} alt="" width={datos(sale.id).ancho} height={datos(sale.id).alto} sizes="60px" className="bh-sombra h-full w-auto max-w-none -translate-x-1/2" />
-                </span>
-              )}
-              <span
-                key={`${id}-${vez}`}
-                className={`bh-colgada absolute top-1 left-1/2 block origin-top ${vez > 0 && saliente?.gancho === i ? "bh-colgar" : ""}`}
-                style={{ height: `${d.largo}cqh`, "--i": i } as CSSProperties}
-              >
-                <Image src={`${B}${id}.webp`} alt="" width={d.ancho} height={d.alto} sizes="60px" className="bh-sombra h-full w-auto max-w-none -translate-x-1/2" />
-              </span>
-            </span>
-          );
-        })}
+        <text data-p="rpm" x="760" y="12" textAnchor="end">
+          RPM 0
+        </text>
 
-        {/* Taladro colgado en el tablero como las demás, en su gancho propio (siempre el mismo: es la estrella). Se
-            mece igual que las otras; al pasar el mouse vibra como si estuviera encendido. */}
-        <span className="absolute top-[24%] right-[26cqh] md:top-[9%] md:right-[34cqh] xl:right-[40cqh]">
-          <span className="bh-gancho absolute -top-[3px] left-1/2 block h-3 w-1.5 -translate-x-1/2 rounded-b-full border-x-2 border-b-2 border-gris-borde" />
-          <span className="bh-colgada absolute top-1 left-1/2 block h-[50cqh] origin-top md:h-[66cqh]" style={{ "--i": 4 } as CSSProperties}>
-            <span className="bh-taladro block h-full">
-              <Image src={`${H}taladro.webp`} alt="" width={515} height={640} priority sizes="(min-width: 768px) 200px, 120px" className="bh-sombra h-full w-auto max-w-none -translate-x-1/2" />
-            </span>
-          </span>
-        </span>
-      </button>
-    </div>
+        {/* tablero perforado + repisa */}
+        <rect className={s.tablero} x="20" y="16" width="752" height="206" rx="4" />
+        <rect x="20" y="16" width="752" height="206" rx="4" fill={`url(#${huecos})`} />
+        <path d="M14 222H778" stroke="#c3ccd8" strokeWidth="2" />
+        <path className={s.cota} d="M14 230H778" />
+        <text className={s.bp} x="24" y="246" style={{ fontSize: 7 }}>
+          TABLERO PERFORADO · 1.20 × 0.60 m
+        </text>
+
+        {/* siluetas punteadas (en reposo se mecen apenas en su gancho) y etiquetas */}
+        {XS.map((x, i) => (
+          <g key={`s${i}`}>
+            <g className={`${s.gh} ${s.t}`} transform={`translate(${x} 40)`}>
+              <g className={s.mece} style={{ animationDelay: `${-i * 0.7}s` }}>
+                <Herramienta i={i} real={false} clip={clip} />
+              </g>
+            </g>
+            <text className={s.bp} x={x + 12} y="34" style={{ fontSize: 6.5 }}>
+              {ETIQUETAS[i]}
+            </text>
+          </g>
+        ))}
+
+        {/* ganchos */}
+        <path
+          d={XS.map((x) => `M${x - 3} 30V40Q${x - 3} 46 ${x + 3} 46`).join("")}
+          fill="none"
+          stroke="#c3ccd8"
+          strokeWidth="2"
+          strokeLinecap="round"
+        />
+
+        {/* herramientas reales: arriba, fuera de cuadro e invisibles hasta activarse (el motor las mueve) */}
+        {XS.map((x, i) => (
+          <g key={`t${i}`} data-p={`t${i}`} className={s.t} transform={`translate(${x} -220) rotate(0)`} style={{ opacity: 0 }}>
+            <Herramienta i={i} real clip={clip} />
+          </g>
+        ))}
+
+        <g data-p="chispas" className={s.chispas} />
+      </svg>
+    </BannerPlano>
   );
 }

@@ -1,0 +1,153 @@
+/*
+ * Ilustración del banner de Herramientas, portada de banner-herramientas-v1.html (prototipo aprobado). Excepción a la
+ * regla de tokens del CLAUDE.md (como las tarjetas de categoría): colores escritos aquí, idénticos al prototipo.
+ * `--f-mono` viene de BannerPlano. Clases globales en la raíz del banner: `on` (activo) y `vivo` (esmeril y taladro
+ * encendidos).
+ */
+
+.svg {
+  --deep: #0a1f38;
+  --stroke: #c3ccd8;
+  --trace: rgba(190, 215, 245, 0.55);
+}
+.svg text {
+  font-family: var(--f-mono);
+  fill: var(--trace);
+  font-size: 9px;
+  letter-spacing: 0.08em;
+}
+
+.cota {
+  fill: none;
+  stroke: var(--trace);
+  stroke-width: 1;
+}
+.bp {
+  transition: opacity 0.5s;
+}
+:global(.on) .bp {
+  opacity: 0.25;
+}
+
+/* Tablero perforado: contorno punteado en reposo, masonite al activarse. */
+.tablero {
+  fill: transparent;
+  stroke: var(--trace);
+  stroke-width: 1;
+  stroke-dasharray: 4 4;
+  transition:
+    fill 0.6s,
+    stroke 0.6s;
+}
+:global(.on) .tablero {
+  fill: rgba(185, 139, 90, 0.14);
+  stroke: rgba(190, 215, 245, 0.25);
+  stroke-dasharray: none;
+}
+
+/* Herramientas: plano en reposo, materiales reales al activarse. */
+.t * {
+  stroke: var(--stroke);
+  stroke-width: 1.8;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+}
+.t .f {
+  fill: var(--deep);
+  transition: fill 0.5s;
+}
+:global(.on) .t .fRojo {
+  fill: #e3262f;
+}
+:global(.on) .t .fAcero {
+  fill: #aab5c3;
+}
+:global(.on) .t .fNegro {
+  fill: #1c222c;
+}
+:global(.on) .t .fMadera {
+  fill: #a0784a;
+}
+:global(.on) .t .fVial {
+  fill: #cfe98a;
+}
+.t .hole {
+  fill: #0f2a4a;
+}
+.t .no {
+  fill: none;
+}
+
+/* Siluetas del tablero (sombra de cada herramienta). */
+.gh * {
+  fill: none !important;
+  stroke: var(--trace) !important;
+  stroke-width: 1 !important;
+  stroke-dasharray: 3 3;
+}
+.gh {
+  transition: opacity 0.5s;
+}
+:global(.on) .gh {
+  opacity: 0.35;
+}
+
+/* Giro del disco y la broca. */
+.disco {
+  transform-box: fill-box;
+  transform-origin: center;
+}
+:global(.vivo) .disco {
+  animation: gira 0.18s linear infinite;
+}
+@keyframes gira {
+  to {
+    transform: rotate(360deg);
+  }
+}
+:global(.vivo) .estrias {
+  animation: estria 0.12s linear infinite;
+}
+@keyframes estria {
+  to {
+    transform: translateX(-8px);
+  }
+}
+
+.chispas line {
+  stroke: #ffc266;
+  stroke-width: 2;
+  stroke-linecap: round;
+}
+
+/* Reposo: cada silueta se mece apenas en su gancho (gira desde el origen del grupo, que es el gancho). Se detiene al
+   activarse y con "reducir movimiento". */
+.mece {
+  transform-origin: 0 0;
+  animation: mecer 3.8s ease-in-out infinite alternate;
+}
+:global(.on) .mece {
+  animation: none;
+}
+@keyframes mecer {
+  from {
+    transform: rotate(-1.4deg);
+  }
+  to {
+    transform: rotate(1.4deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mece,
+  :global(.vivo) .disco,
+  :global(.vivo) .estrias {
+    animation: none;
+  }
+  .bp,
+  .tablero,
+  .t .f,
+  .gh {
+    transition-duration: 0.01s;
+  }
+}

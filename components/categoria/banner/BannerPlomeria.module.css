@@ -1,0 +1,285 @@
+/*
+ * Ilustración del banner de Plomería, portada de banner-plomeria-v1.html (prototipo aprobado). Excepción a la regla de
+ * tokens del CLAUDE.md (como las tarjetas de categoría): colores escritos aquí, idénticos al prototipo. `--f-mono` viene
+ * de BannerPlano. Clases globales en la raíz del banner: `on` (activo), `agua` (el agua corre), `vivo` (corriente en la
+ * red) y `grifo` (sale el chorro).
+ */
+
+.svg {
+  --deep: #0a1f38;
+  --stroke: #c3ccd8;
+  --trace: rgba(190, 215, 245, 0.55);
+  --agua: #4fc3ff;
+  --oro: #c9a45c;
+  --cromo: #cfd8e3;
+}
+.svg text {
+  font-family: var(--f-mono);
+  fill: var(--trace);
+  font-size: 9px;
+  letter-spacing: 0.08em;
+}
+
+.ln {
+  stroke: var(--stroke);
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.cota {
+  fill: none;
+  stroke: var(--trace);
+  stroke-width: 1;
+}
+.bp {
+  transition: opacity 0.6s;
+}
+:global(.on) .bp {
+  opacity: 0.25;
+}
+
+/* Tubería: plano punteado en reposo; al activarse se arma con las piezas reales. */
+.plan {
+  fill: none;
+  stroke: var(--trace);
+  stroke-width: 1.2;
+  stroke-dasharray: 5 5;
+  transition: opacity 0.4s;
+}
+:global(.on) .plan {
+  opacity: 0;
+}
+.gh {
+  transition: opacity 0.4s;
+}
+.gh path,
+.gh rect {
+  fill: none;
+  stroke: var(--trace);
+  stroke-width: 1;
+  stroke-dasharray: 4 4;
+}
+:global(.on) .gh {
+  opacity: 0;
+}
+.rev {
+  fill: none;
+  stroke-linecap: butt;
+  stroke-linejoin: round;
+}
+.pzTubo path {
+  fill: none;
+  stroke: var(--stroke);
+  stroke-width: 3.2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* Corriente del agua (red y manguera). */
+.flow {
+  fill: none;
+  stroke: rgba(255, 255, 255, 0.6);
+  stroke-width: 2;
+  stroke-dasharray: 3 15;
+  opacity: 0;
+  transition: opacity 0.4s;
+}
+.flowF {
+  stroke: rgba(255, 255, 255, 0.75);
+  stroke-width: 1.2;
+}
+:global(.vivo) .flow {
+  opacity: 1;
+  animation: fluye 0.6s linear infinite;
+}
+@keyframes fluye {
+  to {
+    stroke-dashoffset: -18;
+  }
+}
+
+/* Materiales: plano en reposo, real al activarse. */
+.fill {
+  fill: var(--deep);
+  transition: fill 0.6s;
+}
+:global(.on) .fCromo {
+  fill: var(--cromo);
+}
+:global(.on) .fLoza {
+  fill: #f6f8fb;
+}
+:global(.on) .fOro {
+  fill: var(--oro);
+}
+:global(.on) .fMarmol {
+  fill: #eceff3;
+}
+:global(.on) .fMadera {
+  fill: #7a5534;
+}
+.vetas {
+  fill: none;
+  stroke: rgba(190, 215, 245, 0.3);
+  stroke-width: 0.8;
+  transition: stroke 0.6s;
+}
+:global(.on) .vetas {
+  stroke: rgba(120, 132, 150, 0.55);
+}
+.listones {
+  fill: none;
+  stroke: var(--trace);
+  stroke-width: 1;
+  transition: stroke 0.6s;
+}
+:global(.on) .listones {
+  stroke: rgba(40, 24, 12, 0.45);
+}
+.led {
+  fill: #ffe6b8;
+  opacity: 0;
+  filter: blur(1.5px);
+  transition: opacity 0.8s;
+}
+:global(.on) .led {
+  opacity: 0.9;
+}
+.brillo {
+  fill: none;
+  stroke: #fff;
+  stroke-width: 2;
+  stroke-linecap: round;
+  opacity: 0;
+  transition: opacity 0.6s;
+}
+:global(.on) .brillo {
+  opacity: 0.7;
+}
+.cano {
+  fill: none;
+  stroke: var(--stroke);
+  stroke-width: 9;
+  stroke-linecap: round;
+}
+.canoIn {
+  fill: none;
+  stroke: var(--deep);
+  stroke-width: 5;
+  stroke-linecap: round;
+  transition: stroke 0.6s;
+}
+:global(.on) .canoIn {
+  stroke: var(--oro);
+}
+
+/* Chorro y ondas en el bowl. */
+.chorro {
+  opacity: 0;
+  transition: opacity 0.25s;
+}
+:global(.grifo) .chorro {
+  opacity: 1;
+}
+.chorro rect {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: ondula 0.35s linear infinite;
+}
+@keyframes ondula {
+  0%,
+  100% {
+    transform: scaleX(1);
+  }
+  50% {
+    transform: scaleX(0.82);
+  }
+}
+.ondas ellipse {
+  fill: none;
+  stroke: var(--agua);
+  stroke-width: 1.2;
+  opacity: 0;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+:global(.grifo) .ondas ellipse {
+  animation: onda 1.2s ease-out infinite;
+}
+:global(.grifo) .ondas ellipse:nth-child(2) {
+  animation-delay: 0.4s;
+}
+:global(.grifo) .ondas ellipse:nth-child(3) {
+  animation-delay: 0.8s;
+}
+@keyframes onda {
+  0% {
+    opacity: 0.9;
+    transform: scale(0.2);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1);
+  }
+}
+
+/* Brillo azul del agua (el de BannerPlano está apagado con --brillo-on: 0). */
+.brilloAgua {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 1s;
+  background: radial-gradient(98% 120% at 39% 60%, rgba(79, 195, 255, 0.22), transparent 70%);
+}
+:global(.agua) .brilloAgua {
+  opacity: 1;
+}
+
+/* Reposo: una gota cae del grifo de vez en cuando. Se detiene al activarse y con "reducir movimiento". */
+.gota {
+  opacity: 0;
+  animation: gotea 3.6s ease-in infinite;
+}
+:global(.on) .gota {
+  animation: none;
+}
+@keyframes gotea {
+  0%,
+  70% {
+    opacity: 0;
+    transform: translateY(0);
+  }
+  74% {
+    opacity: 0.9;
+    transform: translateY(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(46px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gota,
+  .chorro rect,
+  :global(.grifo) .ondas ellipse,
+  :global(.vivo) .flow {
+    animation: none;
+  }
+  .bp,
+  .plan,
+  .gh,
+  .fill,
+  .vetas,
+  .listones,
+  .led,
+  .brillo,
+  .canoIn,
+  .chorro,
+  .flow,
+  .brilloAgua {
+    transition-duration: 0.01s;
+  }
+}
