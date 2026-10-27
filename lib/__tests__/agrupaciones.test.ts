@@ -120,16 +120,19 @@ describe("agrupar", () => {
     }
   });
 
-  it("los dados largos Stanley (estría y hexagonal) llevan la foto del dado largo Stanley", () => {
+  it("los dados largos Stanley llevan su foto: una el de estría y otra el hexagonal", () => {
     const { grupos: g } = agrupar([
       p("STLY0496", "STANLEY DADO LARGO ESTRIA 1/2X 10M", 13.26, "STANLEY"),
       p("STLY0490", "STANLEY DADO LARG ESTRIA 1/2X16M", 15.58, "STANLEY"),
       p("STLY2092", "STANLEY DADOS LARG.HEX.1/4X 12MM 86100G", 6.81, "STANLEY"),
       p("STLY0519", "STANLEY DADO LARGO MET.1/4X5.5MM HEX.", 10.14, "STANLEY"),
     ]);
-    for (const id of ["grupo-dado-estria-largo-stanley", "grupo-dado-hexagonal-largo-stanley"]) {
+    for (const [id, foto] of [
+      ["grupo-dado-estria-largo-stanley", /dado-largo-estria-stanley/],
+      ["grupo-dado-hexagonal-largo-stanley", /dado-largo-stanley.webp/],
+    ] as const) {
       const grupo = g.get(id)!;
-      expect(grupo.tarjeta.imagen).toMatch(/dado-largo-stanley/);
+      expect(grupo.tarjeta.imagen).toMatch(foto);
       expect(grupo.variantes.every((v) => v.producto.imagen === grupo.tarjeta.imagen)).toBe(true);
     }
   });

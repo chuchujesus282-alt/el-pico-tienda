@@ -13,7 +13,8 @@ import type { Producto } from "@/types/catalogo";
 /** Foto de cada familia (public/productos/grupos/). */
 const FOTO_LLAVE = "/productos/grupos/llave-combinada-cromada.webp";
 const FOTO_DADO = "/productos/grupos/dado-cromado.webp"; // solo dados Acesa
-const FOTO_DADO_LARGO_STANLEY = "/productos/grupos/dado-largo-stanley.webp";
+const FOTO_DADO_LARGO_STANLEY = "/productos/grupos/dado-largo-stanley.webp"; // hexagonal largo
+const FOTO_DADO_LARGO_ESTRIA_STANLEY = "/productos/grupos/dado-largo-estria-stanley.webp";
 
 /** Fotos sueltas por código de Saint (public/productos/{codigo}.webp). */
 export const FOTOS_SAINT: Record<string, string> = {
@@ -25,7 +26,7 @@ type Seccion = "sistema" | "encastre";
 /**
  * Definición de cada grupo: título que se muestra, foto y cómo se ordenan sus medidas. `imagen: null`: sin foto (la
  * tarjeta muestra el ícono de la subcategoría). Cada foto es SOLO de su marca y tipo (pedido de persona B): la del dado
- * cromado, de los Acesa; la del dado largo Stanley, de los dos grupos de dados largos Stanley; los demás dados van sin
+ * cromado, de los Acesa; las de los dados largos Stanley, una para el de estría y otra para el hexagonal; los demás dados van sin
  * foto hasta tener la suya.
  * `sinMarca`: la tarjeta no muestra marca (en Saint vienen "CHINO", "DADO CHINO" o vacía).
  */
@@ -38,7 +39,7 @@ const GRUPOS: Record<string, { titulo: string; imagen: string | null; seccion: S
   "dado-proto": { titulo: "Dado estándar Proto", imagen: null, seccion: "encastre" },
   "dado-largo-proto": { titulo: "Dado largo Proto", imagen: null, seccion: "encastre" },
   "dado-estria-corto-stanley": { titulo: "Dado de estría corto Stanley", imagen: null, seccion: "encastre" },
-  "dado-estria-largo-stanley": { titulo: "Dado de estría largo Stanley", imagen: FOTO_DADO_LARGO_STANLEY, seccion: "encastre" },
+  "dado-estria-largo-stanley": { titulo: "Dado de estría largo Stanley", imagen: FOTO_DADO_LARGO_ESTRIA_STANLEY, seccion: "encastre" },
   "dado-hexagonal-corto-stanley": { titulo: "Dado hexagonal corto Stanley", imagen: null, seccion: "encastre" },
   "dado-hexagonal-largo-stanley": { titulo: "Dado hexagonal largo Stanley", imagen: FOTO_DADO_LARGO_STANLEY, seccion: "encastre" },
   "dado-encastre-3-4-stanley": { titulo: 'Dado Stanley de encastre 3/4"', imagen: null, seccion: null },
