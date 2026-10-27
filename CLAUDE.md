@@ -12,6 +12,7 @@ Next.js 16 (APIs distintas a las que conoces; consulta `node_modules/next/dist/d
 ## Fase actual del proyecto
 - Fase 1: catálogo por categorías con precios. El carrito NO cobra: arma un mensaje y redirige a WhatsApp para cerrar la venta.
 - No hay inventario ni existencias en esta fase. No mostrar "disponible/agotado".
+- **Trabajo pendiente (persona A):** buscador y sugerencias desde el servidor, antes de conectar otra categoría de Saint, y códigos de las calculadoras por revisar con persona B. Todo en `docs/pendiente-buscador-servidor.md`.
 
 ## Comandos
 - `npm run dev` — servidor local en http://localhost:3000
