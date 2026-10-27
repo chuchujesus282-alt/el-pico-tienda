@@ -1,4 +1,5 @@
 import type { Producto } from "@/types/catalogo";
+import { clasificarGenerico, GRUPOS_GENERICOS, ORDEN_SECCIONES } from "@/lib/agrupacionesGenericas";
 
 // Agrupación de productos de Saint que son el MISMO producto en distintas medidas (llave combinada Acesa 8 mm, 10 mm…;
 // dados por marca y tipo). En la lista de la categoría cada grupo sale como UNA tarjeta ("Desde $X") y en su página se
@@ -21,7 +22,9 @@ export const FOTOS_SAINT: Record<string, string> = {
   "3M0015": "/productos/3M0015.webp", // mopa de pulir azul doble cara 8" 3M
 };
 
-type Seccion = "sistema" | "encastre";
+/** Cómo se dividen las medidas en el selector: milímetros/pulgadas, encastre del dado, o una sección propia que da la
+ * regla de cada producto ("Punta redonda", "Rosca fina NF", 'Diámetro 1/4"'…). */
+type Seccion = "sistema" | "encastre" | "propia";
 
 /**
  * Definición de cada grupo: título que se muestra, foto y cómo se ordenan sus medidas. `imagen: null`: sin foto (la
@@ -30,7 +33,15 @@ type Seccion = "sistema" | "encastre";
  * foto hasta tener la suya.
  * `sinMarca`: la tarjeta no muestra marca (en Saint vienen "CHINO", "DADO CHINO" o vacía).
  */
-const GRUPOS: Record<string, { titulo: string; imagen: string | null; seccion: Seccion | null; sinMarca?: boolean }> = {
+type DefGrupo = {
+  titulo: string;
+  imagen: string | null;
+  seccion: Seccion | null;
+  sinMarca?: boolean;
+  /** El nombre de cada medida lleva también su sección: 'Cuchara de albañil 8" punta redonda'. */
+  seccionEnTitulo?: boolean;
+};
+const GRUPOS: Record<string, DefGrupo> = {
   "llave-combinada-acesa": { titulo: "Llave combinada Acesa", imagen: FOTO_LLAVE, seccion: "sistema" },
   "dado-acesa": { titulo: "Dado Acesa", imagen: FOTO_DADO, seccion: "encastre" },
   "dado-economico": { titulo: "Dado económico", imagen: null, seccion: "encastre", sinMarca: true },
@@ -46,6 +57,8 @@ const GRUPOS: Record<string, { titulo: string; imagen: string | null; seccion: S
   "dado-punta-stanley": { titulo: "Dado de punta Stanley", imagen: null, seccion: "encastre" },
   "dado-torx-stanley": { titulo: "Dado torx Stanley", imagen: null, seccion: "encastre" },
   "dado-hexagonal-corto-promaker": { titulo: "Dado hexagonal corto Stanley Promaker", imagen: null, seccion: "encastre" },
+  // Genéricos sin marca importante (lib/agrupacionesGenericas.ts): agrupados por medida, por ahora sin foto.
+  ...GRUPOS_GENERICOS,
 };
 
 /** Prefijo de los ids de grupo (así nunca chocan con un código de Saint). */
@@ -78,23 +91,28 @@ const ORDEN_ENCASTRE = ["1/4", "3/8", "1/2", "3/4"];
 
 /** "15MM" → "15 mm"; "1.1/4" / "1 1/4" → '1-1/4"'; "9/16" → '9/16"'; "T-30S" → "T30 seguridad"; "E18" → "E18". */
 export function leerMedida(texto: string): string | null {
-  const t = texto.trim().toUpperCase();
+  // "10,5 mm" → 10.5 (decimales con coma, como vienen en Saint).
+  const t = texto.trim().toUpperCase().replace(/(\d),(\d)/g, "$1.$2");
   let m: RegExpMatchArray | null;
+  const mm = (n: string) => `${String(Number(n)).replace(".", ",")} mm`;
   if ((m = t.match(/^T-?(\d+)(S?)\b/))) return `T${m[1]}${m[2] ? " seguridad" : ""}`;
   if ((m = t.match(/^E(\d+)\b/))) return `E${m[1]}`;
   if ((m = t.match(/^(\d+)[ .-](\d+\/\d+)/))) return `${m[1]}-${m[2]}"`;
   if ((m = t.match(/^(\d+\/\d+)/))) return `${m[1]}"`;
-  if ((m = t.match(/^(\d+(?:\.\d+)?)\s*M{1,2}\b/))) return `${Number(m[1])} mm`;
-  if ((m = t.match(/^(\d+(?:\.\d+)?)(?![\d/])/))) return `${Number(m[1])} mm`;
+  if ((m = t.match(/^(\d+(?:\.\d+)?)\s*M{1,2}\b/))) return mm(m[1]);
+  if ((m = t.match(/^(\d+(?:\.\d+)?)"/))) return `${Number(m[1])}"`; // pulgadas enteras: 10"
+  if ((m = t.match(/^(\d+(?:\.\d+)?)(?![\d/])/))) return mm(m[1]);
   return null;
 }
 
 /** Valor para ordenar las medidas de menor a mayor (en mm; torx y hembra al final, por su número). */
 export function valorMedida(etiqueta: string): number {
   let m: RegExpMatchArray | null;
-  if ((m = etiqueta.match(/^(\d+(?:\.\d+)?) mm/))) return Number(m[1]);
+  if ((m = etiqueta.match(/^(\d+(?:[.,]\d+)?) mm/))) return Number(m[1].replace(",", "."));
+  if ((m = etiqueta.match(/^(\d+(?:\.\d+)?)"/))) return Number(m[1]) * 25.4;
   if ((m = etiqueta.match(/^(\d+)-(\d+)\/(\d+)"/))) return (Number(m[1]) + Number(m[2]) / Number(m[3])) * 25.4;
   if ((m = etiqueta.match(/^(\d+)\/(\d+)"/))) return (Number(m[1]) / Number(m[2])) * 25.4;
+  if ((m = etiqueta.match(/^M(\d+) × (\d+(?:,\d+)?)/))) return Number(m[1]) + Number(m[2].replace(",", ".")) / 100; // machos M10 × 1,25
   if ((m = etiqueta.match(/^T(\d+)/))) return 1000 + Number(m[1]);
   if ((m = etiqueta.match(/^E(\d+)/))) return 2000 + Number(m[1]);
   return 9999;
@@ -108,11 +126,14 @@ function medidaDeDado(nombre: string): { encastre: string | null; medida: string
   return { encastre: m[1], medida: leerMedida(resto) };
 }
 
-type Clasificado = { grupo: string; etiqueta: string; encastre: string | null };
+export type Clasificado = { grupo: string; etiqueta: string; encastre: string | null; seccion?: string; detalle?: string };
 
 /** ¿A qué grupo va este producto y con qué medida? null: queda suelto. */
-export function clasificar(nombre: string): Clasificado | null {
+export function clasificar(nombre: string, marca: string | null = null): Clasificado | null {
   const n = nombre.toUpperCase().replace(/\s+/g, " ").trim();
+  // Genéricos (mechas, rolineras, retenes, limas…): undefined = no es de esas familias.
+  const generico = clasificarGenerico(n, marca, leerMedida);
+  if (generico !== undefined) return generico;
 
   // Llaves combinadas Acesa (solo Acesa, a pedido de persona B).
   let m = n.match(/^ACESA LLAVE COMBINADA PROFESIONAL (.+)$/);
@@ -152,6 +173,7 @@ export function clasificar(nombre: string): Clasificado | null {
 }
 
 const tituloSeccion = (seccion: Seccion | null, c: Clasificado): string | null => {
+  if (seccion === "propia") return c.seccion ?? null;
   if (seccion === "encastre") return c.encastre ? `Encastre ${c.encastre}"` : null;
   if (seccion === "sistema") return c.etiqueta.endsWith(" mm") ? "Milímetros" : "Pulgadas";
   return null;
@@ -161,7 +183,12 @@ const ordenSeccion = (seccion: string | null) => {
   if (seccion === "Milímetros") return 0;
   if (seccion === "Pulgadas") return 1;
   const i = ORDEN_ENCASTRE.findIndex((e) => seccion === `Encastre ${e}"`);
-  return i === -1 ? 9 : i;
+  if (i !== -1) return i;
+  const j = ORDEN_SECCIONES.indexOf(seccion);
+  if (j !== -1) return 10 + j;
+  // 'Diámetro 1/4"', "Serie 471"…: por la medida o el número del final.
+  const fin = seccion.split(" ").at(-1) ?? "";
+  return 100 + (fin.includes("/") ? valorMedida(fin.endsWith('"') ? fin : `${fin}"`) : Number(fin) || 0);
 };
 
 /**
@@ -180,7 +207,7 @@ export function agrupar(lista: Producto[]): {
   const clasificados = new Map<string, Clasificado>();
   const miembros = new Map<string, Producto[]>();
   for (const p of lista) {
-    const c = clasificar(p.nombre);
+    const c = clasificar(p.nombre, p.marca);
     if (!c) continue;
     clasificados.set(p.id, c);
     miembros.set(c.grupo, [...(miembros.get(c.grupo) ?? []), p]);
@@ -198,7 +225,13 @@ export function agrupar(lista: Producto[]): {
         const c = clasificados.get(p.id)!;
         const seccion = tituloSeccion(def.seccion, c);
         // En el nombre de la medida va también el encastre del dado: 'Dado … 1/2" × 17 mm'.
-        const detalle = c.encastre && def.seccion === "encastre" ? `${c.encastre}" × ${c.etiqueta}` : c.etiqueta;
+        const detalle = c.detalle
+          ? c.detalle
+          : c.encastre && def.seccion === "encastre"
+            ? `${c.encastre}" × ${c.etiqueta}`
+            : def.seccionEnTitulo && seccion
+              ? `${c.etiqueta} ${seccion.toLowerCase()}`
+              : c.etiqueta;
         const producto: Producto = { ...p, titulo: `${def.titulo} ${detalle}`, imagen: def.imagen ?? p.imagen };
         reemplazos.set(p.id, producto);
         grupoDe.set(p.id, id);
@@ -208,7 +241,7 @@ export function agrupar(lista: Producto[]): {
         (a, b) =>
           ordenSeccion(a.seccion) - ordenSeccion(b.seccion) ||
           valorMedida(a.etiqueta) - valorMedida(b.etiqueta) ||
-          a.etiqueta.localeCompare(b.etiqueta),
+          a.etiqueta.localeCompare(b.etiqueta, "es", { numeric: true }),
       );
     // Dos medidas con el mismo nombre (pasa en Saint): se distinguen por su código.
     const repetidas = new Set<string>();

@@ -19,7 +19,9 @@ describe("leerMedida", () => {
     expect(leerMedida("15MM\"")).toBe("15 mm");
     expect(leerMedida("09MM 4709TM")).toBe("9 mm");
     expect(leerMedida("19M")).toBe("19 mm");
-    expect(leerMedida("5.5MM HEX.")).toBe("5.5 mm");
+    expect(leerMedida("5.5MM HEX.")).toBe("5,5 mm");
+    expect(leerMedida("10,5 mm")).toBe("10,5 mm");
+    expect(leerMedida('10"')).toBe('10"');
     expect(leerMedida("1.1/4")).toBe('1-1/4"');
     expect(leerMedida('1 1/4"')).toBe('1-1/4"');
     expect(leerMedida("15/16")).toBe('15/16"');
@@ -59,6 +61,22 @@ describe("clasificar", () => {
     expect(clasificar("STANLEY/PROMAKER DADO HEX CORTO 1/2X 5/8")).toMatchObject({ grupo: "dado-hexagonal-corto-promaker", etiqueta: '5/8"' });
     expect(clasificar("PROTO DADO LARGOS 6 PTAS. 1/4 X 5/16\"")).toMatchObject({ grupo: "dado-largo-proto", etiqueta: '5/16"' });
     expect(clasificar("DADO MAGNETICO 45MM X 5/16")).toMatchObject({ grupo: "dado-magnetico-ferrezaga", etiqueta: '5/16"' });
+  });
+
+  it("genéricos: mechas, repuestos y herramientas de mano", () => {
+    expect(clasificar("MECHA PARA HIERRO HSS 10,5 mm", "TORNERIA")).toMatchObject({ grupo: "mecha-hierro-hss", etiqueta: "10,5 mm" });
+    expect(clasificar("MECHAS WIDIA 12mm O 1/2", "TORNERIA")).toMatchObject({ grupo: "mecha-widia", etiqueta: '12 mm / 1/2"' });
+    expect(clasificar('MECHA P/CONCRETO 1/2" LARGA ECONOMICA', "TORNERIA")).toMatchObject({ etiqueta: '1/2"', seccion: "Económica" });
+    expect(clasificar("ROLINERA MOD 6309.ZZ.C3", "TORNERIA")).toMatchObject({ grupo: "rolinera", etiqueta: "6309 ZZ C3", seccion: "Serie 63" });
+    expect(clasificar("RETEN 472-052 472-050", null)).toMatchObject({ grupo: "reten", etiqueta: "472-052 / 472-050" });
+    expect(clasificar("JGO. MACHO 10 X 1,25 MM", "TORNERIA")).toMatchObject({ etiqueta: "M10 × 1,25", seccion: "Métrico" });
+    expect(clasificar("JGO. MACHO NF 5/16", "TORNERIA")).toMatchObject({ etiqueta: '5/16"', seccion: "Rosca fina NF" });
+    expect(clasificar("PASADOR PRESION 1/8x1-1/4", "TORNILLOS")).toMatchObject({ etiqueta: '1-1/4"', detalle: '1/8" × 1-1/4"' });
+    expect(clasificar("CUCHARA PARA ALBANIL PTA. REDONDA 8\"", null)).toMatchObject({ etiqueta: '8"', seccion: "Punta redonda" });
+    expect(clasificar("CORREA INDUSTRIAL TIPO A MOD a-17 o A-18", "CORREAS IND")).toMatchObject({ grupo: "correa-a", etiqueta: "A-17 / A-18" });
+    // Con una marca real, aunque el nombre coincida, queda suelto.
+    expect(clasificar('LIMA TRIANGULAR 4"', "NICHOL")).toBeNull();
+    expect(clasificar('MECHA P/CONCRETO SDS PLUS 1/2X6"', "MILWAUKEE")).toBeNull();
   });
 
   it("los sueltos quedan sueltos", () => {
