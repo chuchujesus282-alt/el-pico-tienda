@@ -1,7 +1,12 @@
 "use client";
 
 import { useEffect } from "react";
-import { accionGuardarDatosCuenta, accionLeerDatosCuenta, accionSincronizarAlEntrar } from "@/app/mi-cuenta/acciones";
+import {
+  accionGuardarDatosCuenta,
+  accionLeerDatosCuenta,
+  accionOlvidarVisitante,
+  accionSincronizarAlEntrar,
+} from "@/app/mi-cuenta/acciones";
 import { guardarItems, obtenerItems, suscribir as suscribirCarrito } from "@/components/carrito/almacenCarrito";
 import { obtenerFavoritos, reemplazarFavoritos, suscribirFavoritos } from "@/components/favoritos/almacenFavoritos";
 import { authCliente } from "@/lib/authCliente";
@@ -12,7 +17,8 @@ import { authCliente } from "@/lib/authCliente";
 // - En las visitas siguientes: manda lo de la cuenta (lo que quitaste en otro dispositivo no reaparece).
 // - Cada cambio (agregar, quitar, cambiar cantidad, marcar favorito) se guarda en la cuenta medio segundo después.
 // - Al cerrar sesión (o si la sesión venció): se vacían el carrito y los favoritos de ESTE navegador, por si es una
-//   computadora compartida. Siguen guardados en la cuenta y vuelven al entrar.
+//   computadora compartida. Siguen guardados en la cuenta y vuelven al entrar. También se cambia el código de
+//   visitante de los eventos para análisis (lib/eventos/), para no mezclar a la próxima persona con esta cuenta.
 
 /** De quién son el carrito y los favoritos que hay en este navegador (id de la cuenta), o nada si son de un visitante. */
 const MARCA = "el-pico:cuenta";
@@ -50,6 +56,7 @@ export default function SincronizarCuenta() {
         guardarItems([]);
         reemplazarFavoritos([]);
         ponerMarca(null);
+        void accionOlvidarVisitante().catch(() => {});
       }
       return;
     }

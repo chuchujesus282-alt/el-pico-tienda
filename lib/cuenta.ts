@@ -7,6 +7,7 @@ import { headers } from "next/headers";
 import { validarDatosFiscales } from "@/components/cuenta/datosFiscales";
 import { auth } from "@/lib/auth";
 import { getIndiceConEstado } from "@/lib/catalogo";
+import { vincularVisitante } from "@/lib/eventos/servidor";
 import { correosDisponibles } from "@/lib/correo";
 import { db } from "@/lib/db";
 import { carritoItem, favorito, perfil, user } from "@/lib/db/esquema";
@@ -291,6 +292,8 @@ async function conProductos(lineas: LineaCarrito[]): Promise<ItemCarrito[] | nul
 export async function sincronizarAlEntrar(navegador: { carrito: unknown; favoritos: unknown }): Promise<DatosCuenta | null> {
   const cliente = await usuarioActual();
   if (!cliente) return null;
+  // Los eventos de este navegador (de antes de entrar y de después) quedan unidos a la cuenta. Nunca falla.
+  const vinculo = vincularVisitante(cliente.id);
   try {
     const cuenta = await leerLineas(cliente.id);
     const carrito = mezclarCarrito(limpiarCarrito(navegador.carrito), cuenta.carrito);
@@ -301,6 +304,8 @@ export async function sincronizarAlEntrar(navegador: { carrito: unknown; favorit
   } catch (error) {
     console.error("[cuenta] No se pudo sincronizar el carrito y los favoritos:", error);
     return null;
+  } finally {
+    await vinculo;
   }
 }
 
@@ -308,6 +313,8 @@ export async function sincronizarAlEntrar(navegador: { carrito: unknown; favorit
 export async function leerDatosCuenta(): Promise<DatosCuenta | null> {
   const cliente = await usuarioActual();
   if (!cliente) return null;
+  // También en cada visita: si la cookie del visitante se creó después de entrar, aquí queda vinculada.
+  const vinculo = vincularVisitante(cliente.id);
   try {
     const { carrito, favoritos } = await leerLineas(cliente.id);
     const conDatos = await conProductos(carrito);
@@ -315,6 +322,8 @@ export async function leerDatosCuenta(): Promise<DatosCuenta | null> {
   } catch (error) {
     console.error("[cuenta] No se pudo leer el carrito y los favoritos:", error);
     return null;
+  } finally {
+    await vinculo;
   }
 }
 

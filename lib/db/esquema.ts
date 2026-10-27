@@ -2,7 +2,20 @@
 // Cambiar algo aquí exige una migración nueva: `npm run db:generate` (crea el SQL en drizzle/) y `npm run db:migrate`.
 // En TypeScript los campos van en camelCase (así los pide Better Auth); en la base de datos, en snake_case.
 
-import { bigint, boolean, index, integer, pgTable, primaryKey, text, timestamp, uniqueIndex } from "drizzle-orm/pg-core";
+import {
+  bigint,
+  boolean,
+  date,
+  index,
+  integer,
+  pgEnum,
+  pgTable,
+  primaryKey,
+  text,
+  timestamp,
+  uniqueIndex,
+  uuid,
+} from "drizzle-orm/pg-core";
 
 const creadoEn = () => timestamp("created_at", { withTimezone: true }).notNull().defaultNow();
 const actualizadoEn = () =>
@@ -147,3 +160,84 @@ export const limiteIntento = pgTable("limite_intento", {
   conteo: integer("conteo").notNull(),
   inicio: timestamp("inicio", { withTimezone: true }).notNull(),
 });
+
+/* ---------- Eventos para análisis (lib/eventos/, docs/eventos.md) ---------- */
+// Livianos a propósito (Neon gratis: 1 GB): sin IP, sin navegador, sin nombres de producto ni datos personales.
+// Las fechas se guardan en UTC (timestamptz); las consultas las pasan a hora de Caracas.
+
+/** Tipos de evento. "pedido_enviado" queda listo para la fase 5 (todavía no se acepta desde el navegador). */
+export const tipoEvento = pgEnum("tipo_evento", [
+  "producto_visto",
+  "categoria_vista",
+  "busqueda",
+  "carrito",
+  "favorito",
+  "pedido_enviado",
+]);
+
+/**
+ * Un evento. `visitante` es el código al azar de la cookie "el-pico-visitante" (no identifica a nadie); la cuenta,
+ * si la hay, sale de `visitante_cuenta`. Se guardan 12 meses; antes de borrarlos se resumen por mes.
+ */
+export const evento = pgTable(
+  "evento",
+  {
+    id: bigint("id", { mode: "number" }).primaryKey().generatedAlwaysAsIdentity(),
+    tipo: tipoEvento("tipo").notNull(),
+    visitante: uuid("visitante").notNull(),
+    productoId: text("producto_id"), // código (producto_visto, carrito, favorito, pedido_enviado)
+    categoria: text("categoria"), // slug de la web (categoria_vista)
+    subcategoria: text("subcategoria"), // código de Saint (o el nombre, en las categorías de ejemplo)
+    termino: text("termino"), // búsqueda: minúsculas, máx. 60 caracteres
+    resultados: integer("resultados"), // búsqueda: cuántos productos encontró (0 = sin resultados)
+    createdAt: creadoEn(),
+  },
+  (t) => [
+    // Para "no repetir en 30 minutos" y para vincular a la cuenta.
+    index("evento_visitante_fecha_idx").on(t.visitante, t.createdAt),
+    // BRIN: casi no ocupa espacio y sirve para buscar por fecha (resúmenes, limpieza, consultas por mes).
+    index("evento_fecha_brin_idx").using("brin", t.createdAt),
+  ],
+);
+
+/** De qué cuenta es cada visitante (se anota al entrar). Una cuenta puede tener varios (teléfono, PC…). */
+export const visitanteCuenta = pgTable(
+  "visitante_cuenta",
+  {
+    visitante: uuid("visitante").primaryKey(),
+    userId: text("user_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    createdAt: creadoEn(),
+  },
+  (t) => [index("visitante_cuenta_user_id_idx").on(t.userId)],
+);
+
+/**
+ * Resumen mensual (para siempre) de los eventos que ya se borraron: cuántos de cada tipo por producto o categoría.
+ * `mes` es el primer día del mes en hora de Caracas. Los campos que no aplican van como "" (no NULL) para la clave.
+ */
+export const resumenEventoMes = pgTable(
+  "resumen_evento_mes",
+  {
+    mes: date("mes").notNull(),
+    tipo: tipoEvento("tipo").notNull(),
+    productoId: text("producto_id").notNull().default(""),
+    categoria: text("categoria").notNull().default(""),
+    subcategoria: text("subcategoria").notNull().default(""),
+    cantidad: integer("cantidad").notNull(),
+  },
+  (t) => [primaryKey({ columns: [t.mes, t.tipo, t.productoId, t.categoria, t.subcategoria] })],
+);
+
+/** Resumen mensual (para siempre) de las búsquedas ya borradas: cuántas veces y cuántas sin resultados. */
+export const resumenBusquedaMes = pgTable(
+  "resumen_busqueda_mes",
+  {
+    mes: date("mes").notNull(),
+    termino: text("termino").notNull(),
+    cantidad: integer("cantidad").notNull(),
+    sinResultados: integer("sin_resultados").notNull(),
+  },
+  (t) => [primaryKey({ columns: [t.mes, t.termino] })],
+);

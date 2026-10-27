@@ -1,6 +1,7 @@
 "use server";
 
 import { guardarDatosCuenta, guardarPerfil, leerDatosCuenta, sincronizarAlEntrar } from "@/lib/cuenta";
+import { olvidarVisitante } from "@/lib/eventos/servidor";
 import type { DatosCuenta, DatosFiscales, ResultadoCuenta } from "@/types/cuenta";
 
 // Acciones de la cuenta con la sesión abierta. Todo lo que llega del navegador se revisa en lib/cuenta.ts.
@@ -23,4 +24,9 @@ export async function accionLeerDatosCuenta(): Promise<DatosCuenta | null> {
 /** Después de cada cambio en el navegador: lo guarda en la cuenta. */
 export async function accionGuardarDatosCuenta(datos: { carrito?: unknown; favoritos?: unknown }): Promise<boolean> {
   return guardarDatosCuenta(datos ?? {});
+}
+
+/** Al cerrar sesión: el visitante de este navegador empieza con un código nuevo (lib/eventos/servidor.ts). */
+export async function accionOlvidarVisitante(): Promise<void> {
+  await olvidarVisitante();
 }
