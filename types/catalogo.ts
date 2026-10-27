@@ -3,8 +3,11 @@
 export type Producto = {
   id: string; // código del producto en el sistema
   nombre: string;
+  titulo?: string; // ya listo para mostrar (productos de Saint, lib/nombresSaint.ts); si falta, tituloProducto() lo arma
   marca: string | null;
   precio: number; // en USD, sin formato
+  precioBs?: number; // en bolívares con IVA, tal como lo da Saint (solo productos de Saint)
+  tasa?: number; // tasa BCV con la que Saint calculó el precio en dólares (precio = precioBs / tasa)
   imagen: string | null; // URL absoluta o null
   categoriaSlug: string;
   subcategoria: string | null;
@@ -23,8 +26,9 @@ export type ResultadoCategoria = {
   total: number;
   pagina: number;
   porPagina: number;
-  marcas: string[]; // para el filtro
+  marcas: string[]; // para el filtro (vacío: el filtro no se muestra)
   subcategorias: string[]; // para el filtro
+  cantidades?: Record<string, number>; // productos de cada subcategoría (Saint), al lado del filtro
 };
 
 export type OrdenProductos = "relevancia" | "precio-asc" | "precio-desc" | "nombre";
@@ -35,6 +39,7 @@ export type OpcionesCategoria = {
   marca?: string;
   subcategoria?: string;
   orden?: OrdenProductos;
+  q?: string; // búsqueda dentro de la categoría (nombre, código o marca)
 };
 
 /** Producto que suele comprarse junto con otro (sale de las facturas del SQL). */

@@ -10,8 +10,8 @@ export const revalidate = 300;
  * Solo los campos que usan el buscador, "Te puede interesar" y favoritos (ProductCard). La descripción, cuando la
  * base de datos la traiga, NO viaja: con miles de productos haría la descarga varias veces más pesada.
  */
-function paraNavegador({ id, nombre, marca, precio, imagen, categoriaSlug, subcategoria, ventas }: Producto): Producto {
-  return { id, nombre, marca, precio, imagen, categoriaSlug, subcategoria, ventas };
+function paraNavegador({ id, nombre, titulo, marca, precio, imagen, categoriaSlug, subcategoria, ventas }: Producto): Producto {
+  return { id, nombre, titulo, marca, precio, imagen, categoriaSlug, subcategoria, ventas };
 }
 
 export async function GET() {

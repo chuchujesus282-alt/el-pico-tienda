@@ -38,22 +38,7 @@ export const productosMock: Producto[] = [
     ["00201658", "PEGA PARA PVC 1/4 GALON", "ADHEMAX", 7.9, "Adhesivos", 120],
     ["00201682", 'CINTA TEFLON 1/2" X 10MTS', "AQUAFLEX", 0.5, "Conexiones", 420],
   ]),
-  ...crear("herramientas", [
-    ["00302011", "TALADRO PERCUTOR 1/2\" 650W", "PROTEK", 68.5, "Eléctricas", 34],
-    ["00302045", "MARTILLO UÑA 16OZ MANGO FIBRA", "FORJAMAX", 9.2, "Manuales", 76],
-    ["00302088", "JUEGO DE DESTORNILLADORES 6 PIEZAS", "FORJAMAX", 12.4, "Manuales", 49],
-    ["00302130", 'ESMERIL ANGULAR 4 1/2" 820W', "PROTEK", 54.99, "Eléctricas", 27],
-    ["00302177", "CINTA METRICA 5MTS X 19MM", "MEDIPRO", 5.6, "Medición", 95],
-    ["00302204", 'BROCA PARA CONCRETO 3/8" X 6"', "PROTEK", 2.8, "Brocas", 160],
-    ["00302228", 'BROCA PARA CONCRETO 1/4" X 4"', "PROTEK", 1.95, "Brocas", 210],
-    ["00302252", 'BROCA PARA METAL HSS 3/8"', "FORJAMAX", 3.6, "Brocas", 72],
-    ["00302276", 'DESTORNILLADOR DE PALA 1/4" X 4"', "FORJAMAX", 2.4, "Manuales", 110],
-    ["00302290", 'LLAVE AJUSTABLE 10" CROMADA', "FORJAMAX", 8.75, "Manuales", 66],
-    ["00302314", 'ARCO DE SEGUETA 12" CON HOJA', "FORJAMAX", 6.2, "Manuales", 41],
-    // Materiales de las calculadoras de proyectos (precios de prueba, referenciales del mercado venezolano).
-    ["00302338", 'NIVEL DE ALUMINIO 24"', "MEDIPRO", 9.4, "Medición", 44],
-    ["00302354", 'ESPATULA DE ACERO 4" MANGO MADERA', "FORJAMAX", 3.1, "Manuales", 61],
-  ]),
+  // Herramientas ya no tiene productos de ejemplo: vienen de Saint (lib/categoriasSaint.ts).
   ...crear("electricidad", [
     ["00403002", "BOMBILLO LED 12W LUZ BLANCA E27", "LUMEN", 2.35, "Iluminación", 380],
     ["00403019", "CABLE THW #12 ROLLO 100MTS", "CONDUVEN", 89.0, "Cables", 38],

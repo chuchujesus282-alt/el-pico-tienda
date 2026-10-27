@@ -8,6 +8,9 @@ import ImagenProducto from "@/components/producto/ImagenProducto";
 type Props = {
   src: string | null;
   alt: string;
+  /** Para la imagen genérica cuando no hay foto (ícono de la subcategoría). */
+  categoria?: string;
+  subcategoria?: string | null;
 };
 
 const sinSuscripcion = () => () => {};
@@ -25,7 +28,7 @@ function origen(e: { clientX: number; clientY: number; currentTarget: Element })
  * - Con mouse: lupa que amplía la zona bajo el cursor.
  * - Clic / toque: abre la imagen a pantalla completa, donde se puede acercar y recorrer.
  */
-export default function GaleriaZoom({ src, alt }: Props) {
+export default function GaleriaZoom({ src, alt, categoria, subcategoria }: Props) {
   const [lupa, setLupa] = useState<string | null>(null); // transform-origin mientras el mouse está encima
   const [abierta, setAbierta] = useState(false);
   // La imagen grande se monta la primera vez que se abre (y queda para la animación de cierre):
@@ -55,6 +58,15 @@ export default function GaleriaZoom({ src, alt }: Props) {
     setAbierta(true);
     setUsada(true);
   };
+
+  // Sin foto no hay nada que ampliar: la imagen genérica en el mismo marco, sin lupa.
+  if (!src) {
+    return (
+      <div className="overflow-hidden rounded-[1.25rem] border border-gris-borde bg-pico-blanco p-2 shadow-tarjeta md:p-3">
+        <ImagenProducto src={null} alt={alt} sizes="1px" categoria={categoria} subcategoria={subcategoria} className="rounded-xl" />
+      </div>
+    );
+  }
 
   return (
     <>

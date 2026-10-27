@@ -56,6 +56,7 @@ getCompradosJuntos(id: string, limite?: number): Promise<CompradoJunto[]>  // []
 ```
 
 ## De dónde salen los datos
+- **Categorías conectadas a Saint** (mapa en `lib/categoriasSaint.ts`; hoy solo Herramientas = 1171): sus productos son los REALES, de `PRODUCTOS_API_URL` + `&categoria=CODIGO` (`lib/saint.ts`). Respuesta: `{ tasa, categoria, total, subcategorias: [{ codigo, nombre, cantidad }], productos: [{ codigo, nombre, marca, codSubcategoria, subcategoria, precioBs, precioUsd }] }`; `precioBs` trae IVA y `precioUsd = precioBs / tasa`. Se convierten a `Producto` con `id = codigo`, `titulo` legible (`lib/nombresSaint.ts`), `precio = precioUsd`, `precioBs`, `tasa`, `imagen: null` (ícono de la subcategoría) y marca "S/M" → `null`. **Nunca se copian existencias ni cantidades de inventario.** Caché de Next de 10 min + lista convertida en memoria; filtro, búsqueda (`q`), orden y página se hacen en el servidor y solo llegan al navegador los 24 de la página. Si Saint no responde y no hay lista guardada: "No pudimos cargar los productos" (nunca los de ejemplo).
 - Si `CATALOGO_API_URL` NO está definida → `lib/catalogo.ts` devuelve datos de `lib/mock/` (unos 70 productos de prueba repartidos en varias categorías, con `ventas` inventadas). Así ambos pueden trabajar sin el servidor.
 - Si está definida → consulta la API del servidor de la ferretería a través del túnel de Cloudflare.
 

@@ -1,9 +1,10 @@
 import type { OrdenProductos } from "@/types/catalogo";
 
-// Los filtros, el orden y la página viven en la URL (?marca=&subcategoria=&orden=&pagina=)
+// Los filtros, la búsqueda, el orden y la página viven en la URL (?q=&marca=&subcategoria=&orden=&pagina=)
 // para que se puedan compartir y el botón "atrás" funcione.
 
 export type EstadoCategoria = {
+  q?: string;
   marca?: string;
   subcategoria?: string;
   orden: OrdenProductos;
@@ -29,6 +30,7 @@ export function leerEstado(parametros: ParametrosUrl): EstadoCategoria {
   const orden = primero(parametros.orden);
   const pagina = Number.parseInt(primero(parametros.pagina) ?? "", 10);
   return {
+    q: primero(parametros.q)?.slice(0, 80),
     marca: primero(parametros.marca),
     subcategoria: primero(parametros.subcategoria),
     orden: OPCIONES_ORDEN.some((o) => o.valor === orden) ? (orden as OrdenProductos) : "relevancia",
@@ -40,6 +42,7 @@ export function leerEstado(parametros: ParametrosUrl): EstadoCategoria {
 export function hrefCategoria(slug: string, estado: EstadoCategoria, cambios: Partial<EstadoCategoria> = {}): string {
   const final = { ...estado, pagina: 1, ...cambios };
   const busqueda = new URLSearchParams();
+  if (final.q) busqueda.set("q", final.q);
   if (final.subcategoria) busqueda.set("subcategoria", final.subcategoria);
   if (final.marca) busqueda.set("marca", final.marca);
   if (final.orden !== "relevancia") busqueda.set("orden", final.orden);

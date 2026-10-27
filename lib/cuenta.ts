@@ -6,7 +6,7 @@ import { isAPIError } from "better-auth/api";
 import { headers } from "next/headers";
 import { validarDatosFiscales } from "@/components/cuenta/datosFiscales";
 import { auth } from "@/lib/auth";
-import { getIndiceProductos } from "@/lib/catalogo";
+import { getIndiceConEstado } from "@/lib/catalogo";
 import { correosDisponibles } from "@/lib/correo";
 import { db } from "@/lib/db";
 import { carritoItem, favorito, perfil, user } from "@/lib/db/esquema";
@@ -267,10 +267,17 @@ async function escribir(userId: string, { carrito, favoritos }: { carrito?: Line
   if (consultas.length > 0) await db.batch(consultas as [BatchItem<"pg">, ...BatchItem<"pg">[]]);
 }
 
-/** Pone nombre, precio y foto de hoy (del catálogo) a cada línea. Lo que ya no está en el catálogo se deja fuera. */
-async function conProductos(lineas: LineaCarrito[]): Promise<ItemCarrito[]> {
+/**
+ * Pone nombre, precio y foto de hoy (del catálogo) a cada línea. Lo que ya no está en el catálogo se deja fuera.
+ * Pero si alguna categoría de Saint no cargó (catálogo incompleto) y falta algún producto, devuelve null: podría
+ * estar en esa categoría, y mandarle al navegador un carrito sin él haría que el navegador lo guardara así y se
+ * perdiera de la cuenta. Con null, el navegador se queda con lo suyo y vuelve a intentar en la próxima visita.
+ */
+async function conProductos(lineas: LineaCarrito[]): Promise<ItemCarrito[] | null> {
   if (lineas.length === 0) return [];
-  const porId = new Map((await getIndiceProductos()).map((p) => [p.id, p]));
+  const { productos, completo } = await getIndiceConEstado();
+  const porId = new Map(productos.map((p) => [p.id, p]));
+  if (!completo && lineas.some(({ id }) => !porId.has(id))) return null;
   return lineas.flatMap(({ id, cantidad }) => {
     const producto = porId.get(id);
     return producto ? [{ producto, cantidad }] : [];
@@ -289,7 +296,8 @@ export async function sincronizarAlEntrar(navegador: { carrito: unknown; favorit
     const carrito = mezclarCarrito(limpiarCarrito(navegador.carrito), cuenta.carrito);
     const favoritos = mezclarFavoritos(limpiarFavoritos(navegador.favoritos), cuenta.favoritos);
     await escribir(cliente.id, { carrito, favoritos });
-    return { carrito: await conProductos(carrito), favoritos };
+    const conDatos = await conProductos(carrito);
+    return conDatos ? { carrito: conDatos, favoritos } : null;
   } catch (error) {
     console.error("[cuenta] No se pudo sincronizar el carrito y los favoritos:", error);
     return null;
@@ -302,7 +310,8 @@ export async function leerDatosCuenta(): Promise<DatosCuenta | null> {
   if (!cliente) return null;
   try {
     const { carrito, favoritos } = await leerLineas(cliente.id);
-    return { carrito: await conProductos(carrito), favoritos };
+    const conDatos = await conProductos(carrito);
+    return conDatos ? { carrito: conDatos, favoritos } : null;
   } catch (error) {
     console.error("[cuenta] No se pudo leer el carrito y los favoritos:", error);
     return null;

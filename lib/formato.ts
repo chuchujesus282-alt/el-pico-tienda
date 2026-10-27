@@ -37,8 +37,17 @@ function capitalizar(texto: string): string {
   return texto.charAt(0).toUpperCase() + texto.slice(1).toLowerCase();
 }
 
-/** Título legible del producto, con la marca incluida. */
-export function tituloProducto({ nombre, marca }: Pick<Producto, "nombre" | "marca">): string {
+/** 7043.12 → "Bs. 7.043,12". */
+export function formatearBs(bs: number): string {
+  return `Bs. ${numeroVE.format(bs)}`;
+}
+
+/**
+ * Título legible del producto, con la marca incluida. Los de Saint ya traen el suyo (`titulo`, armado en
+ * lib/nombresSaint.ts: su nombre ya empieza con la marca y tiene códigos que no deben pasar a minúscula).
+ */
+export function tituloProducto({ nombre, marca, titulo }: Pick<Producto, "nombre" | "marca" | "titulo">): string {
+  if (titulo) return titulo;
   const palabras = nombre.trim().split(/\s+/);
   const formateadas = palabras.map(formatearPalabra);
   formateadas[0] = formateadas[0].charAt(0).toUpperCase() + formateadas[0].slice(1);

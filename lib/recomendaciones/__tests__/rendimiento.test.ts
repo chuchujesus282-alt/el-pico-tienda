@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { productosMock } from "@/lib/mock/productos";
+import { catalogoPruebas as productosMock } from "@/lib/mock/catalogoPruebas";
 import type { Producto } from "@/types/catalogo";
 import { buscar, crearIndice, crearIndicePorPartes, sugerir } from "../busqueda";
 import { tePuedeInteresar } from "../interesar";

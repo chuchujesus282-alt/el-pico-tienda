@@ -1,11 +1,13 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import BannerCalculadoras from "@/components/calculadoras/BannerCalculadoras";
+import BuscarEnCategoria from "@/components/categoria/BuscarEnCategoria";
 import FiltrosActivos from "@/components/categoria/FiltrosActivos";
 import FiltrosCategoria from "@/components/categoria/FiltrosCategoria";
 import Paginacion from "@/components/categoria/Paginacion";
 import PanelFiltrosMovil from "@/components/categoria/PanelFiltrosMovil";
 import SelectorOrden from "@/components/categoria/SelectorOrden";
+import SinCatalogo from "@/components/categoria/SinCatalogo";
 import SinResultados from "@/components/categoria/SinResultados";
 import { hrefCategoria, leerEstado, OPCIONES_ORDEN } from "@/components/categoria/rutas";
 import GrillaProductos from "@/components/producto/GrillaProductos";
@@ -14,12 +16,35 @@ import { bannerDeCategoria } from "@/components/categoria/banner/CategoriaBanner
 import EncabezadoPagina from "@/components/ui/EncabezadoPagina";
 import { iconoDeCategoria } from "@/components/icons/pico/porCategoria";
 import { getCategorias, getProductosPorCategoria } from "@/lib/catalogo";
+import { ErrorSaint } from "@/lib/saint";
+import type { ResultadoCategoria } from "@/types/catalogo";
 
 // Página de categoría — responsable: persona B. Ver la sección "Página de categoría" en docs/guia-de-estilo.md.
 // Si el catálogo falla, el error llega a error.tsx; mientras carga se muestra loading.tsx.
+// Datos (persona A): las categorías de lib/categoriasSaint.ts (hoy Herramientas) traen los productos reales de Saint
+// vía lib/catalogo.ts; filtro, búsqueda (?q=), orden y página se resuelven en el servidor y solo llegan 24 productos.
 
 /** Categorías que muestran el banner de las calculadoras de obra al final. */
 const CON_CALCULADORAS = new Set(["construccion", "pinturas", "tornilleria"]);
+
+/** Banner propio de la categoría (plano técnico que reemplaza al encabezado, o fotos reales a la derecha); sin él, el plano con su ícono de siempre. */
+function EncabezadoCategoria({ slug, nombre, banner: imagen }: { slug: string; nombre: string; banner: string | null }) {
+  const banner = bannerDeCategoria(slug);
+  return banner?.Propio ? (
+    <banner.Propio nombre={nombre} />
+  ) : (
+    <EncabezadoPagina
+      etiqueta="Categoría"
+      titulo={nombre}
+      descripcion={banner?.texto}
+      tituloPartes={banner?.tituloPartes}
+      ruta={[{ texto: nombre }]}
+      imagen={banner ? null : imagen}
+      icono={iconoDeCategoria(slug)}
+      escena={banner?.Escena && <banner.Escena />}
+    />
+  );
+}
 
 async function buscarCategoria(slug: string) {
   const categorias = await getCategorias();
@@ -43,18 +68,36 @@ export default async function PaginaCategoria({ params, searchParams }: PageProp
   const categoria = await buscarCategoria(slug);
   if (!categoria) notFound();
 
-  const resultado = await getProductosPorCategoria(slug, {
-    pagina: estado.pagina,
-    marca: estado.marca,
-    subcategoria: estado.subcategoria,
-    orden: estado.orden,
-  });
+  // Si Saint no responde (y no hay lista guardada), la página sigue con su banner y muestra el aviso en lugar de la
+  // grilla (SinCatalogo). Los demás errores siguen llegando a error.tsx.
+  let resultado: ResultadoCategoria;
+  try {
+    resultado = await getProductosPorCategoria(slug, {
+      pagina: estado.pagina,
+      marca: estado.marca,
+      subcategoria: estado.subcategoria,
+      orden: estado.orden,
+      q: estado.q,
+    });
+  } catch (error) {
+    if (!(error instanceof ErrorSaint)) throw error;
+    console.error(`[categoria] ${error.message}`);
+    return (
+      <div>
+        <EncabezadoCategoria slug={slug} nombre={categoria.nombre} banner={categoria.banner} />
+        <Contenedor className="py-10 md:py-14">
+          <SinCatalogo hrefReintentar={hrefCategoria(slug, estado, { pagina: estado.pagina })} />
+        </Contenedor>
+      </div>
+    );
+  }
 
   const totalPaginas = Math.ceil(resultado.total / resultado.porPagina);
   const filtrosActivos = [estado.marca, estado.subcategoria].filter(Boolean).length;
-  const hrefLimpiar = filtrosActivos
-    ? hrefCategoria(slug, estado, { marca: undefined, subcategoria: undefined })
-    : undefined;
+  const hrefLimpiar =
+    filtrosActivos || estado.q
+      ? hrefCategoria(slug, estado, { marca: undefined, subcategoria: undefined, q: undefined })
+      : undefined;
 
   const filtros = (
     <FiltrosCategoria
@@ -62,31 +105,16 @@ export default async function PaginaCategoria({ params, searchParams }: PageProp
       estado={estado}
       subcategorias={resultado.subcategorias}
       marcas={resultado.marcas}
+      cantidades={resultado.cantidades}
     />
   );
 
   // Cambia con cada filtro/orden/página: la grilla se vuelve a montar y repite su animación de entrada.
-  // Banner propio de la categoría (plano técnico que reemplaza al encabezado, o fotos reales a la derecha); sin él, el plano con su ícono de siempre.
-  const banner = bannerDeCategoria(slug);
-
   const claveVista = hrefCategoria(slug, estado, { pagina: estado.pagina });
 
   return (
     <div>
-      {banner?.Propio ? (
-        <banner.Propio nombre={categoria.nombre} />
-      ) : (
-        <EncabezadoPagina
-          etiqueta="Categoría"
-          titulo={categoria.nombre}
-          descripcion={banner?.texto}
-          tituloPartes={banner?.tituloPartes}
-          ruta={[{ texto: categoria.nombre }]}
-          imagen={banner ? null : categoria.banner}
-          icono={iconoDeCategoria(slug)}
-          escena={banner?.Escena && <banner.Escena />}
-        />
-      )}
+      <EncabezadoCategoria slug={slug} nombre={categoria.nombre} banner={categoria.banner} />
 
       <Contenedor className="py-6 md:py-10">
         <div className="lg:grid lg:grid-cols-[15rem_minmax(0,1fr)] lg:gap-8">
@@ -97,6 +125,7 @@ export default async function PaginaCategoria({ params, searchParams }: PageProp
           </aside>
 
           <div className="min-w-0">
+            <BuscarEnCategoria slug={slug} nombre={categoria.nombre} estado={estado} />
             <div className="mb-4 flex items-center justify-between gap-3">
               <PanelFiltrosMovil activos={filtrosActivos}>{filtros}</PanelFiltrosMovil>
               <p className="hidden text-sm text-gris-texto lg:block">

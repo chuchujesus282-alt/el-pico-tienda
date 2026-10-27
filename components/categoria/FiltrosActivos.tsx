@@ -7,9 +7,10 @@ type Props = {
   estado: EstadoCategoria;
 };
 
-/** Chips de los filtros puestos, cada uno con su ✕ para quitarlo. */
+/** Chips de los filtros puestos (y de la búsqueda), cada uno con su ✕ para quitarlo. */
 export default function FiltrosActivos({ slug, estado }: Props) {
   const chips = [
+    estado.q && { etiqueta: `“${estado.q}”`, href: hrefCategoria(slug, estado, { q: undefined }) },
     estado.subcategoria && { etiqueta: estado.subcategoria, href: hrefCategoria(slug, estado, { subcategoria: undefined }) },
     estado.marca && { etiqueta: estado.marca, href: hrefCategoria(slug, estado, { marca: undefined }) },
   ].filter((c): c is { etiqueta: string; href: string } => !!c);

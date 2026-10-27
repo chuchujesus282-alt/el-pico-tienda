@@ -7,9 +7,13 @@ type Props = {
   estado: EstadoCategoria;
   subcategorias: string[];
   marcas: string[];
+  /** Productos de cada subcategoría (si el catálogo lo da): se muestra al lado, ej. "Herramientas eléctricas 1.478". */
+  cantidades?: Record<string, number>;
 };
 
-type Opcion = { etiqueta: string; href: string; activa: boolean };
+type Opcion = { etiqueta: string; href: string; activa: boolean; cantidad?: number };
+
+const miles = new Intl.NumberFormat("es-VE");
 
 function GrupoFiltro({ titulo, opciones }: { titulo: string; opciones: Opcion[] }) {
   return (
@@ -35,6 +39,9 @@ function GrupoFiltro({ titulo, opciones }: { titulo: string; opciones: Opcion[] 
                 aria-hidden
               />
               <span className="transition-transform duration-200 motion-safe:group-hover:translate-x-0.5">{opcion.etiqueta}</span>
+              {opcion.cantidad !== undefined && !opcion.activa && (
+                <span className="ml-auto shrink-0 text-xs text-gris-texto tabular-nums">{miles.format(opcion.cantidad)}</span>
+              )}
               {opcion.activa && <Check className="ml-auto size-4 shrink-0 motion-safe:animate-latido" aria-hidden />}
             </Link>
           </li>
@@ -45,7 +52,7 @@ function GrupoFiltro({ titulo, opciones }: { titulo: string; opciones: Opcion[] 
 }
 
 /** Filtros de subcategoría y marca. Se usan en la barra lateral (escritorio) y en el panel "Filtrar" (móvil). */
-export default function FiltrosCategoria({ slug, estado, subcategorias, marcas }: Props) {
+export default function FiltrosCategoria({ slug, estado, subcategorias, marcas, cantidades }: Props) {
   const hayFiltros = !!(estado.marca || estado.subcategoria);
 
   const opciones = (clave: "subcategoria" | "marca", valores: string[], todas: string): Opcion[] => [
@@ -54,6 +61,7 @@ export default function FiltrosCategoria({ slug, estado, subcategorias, marcas }
       etiqueta: valor,
       href: hrefCategoria(slug, estado, { [clave]: valor }),
       activa: estado[clave] === valor,
+      cantidad: clave === "subcategoria" ? cantidades?.[valor] : undefined,
     })),
   ];
 

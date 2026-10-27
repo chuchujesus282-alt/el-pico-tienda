@@ -19,7 +19,7 @@ import Contenedor from "@/components/ui/Contenedor";
 import EncabezadoPagina from "@/components/ui/EncabezadoPagina";
 import Precio from "@/components/ui/Precio";
 import { getCategorias, getProducto } from "@/lib/catalogo";
-import { tituloProducto } from "@/lib/formato";
+import { formatearBs, tituloProducto } from "@/lib/formato";
 import { getOpiniones } from "@/lib/opiniones";
 import type { Categoria } from "@/types/catalogo";
 
@@ -68,7 +68,7 @@ export default async function PaginaProducto({ params }: PageProps<"/producto/[i
       <Contenedor className="py-6 md:py-8">
         <article className="grid gap-6 md:grid-cols-2 md:gap-8 lg:gap-12">
           <div className="motion-safe:animate-aparecer md:sticky md:top-6 md:self-start">
-            <GaleriaZoom src={producto.imagen} alt={titulo} />
+            <GaleriaZoom src={producto.imagen} alt={titulo} categoria={producto.categoriaSlug} subcategoria={producto.subcategoria} />
           </div>
 
           <div className="flex flex-col gap-5 motion-safe:animate-aparecer motion-safe:[animation-delay:120ms]">
@@ -96,7 +96,18 @@ export default async function PaginaProducto({ params }: PageProps<"/producto/[i
             {/* Precio limpio: la cifra manda, sin caja ni franja; la nota en una línea debajo. */}
             <div className="border-y border-gris-borde py-4">
               <Precio valor={producto.precio} tamano="grande" tono="logo" className="text-4xl tracking-tight tabular-nums md:text-5xl" />
-              <p className="mt-1.5 text-[13px] text-gris-texto">Precio referencial en dólares · No cobramos en la web.</p>
+              {/* Productos de Saint: también en bolívares (con IVA), con la tasa BCV que usó Saint. */}
+              {producto.precioBs !== undefined && producto.tasa !== undefined && (
+                <p className="mt-1 text-base font-semibold text-texto tabular-nums">
+                  {formatearBs(producto.precioBs)}{" "}
+                  <span className="text-[13px] font-normal text-gris-texto">
+                    · Tasa BCV {new Intl.NumberFormat("es-VE", { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(producto.tasa)} Bs/$
+                  </span>
+                </p>
+              )}
+              <p className="mt-1.5 text-[13px] text-gris-texto">
+                {producto.precioBs !== undefined ? "Precio referencial, IVA incluido" : "Precio referencial en dólares"} · No cobramos en la web.
+              </p>
             </div>
 
             <AccionesCompra producto={producto} />

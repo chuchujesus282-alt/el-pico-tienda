@@ -37,6 +37,8 @@ export default function ProductCard({ producto, prioritario = false, className =
           <ImagenProducto
             src={producto.imagen}
             alt={titulo}
+            categoria={producto.categoriaSlug}
+            subcategoria={producto.subcategoria}
             prioritario={prioritario}
             sizes="(min-width: 1536px) 240px, (min-width: 1024px) 20vw, (min-width: 768px) 30vw, 45vw"
             className="rounded-xl transition-transform duration-700 ease-(--curva-suave) motion-safe:group-hover:scale-[1.04]"

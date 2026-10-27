@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Image from "next/image";
 import { Montanas } from "@/components/layout/Logo";
+import { IconoDeProducto } from "@/components/icons/pico/porCategoria";
 
 type Props = {
   src: string | null;
@@ -12,6 +13,9 @@ type Props = {
   /** Se descarga de inmediato: solo para la imagen principal que se ve al abrir la página (LCP). */
   prioritario?: boolean;
   className?: string;
+  /** Sin foto: se muestra el ícono de la subcategoría (o de la categoría) con las montañas de El Pico. */
+  categoria?: string;
+  subcategoria?: string | null;
 };
 
 /**
@@ -20,7 +24,7 @@ type Props = {
  * recuadros se funden con el marco (mix-blend-multiply), así la grilla se ve pareja aunque las fotos no lo sean.
  * Mientras carga, la silueta de las montañas del logo con un brillo que pasa; luego la foto aparece suave.
  */
-export default function ImagenProducto({ src, alt, sizes, prioritario = false, className = "" }: Props) {
+export default function ImagenProducto({ src, alt, sizes, prioritario = false, className = "", categoria, subcategoria }: Props) {
   const [cargada, setCargada] = useState(false);
 
   return (
@@ -44,12 +48,31 @@ export default function ImagenProducto({ src, alt, sizes, prioritario = false, c
           />
         </>
       ) : (
-        <div className="flex h-full w-full flex-col items-center justify-center gap-1 text-pico-azul/25">
-          <Montanas className="h-1/4 w-auto fill-current" />
-          <span className="sr-only">{alt} (sin imagen)</span>
-        </div>
+        <SinFoto alt={alt} categoria={categoria} subcategoria={subcategoria} />
       )}
       <span className="pointer-events-none absolute inset-0 rounded-[inherit] ring-1 ring-pico-azul/8 ring-inset" aria-hidden />
+    </div>
+  );
+}
+
+/**
+ * Imagen genérica mientras el producto no tenga foto: con categoría, el ícono de su subcategoría en un círculo y la
+ * montañita de El Pico debajo; sin ella (carrito, sugerencias), solo las montañas.
+ */
+function SinFoto({ alt, categoria, subcategoria }: Pick<Props, "alt" | "categoria" | "subcategoria">) {
+  return (
+    <div className="flex h-full w-full flex-col items-center justify-center gap-[7%]">
+      {categoria ? (
+        <>
+          <span className="flex aspect-square w-[46%] items-center justify-center rounded-full bg-pico-blanco shadow-tarjeta ring-1 ring-pico-azul/8">
+            <IconoDeProducto categoria={categoria} subcategoria={subcategoria} className="h-[58%] w-[58%] text-pico-azul/55" />
+          </span>
+          <Montanas className="h-[7%] w-auto fill-pico-rojo/35" />
+        </>
+      ) : (
+        <Montanas className="h-1/4 w-auto fill-pico-azul/25" />
+      )}
+      <span className="sr-only">{alt} (sin imagen)</span>
     </div>
   );
 }
