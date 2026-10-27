@@ -21,24 +21,28 @@ export const FOTOS_SAINT: Record<string, string> = {
 
 type Seccion = "sistema" | "encastre";
 
-/** Definición de cada grupo: título que se muestra, foto y cómo se ordenan sus medidas. */
-/** `sinMarca`: la tarjeta no muestra marca (en Saint vienen "CHINO", "DADO CHINO" o vacía). */
-const GRUPOS: Record<string, { titulo: string; imagen: string; seccion: Seccion | null; sinMarca?: boolean }> = {
+/**
+ * Definición de cada grupo: título que se muestra, foto y cómo se ordenan sus medidas. `imagen: null`: sin foto (la
+ * tarjeta muestra el ícono de la subcategoría). La foto del dado es SOLO de los Acesa (pedido de persona B): los demás
+ * dados (Stanley, Proto, económicos…) van sin foto hasta tener la suya.
+ * `sinMarca`: la tarjeta no muestra marca (en Saint vienen "CHINO", "DADO CHINO" o vacía).
+ */
+const GRUPOS: Record<string, { titulo: string; imagen: string | null; seccion: Seccion | null; sinMarca?: boolean }> = {
   "llave-combinada-acesa": { titulo: "Llave combinada Acesa", imagen: FOTO_LLAVE, seccion: "sistema" },
   "dado-acesa": { titulo: "Dado Acesa", imagen: FOTO_DADO, seccion: "encastre" },
-  "dado-economico": { titulo: "Dado económico", imagen: FOTO_DADO, seccion: "encastre", sinMarca: true },
-  "dado-economico-largo": { titulo: "Dado largo económico", imagen: FOTO_DADO, seccion: "encastre", sinMarca: true },
-  "dado-magnetico-ferrezaga": { titulo: "Dado magnético Ferrezaga 45 mm", imagen: FOTO_DADO, seccion: null },
-  "dado-proto": { titulo: "Dado estándar Proto", imagen: FOTO_DADO, seccion: "encastre" },
-  "dado-largo-proto": { titulo: "Dado largo Proto", imagen: FOTO_DADO, seccion: "encastre" },
-  "dado-estria-corto-stanley": { titulo: "Dado de estría corto Stanley", imagen: FOTO_DADO, seccion: "encastre" },
-  "dado-estria-largo-stanley": { titulo: "Dado de estría largo Stanley", imagen: FOTO_DADO, seccion: "encastre" },
-  "dado-hexagonal-corto-stanley": { titulo: "Dado hexagonal corto Stanley", imagen: FOTO_DADO, seccion: "encastre" },
-  "dado-hexagonal-largo-stanley": { titulo: "Dado hexagonal largo Stanley", imagen: FOTO_DADO, seccion: "encastre" },
-  "dado-encastre-3-4-stanley": { titulo: 'Dado Stanley de encastre 3/4"', imagen: FOTO_DADO, seccion: null },
-  "dado-punta-stanley": { titulo: "Dado de punta Stanley", imagen: FOTO_DADO, seccion: "encastre" },
-  "dado-torx-stanley": { titulo: "Dado torx Stanley", imagen: FOTO_DADO, seccion: "encastre" },
-  "dado-hexagonal-corto-promaker": { titulo: "Dado hexagonal corto Stanley Promaker", imagen: FOTO_DADO, seccion: "encastre" },
+  "dado-economico": { titulo: "Dado económico", imagen: null, seccion: "encastre", sinMarca: true },
+  "dado-economico-largo": { titulo: "Dado largo económico", imagen: null, seccion: "encastre", sinMarca: true },
+  "dado-magnetico-ferrezaga": { titulo: "Dado magnético Ferrezaga 45 mm", imagen: null, seccion: null },
+  "dado-proto": { titulo: "Dado estándar Proto", imagen: null, seccion: "encastre" },
+  "dado-largo-proto": { titulo: "Dado largo Proto", imagen: null, seccion: "encastre" },
+  "dado-estria-corto-stanley": { titulo: "Dado de estría corto Stanley", imagen: null, seccion: "encastre" },
+  "dado-estria-largo-stanley": { titulo: "Dado de estría largo Stanley", imagen: null, seccion: "encastre" },
+  "dado-hexagonal-corto-stanley": { titulo: "Dado hexagonal corto Stanley", imagen: null, seccion: "encastre" },
+  "dado-hexagonal-largo-stanley": { titulo: "Dado hexagonal largo Stanley", imagen: null, seccion: "encastre" },
+  "dado-encastre-3-4-stanley": { titulo: 'Dado Stanley de encastre 3/4"', imagen: null, seccion: null },
+  "dado-punta-stanley": { titulo: "Dado de punta Stanley", imagen: null, seccion: "encastre" },
+  "dado-torx-stanley": { titulo: "Dado torx Stanley", imagen: null, seccion: "encastre" },
+  "dado-hexagonal-corto-promaker": { titulo: "Dado hexagonal corto Stanley Promaker", imagen: null, seccion: "encastre" },
 };
 
 /** Prefijo de los ids de grupo (así nunca chocan con un código de Saint). */
@@ -192,7 +196,7 @@ export function agrupar(lista: Producto[]): {
         const seccion = tituloSeccion(def.seccion, c);
         // En el nombre de la medida va también el encastre del dado: 'Dado … 1/2" × 17 mm'.
         const detalle = c.encastre && def.seccion === "encastre" ? `${c.encastre}" × ${c.etiqueta}` : c.etiqueta;
-        const producto: Producto = { ...p, titulo: `${def.titulo} ${detalle}`, imagen: def.imagen };
+        const producto: Producto = { ...p, titulo: `${def.titulo} ${detalle}`, imagen: def.imagen ?? p.imagen };
         reemplazos.set(p.id, producto);
         grupoDe.set(p.id, id);
         return { id: p.id, etiqueta: c.etiqueta, seccion, producto };

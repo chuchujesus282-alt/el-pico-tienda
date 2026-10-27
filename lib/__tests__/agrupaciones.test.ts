@@ -103,6 +103,23 @@ describe("agrupar", () => {
     expect(productos).toHaveLength(lista.length);
   });
 
+  it("la foto del dado es solo de los Acesa: los demás dados van agrupados pero sin foto", () => {
+    const { grupos: g } = agrupar([
+      p("ACS0214", "ACESA DADO 710-3/4 33mm", 25.1, "ACESA"),
+      p("ACS0219", "ACESA DADO 710-3/4 41mm", 64.63, "ACESA"),
+      p("STLY0540", "STANLEY DADO HEXAG CORTO 3/8 X 8MM", 5.65, "STANLEY"),
+      p("STLY0538", "STANLEY DADO HEXAG CORTO 3/8 X10MM", 5.95, "STANLEY"),
+      p("GN98023", 'DADO ECONOMICO/CHINO 1/2" 10 MM', 4.43),
+      p("GN98027", 'DADO ECONOMICO/CHINO 1/2" 14 MM', 5.35),
+    ]);
+    expect(g.get("grupo-dado-acesa")!.tarjeta.imagen).toMatch(/dado/);
+    for (const id of ["grupo-dado-hexagonal-corto-stanley", "grupo-dado-economico"]) {
+      const grupo = g.get(id)!;
+      expect(grupo.tarjeta.imagen).toBeNull();
+      expect(grupo.variantes.every((v) => v.producto.imagen === null)).toBe(true);
+    }
+  });
+
   it("la mopa 3M lleva su foto", () => {
     expect(productos.find((x) => x.id === "3M0015")!.imagen).toBe("/productos/3M0015.webp");
   });

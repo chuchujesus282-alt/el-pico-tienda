@@ -114,5 +114,5 @@ Fotos que pasó persona B para PROBAR los grupos de medidas (`lib/agrupaciones.t
 | Archivo | Producto |
 |---|---|
 | grupos/llave-combinada-cromada.webp | Grupo "Llave combinada Acesa" (todas sus medidas). Ojo: la llave de la foto tiene grabada la marca WESTWARD |
-| grupos/dado-cromado.webp | Todos los grupos de dados (recortada de la foto original) |
+| grupos/dado-cromado.webp | SOLO el grupo "Dado Acesa" (recortada de la foto original); los demás dados van sin foto |
 | 3M0015.webp | 3M MOPA PULIDO AZUL DOBLE CARA 8" PASO 3 (la foto trae la marca 3M en el empaque) |
