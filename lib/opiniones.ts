@@ -1,15 +1,13 @@
 import "server-only";
 
 import type { Opinion } from "@/types/opiniones";
-import { opinionesMock } from "@/lib/mock/opiniones";
 
 // ÚNICA puerta de entrada a las opiniones de productos.
-// Sin CATALOGO_API_URL usa opiniones de prueba (falsas, solo para el diseño). Con ella, por ahora no hay
-// endpoint de opiniones: devuelve una lista vacía para no mostrar nunca reseñas inventadas en producción.
-
-const API_URL = process.env.CATALOGO_API_URL;
+// Todavía no hay base de datos de opiniones: devuelve una lista vacía (las que escribe el cliente se guardan en su
+// navegador, ver components/opiniones/almacenOpiniones.ts). Las opiniones FALSAS de prueba se borraron el 2026-10-28
+// junto con los productos de ejemplo: nunca se muestran reseñas inventadas.
 
 export async function getOpiniones(productoId: string): Promise<Opinion[]> {
-  if (!API_URL) return opinionesMock(productoId);
-  return []; // TODO: GET /productos/:id/opiniones cuando exista la base de datos
+  void productoId; // TODO: GET /productos/:id/opiniones cuando exista la base de datos
+  return [];
 }

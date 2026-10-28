@@ -9,21 +9,24 @@ import { repartirPorCategoria } from "@/lib/repartirSaint";
 // Productos REALES de Saint, por categoría (las del mapa de lib/categoriasSaint.ts). Solo se usa desde lib/catalogo.ts
 // y lib/tasa.ts. Responsable: persona A.
 //
-// PRODUCTOS_API_URL (en .env.local y en Vercel) ya trae la clave; se le suma &categoria=1171,1200,… (TODAS las
-// categorías del mapa en UN solo pedido). Se pide SOLO desde el servidor de Next: la clave nunca llega al navegador.
-// Responde comprimido con gzip (el fetch de Node lo descomprime solo):
+// PRODUCTOS_API_URL (en .env.local y en Vercel) ya trae la clave; se le suma &categoria=CODIGO (o varios separados por
+// coma). Se pide SOLO desde el servidor de Next: la clave nunca llega al navegador. Responde comprimido con gzip (el
+// fetch de Node lo descomprime solo):
 //   { tasa, categoria, total, subcategorias: [{ codigo, nombre, codCategoria, cantidad }],
 //     productos: [{ codigo, nombre, marca, codCategoria, codSubcategoria, subcategoria, precioBs, precioUsd }] }
 // precioBs ya incluye IVA y precioUsd = precioBs / tasa. Cada producto y subcategoría se reparte a su categoría de la
-// web por codCategoria (con una sola categoría en el mapa, todo va a esa aunque falte codCategoria).
+// web por codCategoria (lib/repartirSaint.ts).
 //
-// Rendimiento: la respuesta (≈650 KB con 3.176 herramientas) se guarda en la caché de Next 10 minutos. Ojo: esa caché
-// NO guarda respuestas de más de 2 MB (con ~30.000 productos serán 5–6 MB): entonces la caché real es la memoria
-// (`guardada`), que en ese caso dura los mismos 10 minutos en vez de 1. Encima, la lista ya convertida (nombres
-// legibles, claves de búsqueda) se reutiliza mientras la respuesta no cambie; así filtrar, ordenar y paginar en cada
-// visita toma milisegundos, y la búsqueda y las recomendaciones (lib/indiceServidor.ts) reciben la MISMA lista y no se
-// vuelven a preparar. Si Saint no responde, se sigue usando la última lista buena; si nunca hubo una, se lanza
-// ErrorSaint (la página muestra "No pudimos cargar los productos").
+// Dos caminos (con las 10 categorías son 11.777 productos):
+// - La PÁGINA de una categoría pide SOLO esa categoría (getCategoriaSaint): pesa de 30 a 650 KB, así que la guarda la
+//   caché de Next 10 minutos, y si una categoría falla las demás siguen.
+// - El ÍNDICE (buscador, "Te puede interesar", carrito, favoritos, página de producto) pide TODAS en un pedido
+//   (getTodosSaint): pesa más de 2 MB (2,3 MB hoy), que la caché de Next NO guarda; la caché real es la memoria
+//   (`todas`), que dura los mismos 10 minutos. Si falla y no hay nada guardado, se arma categoría por categoría.
+// En los dos, la lista ya convertida (nombres legibles, claves de búsqueda) se reutiliza mientras la respuesta no
+// cambie; así filtrar, ordenar y paginar en cada visita toma milisegundos, y la búsqueda y las recomendaciones
+// (lib/indiceServidor.ts) reciben la MISMA lista y no se vuelven a preparar. Si Saint no responde, se sigue usando la
+// última lista buena; si nunca hubo una, se lanza ErrorSaint (la página muestra "No pudimos cargar los productos").
 //
 // NUNCA se copian existencias ni cantidades de inventario: de cada producto solo se toman los campos de abajo.
 
@@ -31,8 +34,6 @@ const API_URL = process.env.PRODUCTOS_API_URL;
 const REVALIDAR_SEGUNDOS = 600;
 /** Cada cuánto se vuelve a mirar la caché de Next (barato: si la respuesta no cambió, se reutiliza la lista). */
 const MEMORIA_MS = 60_000;
-/** La caché de datos de Next no guarda respuestas más grandes que esto: ahí la memoria dura los 10 minutos completos. */
-const TOPE_CACHE_NEXT = 2 * 1024 * 1024;
 const ESPERA_MAXIMA_MS = 20_000;
 
 export class ErrorSaint extends Error {
@@ -59,10 +60,16 @@ export type CategoriaSaint = {
   subcategorias: { codigo: string; nombre: string; cantidad: number }[];
 };
 
-/** La última respuesta buena de Saint, ya repartida por categoría de la web (slug → lista). */
-type Guardada = { porSlug: Map<string, CategoriaSaint>; texto: string; revisar: number };
-let guardada: Guardada | null = null;
-let pedido: Promise<Map<string, CategoriaSaint>> | null = null;
+/**
+ * La última respuesta buena de cada categoría (su propio pedido, para la página de la categoría) y la del pedido con
+ * TODAS (para el índice de búsqueda, el carrito y los favoritos). Cada una se reutiliza mientras su texto no cambie.
+ */
+type Guardada = { datos: CategoriaSaint; texto: string; revisar: number };
+const guardadas = new Map<number, Guardada>();
+const pedidos = new Map<number, Promise<CategoriaSaint>>();
+type GuardadaTodas = { porSlug: Map<string, CategoriaSaint>; texto: string; revisar: number };
+let todas: GuardadaTodas | null = null;
+let pedidoTodas: Promise<Map<string, CategoriaSaint>> | null = null;
 
 /** "Llave ALLEN Combinada" → "llave allen combinada"; "Medición" → "medicion". */
 export function normalizar(texto: string): string {
@@ -143,88 +150,134 @@ function convertir(slug: string, crudo: unknown): CategoriaSaint {
   };
 }
 
-/** UN pedido con todas las categorías del mapa, repartido por categoría de la web. */
-async function pedir(): Promise<Map<string, CategoriaSaint>> {
+/**
+ * Pide a Saint y devuelve el texto. El mensaje de error nunca lleva la URL: tiene la clave.
+ * `cacheNext: false` para el pedido con TODAS las categorías: pesa más de 2 MB, la caché de Next no lo guarda (lo
+ * guarda la memoria) y, si se le pide, Next escribe un aviso en los registros CON LA URL (y la clave).
+ */
+async function pedirTexto(codigos: number[], etiqueta: string, cacheNext = true): Promise<string> {
   if (!API_URL) throw new ErrorSaint("Falta PRODUCTOS_API_URL");
-  const codigos = Object.values(CATEGORIAS_SAINT);
   const url = new URL(API_URL);
   url.searchParams.set("categoria", codigos.join(","));
-
-  let texto: string;
   try {
     const respuesta = await fetch(url, {
-      next: { revalidate: REVALIDAR_SEGUNDOS, tags: ["saint"] },
+      ...(cacheNext ? { next: { revalidate: REVALIDAR_SEGUNDOS, tags: ["saint", etiqueta] } } : { cache: "no-store" as const }),
       signal: AbortSignal.timeout(ESPERA_MAXIMA_MS),
     });
-    // El mensaje nunca lleva la URL: tiene la clave.
-    if (!respuesta.ok) throw new ErrorSaint(`Saint respondió ${respuesta.status}`);
-    texto = await respuesta.text();
+    if (!respuesta.ok) throw new ErrorSaint(`Saint respondió ${respuesta.status} (${etiqueta})`);
+    return await respuesta.text();
   } catch (error) {
     if (error instanceof ErrorSaint) throw error;
-    throw new ErrorSaint("No se pudo conectar con Saint");
+    throw new ErrorSaint(`No se pudo conectar con Saint (${etiqueta})`);
   }
-
-  // Respuesta grande: la caché de Next no la guarda, así que la memoria dura los 10 minutos completos.
-  const vigencia = texto.length > TOPE_CACHE_NEXT ? REVALIDAR_SEGUNDOS * 1000 : MEMORIA_MS;
-  // La misma respuesta de antes (caché de Next): se reutilizan las listas ya convertidas (las MISMAS, así el índice de
-  // búsqueda no se vuelve a armar).
-  if (guardada && guardada.texto === texto) {
-    guardada.revisar = Date.now() + vigencia;
-    return guardada.porSlug;
-  }
-  let crudo: unknown;
-  try {
-    crudo = JSON.parse(texto);
-  } catch {
-    throw new ErrorSaint("Saint respondió algo que no es JSON");
-  }
-  const porSlug = new Map<string, CategoriaSaint>();
-  for (const [slug, parte] of repartirPorCategoria(crudo, CATEGORIAS_SAINT)) porSlug.set(slug, convertir(slug, parte));
-  guardada = { porSlug, texto, revisar: Date.now() + vigencia };
-  return porSlug;
 }
 
-/** Todas las categorías de Saint (slug → lista). Lanza ErrorSaint si no hay datos (ni nuevos ni guardados). */
-async function getPorSlug(): Promise<Map<string, CategoriaSaint>> {
-  if (guardada && guardada.revisar > Date.now()) return guardada.porSlug;
+function leerJson(texto: string, etiqueta: string): unknown {
+  try {
+    return JSON.parse(texto);
+  } catch {
+    throw new ErrorSaint(`Saint respondió algo que no es JSON (${etiqueta})`);
+  }
+}
+
+/** Una sola categoría: su respuesta pesa menos de 2 MB, así que la guarda la caché de Next (10 minutos). */
+async function pedirCategoria(slug: string, codigo: number): Promise<CategoriaSaint> {
+  const texto = await pedirTexto([codigo], `saint-${codigo}`);
+  const anterior = guardadas.get(codigo);
+  // La misma respuesta de antes (caché de Next): se reutiliza la lista ya convertida.
+  if (anterior && anterior.texto === texto) {
+    anterior.revisar = Date.now() + MEMORIA_MS;
+    return anterior.datos;
+  }
+  const partes = repartirPorCategoria(leerJson(texto, `categoría ${codigo}`), { [slug]: codigo });
+  const datos = convertir(slug, partes.get(slug));
+  guardadas.set(codigo, { datos, texto, revisar: Date.now() + MEMORIA_MS });
+  return datos;
+}
+
+/**
+ * Productos de Saint de UNA categoría de la web (para su página): pide solo esa categoría, así cada página carga lo
+ * suyo y, si una categoría falla, las demás siguen. Lanza ErrorSaint si no hay datos (ni nuevos ni guardados).
+ */
+export async function getCategoriaSaint(slug: string): Promise<CategoriaSaint> {
+  const codigo = codigoSaint(slug);
+  if (codigo === undefined) throw new ErrorSaint(`La categoría "${slug}" no tiene código de Saint`);
+
+  const guardada = guardadas.get(codigo);
+  if (guardada && guardada.revisar > Date.now()) return guardada.datos;
 
   // Varias visitas a la vez comparten un solo pedido.
-  pedido ??= pedir()
-    .catch((error: unknown) => {
-      if (!guardada) throw error;
-      console.error(`[saint] ${error instanceof Error ? error.message : error}; se usa la última lista buena.`);
-      guardada.revisar = Date.now() + MEMORIA_MS; // no reintentar en cada visita mientras Saint está caído
-      return guardada.porSlug;
-    })
-    .finally(() => {
-      pedido = null;
-    });
+  let pedido = pedidos.get(codigo);
+  if (!pedido) {
+    pedido = pedirCategoria(slug, codigo)
+      .catch((error: unknown) => {
+        const ultima = guardadas.get(codigo);
+        if (!ultima) throw error;
+        console.error(`[saint] ${error instanceof Error ? error.message : error}; se usa la última lista buena.`);
+        ultima.revisar = Date.now() + MEMORIA_MS; // no reintentar en cada visita mientras Saint está caído
+        return ultima.datos;
+      })
+      .finally(() => pedidos.delete(codigo));
+    pedidos.set(codigo, pedido);
+  }
   return pedido;
-}
-
-/** Productos de Saint de una categoría de la web. Lanza ErrorSaint si no hay datos (ni nuevos ni guardados). */
-export async function getCategoriaSaint(slug: string): Promise<CategoriaSaint> {
-  if (codigoSaint(slug) === undefined) throw new ErrorSaint(`La categoría "${slug}" no tiene código de Saint`);
-  const datos = (await getPorSlug()).get(slug);
-  if (!datos) throw new ErrorSaint(`Saint no trajo la categoría "${slug}"`);
-  return datos;
 }
 
 /** ¿La categoría muestra productos de Saint? */
 export const esCategoriaSaint = (slug: string) => codigoSaint(slug) !== undefined;
 
 /**
- * Todos los productos de Saint (todas las categorías del mapa, en un solo pedido), para el índice de búsqueda, el
- * carrito y los favoritos. `completo: false` si Saint no respondió y no hay una lista guardada (faltan sus productos).
+ * UN pedido con todas las categorías del mapa (&categoria=1171,1498,…), repartido por codCategoria. Pesa más de 2 MB:
+ * la caché de Next no lo guarda, así que la memoria dura los 10 minutos completos.
+ */
+async function pedirTodas(): Promise<Map<string, CategoriaSaint>> {
+  const texto = await pedirTexto(Object.values(CATEGORIAS_SAINT), "saint-todas", false);
+  // Sin caché de Next, cada pedido va a Saint: la memoria dura los 10 minutos completos.
+  const vigencia = REVALIDAR_SEGUNDOS * 1000;
+  // La misma respuesta de antes: las MISMAS listas, así el índice de búsqueda no se vuelve a armar.
+  if (todas && todas.texto === texto) {
+    todas.revisar = Date.now() + vigencia;
+    return todas.porSlug;
+  }
+  const porSlug = new Map<string, CategoriaSaint>();
+  for (const [slug, parte] of repartirPorCategoria(leerJson(texto, "todas"), CATEGORIAS_SAINT)) {
+    porSlug.set(slug, convertir(slug, parte));
+  }
+  todas = { porSlug, texto, revisar: Date.now() + vigencia };
+  return porSlug;
+}
+
+/** Todas las categorías juntas, o la última lista buena. Lanza ErrorSaint si no hay ninguna de las dos. */
+function getTodasJuntas(): Promise<Map<string, CategoriaSaint>> {
+  if (todas && todas.revisar > Date.now()) return Promise.resolve(todas.porSlug);
+  pedidoTodas ??= pedirTodas()
+    .catch((error: unknown) => {
+      if (!todas) throw error;
+      console.error(`[saint] ${error instanceof Error ? error.message : error}; se usa la última lista buena.`);
+      todas.revisar = Date.now() + MEMORIA_MS; // no reintentar en cada visita mientras Saint está caído
+      return todas.porSlug;
+    })
+    .finally(() => {
+      pedidoTodas = null;
+    });
+  return pedidoTodas;
+}
+
+/**
+ * Todos los productos de Saint (todas las categorías del mapa), para el índice de búsqueda, el carrito y los favoritos.
+ * Primero, UN pedido con todas (o su última lista buena). Si eso falla y no hay nada guardado, se arma con los pedidos
+ * de cada categoría que sí respondan. `completo: false` si alguna categoría falta (sus productos no es que no existan).
  */
 export async function getTodosSaint(): Promise<{ listas: CategoriaSaint[]; completo: boolean }> {
-  if (!Object.keys(CATEGORIAS_SAINT).length) return { listas: [], completo: true };
+  const slugs = Object.keys(CATEGORIAS_SAINT);
   try {
-    const porSlug = await getPorSlug();
-    return { listas: [...porSlug.values()], completo: porSlug.size === Object.keys(CATEGORIAS_SAINT).length };
+    const porSlug = await getTodasJuntas();
+    return { listas: [...porSlug.values()], completo: porSlug.size === slugs.length };
   } catch (error) {
-    console.error("[saint]", error instanceof Error ? error.message : error);
-    return { listas: [], completo: false };
+    console.error("[saint]", error instanceof Error ? error.message : error, "; se prueba categoría por categoría.");
+    const resultados = await Promise.allSettled(slugs.map((slug) => getCategoriaSaint(slug)));
+    const listas = resultados.flatMap((r) => (r.status === "fulfilled" ? [r.value] : []));
+    return { listas, completo: listas.length === slugs.length };
   }
 }
 

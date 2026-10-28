@@ -49,7 +49,7 @@ export default function ColumnasCategorias({ categorias }: { categorias: Categor
                   escalar
                 />
               </div>
-            ) : categoria.slug === "plomeria" ? (
+            ) : categoria.slug === "griferia" ? (
               // Tarjeta aprobada (tubería de línea que se arma y por la que corre el agua), escalada al ancho de la columna.
               <div className={LEVANTAR}>
                 <CategoryCardPlomeria

@@ -127,21 +127,66 @@ todo es esperar a Saint) y ~0,02 s las siguientes.
 
 ## Calculadoras: códigos propuestos (PENDIENTE de revisar con persona B)
 
-Cinco materiales de `lib/calculadoras/materiales.ts` apuntaban a herramientas de ejemplo que ya no existen; hoy salen
-como "Consultar disponibilidad". **No cambiar nada hasta que el dueño diga qué códigos usar.**
+Desde el 2026-10-28 TODOS los materiales de `lib/calculadoras/materiales.ts` tienen `productoId: null` (salen como
+"Consultar disponibilidad"): apuntaban a productos de ejemplo, que se borraron. Propuesta de códigos REALES de Saint
+(precios del 2026-10-28). **No cambiar nada hasta que el dueño y persona B lo revisen.** "⚠" = la presentación no
+coincide con la que supone la calculadora (`PRESENTACION` en `lib/calculadoras/constantes.ts`): hay que ajustar la
+constante o elegir otro producto.
 
-| Material (clave) | Hoy | Propuesta | Precio | Alternativas |
-|---|---|---|---|---|
-| `nivel` | 00302338 | `NIKAT087` Nikato nivel de aluminio 24" | $12,89 | `GN16193` Hoteche magnético 24" ($13,23), `GN60724` Da Hai 60 cm 24" ($18,50) |
-| `cinta-metrica` | 00302177 | `BRUF0525` Brufer cinta métrica 5 m × 19 mm | $3,93 | `TRUP0772` Truper 5 m ($5,57) |
-| `segueta` | 00302314 | `STLY1092` Stanley arco de segueta 12" fijo | $12,16 | `SUPER003` Superior tubular ($6,63), `NIKAT032` Nikato 12" ($17,15) |
-| `espatula` | 00302354 | `LBS0108` Lobster espátula 4" mango de madera | $3,33 | `BRUF0208` Brufer 4" ($2,49) |
-| `taladro` | 00302011 | `NIKAT081` Nikato taladro percutor 1/2" 600 W | $67,77 | `CAT0042` Wesco 550 W ($50,95), `BSC0165` Bosch 1/2" ($140,36) |
+| Material (clave) | Propuesta | Precio | Nota / alternativas |
+|---|---|---|---|
+| `cemento` | `CONST0082` Mortero saco cemento gris 42,5 kg | $13,77 | `GN00799` cemento gris por kilo ($0,83) |
+| `arena` | `CONST0010` Metro de arena lavada | $55,68 | `CONST0095` saco de arena lavada ($3,65) |
+| `piedra` | `CONST0018` Metro de piedra | $61,87 | No dice "picada 3/4" |
+| `bloque-arcilla-10` | `CONST0001` Bloque de arcilla 10×20×30 | $0,82 | |
+| `bloque-arcilla-15` | `CONST0005` Bloque de arcilla 15×20×30 | $0,87 | `CONST0003` 12×20×30 ($0,84) |
+| `bloque-arcilla-20` | — | | No hay bloque de arcilla de 20 en Saint |
+| `bloque-concreto-10` | `CONST0121` Bloque Aliven 10 | $1,24 | ⚠ Aliven (liviano), no hay bloque de concreto común |
+| `bloque-concreto-15` | `CONST0123` Bloque Aliven 15 | $1,42 | ⚠ ídem; `CONST0141` bloque "U" 15×20×40 ($1,99) |
+| `bloque-concreto-20` | `CONST0124` Bloque Aliven 20 | $1,91 | ⚠ ídem |
+| `cabilla-3/8` | `CONST0424` Cabilla estriada 3/8 × 12 m | $15,18 | ⚠ barra de 12 m (la calculadora supone 6 m) |
+| `cabilla-1/2` | `CONST0429` Cabilla estriada 1/2" × 12 m | $20,63 | ⚠ 12 m; `CONST0425` alambrón estriado 12 mm × 6 m ($10,32) |
+| `cabilla-5/8` | `CONST0423` Cabilla estriada 5/8 (16 mm) × 6 m | $21,13 | |
+| `alambre` | `GN12855` Alambre galvanizado rollo pequeño | $2,65 | ⚠ no hay "alambre dulce 1 kg"; `GN12332` galvanizado grueso ($7,95) |
+| `pintura-cunete` | `MANP0103` Manpica Titán caucho tipo "C" tobo | $44,21 | `MNT1013` ABC caucho blanco tobo 4 gal ($63,25) |
+| `pintura-galon` | `MANP0102` Manpica Titán caucho tipo "C" galón | $12,76 | `MNT1010` ABC caucho blanco galón ($16,65) |
+| `sellador` | `GN60039` PC3 sellador de usos múltiples galón | $21,75 | `ADESI006` Adesi-Top sellador blanco galón ($68,87); confirmar que sirve como antialcalino |
+| `manto` | `IPA0030` Cindu rollo manto asfáltico 3,15 mm | $59,50 | `IPA0084` 2,7 mm ($55,07) |
+| `primer-asfaltico` | `IPA0055` Primer galón | $25,18 | `IPA0034` primer cuñete ($88,84) |
+| `impermeabilizante-acrilico` | `GN00880` PC3 impermeabilizante con fibra galón | $42,05 | `ADESI007` Adesi-Top #205 galón ($29,39) |
+| `ceramica` | `CERAM002` Cerámica 8701 plana blanca 30×30 | $27,38 | ⚠ 30×30 (la calculadora supone 45×45, caja de 2,03 m²) |
+| `porcelanato` | `CERAM045` Ceramicol porcelanato Urban Grey 60×60 | $56,66 | ⚠ confirmar m² por caja |
+| `pego` | `CONST0133` Gold pego gris Ceramipeg | $6,22 | ⚠ confirmar kilos; `CONST0021` Keraflex saco 25 kg ($62,69) |
+| `carato` | — | | No hay carato en Saint |
+| `lamina-zinc` | `GN11420` Lámina zinc normal 3,60 m | $8,85 | |
+| `lamina-acerolit` | `CONST0168` Lámina Acerotec/Superlit 3,00 m | $55,27 | ⚠ 3,00 m (la calculadora supone 3,66); `GN14950` tipo acerolit transparente 3,5 m ($111,03) |
+| `tornillo-techo` | `TOR1146` Tornillo autotaladrante hex 14×1" | $0,21 | ⚠ se vende por unidad (la calculadora pide bolsas de 100) |
+| `lamina-drywall` | `CONST0032` Lámina drywall 1/2" 1,22×2,44 m | $20,85 | |
+| `paral` | `GN09936` Perfil paral 1-5/8" 3,05 m cal. 26 | $4,67 | ⚠ 1-5/8" (la calculadora dice 2-1/2") |
+| `riel` | `GN09860` Perfil riel 1-5/8" 3,05 m cal. 26 | $4,36 | ⚠ ídem |
+| `tornillo-drywall` | `TOR1220` Tornillo drywall rosca gruesa 6-9×1" | $0,08 | ⚠ por unidad (la calculadora pide cajas de 100) |
+| `cinta-juntas` | `GN60272` Buildco cinta de papel 2" × 76 m | $4,58 | ⚠ 76 m (la calculadora supone 75) |
+| `masilla` | `RAMA0006` Magic Gypsum pasta para drywall galón | $9,12 | ⚠ confirmar kilos por galón |
+| `cuchara` | `GN03409` Cuchara para albañil punta cuadrada 9" | $9,15 | |
+| `llana` | `GN00300` Palustra llana plástica para graneado | $5,80 | ⚠ no hay llana lisa de acero |
+| `balde` | `PRLF0073` Prolife tobo para albañil plástico | $8,15 | |
+| `carretilla` | `MULTP005` Carretilla construcción gris | $98,09 | `HERRA0010` Herragro 65 L ($132,04) |
+| `pala` | `BLLT0128` Bellota/Herragro pala calidad | $21,42 | |
+| `nivel` | `NIKAT087` Nikato nivel de aluminio 24" | $12,89 | `GN60724` Da Hai 60 cm ($18,50) |
+| `cinta-metrica` | `BRUF0525` Brufer cinta métrica 5 m × 19 mm | $3,87 | `TRUP0776` Pretul 5 m ($6,03) |
+| `guantes` | `GN14750` Guantes de carnaza cortos | $4,52 | `GN03713` largos reforzados ($8,24) |
+| `lentes` | `GN03721` Lentes de seguridad oscuro-transparente | $3,11 | `PRLF0036` Prolife Smoke ($3,43) |
+| `segueta` | `BRUF0168` Brufer arco de segueta tubular | $7,99 | `NIKAT032` Nikato 12" ($17,15) |
+| `rodillo` | `GN00188` Set de bandeja y rodillo 9" económico | $7,42 | ⚠ es un set; no hay "rodillo antigota" suelto |
+| `brocha` | `JABAL024` Brocha 2" económica | $3,19 | |
+| `bandeja` | `GN12764` Bandeja plástica para rodillo | $2,49 | |
+| `cinta-enmascarar` | `CELV0006` Tirro papel 1" | $2,92 | |
+| `espatula` | `LBS0108` Lobster espátula 4" mango de madera | $3,28 | `BRUF0208` Brufer 4" ($2,49) |
+| `taladro` | `NIKAT081` Nikato taladro percutor 1/2" 600 W | $67,77 | `CAT0042` Wesco 550 W ($50,18), `BSC0165` Bosch ($140,36) |
+| `escalera` | `ALD0030` Aladino escalera plataforma doméstica 3 tramos | $91,88 | ⚠ confirmar si es de aluminio; `ALD0021` 2 tramos ($70,36) |
 
-(Precios de Saint del 2026-10-25.) Al cambiarlos: la prueba "todo material y herramienta apunta a un producto que
-existe en el catálogo de prueba" (`lib/calculadoras/__tests__/calculadoras.test.ts`) usa `lib/mock/catalogoPruebas.ts`;
-habrá que ajustarla (los códigos reales no están en los datos de prueba). Después se pueden borrar las fotos de ejemplo
-`public/productos/00302*.webp` y sus líneas en `public/productos/CREDITOS.md` (solo las usaba el mock).
+Al aplicarlos: la prueba "todo material y herramienta apunta a un producto que existe" usa la muestra real
+`lib/__tests__/datos/muestraSaint.json`: agrega ahí los productos elegidos (o ajusta la prueba).
 
 ## Detalles para continuar sin este chat
 

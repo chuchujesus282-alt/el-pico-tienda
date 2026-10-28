@@ -37,7 +37,7 @@ const BANNERS: Record<string, ConfigBanner> = {
   pinturas: {
     Propio: BannerPinturas,
   },
-  plomeria: {
+  griferia: {
     Propio: BannerPlomeria,
   },
   construccion: {

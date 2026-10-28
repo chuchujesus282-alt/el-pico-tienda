@@ -16,7 +16,7 @@ export const metadata: Metadata = {
     default: "Centro Ferretero El Pico",
     template: "%s | El Pico",
   },
-  description: "Tienda en línea de Centro Ferretero El Pico, Caracas. Herramientas, plomería, electricidad, pinturas y más.",
+  description: "Tienda en línea de Centro Ferretero El Pico, Caracas. Herramientas, grifería, electricidad, pinturas y más.",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

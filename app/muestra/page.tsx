@@ -35,7 +35,7 @@ export default async function Muestra() {
       </section>
 
       <CarruselProductos titulo="Te puede interesar" productos={interesar} href="/categoria/herramientas" />
-      <CarruselProductos titulo="Nuestros recomendados" productos={recomendados} href="/categoria/plomeria" />
+      <CarruselProductos titulo="Nuestros recomendados" productos={recomendados} href="/categoria/griferia" />
 
       <section>
         <TituloSeccion titulo="GrillaProductos" href="/categoria/herramientas" />

@@ -88,7 +88,7 @@ export const ICONOS_PICO: FichaIcono[] = [
   { nombre: "Tornillo", grupo: "Categorías", descripcion: "Tornillería: tornillo con la ranura roja en la cabeza; gira.", Componente: IconoTornillo },
   { nombre: "Candado", grupo: "Categorías", descripcion: "Cerrajería: candado con el ojo de la llave rojo; el arco salta como al abrirse.", Componente: IconoCandado },
   { nombre: "Bombillo", grupo: "Categorías", descripcion: "Electricidad: bombillo con el filamento rojo encendido y sus rayos.", Componente: IconoBombillo },
-  { nombre: "Tuberia", grupo: "Categorías", descripcion: "Plomería: codo de tubería con la llave de paso roja que gira.", Componente: IconoTuberia },
+  { nombre: "Tuberia", grupo: "Categorías", descripcion: "Grifería: codo de tubería con la llave de paso roja que gira.", Componente: IconoTuberia },
   { nombre: "Pala", grupo: "Categorías", descripcion: "Hogar y jardín: pala con la hoja roja que cava.", Componente: IconoPala },
   { nombre: "Casco", grupo: "Categorías", descripcion: "Seguridad industrial: casco de obra con la cresta roja.", Componente: IconoCasco },
   { nombre: "Llanta", grupo: "Categorías", descripcion: "Vehículos: llanta con su rin y el centro rojo; da la vuelta.", Componente: IconoLlanta },

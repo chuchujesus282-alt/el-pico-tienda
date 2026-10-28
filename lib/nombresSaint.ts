@@ -25,6 +25,7 @@ const RAICES_CON_ACENTO: [string, string][] = [
   ["ECONOMIC", "económic"], ["TECNIC", "técnic"], ["MECANIC", "mecánic"], ["METALMECANIC", "metalmecánic"],
   ["METRIC", "métric"], ["AMPERIMETRIC", "amperimétric"], ["CERAMIC", "cerámic"], ["TERMIC", "térmic"],
   ["RAPID", "rápid"], ["PRACTIC", "práctic"], ["ELASTIC", "elástic"], ["OPTIC", "óptic"], ["UNIC", "únic"],
+  ["QUIMIC", "químic"], ["ARQUITECTONIC", "arquitectónic"],
 ];
 const PALABRAS_CON_ACENTO: Record<string, string> = {
   PORTATIL: "portátil", PORTATILES: "portátiles", MEDICION: "medición", COMBUSTION: "combustión", CARBON: "carbón",
@@ -34,6 +35,10 @@ const PALABRAS_CON_ACENTO: Record<string, string> = {
   SUJECION: "sujeción", DIAMETRO: "diámetro", ANGULO: "ángulo", TUBERIA: "tubería", SEÑALIZACION: "señalización",
   JARDIN: "jardín", ESPATULA: "espátula", ESPATULAS: "espátulas", ESTANDAR: "estándar", MULTIMETRO: "multímetro",
   TERMOMETRO: "termómetro", MANOMETRO: "manómetro", VALVULA: "válvula", VALVULAS: "válvulas",
+  // Nombres de subcategorías de Saint (2026-10-28)
+  CONSTRUCCION: "construcción", TORNILLERIA: "tornillería", CERRAJERIA: "cerrajería", GRIFERIA: "grifería",
+  INSTALACION: "instalación", ILUMINACION: "iluminación", DESAGUE: "desagüe", AREA: "área", AREAS: "áreas",
+  VEHICULO: "vehículo", VEHICULOS: "vehículos",
 };
 
 /** Después de estas palabras, una letra suelta es un tipo o modelo y queda en mayúscula: TIPO A, MOD B. */

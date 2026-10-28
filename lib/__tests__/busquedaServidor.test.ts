@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { catalogoPruebas } from "@/lib/mock/catalogoPruebas";
+import { muestraSaint } from "@/lib/__tests__/datos/muestraSaint";
 import { crearIndice } from "@/lib/recomendaciones/busqueda";
 import type { Senal } from "@/lib/recomendaciones/tipos";
 import {
@@ -14,9 +14,9 @@ import {
 } from "../busquedaServidor";
 import { repartirPorCategoria } from "../repartirSaint";
 
-const indice = crearIndice(catalogoPruebas);
-const MARTILLO = "00302045";
-const TALADRO = "00302011";
+const indice = crearIndice(muestraSaint);
+const MARTILLO = "BLLT0084"; // BELLOTA MARTILLO 8001-D BASIC (real de Saint)
+const TALADRO = "BSC0165"; // BOSCH TALADRO 1/2" PERCUTOR (real de Saint)
 
 describe("/api/sugerencias (responderSugerencias + limpiarConsulta)", () => {
   it("limpia la consulta: espacios de más, no-texto y largo máximo", () => {
@@ -66,7 +66,7 @@ describe("/api/favoritos (leerIds + elegirFavoritos)", () => {
   });
 
   it("devuelve esos productos en el mismo orden y deja fuera los que no están", () => {
-    const productos = elegirFavoritos(catalogoPruebas, [TALADRO, "NO-EXISTE", MARTILLO]);
+    const productos = elegirFavoritos(muestraSaint, [TALADRO, "NO-EXISTE", MARTILLO]);
     expect(productos.map((p) => p.id)).toEqual([TALADRO, MARTILLO]);
     expect(productos[0]).not.toHaveProperty("descripcion");
   });
@@ -114,10 +114,10 @@ describe("Saint con varias categorías (repartirPorCategoria)", () => {
   };
 
   it("reparte productos y subcategorías por codCategoria y descarta los que no están en el mapa", () => {
-    const partes = repartirPorCategoria(respuesta, { herramientas: 1171, plomeria: 1200, pinturas: 1300 });
+    const partes = repartirPorCategoria(respuesta, { herramientas: 1171, griferia: 1200, pinturas: 1300 });
     expect(partes.get("herramientas")!.productos.map((p) => (p as { codigo: string }).codigo)).toEqual(["A1", "A2"]);
-    expect(partes.get("plomeria")!.productos).toHaveLength(1);
-    expect(partes.get("plomeria")!.subcategorias).toHaveLength(1);
+    expect(partes.get("griferia")!.productos).toHaveLength(1);
+    expect(partes.get("griferia")!.subcategorias).toHaveLength(1);
     expect(partes.get("pinturas")!.productos).toEqual([]); // en el mapa pero sin productos: lista vacía
     expect(partes.get("herramientas")!.tasa).toBe(888.12);
   });

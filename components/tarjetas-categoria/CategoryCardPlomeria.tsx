@@ -78,9 +78,9 @@ const AGUA =
 const PIEZA_FUERA = { transform: "translate(420 0)", opacity: "0" };
 
 export default function CategoryCardPlomeria({
-  titulo = "Plomería",
-  descripcion = "Tuberías, conexiones, llaves y grifería.",
-  href = "#plomeria",
+  titulo = "Grifería",
+  descripcion = "Grifos, duchas, llaves, sanitarios, repuestos, desagües y filtros.",
+  href = "#griferia",
   escalar = false,
 }: Props) {
   // Id único para el filtro: varias tarjetas en la misma página no se pisan.

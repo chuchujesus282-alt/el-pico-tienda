@@ -17,7 +17,7 @@ import {
 import type { BannerInicio } from "@/components/inicio/contenidoInicio";
 import Contenedor from "@/components/ui/Contenedor";
 import Revelar from "@/components/ui/Revelar";
-import { getCategorias, getMasVendidos, getProductosDestacados, getProductosPorCategoria } from "@/lib/catalogo";
+import { getCategorias, getProductosDestacados } from "@/lib/catalogo";
 import type { Categoria, Producto } from "@/types/catalogo";
 
 // Página principal — responsable: persona A. Ver la distribución en docs/guia-de-estilo.md.
@@ -50,18 +50,13 @@ function soloCategoriasExistentes(banners: BannerInicio[], categorias: Categoria
 const sinProductos: Producto[] = [];
 
 export default async function Inicio() {
+  // Productos reales de Saint: los códigos de datos/destacados.json y, si faltan, la mezcla automática del día
+  // (lib/destacados.ts). Mientras no haya "Más vendidos", esto reemplaza a los productos de ejemplo de antes.
   const [categorias, interesar, recomendados, productosPorSeccion] = await Promise.all([
     seguro(getCategorias(), []),
-    seguro(getMasVendidos(10), sinProductos), // cliente nuevo; en el navegador se personaliza
+    seguro(getProductosDestacados("te-puede-interesar"), sinProductos), // cliente nuevo; en el navegador se personaliza
     seguro(getProductosDestacados("recomendados"), sinProductos),
-    Promise.all(
-      seccionesCategoria.map((s) =>
-        seguro(
-          getProductosPorCategoria(s.slug, { porPagina: 10 }).then((r) => r.productos),
-          sinProductos,
-        ),
-      ),
-    ),
+    Promise.all(seccionesCategoria.map((s) => seguro(getProductosDestacados(s.slug), sinProductos))),
   ]);
 
   const todos = [...interesar, ...recomendados, ...productosPorSeccion.flat()];

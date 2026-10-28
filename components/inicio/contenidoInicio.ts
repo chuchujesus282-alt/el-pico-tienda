@@ -132,7 +132,7 @@ export function marcasDeProductos(productos: Producto[], limite = 12): Marca[] {
  */
 export const columnasCategorias: Record<string, { imagen: string | null; texto?: string }> = {
   electricidad: { imagen: null, texto: "Cables, breakers, tomas e iluminación." },
-  plomeria: { imagen: null, texto: "Tuberías, conexiones, llaves y grifería." },
+  griferia: { imagen: null, texto: "Grifos, duchas, llaves, sanitarios, repuestos, desagües y filtros." },
   "hogar-y-jardin": { imagen: null, texto: "Mangueras, herramientas de jardín y más para tu casa." },
   vehiculos: { imagen: null, texto: "Aceites, lubricantes y accesorios para tu carro." },
 };

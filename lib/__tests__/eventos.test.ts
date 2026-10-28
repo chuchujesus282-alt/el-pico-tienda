@@ -66,7 +66,7 @@ describe("limpiarEvento", () => {
       categoria: "herramientas",
       subcategoria: "Herramientas eléctricas",
     });
-    expect(limpiarEvento({ tipo: "categoria_vista", categoria: "plomeria" })).toEqual({ tipo: "categoria_vista", categoria: "plomeria" });
+    expect(limpiarEvento({ tipo: "categoria_vista", categoria: "griferia" })).toEqual({ tipo: "categoria_vista", categoria: "griferia" });
     expect(limpiarEvento({ tipo: "busqueda", termino: "Taladro", resultados: 5 })).toEqual({ tipo: "busqueda", termino: "taladro", resultados: 5 });
     expect(limpiarEvento({ tipo: "carrito", producto: "00302011" })).toEqual({ tipo: "carrito", producto: "00302011" });
   });

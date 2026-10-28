@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { catalogoPruebas as productosMock } from "@/lib/mock/catalogoPruebas";
+import { muestraSaint as productosMock } from "@/lib/__tests__/datos/muestraSaint";
 import { barrasParaTramos } from "../cabillas";
 import { caratoKgPorM2 } from "../ceramica";
 import { MATERIALES, type IdMaterial } from "../materiales";

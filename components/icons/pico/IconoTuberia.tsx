@@ -1,6 +1,6 @@
 import IconoBase, { type PropsIcono } from "./IconoBase";
 
-/** Plomería: codo de tubería con la llave de paso roja que gira. */
+/** Grifería: codo de tubería con la llave de paso roja que gira. */
 export default function IconoTuberia(props: PropsIcono) {
   return (
     <IconoBase {...props}>

@@ -9,6 +9,12 @@ const nextConfig: NextConfig = {
       { protocol: "https", hostname: "lh3.googleusercontent.com", pathname: "/**" },
     ],
   },
+  async redirects() {
+    return [
+      // "Plomería" pasó a llamarse "Grifería" (2026-10-28): los enlaces viejos y los buscadores llegan a la nueva.
+      { source: "/categoria/plomeria", destination: "/categoria/griferia", permanent: true },
+    ];
+  },
 };
 
 export default nextConfig;

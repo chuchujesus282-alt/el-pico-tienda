@@ -1,11 +1,11 @@
 import { describe, expect, it } from "vitest";
-import { catalogoPruebas as productosMock } from "@/lib/mock/catalogoPruebas";
+import { muestraSaint as productosMock } from "@/lib/__tests__/datos/muestraSaint";
 import type { Producto } from "@/types/catalogo";
 import { buscar, crearIndice, crearIndicePorPartes, sugerir, sugerirCorrigiendo } from "../busqueda";
 import { tePuedeInteresar } from "../interesar";
 import { relacionados } from "../relacionados";
 
-// Catálogo inventado de 2000 productos: variantes de los de prueba con otras medidas, marcas y colores.
+// Catálogo grande inventado: variantes de la muestra REAL de Saint con otras medidas, marcas y colores.
 function catalogoGrande(cantidad = 2000): Producto[] {
   const medidas = ['1/8"', '1/4"', '3/8"', '1/2"', '5/8"', '3/4"', '1"', '1 1/2"', '2"', "5MTS", "10KG", "1 GALON"];
   const extras = ["NEGRO", "BLANCO", "GALVANIZADO", "REFORZADO", "PROFESIONAL", "ECONOMICO", "INOX", "PLASTICO"];

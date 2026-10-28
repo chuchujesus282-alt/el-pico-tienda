@@ -4,7 +4,9 @@ import IconoBloques from "./IconoBloques";
 import IconoBombillo from "./IconoBombillo";
 import IconoCandado from "./IconoCandado";
 import IconoCasco from "./IconoCasco";
+import IconoEscudo from "./IconoEscudo";
 import IconoLlanta from "./IconoLlanta";
+import IconoManto from "./IconoManto";
 import IconoPala from "./IconoPala";
 import IconoRayo from "./IconoRayo";
 import IconoRegla from "./IconoRegla";
@@ -20,7 +22,7 @@ const POR_CATEGORIA: Record<string, ComponenteIcono> = {
   tornilleria: IconoTornillo,
   cerrajeria: IconoCandado,
   electricidad: IconoBombillo,
-  plomeria: IconoTuberia,
+  griferia: IconoTuberia,
   pinturas: IconoRodillo,
   "hogar-y-jardin": IconoPala,
   "seguridad-industrial": IconoCasco,
@@ -31,12 +33,27 @@ export function iconoDeCategoria(slug: string): ComponenteIcono {
   return POR_CATEGORIA[slug] ?? IconoTornillo;
 }
 
-/** Subcategorías con un ícono más preciso que el de su categoría (por palabra del nombre, sin acentos). */
+/**
+ * Subcategorías de Saint con un ícono más preciso que el de su categoría (por el nombre, sin acentos y en minúsculas).
+ * Las que no están aquí usan el de su categoría. Ojo con el orden: gana la primera que coincide.
+ */
 const POR_SUBCATEGORIA: [RegExp, ComponenteIcono][] = [
+  // Herramientas
   [/medicion/, IconoRegla],
   [/automotri|vehicul/, IconoLlanta],
   [/oxicorte|soldadura/, IconoRayo],
   [/hidraulic/, IconoTuberia],
+  // Construcción
+  [/grupo quimico/, IconoManto],
+  [/manguera/, IconoTuberia],
+  // Electricidad ("Protección" sola; las de Seguridad industrial dicen "Protección de…" y siguen con el casco)
+  [/^proteccion$/, IconoEscudo],
+  [/cableado|dispositivos de conexion|control de motores/, IconoRayo],
+  [/iluminacion|instalacion y montaje/, IconoBombillo],
+  // Vehículos
+  [/sistema electric/, IconoRayo],
+  // Seguridad industrial
+  [/proteccion contra incendios|senalizacion/, IconoEscudo],
 ];
 
 /** Ícono para un producto sin foto: el de su subcategoría si hay uno, si no el de su categoría. */

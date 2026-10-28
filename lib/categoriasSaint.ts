@@ -1,13 +1,21 @@
-// Mapa de categorías de la web → código de la categoría en Saint (el sistema de la tienda).
-// Una categoría que está aquí muestra los productos REALES de Saint (lib/saint.ts); las que no, siguen con los de
-// ejemplo de lib/mock/ hasta que se agregue su código. Para sumar una: { "plomeria": 1234 } y listo.
-// Responsable: persona A. Los slugs son los de lib/mock/categorias.ts.
+// Mapa de categorías de la web → código de la categoría en Saint (el sistema de la tienda). TODAS las categorías de la
+// web traen sus productos REALES de Saint (lib/saint.ts); ya no hay productos de ejemplo. Responsable: persona A.
+// Los slugs son los de lib/categorias.ts. NUNCA agregar el código 1 ("POR ARREGLAR" en Saint): no va en la página.
 
 export const CATEGORIAS_SAINT: Record<string, number> = {
   herramientas: 1171,
+  construccion: 1498,
+  tornilleria: 1620,
+  electricidad: 1685,
+  griferia: 1758,
+  "hogar-y-jardin": 1872,
+  pinturas: 1835,
+  cerrajeria: 1653,
+  vehiculos: 1949,
+  "seguridad-industrial": 1912,
 };
 
-/** Código de Saint de la categoría, o undefined si todavía usa los productos de ejemplo. */
+/** Código de Saint de la categoría, o undefined si no está en el mapa. */
 export function codigoSaint(slug: string): number | undefined {
   return Object.hasOwn(CATEGORIAS_SAINT, slug) ? CATEGORIAS_SAINT[slug] : undefined;
 }

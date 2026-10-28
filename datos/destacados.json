@@ -1,0 +1,40 @@
+{
+  "_instrucciones": "Productos que se muestran en el inicio. Escribe los CÓDIGOS de Saint entre comillas, separados por comas, en el orden en que quieres que salgan. Si un código ya no existe se salta solo. Si una lista está vacía (o le faltan productos), la página la completa con una mezcla automática: un producto de cada subcategoría, que cambia cada día. 'recomendados' = 'Nuestros recomendados'; 'te-puede-interesar' = lo que ve un cliente nuevo; las demás llevan el nombre de su categoría (sus carruseles en el inicio).",
+  "recomendados": [
+    "CONST0082",
+    "ICNL0033",
+    "TOR1220",
+    "FP3611",
+    "MNT1010",
+    "GN01817",
+    "CAT0089",
+    "GN14750",
+    "OPN0002",
+    "SQ0036"
+  ],
+  "te-puede-interesar": [],
+  "construccion": [
+    "CONST0082",
+    "CONST0001",
+    "CONST0010",
+    "CONST0423",
+    "CONST0032",
+    "CONST0133",
+    "GN11420",
+    "CELV0006",
+    "RAMA0006",
+    "CONST0018"
+  ],
+  "hogar-y-jardin": [
+    "OPN0002",
+    "GN11098",
+    "ALFA057",
+    "FINO001",
+    "ALFA077",
+    "GN12233",
+    "ALFA064",
+    "GN22146",
+    "LIMP0165",
+    "PET019"
+  ]
+}
