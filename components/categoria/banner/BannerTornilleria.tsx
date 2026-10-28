@@ -59,18 +59,37 @@ function crearMotor(raiz: HTMLElement): Motor {
   const S = { ty: T0, dy: 0, tq: 0, ny: 50, nr: 0 };
   let fase = 0,
     faseP = 0;
-  const drawHilos = () => hilosT.forEach((h) => h.setAttribute("d", hilosTornillo(fase)));
-  const drawPerno = () => perno.setAttribute("d", hilosPerno(faseP));
-  function draw() {
+  // Cada parte se dibuja por separado: el tornillo, la tuerca y el torque cambian en momentos distintos, y así cada
+  // cuadro solo toca lo que se movió (el texto del torque, solo cuando cambia su décima).
+  const hilos = { t: "", p: "" };
+  const drawHilos = () => {
+    const d = hilosTornillo(fase);
+    if (d === hilos.t) return;
+    hilos.t = d;
+    hilosT.forEach((h) => h.setAttribute("d", d));
+  };
+  const drawPerno = () => {
+    const d = hilosPerno(faseP);
+    if (d === hilos.p) return;
+    hilos.p = d;
+    perno.setAttribute("d", d);
+  };
+  function drawTornillo() {
     tornillo.setAttribute("transform", `translate(0 ${(S.ty + 60).toFixed(2)})`);
     destor.setAttribute("transform", `translate(0 ${(S.ty + 60 + S.dy).toFixed(2)})`);
-    const punta = S.ty + 60 + LEN;
-    hoyo.setAttribute("height", Math.max(0, punta - 150 - 6).toFixed(2));
-    torque.textContent = `TORQUE ${S.tq.toFixed(1)} N·m`;
+    hoyo.setAttribute("height", Math.max(0, S.ty + 60 + LEN - 150 - 6).toFixed(2));
+  }
+  let torqueTexto = "";
+  function drawTorque() {
+    const texto = `TORQUE ${S.tq.toFixed(1)} N·m`;
+    if (texto !== torqueTexto) torque.textContent = torqueTexto = texto;
+  }
+  function drawTuerca() {
     tuerca.setAttribute("transform", `translate(0 ${S.ny.toFixed(2)})`);
     const k = Math.abs(Math.cos(((S.nr * Math.PI) / 180) * 3));
     caraT.setAttribute("d", `M${(540 - 14 * k).toFixed(2)} 0H${(540 + 14 * k).toFixed(2)}V20H${(540 - 14 * k).toFixed(2)}Z`);
   }
+  const draw = () => (drawTornillo(), drawTorque(), drawTuerca());
 
   // Virutas de madera: salen del hoyo y se borran solas.
   function virutas() {
@@ -126,9 +145,10 @@ function crearMotor(raiz: HTMLElement): Motor {
     const g = ++gen;
     raiz.classList.add("on");
     // 1. el destornillador baja hasta la cabeza
+    raiz.classList.remove("ajustado");
     S.dy = -40;
-    draw();
-    if (!(await tween(320, (p) => ((S.dy = -40 * (1 - p)), draw()), out))) return;
+    drawTornillo();
+    if (!(await tween(320, (p) => ((S.dy = -40 * (1 - p)), drawTornillo()), out))) return;
     raiz.classList.add("vivo");
     // 2. el tornillo gira y se hunde en la madera (la rosca avanza), virutas
     chispero = window.setInterval(() => {
@@ -143,7 +163,7 @@ function crearMotor(raiz: HTMLElement): Motor {
         S.nr = 720 * p;
         faseP = -p * 80;
         drawPerno();
-        draw();
+        drawTuerca();
       },
       lin,
     );
@@ -154,15 +174,18 @@ function crearMotor(raiz: HTMLElement): Motor {
         fase = p * 72;
         S.tq = 4.8 * Math.pow(p, 1.6);
         drawHilos();
-        draw();
+        drawTornillo();
+        drawTorque();
       },
       lin,
     );
     pararVirutas();
     if (!ok || !(await tuercaBaja)) return;
     raiz.classList.remove("vivo");
+    // Ajustado: onda en la cabeza del tornillo y el torque se ilumina (clase global `ajustado`).
+    raiz.classList.add("ajustado");
     // 3. el destornillador se retira
-    await tween(320, (p) => ((S.dy = -46 * p), draw()), out);
+    await tween(320, (p) => ((S.dy = -46 * p), drawTornillo()), out);
   }
 
   async function reposo() {
@@ -170,7 +193,7 @@ function crearMotor(raiz: HTMLElement): Motor {
     pararVirutas();
     // `on` se queda hasta que todo vuelve (BannerPlano ya la quitó; el prototipo la quita al final).
     raiz.classList.add("on");
-    raiz.classList.remove("vivo");
+    raiz.classList.remove("vivo", "ajustado");
     const s = { ...S };
     const ok = await tween(420, (p) => {
       S.ty = s.ty + (T0 - s.ty) * p;
@@ -192,7 +215,7 @@ function crearMotor(raiz: HTMLElement): Motor {
       gen++;
       pararVirutas();
       rafs.forEach((id) => cancelAnimationFrame(id));
-      raiz.classList.remove("vivo");
+      raiz.classList.remove("vivo", "ajustado");
     },
   };
 }
@@ -213,7 +236,8 @@ export default function BannerTornilleria({ nombre }: PropsBannerPropio) {
   const id = useId().replace(/:/g, "");
   const encima = `encima-${id}`,
     dentro = `dentro-${id}`,
-    clipPerno = `perno-${id}`;
+    clipPerno = `perno-${id}`,
+    mango = `mango-${id}`;
   const s = styles;
   const F = s.fill;
   return (
@@ -243,9 +267,12 @@ export default function BannerTornilleria({ nombre }: PropsBannerPropio) {
           <clipPath id={clipPerno}>
             <rect x="500" y="0" width="80" height="260" />
           </clipPath>
+          <clipPath id={mango}>
+            <rect x="178" y="-58" width="24" height="38" rx="5" />
+          </clipPath>
         </defs>
 
-        <text data-p="torque" x="760" y="24" textAnchor="end">
+        <text data-p="torque" className={s.torque} x="760" y="24" textAnchor="end">
           TORQUE 0.0 N·m
         </text>
 
@@ -280,8 +307,13 @@ export default function BannerTornilleria({ nombre }: PropsBannerPropio) {
           <rect className={`${F} ${s.fZinc} ${s.ln}`} x="184" y="-20" width="12" height="46" rx="2" />
           <path className={`${F} ${s.fZinc} ${s.ln}`} d="M184 26H196L192 36H188Z" />
           <rect className={`${F} ${s.fRojo} ${s.ln}`} x="176" y="-60" width="28" height="42" rx="6" />
-          <path className={s.cota} d="M182 -54V-24M190 -54V-24M198 -54V-24" style={{ stroke: "#0b1d33" }} />
+          {/* estrías del mango: corren de lado mientras atornilla, como si el mango girara */}
+          <g clipPath={`url(#${mango})`}>
+            <path className={`${s.cota} ${s.estrias}`} d="M174 -54V-24M182 -54V-24M190 -54V-24M198 -54V-24M206 -54V-24" style={{ stroke: "#0b1d33" }} />
+          </g>
         </g>
+        {/* ajustado: onda que sale de la cabeza del tornillo ya a ras de la madera */}
+        <ellipse className={s.onda} cx="190" cy="150" rx="22" ry="6" />
         <g data-p="viruta" className={s.viruta} />
 
         {/* ===== 2. arandelas + clavos ===== */}

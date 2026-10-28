@@ -90,16 +90,21 @@ function crearMotor(raiz: HTMLElement): Motor {
     arcoY = 0,
     arcoR = 0,
     rot = 0;
+  // Altura con la que se dibujó cada pin la última vez: solo se redibuja el que la llave movió (la mayor parte del
+  // recorrido, la llave avanza sin tocar la mayoría de los pines).
+  const dibujado = pines.map(() => 0);
   const drawKey = () => {
     llave.setAttribute("transform", `translate(${off.toFixed(2)} 0)`);
-    for (const p of pines) {
+    pines.forEach((p, i) => {
       const t = alturaLlave(p.x - off);
       const lift = Math.min(40 - p.l + 0.01, t === null ? 0 : Math.max(0, BASE - t));
+      if (Math.abs(lift - dibujado[i]) < 0.05) return;
+      dibujado[i] = lift;
       const g = geomPin(p.x, p.l, lift);
       p.kp.setAttribute("d", g.kp);
       p.drv.setAttribute("y", g.drvY.toFixed(2));
       p.sp.setAttribute("d", g.sp);
-    }
+    });
   };
   const drawArco = () => arco.setAttribute("transform", `translate(0 ${(-arcoY).toFixed(2)}) rotate(${arcoR.toFixed(2)} 52 142)`);
   const drawFront = () => frontal.setAttribute("transform", `rotate(${rot.toFixed(2)})`);
@@ -187,7 +192,8 @@ function crearMotor(raiz: HTMLElement): Motor {
 
 export default function BannerCerrajeria({ nombre }: PropsBannerPropio) {
   const id = useId().replace(/:/g, "");
-  const clipCil = `cil-${id}`;
+  const clipCil = `cil-${id}`,
+    clipCandado = `candado-${id}`;
   const s = styles;
   return (
     <BannerPlano
@@ -211,6 +217,9 @@ export default function BannerCerrajeria({ nombre }: PropsBannerPropio) {
           <clipPath id={clipCil}>
             <rect x="150" y="40" width="370" height="160" rx="10" />
           </clipPath>
+          <clipPath id={clipCandado}>
+            <rect x="36" y="138" width="88" height="80" rx="10" />
+          </clipPath>
         </defs>
 
         <text data-p="estado" className={s.estado} x="150" y="24">
@@ -227,6 +236,10 @@ export default function BannerCerrajeria({ nombre }: PropsBannerPropio) {
             <path d="M52 142V108A28 28 0 0 1 108 108V142" fill="none" stroke="#0a1f38" strokeWidth="3" />
           </g>
           <rect className={`${s.fill} ${s.fCandado} ${s.ln}`} x="36" y="138" width="88" height="80" rx="10" />
+          {/* reflejo dorado que cruza el cuerpo del candado al abrirse */}
+          <g clipPath={`url(#${clipCandado})`}>
+            <rect className={s.reflejo} x="16" y="130" width="22" height="96" />
+          </g>
           <circle cx="80" cy="172" r="6" fill="#0b1d33" />
           <path d="M77 176h6l2 18h-10z" fill="#0b1d33" />
           <path className={s.cota} d="M44 150H116M44 206H116" />
@@ -266,6 +279,10 @@ export default function BannerCerrajeria({ nombre }: PropsBannerPropio) {
         })}
         {/* bocallave */}
         <path className={s.cota} d="M170 172H520M170 200H520" style={{ strokeDasharray: "2 3" }} />
+        {/* al abrir, cada pin enciende su punto en la línea de corte, de izquierda a derecha */}
+        {XS.map((x, i) => (
+          <circle key={x} className={s.alineado} cx={x} cy="130" r="3.5" style={{ transitionDelay: `${i * 60}ms` }} />
+        ))}
 
         {/* vista frontal (arriba a la derecha) */}
         <g transform="translate(700 72)">

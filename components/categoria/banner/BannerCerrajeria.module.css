@@ -85,6 +85,46 @@
   fill: var(--ok);
 }
 
+/* Al abrir: un punto verde por pin en la línea de corte (cada uno con su retraso, en el JSX). */
+.alineado {
+  fill: var(--ok);
+  opacity: 0;
+  transform-box: fill-box;
+  transform-origin: center;
+  transform: scale(0);
+  transition:
+    opacity 0.2s,
+    transform 0.35s cubic-bezier(0.3, 1.6, 0.5, 1);
+  filter: drop-shadow(0 0 3px var(--ok));
+}
+:global(.abierto) .alineado {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* Al abrir: un reflejo de luz cruza el cuerpo de latón del candado una vez. */
+.reflejo {
+  fill: #fff6d8;
+  opacity: 0;
+  transform: skewX(-20deg);
+}
+:global(.abierto) .reflejo {
+  animation: reflejo 0.9s cubic-bezier(0.16, 1, 0.3, 1) 0.35s;
+}
+@keyframes reflejo {
+  0% {
+    opacity: 0;
+    transform: skewX(-20deg) translateX(0);
+  }
+  20% {
+    opacity: 0.55;
+  }
+  100% {
+    opacity: 0;
+    transform: skewX(-20deg) translateX(130px);
+  }
+}
+
 /* Brillo verde al abrir (el dorado del activo es el de BannerPlano, con --brillo). */
 .brilloAbierto {
   position: absolute;
@@ -117,8 +157,12 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .mece {
+  .mece,
+  :global(.abierto) .reflejo {
     animation: none;
+  }
+  .alineado {
+    transition-duration: 0.01s;
   }
   .bp,
   .fill,

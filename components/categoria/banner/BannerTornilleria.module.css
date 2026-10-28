@@ -73,6 +73,45 @@
   stroke: var(--zinc-osc);
 }
 
+/* Estrías del mango del destornillador: corren mientras atornilla (`vivo`), como si girara. */
+:global(.vivo) .estrias {
+  animation: estriasGiran 0.16s linear infinite;
+}
+@keyframes estriasGiran {
+  to {
+    transform: translateX(8px);
+  }
+}
+
+/* Ajustado (clase global `ajustado` al terminar): onda en la cabeza del tornillo y el torque se ilumina. */
+.onda {
+  fill: none;
+  stroke: var(--zinc);
+  stroke-width: 1.5;
+  opacity: 0;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+:global(.ajustado) .onda {
+  animation: onda 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+}
+@keyframes onda {
+  from {
+    opacity: 0.9;
+    transform: scale(0.4);
+  }
+  to {
+    opacity: 0;
+    transform: scale(1.8);
+  }
+}
+.svg .torque {
+  transition: fill 0.4s;
+}
+:global(.ajustado) .svg .torque {
+  fill: #f3f6fa;
+}
+
 /* Virutas de madera que salen del hoyo. */
 .viruta path {
   fill: none;
@@ -95,7 +134,9 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .flota {
+  .flota,
+  :global(.vivo) .estrias,
+  :global(.ajustado) .onda {
     animation: none;
   }
   .bp,
