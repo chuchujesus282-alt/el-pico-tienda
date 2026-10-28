@@ -50,9 +50,10 @@ type Props = {
    * jardín) o la banda transportadora que avanza con el color activo (Vehículos) o las 5 casillas que se marcan
    * (Seguridad industrial; su motor les pone la clase global `ok` a las que tienen `data-casilla`) o la cinta métrica
    * que se extiende (Herramientas) o el tubo que se llena de agua con la clase global `agua` y gotea con `vivo`
-   * (Plomería; las dos las pone su motor).
+   * (Plomería; las dos las pone su motor) o los 5 pines de cerradura que se alinean (Cerrajería: dorados con `on`,
+   * a la misma altura y con la línea de corte verde con la clase global `abierto`, que pone su motor).
    */
-  decoracion?: "gotas" | "cinta" | "cable" | "pasto" | "banda" | "casillas" | "metro" | "tubo";
+  decoracion?: "gotas" | "cinta" | "cable" | "pasto" | "banda" | "casillas" | "metro" | "tubo" | "pines";
   /**
    * Variables CSS propias de cada banner (ver BannerPlano.module.css): --brillo, --brillo-on, --palabra-min/-vw/-max,
    * --palabra-movil-min/-vw/-max, --etiqueta-pad, --etiqueta-sombra. Sin ellas, los valores de Pinturas.
@@ -177,6 +178,14 @@ export default function BannerPlano({
                 <span className={styles.cable} aria-hidden />
               ) : decoracion === "banda" ? (
                 <span className={styles.banda} aria-hidden />
+              ) : decoracion === "pines" ? (
+                <span className={styles.pines} aria-hidden>
+                  <span />
+                  <span />
+                  <span />
+                  <span />
+                  <span />
+                </span>
               ) : decoracion === "metro" ? (
                 <span className={styles.metro} aria-hidden />
               ) : decoracion === "tubo" ? (

@@ -1,4 +1,5 @@
 import type { ComponentType } from "react";
+import BannerCerrajeria from "./BannerCerrajeria";
 import BannerConstruccion from "./BannerConstruccion";
 import BannerElectricidad from "./BannerElectricidad";
 import BannerHerramientas from "./BannerHerramientas";
@@ -27,7 +28,7 @@ type ConfigBanner = {
 };
 
 /**
- * Banner propio de cada categoría: `Propio` (estilo plano técnico, reemplaza al encabezado; hoy Herramientas, Construcción, Electricidad, Plomería, Pinturas, Hogar y jardín, Seguridad industrial y
+ * Banner propio de cada categoría: `Propio` (estilo plano técnico, reemplaza al encabezado; hoy Herramientas, Construcción, Cerrajería, Electricidad, Plomería, Pinturas, Hogar y jardín, Seguridad industrial y
  * Vehículos) o `Escena` (fotos reales a la derecha de EncabezadoPagina; hoy ninguna la usa). Las categorías sin entrada
  * siguen con el plano y su ícono. Para sumar una: su componente en esta carpeta y una línea aquí.
  */
@@ -40,6 +41,9 @@ const BANNERS: Record<string, ConfigBanner> = {
   },
   construccion: {
     Propio: BannerConstruccion,
+  },
+  cerrajeria: {
+    Propio: BannerCerrajeria,
   },
   electricidad: {
     Propio: BannerElectricidad,

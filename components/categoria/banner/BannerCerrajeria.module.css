@@ -1,0 +1,131 @@
+/*
+ * Ilustración del banner de Cerrajería, portada de banner-cerrajeria-v1.html (prototipo aprobado). Excepción a la regla
+ * de tokens del CLAUDE.md (como las tarjetas de categoría): colores escritos aquí, idénticos al prototipo. `--f-mono`
+ * viene de BannerPlano. Clases globales en la raíz del banner: `on` (activo) y `abierto` (pines alineados).
+ */
+
+.svg {
+  --deep: #0a1f38;
+  --stroke: #c3ccd8;
+  --trace: rgba(190, 215, 245, 0.55);
+  --laton: #d4a843;
+  --acero: #aab5c3;
+  --ok: #2fd27a;
+}
+.svg text {
+  font-family: var(--f-mono);
+  fill: var(--trace);
+  font-size: 9px;
+  letter-spacing: 0.08em;
+}
+
+.ln {
+  stroke: var(--stroke);
+  stroke-width: 2;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+}
+.cota {
+  fill: none;
+  stroke: var(--trace);
+  stroke-width: 1;
+}
+.bp {
+  transition: opacity 0.5s;
+}
+:global(.on) .bp {
+  opacity: 0.3;
+}
+
+/* Rellenos: plano en reposo, latón y acero al activarse. */
+.fill {
+  fill: var(--deep);
+  transition: fill 0.5s;
+}
+:global(.on) .fCuerpo {
+  fill: rgba(212, 168, 67, 0.22);
+}
+:global(.on) .fRotor {
+  fill: rgba(212, 168, 67, 0.42);
+}
+:global(.on) .fLaton,
+:global(.on) .fCandado {
+  fill: var(--laton);
+}
+:global(.on) .fAcero {
+  fill: var(--acero);
+}
+.resorte {
+  fill: none;
+  stroke: var(--trace);
+  stroke-width: 1.3;
+  transition: stroke 0.5s;
+}
+:global(.on) .resorte {
+  stroke: var(--acero);
+}
+
+/* Línea de corte: punteada; con los pines alineados, verde y encendida. */
+.corte {
+  stroke: var(--trace);
+  stroke-width: 1;
+  stroke-dasharray: 5 4;
+  transition: stroke 0.3s;
+}
+:global(.abierto) .corte {
+  stroke: var(--ok);
+  stroke-width: 2;
+  stroke-dasharray: none;
+  filter: drop-shadow(0 0 4px var(--ok));
+}
+.svg .estado {
+  transition: fill 0.3s;
+}
+:global(.abierto) .svg .estado {
+  fill: var(--ok);
+}
+
+/* Brillo verde al abrir (el dorado del activo es el de BannerPlano, con --brillo). */
+.brilloAbierto {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.6s;
+  background: radial-gradient(70% 70% at 20% 50%, rgba(47, 210, 122, 0.14), transparent 70%);
+}
+:global(.abierto) .brilloAbierto {
+  opacity: 1;
+}
+
+/* Reposo: el candado se mece apenas desde el arco. Se detiene al activarse y con "reducir movimiento". */
+.mece {
+  transform-origin: 80px 100px;
+  animation: mecer 3.6s ease-in-out infinite alternate;
+}
+:global(.on) .mece {
+  animation: none;
+}
+@keyframes mecer {
+  from {
+    transform: rotate(-1.5deg);
+  }
+  to {
+    transform: rotate(1.5deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mece {
+    animation: none;
+  }
+  .bp,
+  .fill,
+  .resorte,
+  .corte,
+  .svg .estado,
+  .brilloAbierto {
+    transition-duration: 0.01s;
+  }
+}

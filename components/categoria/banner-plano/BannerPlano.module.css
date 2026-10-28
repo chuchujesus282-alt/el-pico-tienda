@@ -364,6 +364,70 @@
   transform: rotate(45deg);
 }
 
+/* Pines de cerradura (Cerrajería): 5 pines de distinto largo bajo la etiqueta; con `on` se doran (color activo) y con
+   `abierto` quedan a la misma altura y la línea de corte se prende en verde. */
+.pines {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 16px;
+  display: flex;
+  height: 20px;
+  align-items: flex-start;
+  gap: 6px;
+  pointer-events: none;
+}
+.pines span {
+  width: 7px;
+  border-radius: 0 0 3px 3px;
+  background: rgba(190, 215, 245, 0.35);
+  transition:
+    height 0.45s cubic-bezier(0.3, 1.5, 0.5, 1),
+    background-color 0.3s;
+}
+.pines span:nth-child(1) {
+  height: 8px;
+}
+.pines span:nth-child(2) {
+  height: 17px;
+}
+.pines span:nth-child(3) {
+  height: 5px;
+}
+.pines span:nth-child(4) {
+  height: 14px;
+}
+.pines span:nth-child(5) {
+  height: 11px;
+}
+.pines::after {
+  content: "";
+  position: absolute;
+  top: 12px;
+  right: -4px;
+  left: -4px;
+  height: 1px;
+  background: rgba(190, 215, 245, 0.35);
+  transition:
+    background-color 0.3s,
+    box-shadow 0.3s;
+}
+:global(.on) .pines span {
+  background: var(--c);
+}
+:global(.abierto) .pines span {
+  height: 12px;
+}
+:global(.abierto) .pines::after {
+  background: #2fd27a;
+  box-shadow: 0 0 6px #2fd27a;
+}
+@media (prefers-reduced-motion: reduce) {
+  .pines span,
+  .pines::after {
+    transition-duration: 0.01s;
+  }
+}
+
 /* Cinta métrica (Herramientas): se extiende bajo la etiqueta, del color activo (amarillo), con sus marcas y el gancho. */
 .metro {
   position: absolute;
