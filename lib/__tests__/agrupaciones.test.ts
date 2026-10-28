@@ -161,7 +161,7 @@ describe("agrupar", () => {
     expect(productos.find((x) => x.id === "3M0015")!.imagen).toBe("/productos/3M0015.webp");
   });
 
-  it("pinturas Pineco: cada foto solo en su línea y tamaño; hidroesmalte 1/4 y Gold sin foto", () => {
+  it("pinturas Pineco: cada foto solo en su línea y tamaño; el hidroesmalte 1/4 usa la del galón; Gold sin foto", () => {
     const pinturas = agrupar([
       p("PINECO015", 'PINECO PIPOL CLASE "B" GALON', 30, "PINECO"),
       p("PINECO016", 'PINECO PIPOL CLASE "B" TOBO', 110, "PINECO"),
@@ -171,7 +171,7 @@ describe("agrupar", () => {
     const foto = (id: string) => pinturas.find((x) => x.id === id)!.imagen;
     expect(foto("PINECO015")).toBe("/productos/PINECO015.webp");
     expect(foto("PINECO016")).toBe("/productos/PINECO016.webp");
-    expect(foto("PINECO019")).toBeNull();
+    expect(foto("PINECO019")).toBe("/productos/PINECO011.webp");
     expect(foto("PINECO010")).toBeNull();
   });
 });
