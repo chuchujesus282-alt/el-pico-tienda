@@ -11,6 +11,8 @@ import { getProductosDestacados, getProductosPorCategoria } from "@/lib/catalogo
 // VITRINA TEMPORAL para revisar los componentes compartidos. Bórrala (carpeta app/muestra) cuando ya no haga falta.
 
 export const metadata: Metadata = { title: "Muestra de componentes", robots: { index: false } };
+// Se arma al abrirla, no al compilar: si Saint no responde durante el build de Vercel, el deploy no se cae por esta vitrina.
+export const dynamic = "force-dynamic";
 
 export default async function Muestra() {
   const [interesar, recomendados, herramientas] = await Promise.all([
