@@ -107,7 +107,12 @@ async function conCatalogo(eventos: Evento[]): Promise<Evento[]> {
       let subcategoria = e.subcategoria;
       if (subcategoria && esCategoriaSaint(e.categoria)) {
         const saint = await getCategoriaSaint(e.categoria).catch(() => null);
-        subcategoria = saint?.subcategorias.find((s) => s.nombre === subcategoria)?.codigo;
+        // Un nivel del árbol llega con su código de instancia ("1503"); los enlaces viejos, con el nombre del primer nivel.
+        const codigo = Number(subcategoria);
+        subcategoria =
+          saint && Number.isFinite(codigo) && saint.arbol.nodos.has(codigo)
+            ? String(codigo)
+            : saint?.subcategorias.find((s) => s.nombre === subcategoria)?.codigo;
       }
       resultado.push(subcategoria ? { ...e, subcategoria } : { tipo: e.tipo, categoria: e.categoria });
     } else {

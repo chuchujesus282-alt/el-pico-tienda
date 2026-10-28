@@ -5,6 +5,7 @@ import { CATEGORIAS_SAINT, codigoSaint } from "@/lib/categoriasSaint";
 import { nombreLegible } from "@/lib/nombresSaint";
 import { agrupar, type Grupo } from "@/lib/agrupaciones";
 import { repartirPorCategoria } from "@/lib/repartirSaint";
+import { ancestros, armarArbol, type ArbolSaint } from "@/lib/arbolSaint";
 
 // Productos REALES de Saint, por categoría (las del mapa de lib/categoriasSaint.ts). Solo se usa desde lib/catalogo.ts
 // y lib/tasa.ts. Responsable: persona A.
@@ -58,6 +59,10 @@ export type CategoriaSaint = {
   grupoDe: Map<string, string>;
   /** Con su código de Saint, su nombre legible y la cantidad de productos que trae Saint (un grupo cuenta como uno). */
   subcategorias: { codigo: string; nombre: string; cantidad: number }[];
+  /** Árbol completo de subcategorías de Saint (instancias, todos los niveles), sin las ramas vacías (lib/arbolSaint.ts). */
+  arbol: ArbolSaint;
+  /** Para cada tarjeta de `listado` (mismo orden): su instancia y todas las de arriba. Un grupo junta las de sus medidas. */
+  ancestrosListado: Set<number>[];
 };
 
 /**
@@ -82,7 +87,7 @@ const redondear = (n: number) => Math.round(n * 100) / 100;
 
 /** Respuesta de Saint → lista lista para la tienda. Lo que no tenga código, nombre o precio válido se deja fuera. */
 function convertir(slug: string, crudo: unknown): CategoriaSaint {
-  const datos = (crudo ?? {}) as { tasa?: unknown; subcategorias?: unknown; productos?: unknown };
+  const datos = (crudo ?? {}) as { tasa?: unknown; subcategorias?: unknown; instancias?: unknown; productos?: unknown };
   const tasa = numero(datos.tasa);
   if (!Array.isArray(datos.productos)) throw new ErrorSaint("Saint respondió sin lista de productos");
 
@@ -98,13 +103,17 @@ function convertir(slug: string, crudo: unknown): CategoriaSaint {
 
   const crudos: Producto[] = [];
   const vistos = new Set<string>();
+  /** Instancia exacta de cada producto en el árbol de Saint (su `codInstancia`). */
+  const instanciaDe = new Map<string, number>();
   for (const fila of datos.productos) {
-    const { codigo, nombre, marca, codSubcategoria, subcategoria, precioBs, precioUsd } = (fila ?? {}) as Record<string, unknown>;
+    const { codigo, nombre, marca, codSubcategoria, subcategoria, codInstancia, precioBs, precioUsd } = (fila ?? {}) as Record<string, unknown>;
     if (!esTexto(codigo) || !esTexto(nombre)) continue;
     const id = codigo.trim();
     const precio = numero(precioUsd);
     if (vistos.has(id) || !Number.isFinite(precio) || precio <= 0) continue;
     vistos.add(id);
+    const instancia = numero(codInstancia);
+    if (Number.isFinite(instancia)) instanciaDe.set(id, instancia);
 
     const marcaReal = esTexto(marca) && marca.trim() !== "S/M" ? marca.trim() : null;
     const nombreLimpio = nombre.trim().replace(/\s+/g, " ");
@@ -138,6 +147,17 @@ function convertir(slug: string, crudo: unknown): CategoriaSaint {
     if (sub) sub.cantidad = Math.max(1, sub.cantidad - (g.variantes.length - 1));
   }
 
+  // Árbol de subcategorías (todos los niveles) y, para cada tarjeta, en qué niveles está: así la página filtra por
+  // cualquier nivel (?sub=1503) mostrando lo de esa instancia y lo de todas las de abajo.
+  const arbol = armarArbol(Array.isArray(datos.instancias) ? datos.instancias : [], codigoSaint(slug) ?? NaN, instanciaDe.values(), (n) => nombreLegible(n));
+  const ancestrosListado = listado.map((p) => {
+    const grupo = grupos.get(p.id);
+    if (!grupo) return ancestros(arbol, instanciaDe.get(p.id));
+    const todos = new Set<number>();
+    for (const v of grupo.variantes) for (const c of ancestros(arbol, instanciaDe.get(v.id))) todos.add(c);
+    return todos;
+  });
+
   return {
     tasa: Number.isFinite(tasa) && tasa > 0 ? tasa : 0,
     productos,
@@ -147,6 +167,8 @@ function convertir(slug: string, crudo: unknown): CategoriaSaint {
     grupos,
     grupoDe,
     subcategorias,
+    arbol,
+    ancestrosListado,
   };
 }
 

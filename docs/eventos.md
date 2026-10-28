@@ -9,7 +9,7 @@ migración `drizzle/0002_eventos.sql`).
 | Tipo (`tipo_evento`) | Cuándo | Qué guarda |
 |---|---|---|
 | `producto_visto` | Se abre la página de un producto | `producto_id` (máx. 1 vez cada 30 min por visitante y producto) |
-| `categoria_vista` | Se abre una categoría | `categoria` (slug) y `subcategoria` si hay filtro: el **código de Saint** (o el nombre, en las categorías de ejemplo). Máx. 1 vez cada 30 min por visitante, categoría y subcategoría; pasar de página no cuenta |
+| `categoria_vista` | Se abre una categoría | `categoria` (slug) y `subcategoria` si está en un nivel del árbol: el **código de la instancia de Saint** (cualquier nivel; desde el 2026-10-28). Máx. 1 vez cada 30 min por visitante, categoría y subcategoría; pasar de página no cuenta |
 | `busqueda` | Se abre `/buscar?q=` (no cada letra del buscador) | `termino` (minúsculas, máx. 60) y `resultados` (0 = sin resultados; llega hasta 60, el tope de `buscar()`: 60 = "60 o más") |
 | `carrito` | Se agrega un producto al carrito | `producto_id` (cada vez que se agrega) |
 | `favorito` | Se marca un favorito (no al quitarlo) | `producto_id` |

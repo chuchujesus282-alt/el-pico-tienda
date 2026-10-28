@@ -31,9 +31,11 @@ export default function PanelFiltrosMovil({ activos, children }: Props) {
     };
   }, [abierto]);
 
-  // Al elegir un filtro (un enlace) se cierra el panel.
+  // Al elegir un filtro (un enlace) se cierra el panel, salvo los que navegan DENTRO del árbol de subcategorías (bajar a
+  // las hijas, volver, la ruta): llevan data-sigue-abierto y el panel se queda abierto para seguir eligiendo.
   const alHacerClic = (e: MouseEvent<HTMLDivElement>) => {
-    if ((e.target as HTMLElement).closest("a")) setAbierto(false);
+    const enlace = (e.target as HTMLElement).closest("a");
+    if (enlace && !enlace.hasAttribute("data-sigue-abierto")) setAbierto(false);
   };
 
   return (
@@ -87,6 +89,16 @@ export default function PanelFiltrosMovil({ activos, children }: Props) {
               </div>
               <div className="flex-1 overflow-y-auto px-4 py-5" onClick={alHacerClic}>
                 {children}
+              </div>
+              {/* Para cerrar después de bajar por el árbol sin elegir el último nivel: la grilla ya muestra ese nivel. */}
+              <div className="border-t border-gris-borde p-4">
+                <button
+                  type="button"
+                  onClick={() => setAbierto(false)}
+                  className="h-11 w-full rounded-boton bg-logo-marino text-sm font-semibold text-pico-blanco transition-colors hover:bg-logo-rojo"
+                >
+                  Ver productos
+                </button>
               </div>
             </aside>
           </div>,

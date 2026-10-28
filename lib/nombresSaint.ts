@@ -26,6 +26,10 @@ const RAICES_CON_ACENTO: [string, string][] = [
   ["METRIC", "métric"], ["AMPERIMETRIC", "amperimétric"], ["CERAMIC", "cerámic"], ["TERMIC", "térmic"],
   ["RAPID", "rápid"], ["PRACTIC", "práctic"], ["ELASTIC", "elástic"], ["OPTIC", "óptic"], ["UNIC", "únic"],
   ["QUIMIC", "químic"], ["ARQUITECTONIC", "arquitectónic"],
+  ["DIAGNOSTIC", "diagnóstic"], ["ASFALTIC", "asfáltic"], ["MILIMETRIC", "milimétric"], ["CILINDRIC", "cilíndric"],
+  ["CONCENTRIC", "concéntric"], ["TELEFONIC", "telefónic"], ["TERMOMAGNETIC", "termomagnétic"],
+  ["ELECTRODOMESTIC", "electrodoméstic"], ["DOMESTIC", "doméstic"], ["HIGIENIC", "higiénic"], ["MURIATIC", "muriátic"],
+  ["INALAMBRIC", "inalámbric"], ["TELESCOPIC", "telescópic"], ["EPOXIC", "epóxic"],
 ];
 const PALABRAS_CON_ACENTO: Record<string, string> = {
   PORTATIL: "portátil", PORTATILES: "portátiles", MEDICION: "medición", COMBUSTION: "combustión", CARBON: "carbón",
@@ -39,6 +43,14 @@ const PALABRAS_CON_ACENTO: Record<string, string> = {
   CONSTRUCCION: "construcción", TORNILLERIA: "tornillería", CERRAJERIA: "cerrajería", GRIFERIA: "grifería",
   INSTALACION: "instalación", ILUMINACION: "iluminación", DESAGUE: "desagüe", AREA: "área", AREAS: "áreas",
   VEHICULO: "vehículo", VEHICULOS: "vehículos",
+  // Niveles del árbol de subcategorías de Saint (2026-10-28)
+  TAPICERIA: "tapicería", JARDINERIA: "jardinería", CARPINTERIA: "carpintería", ALBAÑILERIA: "albañilería",
+  CAÑERIA: "cañería", CAÑERIAS: "cañerías", ESTANTERIA: "estantería", ESTANTERIAS: "estanterías", TUBERIAS: "tuberías",
+  JABON: "jabón", JABONES: "jabones", ENERGIA: "energía", BUJIA: "bujía", BUJIAS: "bujías", FRIA: "fría", FRIO: "frío",
+  LASER: "láser", SILICON: "silicón", TRAFICO: "tráfico", ANGULOS: "ángulos", FOTOCELULA: "fotocélula",
+  FOTOCELULAS: "fotocélulas", MANOMETROS: "manómetros", TERMOMETROS: "termómetros", MULTIMETROS: "multímetros",
+  TORQUIMETRO: "torquímetro", TORQUIMETROS: "torquímetros", AMPERIMETRO: "amperímetro", AMPERIMETROS: "amperímetros",
+  VOLTIMETRO: "voltímetro", VOLTIMETROS: "voltímetros",
 };
 
 /** Después de estas palabras, una letra suelta es un tipo o modelo y queda en mayúscula: TIPO A, MOD B. */
@@ -49,6 +61,9 @@ const LETRAS = /[A-ZÑÁÉÍÓÚÜ]+/g;
 
 function conAcento(palabra: string): string | undefined {
   if (PALABRAS_CON_ACENTO[palabra]) return PALABRAS_CON_ACENTO[palabra];
+  // Toda palabra terminada en -CION o -SION lleva tilde: protección, nivelación, compresión, termofusión…
+  const sufijo = palabra.match(/^([A-ZÑ]{3,})([CS])ION$/);
+  if (sufijo) return `${sufijo[1].toLowerCase()}${sufijo[2].toLowerCase()}ión`;
   for (const [raiz, conTilde] of RAICES_CON_ACENTO) {
     const fin = palabra.slice(raiz.length);
     if (palabra.startsWith(raiz) && ["O", "A", "OS", "AS"].includes(fin)) return conTilde + fin.toLowerCase();

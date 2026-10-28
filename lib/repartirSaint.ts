@@ -2,9 +2,9 @@
 // codCategoria de cada producto y subcategoría. Aparte de lib/saint.ts (que es solo de servidor) para poder probarlo.
 // Responsable: persona A.
 
-type Crudo = { tasa?: unknown; subcategorias?: unknown; productos?: unknown };
+type Crudo = { tasa?: unknown; subcategorias?: unknown; instancias?: unknown; productos?: unknown };
 /** Lo mismo que respondía Saint con una sola categoría: lo que recibe convertir() en lib/saint.ts. */
-export type ParteSaint = { tasa: unknown; subcategorias: unknown[]; productos: unknown[] };
+export type ParteSaint = { tasa: unknown; subcategorias: unknown[]; instancias: unknown[]; productos: unknown[] };
 
 const codigoDe = (fila: unknown) => {
   const valor = (fila as { codCategoria?: unknown } | null)?.codCategoria;
@@ -22,7 +22,7 @@ export function repartirPorCategoria(crudo: unknown, mapa: Record<string, number
   const datos = (crudo ?? {}) as Crudo;
   const slugs = Object.keys(mapa);
   const partes = new Map<string, ParteSaint>(
-    slugs.map((slug) => [slug, { tasa: datos.tasa, subcategorias: [], productos: [] }]),
+    slugs.map((slug) => [slug, { tasa: datos.tasa, subcategorias: [], instancias: [], productos: [] }]),
   );
   if (!Array.isArray(datos.productos)) {
     for (const parte of partes.values()) parte.productos = datos.productos as unknown[];
@@ -39,6 +39,11 @@ export function repartirPorCategoria(crudo: unknown, mapa: Record<string, number
   for (const sub of Array.isArray(datos.subcategorias) ? datos.subcategorias : []) {
     const slug = destino(sub);
     if (slug) partes.get(slug)!.subcategorias.push(sub);
+  }
+  // El árbol completo de subcategorías (todos los niveles), también con su codCategoria.
+  for (const instancia of Array.isArray(datos.instancias) ? datos.instancias : []) {
+    const slug = destino(instancia);
+    if (slug) partes.get(slug)!.instancias.push(instancia);
   }
   for (const producto of datos.productos) {
     const slug = destino(producto);

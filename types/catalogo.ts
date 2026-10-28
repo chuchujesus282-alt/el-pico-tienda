@@ -1,3 +1,5 @@
+import type { NavegacionArbol } from "@/lib/arbolSaint";
+
 // Contrato de datos: ver docs/datos.md. Si cambia, avisa al compañero.
 
 export type Producto = {
@@ -30,6 +32,8 @@ export type ResultadoCategoria = {
   marcas: string[]; // para el filtro (vacío: el filtro no se muestra)
   subcategorias: string[]; // para el filtro
   cantidades?: Record<string, number>; // productos de cada subcategoría (Saint), al lado del filtro
+  /** Árbol de subcategorías de Saint en el nivel pedido (`sub`): ruta, opciones del panel y el nivel actual. */
+  navegacion?: NavegacionArbol;
 };
 
 export type OrdenProductos = "relevancia" | "precio-asc" | "precio-desc" | "nombre";
@@ -39,6 +43,8 @@ export type OpcionesCategoria = {
   porPagina?: number;
   marca?: string;
   subcategoria?: string;
+  /** Nivel del árbol de Saint (código de instancia): esa instancia y todas las de abajo. Gana sobre `subcategoria`. */
+  sub?: number;
   orden?: OrdenProductos;
   q?: string; // búsqueda dentro de la categoría (nombre, código o marca)
 };

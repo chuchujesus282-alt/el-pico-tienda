@@ -12,6 +12,7 @@ import { categorias } from "@/lib/categorias";
 import { diaDeHoy, elegirDestacados } from "@/lib/destacados";
 import { type CategoriaSaint, esCategoriaSaint, getCategoriaSaint, getTodosSaint, normalizar } from "@/lib/saint";
 import { esIdGrupo, type Grupo } from "@/lib/agrupaciones";
+import { codigoPorNombre, navegacion } from "@/lib/arbolSaint";
 
 // ÚNICA puerta de entrada a los datos de productos (ver docs/datos.md).
 // TODAS las categorías traen sus productos REALES de Saint (lib/saint.ts; mapa en lib/categoriasSaint.ts). Ya no hay
@@ -94,6 +95,8 @@ function filtrarYPaginar(
   productos: Producto[],
   claves: string[],
   opciones: OpcionesCategoria,
+  /** Si viene: solo los productos (por posición) que están en el nivel elegido del árbol o debajo. */
+  enNivel?: (i: number) => boolean,
 ): Pick<ResultadoCategoria, "productos" | "total" | "pagina" | "porPagina"> {
   const { pagina = 1, porPagina = POR_PAGINA_DEFECTO, marca, subcategoria, orden = "relevancia", q } = opciones;
   // Cada palabra buscada tiene que aparecer (en el nombre, el código o la marca), en cualquier orden.
@@ -102,7 +105,7 @@ function filtrarYPaginar(
   const filtrados = productos.filter(
     (p, i) =>
       (!marca || p.marca === marca) &&
-      (!subcategoria || p.subcategoria === subcategoria) &&
+      (enNivel ? enNivel(i) : !subcategoria || p.subcategoria === subcategoria) &&
       palabras.every((palabra) => claves[i].includes(palabra)),
   );
 
@@ -126,12 +129,17 @@ export async function getProductosPorCategoria(
     return { productos: [], total: 0, pagina: 1, porPagina: opciones.porPagina ?? POR_PAGINA_DEFECTO, marcas: [], subcategorias: [] };
   }
   const saint = await getCategoriaSaint(slug);
+  // Nivel del árbol de Saint (?sub=1503). Los enlaces viejos (?subcategoria=Nombre) se traducen a su primer nivel. Un
+  // código que no está en esta categoría (o que quedó sin productos) es "Todas".
+  const pedido = opciones.sub ?? (opciones.subcategoria ? codigoPorNombre(saint.arbol, opciones.subcategoria) : undefined);
+  const sub = pedido !== undefined && saint.arbol.nodos.has(pedido) ? pedido : undefined;
   return {
-    // La lista agrupada: cada grupo de medidas (lib/agrupaciones.ts) es una sola tarjeta.
-    ...filtrarYPaginar(saint.listado, saint.clavesListado, opciones),
+    // La lista agrupada: cada grupo de medidas (lib/agrupaciones.ts) es una sola tarjeta. En un nivel, lo de esa
+    // instancia y lo de todas las de abajo.
+    ...filtrarYPaginar(saint.listado, saint.clavesListado, opciones, (i) => sub === undefined || saint.ancestrosListado[i].has(sub)),
     marcas: [], // por ahora sin filtro de marca en las categorías de Saint
     subcategorias: saint.subcategorias.map((s) => s.nombre),
-    cantidades: Object.fromEntries(saint.subcategorias.map((s) => [s.nombre, s.cantidad])),
+    navegacion: navegacion(saint.arbol, sub),
   };
 }
 

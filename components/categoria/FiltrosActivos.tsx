@@ -5,13 +5,16 @@ import { type EstadoCategoria, hrefCategoria } from "./rutas";
 type Props = {
   slug: string;
   estado: EstadoCategoria;
+  /** Nombre del nivel del árbol de subcategorías en el que está (si hay). */
+  nivel?: string;
 };
 
 /** Chips de los filtros puestos (y de la búsqueda), cada uno con su ✕ para quitarlo. */
-export default function FiltrosActivos({ slug, estado }: Props) {
+export default function FiltrosActivos({ slug, estado, nivel }: Props) {
   const chips = [
     estado.q && { etiqueta: `“${estado.q}”`, href: hrefCategoria(slug, estado, { q: undefined }) },
-    estado.subcategoria && { etiqueta: estado.subcategoria, href: hrefCategoria(slug, estado, { subcategoria: undefined }) },
+    // El nivel del árbol (?sub=, o el nombre de un enlace viejo): su ✕ vuelve a "Todas".
+    nivel && { etiqueta: nivel, href: hrefCategoria(slug, estado, { sub: undefined, subcategoria: undefined }) },
     estado.marca && { etiqueta: estado.marca, href: hrefCategoria(slug, estado, { marca: undefined }) },
   ].filter((c): c is { etiqueta: string; href: string } => !!c);
 

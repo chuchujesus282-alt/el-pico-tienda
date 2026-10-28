@@ -77,6 +77,7 @@ export default async function PaginaCategoria({ params, searchParams }: PageProp
       pagina: estado.pagina,
       marca: estado.marca,
       subcategoria: estado.subcategoria,
+      sub: estado.sub,
       orden: estado.orden,
       q: estado.q,
     });
@@ -94,19 +95,22 @@ export default async function PaginaCategoria({ params, searchParams }: PageProp
   }
 
   const totalPaginas = Math.ceil(resultado.total / resultado.porPagina);
-  const filtrosActivos = [estado.marca, estado.subcategoria].filter(Boolean).length;
+  // Nivel del árbol de subcategorías en el que está (null: "Todas"). Si el ?sub= no es de esta categoría, es null.
+  const nivel = resultado.navegacion?.actual ?? null;
+  const filtrosActivos = [estado.marca, nivel].filter(Boolean).length;
   const hrefLimpiar =
     filtrosActivos || estado.q
-      ? hrefCategoria(slug, estado, { marca: undefined, subcategoria: undefined, q: undefined })
+      ? hrefCategoria(slug, estado, { marca: undefined, subcategoria: undefined, sub: undefined, q: undefined })
       : undefined;
 
   const filtros = (
     <FiltrosCategoria
       slug={slug}
       estado={estado}
+      nombreCategoria={categoria.nombre}
+      navegacion={resultado.navegacion}
       subcategorias={resultado.subcategorias}
       marcas={resultado.marcas}
-      cantidades={resultado.cantidades}
     />
   );
 
@@ -117,7 +121,7 @@ export default async function PaginaCategoria({ params, searchParams }: PageProp
     <div>
       <EncabezadoCategoria slug={slug} nombre={categoria.nombre} banner={categoria.banner} />
       {/* Evento para análisis (persona A, lib/eventos/): no dibuja nada. */}
-      <RegistrarEvento evento={{ tipo: "categoria_vista", categoria: slug, subcategoria: estado.subcategoria }} />
+      <RegistrarEvento evento={{ tipo: "categoria_vista", categoria: slug, subcategoria: nivel ? String(nivel.codigo) : undefined }} />
 
       <Contenedor className="py-6 md:py-10">
         <div className="lg:grid lg:grid-cols-[15rem_minmax(0,1fr)] lg:gap-8">
@@ -145,7 +149,7 @@ export default async function PaginaCategoria({ params, searchParams }: PageProp
               />
             </div>
 
-            <FiltrosActivos slug={slug} estado={estado} />
+            <FiltrosActivos slug={slug} estado={estado} nivel={nivel?.nombre} />
 
             {resultado.productos.length > 0 ? (
               <div key={claveVista} className="motion-safe:animate-aparecer">

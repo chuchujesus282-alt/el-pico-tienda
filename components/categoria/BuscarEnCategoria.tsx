@@ -27,7 +27,12 @@ export default function BuscarEnCategoria({ slug, nombre, estado }: Props) {
         placeholder={`Buscar en ${nombre}: nombre, código o marca`}
         className="h-11 w-full rounded-boton border border-gris-borde bg-pico-blanco pr-24 pl-10 text-sm text-texto shadow-tarjeta transition placeholder:text-gris-texto focus:border-logo-marino focus:ring-4 focus:ring-logo-marino/15 focus:outline-none"
       />
-      {estado.subcategoria && <input type="hidden" name="subcategoria" value={estado.subcategoria} />}
+      {/* La búsqueda respeta el nivel del árbol en el que está (?sub=), o el de un enlace viejo (?subcategoria=). */}
+      {estado.sub ? (
+        <input type="hidden" name="sub" value={estado.sub} />
+      ) : (
+        estado.subcategoria && <input type="hidden" name="subcategoria" value={estado.subcategoria} />
+      )}
       {estado.marca && <input type="hidden" name="marca" value={estado.marca} />}
       {estado.orden !== "relevancia" && <input type="hidden" name="orden" value={estado.orden} />}
       <button
