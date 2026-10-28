@@ -1,6 +1,5 @@
 import type { Producto } from "@/types/catalogo";
 import { clasificarGenerico, GRUPOS_GENERICOS, ORDEN_SECCIONES } from "@/lib/agrupacionesGenericas";
-import { nombreLegible } from "@/lib/nombresSaint";
 
 // Agrupación de productos de Saint que son el MISMO producto en distintas medidas (llave combinada Acesa 8 mm, 10 mm…;
 // dados por marca y tipo). En la lista de la categoría cada grupo sale como UNA tarjeta ("Desde $X") y en su página se
@@ -116,107 +115,8 @@ export function valorMedida(etiqueta: string): number {
   if ((m = etiqueta.match(/^M(\d+) × (\d+(?:,\d+)?)/))) return Number(m[1]) + Number(m[2].replace(",", ".")) / 100; // machos M10 × 1,25
   if ((m = etiqueta.match(/^T(\d+)/))) return 1000 + Number(m[1]);
   if ((m = etiqueta.match(/^E(\d+)/))) return 2000 + Number(m[1]);
-  // Las demás unidades (lb, oz, t, HP…): por su número.
-  if ((m = etiqueta.match(/^(\d+)\/(\d+)/))) return Number(m[1]) / Number(m[2]);
-  if ((m = etiqueta.match(/^(\d+(?:[.,]\d+)?)/))) return Number(m[1].replace(",", "."));
   return 9999;
 }
-
-// ---------- grupos automáticos: misma marca y mismo nombre, cambia solo la medida ----------
-
-/** Unidades que se leen como medida (y cómo se escriben). Sin "M" sola ni "A" sola: chocan con "3M" o "TIPO A". */
-const UNIDADES: [RegExp, string][] = [
-  [/^MM$/, "mm"],
-  [/^CM$/, "cm"],
-  [/^(MTS?|METROS?)$/, "m"],
-  [/^(LBS?|LIBRAS?)$/, "lb"],
-  [/^OZ$/, "oz"],
-  [/^(KGS?|KILOS?)$/, "kg"],
-  [/^GRS?$/, "g"],
-  [/^TONS?$/, "t"],
-  [/^HP$/, "HP"],
-  [/^W$/, "W"],
-  [/^V$/, "V"],
-  [/^AMP$/, "A"],
-  [/^PSI$/, "psi"],
-  [/^(GAL|GALONES)$/, "gal"],
-  [/^(LTS?|LITROS?)$/, "L"],
-  [/^CC$/, "cc"],
-  [/^KVA$/, "kVA"],
-  [/^AH$/, "Ah"],
-];
-const UNIDAD = "MM|CM|MTS?|METROS?|LBS?|LIBRAS?|OZ|KGS?|KILOS?|GRS?|TONS?|HP|W|V|AMP|PSI|GALONES|GAL|LTS?|LITROS?|CC|KVA|AH";
-/**
- * Una medida dentro del nombre: fracción ("1/2", "1-1/4", "2 1/2"") con o sin unidad, o número con unidad o comillas
- * ("10"", "16OZ", "12 TON", "3,3MM"). No cuenta lo pegado a otra cosa ("T200-7", "110/220V", "GWS850").
- */
-const MEDIDA_EN_NOMBRE = new RegExp(
-  `(?<![\\w/.,-])(?:(\\d+(?:[ .-]\\d+)?\\/\\d+)(?:"|''|\\s?(${UNIDAD})\\b)?|(\\d+(?:[.,]\\d+)?)\\s?(?:("|'')|(${UNIDAD})\\b))(?![\\w/])`,
-  "g",
-);
-
-/** '1/2' → '1/2"'; "16","OZ" → "16 oz"; "3,3","MM" → "3,3 mm". null si no es una medida creíble ("60/40"). */
-function etiquetaDeMedida(fraccion?: string, unidadFraccion?: string, numero?: string, comillas?: string, unidad?: string) {
-  const legible = (u: string) => UNIDADES.find(([r]) => r.test(u))?.[1] ?? u.toLowerCase();
-  if (fraccion) {
-    const [arriba, abajo] = fraccion.split(/[ .-]/).at(-1)!.split("/").map(Number);
-    // Solo fracciones de pulgada (…/2, /4, /8, /16, /32, /64): "60/40" o "220/440" no son medidas.
-    if (!(arriba < abajo) || ![2, 4, 8, 16, 32, 64].includes(abajo)) return null;
-    if (unidadFraccion) return `${fraccion.replace(/[ .]/, "-")} ${legible(unidadFraccion)}`;
-    return leerMedida(fraccion);
-  }
-  if (!numero) return null;
-  if (comillas) return `${numero.replace(".", ",")}"`;
-  return `${numero} ${legible(unidad!)}`;
-}
-
-/**
- * Grupo automático de un producto: el nombre sin sus medidas (con la marca) es la clave, y las medidas son el botón.
- * "MANDARRIA MANGO FIBRA ECONOMICA 10LBS" → clave "MANDARRIA MANGO FIBRA ECONOMICA", etiqueta "10 lb". null: el nombre
- * no trae medida, o sin ella no queda un nombre que se entienda.
- */
-export function claveAutomatica(nombre: string, marca: string | null): { clave: string; base: string; etiqueta: string } | null {
-  const n = nombre
-    .toUpperCase()
-    .replace(/\s+/g, " ")
-    .replace(/(?<=\d)"(?=[A-Z])/g, `" `) // 3/32"CADA → 3/32" CADA
-    .replace(/\b1\/2 CANA\b/, "MEDIA CAÑA") // la lima de media caña no mide 1/2"
-    .trim();
-  const etiquetas: string[] = [];
-  let base = n.replace(MEDIDA_EN_NOMBRE, (todo, fraccion, unidadFraccion, numero, comillas, unidad) => {
-    const etiqueta = etiquetaDeMedida(fraccion, unidadFraccion, numero, comillas, unidad);
-    if (!etiqueta) return todo;
-    etiquetas.push(etiqueta);
-    return " ";
-  });
-  if (!etiquetas.length) return null;
-  base = base
-    .replace(/\s+(X|\/\/|\/|-)(?=\s|$)/g, " ") // "12" X 304MM" → sin la "X" que unía las medidas
-    .replace(/\(\s*\)/g, " ") // "(16CM)" → "( )"
-    .replace(/(^|\s)("|[FMH])(?=\s|$)/g, " ") // restos: comillas sueltas, la F/M (hembra/macho) del adaptador
-    .replace(/\s+/g, " ")
-    .trim();
-  // Lo que queda colgando al final: "ESPIGA DE", "PALETA O", "ROLLO DE .".
-  for (let antes = ""; antes !== base; ) {
-    antes = base;
-    base = base.replace(/\s*(\bDE|\bD\/|\bP\/|\bPARA|\bX|\bO|\bY|\/\/|-|\.|,)$/, "").trim();
-  }
-  if (!/[A-ZÑ]{3}/.test(base)) return null;
-  // Por marca. Si el nombre ya empieza con ella (o Saint no trae marca), cuenta el nombre: "BRUFER LLAVE…" con y sin
-  // marca en Saint es el mismo producto.
-  const primera = marca?.toUpperCase().split(/[\s/]+/)[0];
-  const porNombre = !marca || (!!primera && base.split(/[\s/]+/)[0] === primera);
-  return { clave: `${porNombre ? "" : marca}|${base}`, base, etiqueta: etiquetas.join(" × ") };
-}
-
-/** "MARCA|NIKATO LLAVE DE TUBO" → "nikato-llave-de-tubo" (para el id del grupo). */
-const slugDe = (texto: string) =>
-  texto
-    .normalize("NFD")
-    .replace(/[̀-ͯ]/g, "")
-    .toLowerCase()
-    .replace(/[^a-z0-9ñ]+/g, "-")
-    .replace(/^-|-$/g, "");
 
 /** Encastre + medida de un dado: lo que sigue al encastre ("1/2X17MM" → 1/2 y "17 mm"). */
 function medidaDeDado(nombre: string): { encastre: string | null; medida: string | null } {
@@ -306,34 +206,11 @@ export function agrupar(lista: Producto[]): {
 } {
   const clasificados = new Map<string, Clasificado>();
   const miembros = new Map<string, Producto[]>();
-  const sinRegla: Producto[] = [];
   for (const p of lista) {
     const c = clasificar(p.nombre, p.marca);
-    if (!c) {
-      sinRegla.push(p);
-      continue;
-    }
+    if (!c) continue;
     clasificados.set(p.id, c);
     miembros.set(c.grupo, [...(miembros.get(c.grupo) ?? []), p]);
-  }
-
-  // Lo que ninguna regla agrupa: misma marca y mismo nombre, cambiando solo la medida (lb, oz, pulgadas, t, HP…).
-  const automaticos = new Map<string, DefGrupo>();
-  for (const p of sinRegla) {
-    const a = claveAutomatica(p.nombre, p.marca);
-    if (!a) continue;
-    const clave = `auto-${slugDe(a.clave)}`;
-    if (!automaticos.has(clave)) {
-      const titulo = nombreLegible(a.base, p.marca);
-      automaticos.set(clave, { titulo, imagen: null, seccion: null, sinMarca: !p.marca });
-    }
-    clasificados.set(p.id, { grupo: clave, etiqueta: a.etiqueta, encastre: null });
-    miembros.set(clave, [...(miembros.get(clave) ?? []), p]);
-  }
-  // En un grupo automático que mezcla milímetros y pulgadas, las medidas se separan en dos filas.
-  for (const [clave, def] of automaticos) {
-    const etiquetas = (miembros.get(clave) ?? []).map((p) => clasificados.get(p.id)!.etiqueta);
-    if (etiquetas.some((e) => / mm$/.test(e)) && etiquetas.some((e) => /"$/.test(e))) def.seccion = "sistema";
   }
 
   const grupos = new Map<string, Grupo>();
@@ -341,7 +218,7 @@ export function agrupar(lista: Producto[]): {
   const reemplazos = new Map<string, Producto>();
   for (const [clave, productos] of miembros) {
     if (productos.length < 2) continue;
-    const def = GRUPOS[clave] ?? automaticos.get(clave)!;
+    const def = GRUPOS[clave];
     const id = PREFIJO_GRUPO + clave;
     const variantes: Variante[] = productos
       .map((p) => {

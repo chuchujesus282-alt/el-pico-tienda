@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { agrupar, claveAutomatica, clasificar, leerMedida, valorMedida } from "@/lib/agrupaciones";
+import { agrupar, clasificar, leerMedida, valorMedida } from "@/lib/agrupaciones";
 import type { Producto } from "@/types/catalogo";
 
 // Nombres tal como vienen de Saint (Herramientas, 1171).
@@ -159,53 +159,5 @@ describe("agrupar", () => {
 
   it("la mopa 3M lleva su foto", () => {
     expect(productos.find((x) => x.id === "3M0015")!.imagen).toBe("/productos/3M0015.webp");
-  });
-});
-
-describe("grupos automáticos (misma marca y nombre, cambia la medida)", () => {
-  it("lee la medida y deja el nombre limpio", () => {
-    expect(claveAutomatica("MANDARRIA MANGO FIBRA ECONOMICA 10LBS", null)).toEqual({
-      clave: "|MANDARRIA MANGO FIBRA ECONOMICA",
-      base: "MANDARRIA MANGO FIBRA ECONOMICA",
-      etiqueta: "10 lb",
-    });
-    expect(claveAutomatica('BRUFER CEPILLO CON ESPIGA DE 1/2"', "BRUFER")?.base).toBe("BRUFER CEPILLO CON ESPIGA");
-    expect(claveAutomatica("BIG REED GATO TIPO BOTELLA 12 TON", "BIG REED")?.etiqueta).toBe("12 t");
-    expect(claveAutomatica('NIKATO CIZALLA CORTA PERNOS 12" 304MM', "NIKATO")?.etiqueta).toBe('12" × 304 mm');
-    expect(claveAutomatica('ELECTRODO P/ALUMINIO 3/32" CADA UNO', null)?.base).toBe("ELECTRODO P/ALUMINIO CADA UNO");
-  });
-
-  it("no confunde con medidas lo que no lo es", () => {
-    expect(claveAutomatica("CARBON NORMAL 001 MOD 495", null)).toBeNull();
-    expect(claveAutomatica("ESTAÑO EN TUBO 60/40 0.8 MM", null)?.etiqueta).toBe("0.8 mm");
-    expect(claveAutomatica("PEARL BOMBA CENTRIFUGA 10HP 220/440 TRIF", "PEARL")?.etiqueta).toBe("10 HP");
-  });
-
-  it("agrupa por marca: con el nombre de la marca delante, aunque Saint no la traiga en el campo", () => {
-    const { listado, grupos } = agrupar([
-      p("N1", 'NIKATO LLAVE DE TUBO 14"', 20, "NIKATO"),
-      p("N2", 'NIKATO LLAVE DE TUBO 8"', 10, "NIKATO"),
-      p("R1", 'RIDGID LLAVE DE TUBO 12"', 40, "RIDGID"),
-      p("R2", 'RIDGID LLAVE DE TUBO 14"', 45, "RIDGID"),
-      p("B1", 'BRUFER LLAVE AJUSTABLE CROMADA 8"', 6),
-      p("B2", 'BRUFER LLAVE AJUSTABLE CROMADA 6"', 5, "BRUFER"),
-      p("S1", "PRODUCTO SIN MEDIDA", 1),
-    ]);
-    expect(listado).toHaveLength(4);
-    const nikato = [...grupos.values()].find((g) => g.titulo === "Nikato llave de tubo")!;
-    expect(nikato.tarjeta.precio).toBe(10);
-    expect(nikato.tarjeta.marca).toBe("NIKATO");
-    expect(nikato.variantes.map((v) => v.etiqueta)).toEqual(['8"', '14"']);
-    expect(nikato.variantes[0].producto.titulo).toBe('Nikato llave de tubo 8"');
-    expect([...grupos.values()].some((g) => g.variantes.map((v) => v.id).sort().join() === "B1,B2")).toBe(true);
-  });
-
-  it("un producto solo, o uno que ya tiene su regla, no arma grupo automático", () => {
-    const { grupos } = agrupar([
-      p("ACS0081", "ACESA LLAVE COMBINADA PROFESIONAL 10 mm", 7.49, "ACESA"),
-      p("ACS0089", "ACESA LLAVE COMBINADA PROFESIONAL 18 mm", 15.44, "ACESA"),
-      p("X1", 'TRUPER LLAVE DE TUBO 10"', 9, "TRUPER"),
-    ]);
-    expect([...grupos.keys()]).toEqual(["grupo-llave-combinada-acesa"]);
   });
 });
