@@ -1,14 +1,13 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
-import { cargarIndice } from "@/components/busqueda/indiceCliente";
+import { useEffect, useState } from "react";
 import { useCarrito } from "@/components/carrito/ProveedorCarrito";
 import CarruselProductos from "@/components/producto/CarruselProductos";
 import { leerSenales } from "@/lib/recomendaciones/almacenPerfil";
-import type { IndiceBusqueda } from "@/lib/recomendaciones/busqueda";
-import { tePuedeInteresar } from "@/lib/recomendaciones/interesar";
-import type { Senal } from "@/lib/recomendaciones/tipos";
 import type { Producto } from "@/types/catalogo";
+
+/** Solo las señales más recientes viajan al servidor (las viejas casi no pesan en el puntaje). */
+const MAXIMO_SENALES = 50;
 
 type Props = {
   /** Lo que se ve primero y lo que ve un cliente nuevo: los más vendidos (los trae el servidor). */
@@ -18,36 +17,35 @@ type Props = {
 };
 
 /**
- * "Te puede interesar" personalizado con el perfil guardado en este navegador
- * (pedidos por WhatsApp, carrito, productos vistos y búsquedas). Sin perfil: los más vendidos.
+ * "Te puede interesar" personalizado con el perfil guardado en este navegador (pedidos por WhatsApp, carrito,
+ * productos vistos y búsquedas). El puntaje lo calcula el servidor (POST /api/te-puede-interesar, con el índice de
+ * lib/indiceServidor.ts): el navegador manda lo que el cliente miró y lo que tiene en el carrito, y recibe los 10
+ * productos. Sin perfil, mientras responde o si el índice todavía se está armando: los más vendidos.
  */
 export default function TePuedeInteresar({ inicial, titulo = "Te puede interesar", className }: Props) {
   const { items } = useCarrito();
-  const [perfil, setPerfil] = useState<{ indice: IndiceBusqueda; senales: Senal[] } | null>(null);
-
-  useEffect(() => {
-    const senales = leerSenales();
-    if (!senales.length) return; // cliente nuevo: se quedan los más vendidos
-    let vigente = true;
-    cargarIndice().then((indice) => {
-      if (vigente && indice) setPerfil({ indice, senales });
-    });
-    return () => {
-      vigente = false;
-    };
-  }, []);
+  const [personales, setPersonales] = useState<Producto[] | null>(null);
 
   const enCarrito = items.map((i) => i.producto.id).join(",");
-  const productos = useMemo(() => {
-    if (!perfil) return inicial;
-    return tePuedeInteresar({
-      productos: perfil.indice.productos,
-      senales: perfil.senales,
-      indice: perfil.indice,
-      enCarrito: enCarrito ? enCarrito.split(",") : [],
-      limite: 10,
-    });
-  }, [perfil, enCarrito, inicial]);
+  useEffect(() => {
+    const senales = leerSenales().slice(-MAXIMO_SENALES);
+    if (!senales.length) return; // cliente nuevo: se quedan los más vendidos
+    const control = new AbortController();
+    fetch("/api/te-puede-interesar", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ senales, enCarrito: enCarrito ? enCarrito.split(",") : [] }),
+      signal: control.signal,
+    })
+      .then((r) => (r.ok ? (r.json() as Promise<{ productos: Producto[] | null }>) : null))
+      .then((datos) => {
+        if (datos?.productos?.length) setPersonales(datos.productos);
+      })
+      .catch(() => {
+        // Sin respuesta: se quedan los más vendidos.
+      });
+    return () => control.abort();
+  }, [enCarrito]);
 
-  return <CarruselProductos titulo={titulo} productos={productos} className={className} />;
+  return <CarruselProductos titulo={titulo} productos={personales ?? inicial} className={className} />;
 }

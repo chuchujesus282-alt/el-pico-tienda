@@ -7,12 +7,14 @@ import RegistrarSenal from "@/components/recomendaciones/RegistrarSenal";
 import RegistrarEvento from "@/components/eventos/RegistrarEvento";
 import Contenedor from "@/components/ui/Contenedor";
 import EncabezadoPagina from "@/components/ui/EncabezadoPagina";
-import { getCategorias, getIndiceProductos } from "@/lib/catalogo";
-import { buscar, crearIndice } from "@/lib/recomendaciones/busqueda";
-import type { Categoria, Producto } from "@/types/catalogo";
+import { getCategorias } from "@/lib/catalogo";
+import { indice } from "@/lib/indiceServidor";
+import { buscar, type IndiceBusqueda } from "@/lib/recomendaciones/busqueda";
+import type { Categoria } from "@/types/catalogo";
 import IconoLupa from "@/components/icons/pico/IconoLupa";
 
-// Resultados de búsqueda (/buscar?q=…) — responsable: persona A. Usa la búsqueda inteligente de lib/recomendaciones/.
+// Resultados de búsqueda (/buscar?q=…) — responsable: persona A. Usa la búsqueda inteligente de lib/recomendaciones/
+// con el índice compartido del servidor (lib/indiceServidor.ts; el mismo de las sugerencias del header).
 
 async function leerConsulta(searchParams: PageProps<"/buscar">["searchParams"]): Promise<string> {
   const { q } = await searchParams;
@@ -27,10 +29,10 @@ export async function generateMetadata({ searchParams }: PageProps<"/buscar">): 
 export default async function PaginaBuscar({ searchParams }: PageProps<"/buscar">) {
   const consulta = await leerConsulta(searchParams);
 
-  let productos: Producto[];
+  let indiceBusqueda: IndiceBusqueda;
   let categorias: Categoria[] = [];
   try {
-    [productos, categorias] = await Promise.all([getIndiceProductos(), getCategorias().catch(() => [])]);
+    [{ indice: indiceBusqueda }, categorias] = await Promise.all([indice(), getCategorias().catch(() => [])]);
   } catch {
     return (
       <>
@@ -44,7 +46,7 @@ export default async function PaginaBuscar({ searchParams }: PageProps<"/buscar"
     );
   }
 
-  const resultado = buscar(crearIndice(productos), consulta);
+  const resultado = buscar(indiceBusqueda, consulta);
   const categoria = categorias.find((c) => c.slug === resultado.categoriaCercana) ?? null;
   const cantidad = resultado.productos.length;
 

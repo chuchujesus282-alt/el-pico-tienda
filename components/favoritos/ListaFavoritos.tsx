@@ -2,7 +2,6 @@
 
 import { useEffect, useState, useSyncExternalStore } from "react";
 import { Check, Heart, LayoutGrid, ShoppingCart } from "lucide-react";
-import { cargarProductos } from "@/components/busqueda/indiceCliente";
 import { useCarrito } from "@/components/carrito/ProveedorCarrito";
 import GrillaProductos from "@/components/producto/GrillaProductos";
 import Boton from "@/components/ui/Boton";
@@ -11,26 +10,60 @@ import type { Producto } from "@/types/catalogo";
 import { useFavoritos } from "./almacenFavoritos";
 
 const sinSuscripcion = () => () => {};
+/** Como mucho estos códigos viajan al servidor (lo mismo que acepta /api/favoritos). */
+const MAXIMO_FAVORITOS = 200;
+
+type Respuesta = {
+  /** Los productos que encontró el servidor, por código. */
+  porId: Map<string, Producto>;
+  /** Los códigos que se le preguntaron (los que no están en porId no están en el catálogo). */
+  pedidos: Set<string>;
+  /** false: faltó una parte del catálogo; lo que no llegó no es que ya no exista. */
+  completo: boolean;
+  /** El servidor no pudo cargar el catálogo. */
+  fallo: boolean;
+};
 
 /**
  * Página de favoritos completa: el título (con cuántos hay y "Agregar todo al carrito") y los productos marcados con
- * el corazón. Los datos (precio, foto) se piden al catálogo, así siempre están al día.
+ * el corazón. Los datos (precio, foto) se piden al servidor solo para los códigos guardados (POST /api/favoritos), así
+ * siempre están al día y el navegador no descarga el catálogo.
  */
 export default function ListaFavoritos() {
   const { ids } = useFavoritos();
   const { agregar } = useCarrito();
   const montado = useSyncExternalStore(sinSuscripcion, () => true, () => false);
-  // null: el catálogo aún no llega.
-  const [catalogo, setCatalogo] = useState<Producto[] | null>(null);
+  // null: el servidor aún no responde.
+  const [respuesta, setRespuesta] = useState<Respuesta | null>(null);
   const [agregados, setAgregados] = useState(false);
 
+  // Se pregunta de nuevo solo si aparece un código que no se había preguntado (quitar uno no hace falta pedirlo).
+  const nuevos = ids.slice(0, MAXIMO_FAVORITOS).filter((id) => !respuesta?.pedidos.has(id));
+  const clave = nuevos.length ? ids.slice(0, MAXIMO_FAVORITOS).join(",") : "";
   useEffect(() => {
-    let vigente = true;
-    cargarProductos().then((productos) => vigente && setCatalogo(productos));
-    return () => {
-      vigente = false;
-    };
-  }, []);
+    if (!clave) return;
+    const pedidos = clave.split(",");
+    const control = new AbortController();
+    fetch("/api/favoritos", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ ids: pedidos }),
+      signal: control.signal,
+    })
+      .then(async (r) => {
+        const datos = (await r.json()) as { productos?: Producto[]; completo?: boolean };
+        setRespuesta({
+          porId: new Map((datos.productos ?? []).map((p) => [p.id, p])),
+          pedidos: new Set(pedidos),
+          completo: datos.completo !== false,
+          fallo: !r.ok,
+        });
+      })
+      .catch(() => {
+        if (!control.signal.aborted) setRespuesta({ porId: new Map(), pedidos: new Set(pedidos), completo: false, fallo: true });
+      });
+    return () => control.abort();
+  }, [clave]);
 
   useEffect(() => {
     if (!agregados) return;
@@ -39,11 +72,13 @@ export default function ListaFavoritos() {
   }, [agregados]);
 
   // Antes de leer el navegador no se sabe si hay favoritos: esqueletos en vez de "no tienes".
-  const cargando = !montado || (ids.length > 0 && catalogo === null);
-  const porId = new Map((catalogo ?? []).map((p) => [p.id, p]));
-  // Mismo orden que la lista (lo último que guardó, primero). Lo que ya no está en el catálogo no se muestra.
-  const productos = ids.map((id) => porId.get(id)).filter((p): p is Producto => Boolean(p));
-  const sinCatalogo = !cargando && ids.length > 0 && catalogo?.length === 0;
+  const cargando = !montado || (ids.length > 0 && (respuesta === null || nuevos.length > 0) && !respuesta?.fallo);
+  // Mismo orden que la lista (lo último que guardó, primero). Lo que ya no está en el catálogo no se muestra (pero se
+  // queda guardado: si mañana vuelve, reaparece).
+  const productos = ids.map((id) => respuesta?.porId.get(id)).filter((p): p is Producto => Boolean(p));
+  const sinCatalogo = !cargando && ids.length > 0 && respuesta?.fallo === true;
+  // Faltó una parte del catálogo y hay favoritos que no llegaron: se avisa en vez de darlos por desaparecidos.
+  const incompletos = !cargando && !sinCatalogo && respuesta?.completo === false && productos.length < ids.length;
 
   const agregarTodo = () => {
     productos.forEach((p) => agregar(p));
@@ -73,10 +108,17 @@ export default function ListaFavoritos() {
         <p className="rounded-tarjeta border border-gris-borde bg-pico-blanco p-6 text-center text-sm text-gris-texto">
           No pudimos conectar con el catálogo para mostrar tus favoritos. Intenta de nuevo en unos minutos.
         </p>
-      ) : productos.length === 0 ? (
+      ) : productos.length === 0 && !incompletos ? (
         <Vacio />
       ) : (
-        <GrillaProductos productos={productos} titulo="Tus favoritos" />
+        <>
+          {incompletos && (
+            <p className="rounded-boton bg-pico-azul-claro px-4 py-3 text-sm text-texto">
+              Algunos de tus favoritos no se pudieron cargar en este momento. Vuelve a intentar en unos minutos.
+            </p>
+          )}
+          {productos.length > 0 && <GrillaProductos productos={productos} titulo="Tus favoritos" />}
+        </>
       )}
     </div>
   );

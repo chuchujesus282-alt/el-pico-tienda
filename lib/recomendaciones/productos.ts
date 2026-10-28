@@ -39,8 +39,41 @@ export function prepararCatalogo(productos: Producto[]): CatalogoPreparado {
 
 /** Cuántos productos se procesan seguidos antes de dejar respirar al navegador (ver prepararCatalogoPorPartes). */
 export const TANDA = 250;
-/** Cede el turno al navegador (clics, teclado, animaciones) y sigue después. */
-export const respirar = () => new Promise<void>((listo) => setTimeout(listo, 0));
+/**
+ * Cede el turno (en el navegador: clics, teclado, animaciones; en el servidor: las otras visitas) y sigue después.
+ * En el servidor (Node) con setImmediate: setTimeout(0) espera de más entre tandas (con 30.000 productos, armar el
+ * índice tardaba 3,9 s en vez de 0,8 s). El navegador no tiene setImmediate: ahí sigue con setTimeout.
+ */
+export const respirar = () =>
+  new Promise<void>((listo) => (typeof setImmediate === "function" ? setImmediate(listo) : setTimeout(listo, 0)));
+
+/**
+ * Los `limite` primeros de una lista según `comparar`, sin ordenar la lista entera: da lo mismo que
+ * `[...].sort(comparar).slice(0, limite)` (en los empates, el que aparece antes), pero con 30.000 productos y un límite
+ * de 4 a 10 es mucho más rápido y no crea una copia de la lista.
+ */
+export class Mejores<T> {
+  private lista: T[] = [];
+  constructor(
+    private readonly limite: number,
+    private readonly comparar: (a: T, b: T) => number,
+  ) {}
+
+  ofrecer(item: T) {
+    const { lista, limite, comparar } = this;
+    if (limite <= 0) return;
+    if (lista.length === limite && comparar(item, lista[lista.length - 1]) >= 0) return;
+    // Va antes del primero que le gana estrictamente: así los empates quedan en el orden en que llegaron.
+    let i = lista.length;
+    while (i > 0 && comparar(item, lista[i - 1]) < 0) i--;
+    lista.splice(i, 0, item);
+    if (lista.length > limite) lista.pop();
+  }
+
+  resultado(): T[] {
+    return this.lista;
+  }
+}
 
 /**
  * Igual que prepararCatalogo, pero por tandas, cediendo el turno entre una y otra: en el navegador, con miles de
@@ -65,8 +98,7 @@ export function masVendidos(
   limite = 10,
   { categoria, excluir }: { categoria?: string; excluir?: Set<string> } = {},
 ): Producto[] {
-  return productos
-    .filter((p) => (!categoria || p.categoriaSlug === categoria) && !excluir?.has(p.id))
-    .sort((a, b) => ventas(b) - ventas(a))
-    .slice(0, limite);
+  const mejores = new Mejores<Producto>(limite, (a, b) => ventas(b) - ventas(a));
+  for (const p of productos) if ((!categoria || p.categoriaSlug === categoria) && !excluir?.has(p.id)) mejores.ofrecer(p);
+  return mejores.resultado();
 }

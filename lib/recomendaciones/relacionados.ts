@@ -1,6 +1,6 @@
 import type { CompradoJunto, Producto } from "@/types/catalogo";
-import { coincidencia, complementosDe } from "./diccionarios";
-import { indexarProducto, masVendidos, prepararCatalogo, ventas } from "./productos";
+import { candidatosDe, coincidencia, complementosDe } from "./diccionarios";
+import { indexarProducto, masVendidos, Mejores, prepararCatalogo, ventas } from "./productos";
 import type { ProductoIndexado } from "./tipos";
 
 // "También te puede servir": mezcla complementarios (lo que se usa junto, según datos/complementarios.json),
@@ -14,7 +14,8 @@ export function complementariosDe(base: ProductoIndexado, catalogo: ProductoInde
   for (const frase of complementosDe(base)) {
     if (elegidos.length >= limite) break;
     let mejor: { p: ProductoIndexado; puntaje: number } | null = null;
-    for (const p of catalogo) {
+    // Solo los que pueden coincidir con la frase, en el mismo orden que el catálogo: mismo resultado, sin recorrerlo todo.
+    for (const p of candidatosDe(catalogo, frase)) {
       if (p.producto.id === base.producto.id || elegidos.includes(p)) continue;
       const c = coincidencia(p, frase);
       if (!c) continue;
@@ -31,23 +32,27 @@ export function complementariosDe(base: ProductoIndexado, catalogo: ProductoInde
 /** Parecidos a `base`: mismo tipo o subcategoría, y suman la misma medida, la marca y un precio cercano. */
 export function similaresDe(base: ProductoIndexado, catalogo: ProductoIndexado[], limite = 4): ProductoIndexado[] {
   const b = base.producto;
-  return catalogo
-    .filter((p) => p.producto.id !== b.id)
-    .map((p) => {
-      const q = p.producto;
-      let puntaje = 0;
-      if (p.tipo && p.tipo === base.tipo) puntaje += 3;
-      if (q.subcategoria && q.subcategoria === b.subcategoria) puntaje += 2;
-      if (q.categoriaSlug === b.categoriaSlug) puntaje += 1;
-      puntaje += Math.min(2, p.medidas.filter((m) => base.medidas.includes(m)).length) * 1.5;
-      if (q.marca && q.marca === b.marca) puntaje += 0.5;
-      if (q.precio > 0 && b.precio > 0) puntaje += Math.max(0, 1 - Math.abs(Math.log(q.precio / b.precio)) / Math.log(4));
-      return { p, puntaje };
-    })
-    .filter((x) => x.puntaje >= 3) // al menos mismo tipo, o misma subcategoría y categoría
-    .sort((x, y) => y.puntaje - x.puntaje || ventas(y.p.producto) - ventas(x.p.producto))
-    .slice(0, limite)
-    .map((x) => x.p);
+  // Recorre el catálogo una vez y guarda solo los mejores (Mejores): con 30.000 productos, crear un objeto por cada uno
+  // y ordenarlos todos tomaba ~20 ms por producto base. Mismo puntaje y mismo orden que antes.
+  const mejores = new Mejores<{ p: ProductoIndexado; puntaje: number }>(
+    limite,
+    (x, y) => y.puntaje - x.puntaje || ventas(y.p.producto) - ventas(x.p.producto),
+  );
+  for (const p of catalogo) {
+    const q = p.producto;
+    if (q.id === b.id) continue;
+    let puntaje = 0;
+    if (p.tipo && p.tipo === base.tipo) puntaje += 3;
+    if (q.subcategoria && q.subcategoria === b.subcategoria) puntaje += 2;
+    if (q.categoriaSlug === b.categoriaSlug) puntaje += 1;
+    let comunes = 0;
+    for (const m of p.medidas) if (base.medidas.includes(m)) comunes++;
+    puntaje += Math.min(2, comunes) * 1.5;
+    if (q.marca && q.marca === b.marca) puntaje += 0.5;
+    if (q.precio > 0 && b.precio > 0) puntaje += Math.max(0, 1 - Math.abs(Math.log(q.precio / b.precio)) / Math.log(4));
+    if (puntaje >= 3) mejores.ofrecer({ p, puntaje }); // al menos mismo tipo, o misma subcategoría y categoría
+  }
+  return mejores.resultado().map((x) => x.p);
 }
 
 /**

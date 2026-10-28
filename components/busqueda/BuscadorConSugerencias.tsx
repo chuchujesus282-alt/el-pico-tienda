@@ -7,41 +7,58 @@ import { ArrowRight, Search } from "lucide-react";
 import ImagenProducto from "@/components/producto/ImagenProducto";
 import Precio from "@/components/ui/Precio";
 import { tituloProducto } from "@/lib/formato";
-import { sugerirCorrigiendo } from "@/lib/recomendaciones/busqueda";
-import type { IndiceBusqueda } from "@/lib/recomendaciones/busqueda";
-import type { Producto } from "@/types/catalogo";
-import { cargarIndice } from "./indiceCliente";
+import type { ProductoSugerido, RespuestaSugerencias } from "@/lib/busquedaServidor";
 
-const ESPERA_MS = 150; // debounce: se busca cuando el cliente deja de escribir
-const MAXIMO = 6;
+const ESPERA_MS = 150; // debounce: se pregunta al servidor cuando el cliente deja de escribir
+/** Si el índice del servidor todavía se está armando, se pregunta una vez más pasado este tiempo. */
+const REINTENTO_MS = 1500;
 
 /**
- * Caja de búsqueda del header con sugerencias en vivo (búsqueda inteligente de lib/recomendaciones/).
- * Enter sin elegir sugerencia → página /buscar?q=… con todos los resultados.
+ * Caja de búsqueda del header con sugerencias en vivo (búsqueda inteligente de lib/recomendaciones/). Las sugerencias
+ * las calcula el servidor (GET /api/sugerencias?q=…, con el índice de lib/indiceServidor.ts): el navegador ya no
+ * descarga el catálogo. Enter sin elegir sugerencia → página /buscar?q=… con todos los resultados.
  */
 export default function BuscadorConSugerencias({ className = "" }: { className?: string }) {
   const router = useRouter();
   const idLista = useId();
   const [texto, setTexto] = useState("");
-  const [indice, setIndice] = useState<IndiceBusqueda | null>(null);
-  const [sugerencias, setSugerencias] = useState<Producto[]>([]);
-  const [correccion, setCorreccion] = useState<string | null>(null);
+  // null: todavía no hay respuesta (o el índice del servidor no estaba listo): no se muestra la lista.
+  const [resultado, setResultado] = useState<{ productos: ProductoSugerido[]; correccion: string | null } | null>(null);
   const [abierto, setAbierto] = useState(false);
   const [activo, setActivo] = useState(-1);
   const contenedor = useRef<HTMLFormElement>(null);
+  const preparado = useRef(false);
 
   const consulta = texto.trim();
+  const sugerencias = resultado?.productos ?? [];
+  const correccion = resultado?.correccion ?? null;
 
   useEffect(() => {
-    const espera = setTimeout(() => {
-      const resultado =
-        indice && consulta.length >= 2 ? sugerirCorrigiendo(indice, consulta, MAXIMO) : { productos: [], correccion: null };
-      setSugerencias(resultado.productos);
-      setCorreccion(resultado.correccion);
-      setActivo(-1);
-    }, ESPERA_MS);
-    return () => clearTimeout(espera);
-  }, [indice, consulta]);
+    if (consulta.length < 2) return;
+    // Cada letra cancela la consulta anterior: solo cuenta la respuesta de lo último que se escribió.
+    const control = new AbortController();
+    let reintento: ReturnType<typeof setTimeout> | undefined;
+    const pedir = (intento: number) =>
+      fetch(`/api/sugerencias?q=${encodeURIComponent(consulta)}`, { signal: control.signal })
+        .then((r) => (r.ok ? (r.json() as Promise<RespuestaSugerencias>) : Promise.reject(new Error("sin sugerencias"))))
+        .then((datos) => {
+          if (!datos.listo) {
+            if (intento === 0) reintento = setTimeout(() => pedir(1), REINTENTO_MS);
+            return;
+          }
+          setResultado({ productos: datos.productos, correccion: datos.correccion });
+          setActivo(-1);
+        })
+        .catch(() => {
+          // Cancelada o sin conexión: Enter sigue llevando a /buscar.
+        });
+    const espera = setTimeout(() => pedir(0), ESPERA_MS);
+    return () => {
+      clearTimeout(espera);
+      clearTimeout(reintento);
+      control.abort();
+    };
+  }, [consulta]);
 
   // Cerrar al hacer clic fuera.
   useEffect(() => {
@@ -55,10 +72,14 @@ export default function BuscadorConSugerencias({ className = "" }: { className?:
 
   const prepararIndice = () => {
     setAbierto(true);
-    if (!indice) cargarIndice().then((i) => i && setIndice(i));
+    // Al tocar la caja, una consulta vacía (casi nada) le avisa al servidor que arme el índice si todavía no lo tiene:
+    // así, cuando el cliente termine de escribir, las sugerencias ya están listas.
+    if (preparado.current) return;
+    preparado.current = true;
+    fetch("/api/sugerencias?q=").catch(() => {});
   };
 
-  const mostrarLista = abierto && consulta.length >= 2 && indice !== null;
+  const mostrarLista = abierto && consulta.length >= 2 && resultado !== null;
   const enlaceTodos = `/buscar?q=${encodeURIComponent(consulta)}`;
 
   const alTeclear = (e: React.KeyboardEvent<HTMLInputElement>) => {

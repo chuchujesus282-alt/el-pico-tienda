@@ -6,7 +6,12 @@ Tres funciones con piezas compartidas, todas en `lib/recomendaciones/` (lógica 
 2. **Productos relacionados** ("También te puede servir"): para la página de producto.
 3. **"Te puede interesar" personalizado**: carrusel del inicio.
 
-Pruebas: `npm test` (Vitest). Cubren los ejemplos de abajo y miden la velocidad con 2000 productos.
+Pruebas: `npm test` (Vitest). Cubren los ejemplos de abajo y miden la velocidad con 2.000 y con 30.000 productos.
+
+**Todo corre en el SERVIDOR** (desde el 2026-10-28): el navegador nunca descarga el catálogo (con ~30.000 productos
+serían 6,6 MB y ~76 MB de memoria en cada teléfono). Hay UN índice de búsqueda en la memoria del servidor
+(`lib/indiceServidor.ts`) que usan `/buscar`, las sugerencias del header y "Te puede interesar"; el navegador solo
+pregunta y recibe lo que va a mostrar (~2 KB). Los algoritmos de `lib/recomendaciones/` son los mismos de siempre.
 
 ## Archivos
 
@@ -17,17 +22,21 @@ Pruebas: `npm test` (Vitest). Cubren los ejemplos de abajo y miden la velocidad 
 | `datos/consumibles.json` | Lo que se gasta y se puede volver a sugerir (editable) |
 | `lib/recomendaciones/medidas.ts` | Unifica medidas: `1/4`, `1/4"`, `¼`, "un cuarto", `1/4 pulg`, `2/8` → `1/4` |
 | `lib/recomendaciones/normalizar.ts` | `palabrasClave(texto)`: minúsculas, sin acentos, medidas, singular, sinónimos |
-| `lib/recomendaciones/diccionarios.ts` | Lee los JSON de `datos/`; `complementosDe()`, `esConsumible()` |
-| `lib/recomendaciones/productos.ts` | Prepara el catálogo una vez; `masVendidos()` |
+| `lib/recomendaciones/diccionarios.ts` | Lee los JSON de `datos/`; `complementosDe()`, `esConsumible()`, `candidatosDe()` |
+| `lib/recomendaciones/productos.ts` | Prepara el catálogo una vez; `masVendidos()`; `Mejores` (los N primeros sin ordenar todo) |
 | `lib/recomendaciones/busqueda.ts` | `crearIndice()`, `sugerir()`, `buscar()`, `quisoDecir()` (MiniSearch) |
 | `lib/recomendaciones/relacionados.ts` | `relacionados()`, `complementariosDe()`, `similaresDe()`, `compradosJuntos()` |
 | `lib/recomendaciones/perfil.ts` | Pesos de las señales, olvido con el tiempo, `senalesDesdeCompras()` |
 | `lib/recomendaciones/almacenPerfil.ts` | Guarda el perfil en `localStorage` (`el-pico:perfil`), siempre con try/catch |
 | `lib/recomendaciones/interesar.ts` | `tePuedeInteresar()` |
 | `lib/recomendaciones/__tests__/` | Pruebas |
-| `app/api/indice-busqueda/route.ts` | Entrega el catálogo al navegador (caché de 5 min) |
-| `app/buscar/page.tsx` | Página de resultados |
-| `components/busqueda/` | `BuscadorConSugerencias` (header), `SinResultados`, `indiceCliente` |
+| `lib/indiceServidor.ts` | El índice ÚNICO del servidor: `indice()` (espera; para `/buscar`) e `indiceSiEstaListo()` (no espera; si falta, lo arma en segundo plano con `after()`) |
+| `lib/busquedaServidor.ts` | Lo que responden las rutas de abajo (validar lo que llega, campos que viajan); con pruebas |
+| `app/api/sugerencias/route.ts` | `GET ?q=` → `{ productos, correccion, listo }` (6 filas; caché de 60 s; NO registra eventos) |
+| `app/api/te-puede-interesar/route.ts` | `POST { senales, enCarrito }` → `{ productos, listo }` (los 10 personalizados) |
+| `app/api/favoritos/route.ts` | `POST { ids }` → `{ productos, completo }` (solo esos productos) |
+| `app/buscar/page.tsx` | Página de resultados (aquí se registra el evento de búsqueda) |
+| `components/busqueda/` | `BuscadorConSugerencias` (header; pregunta a `/api/sugerencias`), `SinResultados` |
 | `components/recomendaciones/` | `ProductosRelacionados`, `TePuedeInteresar`, `RegistrarSenal` |
 
 Los algoritmos **reciben** la lista de productos; nunca la buscan. Los datos llegan por `lib/catalogo.ts`
@@ -43,7 +52,8 @@ import RegistrarSenal from "@/components/recomendaciones/RegistrarSenal";
 <RegistrarSenal senales={[{ tipo: "visto", id: producto.id }]} />   {/* anota "producto visto" */}
 <ProductosRelacionados producto={producto} className="mt-10" />     {/* "También te puede servir" */}
 
-// Inicio: los más vendidos llegan del servidor y en el navegador se personaliza.
+// Inicio: se ven los más vendidos; si el cliente tiene perfil, el navegador lo manda a /api/te-puede-interesar y
+// los cambia por los 10 personalizados que calcula el servidor.
 <TePuedeInteresar inicial={await getMasVendidos(10)} />
 
 // Header: <BuscadorConSugerencias /> ya está puesto.

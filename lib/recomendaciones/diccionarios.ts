@@ -24,6 +24,31 @@ export function coincidencia(producto: ProductoIndexado, frase: Frase): number {
   return 0;
 }
 
+// Por catálogo: palabra → productos que la tienen entre sus primeras POSICION_MAXIMA + 1 palabras, en el orden del
+// catálogo. Se arma una vez por lista (la misma lista se reutiliza mientras el catálogo no cambie).
+const porPrimeraPalabra = new WeakMap<ProductoIndexado[], Map<string, ProductoIndexado[]>>();
+
+/**
+ * Los únicos productos del catálogo que pueden coincidir con la frase (coincidencia() > 0), en el orden del catálogo.
+ * Una coincidencia necesita la primera palabra de la frase en las primeras posiciones del nombre: con 30.000 productos
+ * así no hay que revisarlos todos para cada frase (complementariosDe tardaba ~18 ms por producto base).
+ */
+export function candidatosDe(catalogo: ProductoIndexado[], frase: Frase): ProductoIndexado[] {
+  let mapa = porPrimeraPalabra.get(catalogo);
+  if (!mapa) {
+    mapa = new Map();
+    for (const p of catalogo) {
+      for (const token of new Set(p.tokens.slice(0, POSICION_MAXIMA + 1))) {
+        const lista = mapa.get(token);
+        if (lista) lista.push(p);
+        else mapa.set(token, [p]);
+      }
+    }
+    porPrimeraPalabra.set(catalogo, mapa);
+  }
+  return frase.length ? (mapa.get(frase[0]) ?? []) : [];
+}
+
 type Mapa = { tipo: Frase; complementos: Frase[] }[];
 
 let mapa: Mapa | null = null;

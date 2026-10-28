@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { catalogoPruebas as productosMock } from "@/lib/mock/catalogoPruebas";
 import type { Producto } from "@/types/catalogo";
-import { buscar, crearIndice, crearIndicePorPartes, sugerir } from "../busqueda";
+import { buscar, crearIndice, crearIndicePorPartes, sugerir, sugerirCorrigiendo } from "../busqueda";
 import { tePuedeInteresar } from "../interesar";
 import { relacionados } from "../relacionados";
 
@@ -93,4 +93,52 @@ describe("rendimiento con 2000 productos", () => {
     expect(porProducto).toBeLessThan(50);
     expect(interesar).toBeLessThan(500);
   });
+});
+
+// Con el catálogo que tendrá la tienda (~30.000 productos de Saint), en el SERVIDOR (lib/indiceServidor.ts): el índice
+// se arma una vez y cada sugerencia, búsqueda o "Te puede interesar" usa ese mismo índice. Límites holgados (una PC
+// modesta con poca memoria); los números reales se imprimen para el reporte.
+describe("rendimiento con 30.000 productos (índice en el servidor)", () => {
+  const productos = catalogoGrande(30_000);
+  const indice = crearIndice(productos);
+
+  it("arma el índice, sugiere, busca y recomienda en tiempos de servidor", async () => {
+    const otra = productos.map((p) => ({ ...p })); // otra lista: sin caché compartida
+    const t0 = performance.now();
+    await crearIndicePorPartes(otra);
+    const armado = performance.now() - t0;
+
+    const vueltas = 3;
+    const t1 = performance.now();
+    for (let v = 0; v < vueltas; v++) for (const q of CONSULTAS) sugerirCorrigiendo(indice, q.slice(0, 6), 6);
+    const sugerencia = (performance.now() - t1) / (vueltas * CONSULTAS.length);
+
+    const t2 = performance.now();
+    for (let v = 0; v < vueltas; v++) for (const q of CONSULTAS) buscar(indice, q);
+    const busqueda = (performance.now() - t2) / (vueltas * CONSULTAS.length);
+
+    const t3 = performance.now();
+    for (const p of productos.slice(0, 20)) relacionados(p, productos);
+    const porProducto = (performance.now() - t3) / 20;
+
+    const ahora = Date.now();
+    const senales = productos.slice(0, 50).map((p, i) => ({
+      tipo: (["whatsapp", "carrito", "visto"] as const)[i % 3],
+      id: p.id,
+      fecha: ahora - i * 3600_000,
+    }));
+    const t4 = performance.now();
+    tePuedeInteresar({ productos, senales, indice, ahora, limite: 10 });
+    const interesar = performance.now() - t4;
+
+    console.info(
+      `30.000 productos · índice (por partes): ${armado.toFixed(0)} ms · sugerencia: ${sugerencia.toFixed(2)} ms · ` +
+        `búsqueda: ${busqueda.toFixed(2)} ms · relacionados: ${porProducto.toFixed(1)} ms · Te puede interesar (50 señales): ${interesar.toFixed(1)} ms`,
+    );
+    expect(armado).toBeLessThan(5000);
+    expect(sugerencia).toBeLessThan(25);
+    expect(busqueda).toBeLessThan(50);
+    expect(porProducto).toBeLessThan(150);
+    expect(interesar).toBeLessThan(500);
+  }, 60_000);
 });

@@ -1,8 +1,9 @@
 # Pendiente: buscador y sugerencias desde el servidor
 
 Escrito el 2026-10-26 por persona A (con Claude Code) para continuar en otra computadora y otra sesión.
-**Estado: plan APROBADO por el dueño, sin empezar.** No hay código de esto en `main` todavía.
-Bórralo (y su línea en `CLAUDE.md`) cuando todo esté hecho.
+**Estado (2026-10-28): el plan del buscador está HECHO** (ver el Registro de cambios de `CLAUDE.md`). Este archivo
+queda solo por la sección "Calculadoras: códigos propuestos" (pendiente con persona B); bórralo (y su línea en
+`CLAUDE.md`) cuando eso también esté hecho. Lo de abajo sobre el buscador queda como historial.
 
 ## Por qué
 
