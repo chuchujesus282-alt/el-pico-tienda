@@ -14,3 +14,16 @@ Fotos que pasó persona B para PROBAR los grupos de medidas (`lib/agrupaciones.t
 | grupos/dado-largo-stanley.webp | Grupo "Dado hexagonal largo Stanley" (dado largo con su empaque Stanley, de frente, recortada) |
 | grupos/dado-largo-estria-stanley.webp | Grupo "Dado de estría largo Stanley" (dado largo 12 puntas con su empaque Stanley, acostado, recortada) |
 | 3M0015.webp | 3M MOPA PULIDO AZUL DOBLE CARA 8" PASO 3 (la foto trae la marca 3M en el empaque) |
+
+## Pinturas Pineco (2026-10-28, persona B)
+
+Fotos oficiales del empaque que pasó persona B (fondo transparente pasado a blanco, 1080×1080). Cada una va SOLO en el producto de su línea y tamaño (`FOTOS_SAINT` en `lib/agrupaciones.ts`).
+
+| Archivo | Producto |
+|---|---|
+| PINECO014.webp | PINECO ESMALTE 2 EN 1 ACRILICO DTM GALON (empaque "DTM Esmalte + Anticorrosivo", 3,785 L) |
+| PINECO015.webp | PINECO PIPOL CLASE "B" GALON (3,785 L) |
+| PINECO016.webp | PINECO PIPOL CLASE "B" TOBO (15,14 L) |
+| PINECO011.webp | PINECO HIDROESMALTE CLASE A GALON (empaque "Prestige Hidroesmalte", 3,785 L) |
+| PINECO002.webp | PINECO PRESTIGE CLASE A MATE GAL (3,785 L) |
+| PINECO003.webp | PINECO PRESTIGE CLASE A SATINADO GALON (3,785 L) |

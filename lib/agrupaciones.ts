@@ -20,6 +20,14 @@ const FOTO_DADO_LARGO_ESTRIA_STANLEY = "/productos/grupos/dado-largo-estria-stan
 /** Fotos sueltas por código de Saint (public/productos/{codigo}.webp). */
 export const FOTOS_SAINT: Record<string, string> = {
   "3M0015": "/productos/3M0015.webp", // mopa de pulir azul doble cara 8" 3M
+  // Pinturas Pineco: fotos oficiales del empaque, una por producto y tamaño (galón o tobo). Los de 1/4 de galón, el
+  // Prestige Gold, el Prestige mate en tobo y el Cerami-K siguen sin foto: no llegó la de su empaque.
+  PINECO014: "/productos/PINECO014.webp", // esmalte 2 en 1 acrílico DTM, galón
+  PINECO015: "/productos/PINECO015.webp", // Pípol clase B, galón
+  PINECO016: "/productos/PINECO016.webp", // Pípol clase B, tobo (4 galones)
+  PINECO011: "/productos/PINECO011.webp", // hidroesmalte Prestige clase A, galón
+  PINECO002: "/productos/PINECO002.webp", // Prestige clase A mate, galón
+  PINECO003: "/productos/PINECO003.webp", // Prestige clase A satinado, galón
 };
 
 /** Cómo se dividen las medidas en el selector: milímetros/pulgadas, encastre del dado, o una sección propia que da la

@@ -160,4 +160,18 @@ describe("agrupar", () => {
   it("la mopa 3M lleva su foto", () => {
     expect(productos.find((x) => x.id === "3M0015")!.imagen).toBe("/productos/3M0015.webp");
   });
+
+  it("pinturas Pineco: cada foto solo en su línea y tamaño; 1/4 de galón y Gold sin foto", () => {
+    const pinturas = agrupar([
+      p("PINECO015", 'PINECO PIPOL CLASE "B" GALON', 30, "PINECO"),
+      p("PINECO016", 'PINECO PIPOL CLASE "B" TOBO', 110, "PINECO"),
+      p("PINECO019", "PINECO HIDROESMALTE CLASE A 1/4 GALON", 15, "PINECO"),
+      p("PINECO010", "PINECO PRESTIGE GOLD CLASE A MATE GALON", 50, "PINECO"),
+    ]).productos;
+    const foto = (id: string) => pinturas.find((x) => x.id === id)!.imagen;
+    expect(foto("PINECO015")).toBe("/productos/PINECO015.webp");
+    expect(foto("PINECO016")).toBe("/productos/PINECO016.webp");
+    expect(foto("PINECO019")).toBeNull();
+    expect(foto("PINECO010")).toBeNull();
+  });
 });
