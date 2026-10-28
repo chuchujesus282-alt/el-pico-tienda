@@ -10,7 +10,14 @@ import type {
 import { categoriasMock } from "@/lib/mock/categorias";
 import { destacadosMock, productosMock } from "@/lib/mock/productos";
 import { masVendidos } from "@/lib/recomendaciones/productos";
-import { type CategoriaSaint, esCategoriaSaint, getCategoriaSaint, getTodosSaint, normalizar } from "@/lib/saint";
+import {
+  type CategoriaSaint,
+  esCategoriaSaint,
+  getCategoriaSaint,
+  getMovidosSaint,
+  getTodosSaint,
+  normalizar,
+} from "@/lib/saint";
 import { esIdGrupo, type Grupo } from "@/lib/agrupaciones";
 
 // ÚNICA puerta de entrada a los datos de productos (ver docs/datos.md).
@@ -131,16 +138,22 @@ export async function getProductosPorCategoria(
     );
   }
 
-  const deCategoria = productosEjemplo.filter((p) => p.categoriaSlug === slug);
+  // Los productos reales de Saint que pertenecen aquí (bombas de agua en Plomería, gatos en Vehículos…) van primero;
+  // detrás, los de ejemplo de la categoría.
+  const movidos = await getMovidosSaint(slug);
+  const ejemplo = productosEjemplo.filter((p) => p.categoriaSlug === slug);
+  const deCategoria = [...(movidos?.listado ?? []), ...ejemplo];
+  const claves = [...(movidos?.clavesListado ?? []), ...ejemplo.map((p) => clavesEjemplo.get(p) ?? "")];
   const marcas = [...new Set(deCategoria.map((p) => p.marca).filter((m): m is string => !!m))].sort();
-  const subcategorias = [
-    ...new Set(deCategoria.map((p) => p.subcategoria).filter((s): s is string => !!s)),
-  ].sort();
+  const cantidades: Record<string, number> = {};
+  for (const p of deCategoria) if (p.subcategoria) cantidades[p.subcategoria] = (cantidades[p.subcategoria] ?? 0) + 1;
+  const subcategorias = Object.keys(cantidades).sort((a, b) => a.localeCompare(b, "es"));
 
   return {
-    ...filtrarYPaginar(deCategoria, deCategoria.map((p) => clavesEjemplo.get(p) ?? ""), opciones),
+    ...filtrarYPaginar(deCategoria, claves, opciones),
     marcas,
     subcategorias,
+    ...(movidos ? { cantidades } : {}),
   };
 }
 

@@ -5,6 +5,7 @@ import { CATEGORIAS_SAINT, codigoSaint } from "@/lib/categoriasSaint";
 import { nombreLegible } from "@/lib/nombresSaint";
 import { agrupar, type Grupo } from "@/lib/agrupaciones";
 import { repartirPorCategoria } from "@/lib/repartirSaint";
+import { ORDEN_SUBCATEGORIAS, reclasificar } from "@/lib/clasificacionSaint";
 
 // Productos REALES de Saint, por categoría (las del mapa de lib/categoriasSaint.ts). Solo se usa desde lib/catalogo.ts
 // y lib/tasa.ts. Responsable: persona A.
@@ -55,7 +56,7 @@ export type CategoriaSaint = {
   /** Grupos de medidas por id, y de cada código su grupo. */
   grupos: Map<string, Grupo>;
   grupoDe: Map<string, string>;
-  /** Con su código de Saint, su nombre legible y la cantidad de productos que trae Saint (un grupo cuenta como uno). */
+  /** Las de la web (lib/clasificacionSaint.ts), con un código de texto y cuántos productos se ven (un grupo cuenta uno). */
   subcategorias: { codigo: string; nombre: string; cantidad: number }[];
 };
 
@@ -73,24 +74,20 @@ const esTexto = (v: unknown): v is string => typeof v === "string" && v.trim() !
 const numero = (v: unknown) => (typeof v === "number" ? v : typeof v === "string" ? Number(v) : NaN);
 const redondear = (n: number) => Math.round(n * 100) / 100;
 
-/** Respuesta de Saint → lista lista para la tienda. Lo que no tenga código, nombre o precio válido se deja fuera. */
-function convertir(slug: string, crudo: unknown): CategoriaSaint {
+/** Parte de la respuesta de Saint → sus productos (con la categoría y subcategoría de Saint). Lo que no tenga código,
+ * nombre o precio válido se deja fuera. */
+function leer(slug: string, crudo: unknown, vistos: Set<string>): { tasa: number; productos: Producto[] } {
   const datos = (crudo ?? {}) as { tasa?: unknown; subcategorias?: unknown; productos?: unknown };
   const tasa = numero(datos.tasa);
   if (!Array.isArray(datos.productos)) throw new ErrorSaint("Saint respondió sin lista de productos");
 
-  const subcategorias: CategoriaSaint["subcategorias"] = [];
   const nombrePorCodigo = new Map<string, string>();
   for (const sub of Array.isArray(datos.subcategorias) ? datos.subcategorias : []) {
-    const { codigo, nombre, cantidad } = (sub ?? {}) as Record<string, unknown>;
-    if (!esTexto(nombre)) continue;
-    const legible = nombreLegible(nombre);
-    nombrePorCodigo.set(String(codigo), legible);
-    subcategorias.push({ codigo: String(codigo), nombre: legible, cantidad: Math.max(0, Math.trunc(numero(cantidad)) || 0) });
+    const { codigo, nombre } = (sub ?? {}) as Record<string, unknown>;
+    if (esTexto(nombre)) nombrePorCodigo.set(String(codigo), nombreLegible(nombre));
   }
 
-  const crudos: Producto[] = [];
-  const vistos = new Set<string>();
+  const productos: Producto[] = [];
   for (const fila of datos.productos) {
     const { codigo, nombre, marca, codSubcategoria, subcategoria, precioBs, precioUsd } = (fila ?? {}) as Record<string, unknown>;
     if (!esTexto(codigo) || !esTexto(nombre)) continue;
@@ -102,7 +99,7 @@ function convertir(slug: string, crudo: unknown): CategoriaSaint {
     const marcaReal = esTexto(marca) && marca.trim() !== "S/M" ? marca.trim() : null;
     const nombreLimpio = nombre.trim().replace(/\s+/g, " ");
     const bs = numero(precioBs);
-    const producto: Producto = {
+    productos.push({
       id,
       nombre: nombreLimpio,
       titulo: nombreLegible(nombreLimpio, marcaReal),
@@ -114,10 +111,16 @@ function convertir(slug: string, crudo: unknown): CategoriaSaint {
       categoriaSlug: slug,
       subcategoria:
         nombrePorCodigo.get(String(codSubcategoria)) ?? (esTexto(subcategoria) ? nombreLegible(subcategoria) : null),
-    };
-    crudos.push(producto);
+    });
   }
+  return { tasa: Number.isFinite(tasa) && tasa > 0 ? tasa : 0, productos };
+}
 
+/** "Accesorios para herramientas" → "accesorios-para-herramientas" (el código de una subcategoría de la web). */
+const codigoDeSubcategoria = (nombre: string) => normalizar(nombre).replace(/[^a-z0-9ñ]+/g, "-").replace(/^-|-$/g, "");
+
+/** Los productos (ya reclasificados) de una categoría de la web → la lista lista para la tienda. */
+function armar(slug: string, tasa: number, crudos: Producto[]): CategoriaSaint {
   // Medidas del mismo producto (llaves combinadas Acesa, dados…): un grupo con su foto (lib/agrupaciones.ts, persona B).
   const { productos, listado, grupos, grupoDe } = agrupar(crudos);
   const clave = (p: Producto) => normalizar(`${p.id} ${p.nombre} ${p.titulo ?? ""} ${p.marca ?? ""}`);
@@ -125,24 +128,19 @@ function convertir(slug: string, crudo: unknown): CategoriaSaint {
   const clavesListado = listado.map((p) =>
     grupos.has(p.id) ? [clave(p), ...grupos.get(p.id)!.variantes.map((v) => clave(v.producto))].join(" ") : clave(p),
   );
-  // En el filtro, cada grupo cuenta como un producto (como se ve en la lista).
-  for (const g of grupos.values()) {
-    const sub = subcategorias.find((s) => s.nombre === g.tarjeta.subcategoria);
-    if (sub) sub.cantidad = Math.max(1, sub.cantidad - (g.variantes.length - 1));
-  }
 
-  return {
-    tasa: Number.isFinite(tasa) && tasa > 0 ? tasa : 0,
-    productos,
-    claves,
-    listado,
-    clavesListado,
-    grupos,
-    grupoDe,
-    subcategorias,
-  };
+  // Subcategorías: las que de verdad tienen productos, contadas como se ven en la lista (un grupo cuenta como uno), en
+  // el orden de lib/clasificacionSaint.ts (las demás al final, por nombre).
+  const cantidades = new Map<string, number>();
+  for (const p of listado) if (p.subcategoria) cantidades.set(p.subcategoria, (cantidades.get(p.subcategoria) ?? 0) + 1);
+  const orden = ORDEN_SUBCATEGORIAS[slug] ?? [];
+  const posicion = (nombre: string) => (orden.includes(nombre) ? orden.indexOf(nombre) : orden.length);
+  const subcategorias = [...cantidades]
+    .sort(([a], [b]) => posicion(a) - posicion(b) || a.localeCompare(b, "es"))
+    .map(([nombre, cantidad]) => ({ codigo: codigoDeSubcategoria(nombre), nombre, cantidad }));
+
+  return { tasa, productos, claves, listado, clavesListado, grupos, grupoDe, subcategorias };
 }
-
 /** UN pedido con todas las categorías del mapa, repartido por categoría de la web. */
 async function pedir(): Promise<Map<string, CategoriaSaint>> {
   if (!API_URL) throw new ErrorSaint("Falta PRODUCTOS_API_URL");
@@ -178,8 +176,25 @@ async function pedir(): Promise<Map<string, CategoriaSaint>> {
   } catch {
     throw new ErrorSaint("Saint respondió algo que no es JSON");
   }
+  // Cada producto va a la categoría y subcategoría que le corresponde por su nombre (lib/clasificacionSaint.ts): en
+  // Herramientas de Saint vienen bombas de agua, gatos de carro, desmalezadoras… Por eso puede haber listas de
+  // categorías que no están en el mapa (Plomería, Vehículos…): ahí se muestran junto a sus productos de ejemplo.
+  const vistos = new Set<string>();
+  const porDestino = new Map<string, Producto[]>(Object.keys(CATEGORIAS_SAINT).map((slug) => [slug, []]));
+  let tasa = 0;
+  for (const [slug, parte] of repartirPorCategoria(crudo, CATEGORIAS_SAINT)) {
+    const leida = leer(slug, parte, vistos);
+    tasa ||= leida.tasa;
+    for (const p of leida.productos) {
+      const destino = reclasificar({ nombre: p.nombre, categoriaSlug: slug, subcategoria: p.subcategoria ?? null });
+      p.categoriaSlug = destino.categoria;
+      p.subcategoria = destino.subcategoria;
+      if (!porDestino.has(destino.categoria)) porDestino.set(destino.categoria, []);
+      porDestino.get(destino.categoria)!.push(p);
+    }
+  }
   const porSlug = new Map<string, CategoriaSaint>();
-  for (const [slug, parte] of repartirPorCategoria(crudo, CATEGORIAS_SAINT)) porSlug.set(slug, convertir(slug, parte));
+  for (const [slug, productos] of porDestino) porSlug.set(slug, armar(slug, tasa, productos));
   guardada = { porSlug, texto, revisar: Date.now() + vigencia };
   return porSlug;
 }
@@ -214,6 +229,19 @@ export async function getCategoriaSaint(slug: string): Promise<CategoriaSaint> {
 export const esCategoriaSaint = (slug: string) => codigoSaint(slug) !== undefined;
 
 /**
+ * Productos de Saint que se reclasificaron a una categoría que NO es de Saint (bombas de agua → Plomería…). null si no
+ * hay o si Saint no responde: esas categorías siguen mostrando sus productos de ejemplo. Nunca lanza.
+ */
+export async function getMovidosSaint(slug: string): Promise<CategoriaSaint | null> {
+  if (esCategoriaSaint(slug) || !Object.keys(CATEGORIAS_SAINT).length) return null;
+  try {
+    return (await getPorSlug()).get(slug) ?? null;
+  } catch {
+    return null;
+  }
+}
+
+/**
  * Todos los productos de Saint (todas las categorías del mapa, en un solo pedido), para el índice de búsqueda, el
  * carrito y los favoritos. `completo: false` si Saint no respondió y no hay una lista guardada (faltan sus productos).
  */
@@ -221,7 +249,7 @@ export async function getTodosSaint(): Promise<{ listas: CategoriaSaint[]; compl
   if (!Object.keys(CATEGORIAS_SAINT).length) return { listas: [], completo: true };
   try {
     const porSlug = await getPorSlug();
-    return { listas: [...porSlug.values()], completo: porSlug.size === Object.keys(CATEGORIAS_SAINT).length };
+    return { listas: [...porSlug.values()], completo: Object.keys(CATEGORIAS_SAINT).every((slug) => porSlug.has(slug)) };
   } catch (error) {
     console.error("[saint]", error instanceof Error ? error.message : error);
     return { listas: [], completo: false };
