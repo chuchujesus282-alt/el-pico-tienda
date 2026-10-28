@@ -42,6 +42,14 @@
 .banner {
   width: min(620px, 100%);
 }
+/* Fondo claro del <body> de banner-tornilleria.html (--page), con el mismo padding, para comparar sobre el mismo color. */
+.fondoClaro {
+  display: grid;
+  justify-items: center;
+  width: 100%;
+  padding-block: 32px;
+  background: #dfe5ee;
+}
 .hint {
   font-size: 12px;
   letter-spacing: 0.08em;

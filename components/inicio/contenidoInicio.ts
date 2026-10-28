@@ -104,7 +104,7 @@ export const bannersPromocionales: BannerInicio[] = [
     imagen: null,
     alt: "Tornillería en El Pico",
     href: "/categoria/tornilleria",
-    titulo: "Tornillería de todas las medidas",
+    titulo: "Tornillería",
     texto: "Tornillos, tuercas, anclajes y fijaciones.",
     textoBoton: "Ver tornillería",
     variante: "claro",

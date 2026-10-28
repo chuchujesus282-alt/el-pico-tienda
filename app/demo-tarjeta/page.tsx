@@ -3,12 +3,13 @@ import CategoryCardElectricidad from "@/components/tarjetas-categoria/CategoryCa
 import CategoryCardPlomeria from "@/components/tarjetas-categoria/CategoryCardPlomeria";
 import CategoryCardJardin from "@/components/tarjetas-categoria/CategoryCardJardin";
 import CategoryCardVehiculos from "@/components/tarjetas-categoria/CategoryCardVehiculos";
+import BannerTornilleria from "@/components/inicio/BannerTornilleria";
 import BannerTrabajaProtegido from "@/components/inicio/BannerTrabajaProtegido";
 import { plexMono } from "@/components/tarjetas-categoria/fuentes";
 import styles from "./demo.module.css";
 
 // Página de prueba TEMPORAL (sin enlaces desde la tienda): muestra las tarjetas de categoría igual que sus prototipos
-// (tarjeta-electricidad-linea.html, tarjeta-plomeria-linea.html, tarjeta-jardin-linea.html, tarjeta-vehiculos-linea.html) y el banner del casco (banner-trabaja-protegido.html, a 620px como su prototipo) para compararlas. Pantalla completa (ver
+// (tarjeta-electricidad-linea.html, tarjeta-plomeria-linea.html, tarjeta-jardin-linea.html, tarjeta-vehiculos-linea.html) y los banners del casco (banner-trabaja-protegido.html) y de tornillería (banner-tornilleria.html, sobre su fondo claro), a 620px como sus prototipos, para compararlos. Pantalla completa (ver
 // components/layout/pantallaCompleta.ts).
 
 export const metadata: Metadata = { title: "Tarjetas de categoría El Pico", robots: { index: false } };
@@ -28,6 +29,12 @@ export default function PaginaDemoTarjeta() {
         </div>
         <div className={styles.banner}>
           <BannerTrabajaProtegido />
+        </div>
+        {/* Tornillería sobre el fondo claro de su prototipo (banner-tornilleria.html), también a 620px. */}
+        <div className={styles.fondoClaro}>
+          <div className={styles.banner}>
+            <BannerTornilleria />
+          </div>
         </div>
       </main>
     </div>
