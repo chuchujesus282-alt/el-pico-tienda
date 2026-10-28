@@ -3,10 +3,8 @@ import Link from "next/link";
 import { ArrowRight, MapPin } from "lucide-react";
 import HorarioEnVivo from "@/components/horario/HorarioEnVivo";
 import Contenedor from "@/components/ui/Contenedor";
-import EncabezadoPagina from "@/components/ui/EncabezadoPagina";
 import { HORARIO, formatearFranja } from "@/lib/horario";
 import { TIENDA } from "@/lib/tienda";
-import IconoReloj from "@/components/icons/pico/IconoReloj";
 
 // Horario — responsable: persona A (rama `horario`). Las horas se cambian en lib/horario.ts.
 
@@ -39,12 +37,8 @@ const datosEstructurados = {
 export default function PaginaHorario() {
   return (
     <>
-      <EncabezadoPagina
-        titulo="Horario"
-        descripcion="Abrimos todos los días. En feriado, el horario es el mismo de los sábados."
-        ruta={[{ texto: "Horario" }]}
-        icono={IconoReloj}
-      />
+      {/* Sin EncabezadoPagina (pedido de persona B): el título queda solo para lectores de pantalla. */}
+      <h1 className="sr-only">Horario</h1>
     <Contenedor className="py-6 md:py-10">
       <script
         type="application/ld+json"

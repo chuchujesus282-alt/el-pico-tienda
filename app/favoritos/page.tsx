@@ -2,8 +2,6 @@ import type { Metadata } from "next";
 
 import ListaFavoritos from "@/components/favoritos/ListaFavoritos";
 import Contenedor from "@/components/ui/Contenedor";
-import EncabezadoPagina from "@/components/ui/EncabezadoPagina";
-import IconoCorazon from "@/components/icons/pico/IconoCorazon";
 
 // Favoritos — responsable: persona A (rama `inicio`). Se guardan en el navegador del cliente
 // (components/favoritos/almacenFavoritos.ts) y, con la sesión abierta, también en su cuenta
@@ -18,12 +16,8 @@ export const metadata: Metadata = {
 export default function PaginaFavoritos() {
   return (
     <>
-      <EncabezadoPagina
-        titulo="Mis favoritos"
-        ruta={[{ texto: "Favoritos" }]}
-        icono={IconoCorazon}
-        descripcion="Lo que guardaste con el corazón, listo para cuando lo necesites."
-      />
+      {/* Sin EncabezadoPagina (pedido de persona B): el título queda solo para lectores de pantalla. */}
+      <h1 className="sr-only">Mis favoritos</h1>
       <Contenedor className="py-6 md:py-10">
         <ListaFavoritos />
       </Contenedor>
