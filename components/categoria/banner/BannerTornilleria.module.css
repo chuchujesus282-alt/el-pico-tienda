@@ -1,0 +1,106 @@
+/*
+ * Ilustración del banner de Tornillería, portada de banner-tornilleria-v1.html (prototipo aprobado). Excepción a la
+ * regla de tokens del CLAUDE.md (como las tarjetas de categoría): colores escritos aquí, idénticos al prototipo.
+ * `--f-mono` viene de BannerPlano. Clases globales en la raíz del banner: `on` (activo) y `vivo` (el tornillo gira).
+ */
+
+.svg {
+  --deep: #0a1f38;
+  --stroke: #c3ccd8;
+  --trace: rgba(190, 215, 245, 0.55);
+  --zinc: #b9c3cf;
+  --zinc-osc: #7f8b99;
+  --madera: #b8895a;
+  --madera-osc: #8d6438;
+}
+.svg text {
+  font-family: var(--f-mono);
+  fill: var(--trace);
+  font-size: 9px;
+  letter-spacing: 0.08em;
+}
+
+.ln {
+  stroke: var(--stroke);
+  stroke-width: 1.8;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+}
+.cota {
+  fill: none;
+  stroke: var(--trace);
+  stroke-width: 1;
+}
+.bp {
+  transition: opacity 0.5s;
+}
+:global(.on) .bp {
+  opacity: 0.28;
+}
+
+/* Rellenos: plano en reposo, materiales reales al activarse. */
+.fill {
+  fill: var(--deep);
+  transition: fill 0.5s;
+}
+:global(.on) .fZinc {
+  fill: var(--zinc);
+}
+:global(.on) .fZincOsc {
+  fill: var(--zinc-osc);
+}
+:global(.on) .fMadera {
+  fill: var(--madera);
+}
+:global(.on) .fRojo {
+  fill: #e3262f;
+}
+.veta {
+  fill: none;
+  stroke: var(--trace);
+  stroke-width: 1;
+  transition: stroke 0.5s;
+}
+:global(.on) .veta {
+  stroke: var(--madera-osc);
+}
+.hilo {
+  fill: none;
+  stroke: var(--stroke);
+  stroke-width: 1.4;
+}
+:global(.on) .hilo {
+  stroke: var(--zinc-osc);
+}
+
+/* Virutas de madera que salen del hoyo. */
+.viruta path {
+  fill: none;
+  stroke: #d9b07c;
+  stroke-width: 1.6;
+  stroke-linecap: round;
+}
+
+/* Reposo: el tarugo flota apenas. Se detiene al activarse y con "reducir movimiento". */
+.flota {
+  animation: flotar 3.8s ease-in-out infinite alternate;
+}
+:global(.on) .flota {
+  animation: none;
+}
+@keyframes flotar {
+  to {
+    transform: translateY(-3px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .flota {
+    animation: none;
+  }
+  .bp,
+  .fill,
+  .veta {
+    transition-duration: 0.01s;
+  }
+}

@@ -51,9 +51,10 @@ type Props = {
    * (Seguridad industrial; su motor les pone la clase global `ok` a las que tienen `data-casilla`) o la cinta métrica
    * que se extiende (Herramientas) o el tubo que se llena de agua con la clase global `agua` y gotea con `vivo`
    * (Plomería; las dos las pone su motor) o los 5 pines de cerradura que se alinean (Cerrajería: dorados con `on`,
-   * a la misma altura y con la línea de corte verde con la clase global `abierto`, que pone su motor).
+   * a la misma altura y con la línea de corte verde con la clase global `abierto`, que pone su motor) o la rosca de
+   * tornillo que se despliega y gira con la clase global `vivo` (Tornillería).
    */
-  decoracion?: "gotas" | "cinta" | "cable" | "pasto" | "banda" | "casillas" | "metro" | "tubo" | "pines";
+  decoracion?: "gotas" | "cinta" | "cable" | "pasto" | "banda" | "casillas" | "metro" | "tubo" | "pines" | "rosca";
   /**
    * Variables CSS propias de cada banner (ver BannerPlano.module.css): --brillo, --brillo-on, --palabra-min/-vw/-max,
    * --palabra-movil-min/-vw/-max, --etiqueta-pad, --etiqueta-sombra. Sin ellas, los valores de Pinturas.
@@ -178,6 +179,8 @@ export default function BannerPlano({
                 <span className={styles.cable} aria-hidden />
               ) : decoracion === "banda" ? (
                 <span className={styles.banda} aria-hidden />
+              ) : decoracion === "rosca" ? (
+                <span className={styles.rosca} aria-hidden />
               ) : decoracion === "pines" ? (
                 <span className={styles.pines} aria-hidden>
                   <span />

@@ -364,6 +364,42 @@
   transform: rotate(45deg);
 }
 
+/* Rosca de tornillo (Tornillería): se despliega bajo la etiqueta con `on` y gira mientras el tornillo entra (`vivo`). */
+.rosca {
+  position: absolute;
+  top: calc(100% + 6px);
+  right: -8px;
+  left: 8px;
+  height: 10px;
+  border-top: 1.5px solid #b9c3cf;
+  border-bottom: 1.5px solid #b9c3cf;
+  border-radius: 1px;
+  background: repeating-linear-gradient(115deg, #b9c3cf 0 3px, #7f8b99 3px 5px, transparent 5px 9px);
+  transform: skewX(-12deg) scaleX(0);
+  transform-origin: left;
+  transition: transform 0.6s cubic-bezier(0.3, 0.7, 0.2, 1) 0.1s;
+  pointer-events: none;
+}
+:global(.on) .rosca {
+  transform: skewX(-12deg) scaleX(1);
+}
+:global(.vivo) .rosca {
+  animation: girarRosca 0.35s linear infinite;
+}
+@keyframes girarRosca {
+  to {
+    background-position: 9px 0;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .rosca {
+    transition-duration: 0.01s;
+  }
+  :global(.vivo) .rosca {
+    animation: none;
+  }
+}
+
 /* Pines de cerradura (Cerrajería): 5 pines de distinto largo bajo la etiqueta; con `on` se doran (color activo) y con
    `abierto` quedan a la misma altura y la línea de corte se prende en verde. */
 .pines {

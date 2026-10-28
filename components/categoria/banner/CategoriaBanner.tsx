@@ -7,6 +7,7 @@ import BannerHogarJardin from "./BannerHogarJardin";
 import BannerPinturas from "./BannerPinturas";
 import BannerPlomeria from "./BannerPlomeria";
 import BannerSeguridad from "./BannerSeguridad";
+import BannerTornilleria from "./BannerTornilleria";
 import BannerVehiculos from "./BannerVehiculos";
 import "./banner.css";
 
@@ -28,7 +29,7 @@ type ConfigBanner = {
 };
 
 /**
- * Banner propio de cada categoría: `Propio` (estilo plano técnico, reemplaza al encabezado; hoy Herramientas, Construcción, Cerrajería, Electricidad, Plomería, Pinturas, Hogar y jardín, Seguridad industrial y
+ * Banner propio de cada categoría: `Propio` (estilo plano técnico, reemplaza al encabezado; hoy Herramientas, Construcción, Tornillería, Cerrajería, Electricidad, Plomería, Pinturas, Hogar y jardín, Seguridad industrial y
  * Vehículos) o `Escena` (fotos reales a la derecha de EncabezadoPagina; hoy ninguna la usa). Las categorías sin entrada
  * siguen con el plano y su ícono. Para sumar una: su componente en esta carpeta y una línea aquí.
  */
@@ -44,6 +45,9 @@ const BANNERS: Record<string, ConfigBanner> = {
   },
   cerrajeria: {
     Propio: BannerCerrajeria,
+  },
+  tornilleria: {
+    Propio: BannerTornilleria,
   },
   electricidad: {
     Propio: BannerElectricidad,
