@@ -10,6 +10,7 @@ import IconoCarrito from "@/components/icons/pico/IconoCarrito";
 import IconoCorazon from "@/components/icons/pico/IconoCorazon";
 import IconoUbicacion from "@/components/icons/pico/IconoUbicacion";
 import { authCliente } from "@/lib/authCliente";
+import { Montanas } from "@/components/layout/Logo";
 import FotoCuenta from "./FotoCuenta";
 
 /** Columna de /mi-cuenta: quién eres, atajos a lo tuyo (con cuántos tienes) y cerrar sesión. */
@@ -34,20 +35,25 @@ export default function TarjetaCuenta({ nombre, correo }: { nombre: string; corr
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="flex items-center gap-4 rounded-tarjeta bg-pico-blanco p-5 shadow-tarjeta">
-        <FotoCuenta className="size-14 shrink-0 text-lg" />
-        <div className="min-w-0">
-          <p className="truncate text-lg font-bold text-pico-azul">{nombre}</p>
-          <p className="truncate text-sm text-gris-texto">{correo}</p>
+      {/* Quién eres: tarjeta azul marino (contrasta con el formulario blanco de la factura), con la foto en una placa
+          blanca y las montañas del logo muy tenues al fondo. */}
+      <div className="relative flex items-center gap-4 overflow-hidden rounded-tarjeta bg-gradient-to-br from-pico-azul to-pico-azul-oscuro p-5 shadow-tarjeta-hover motion-safe:animate-aparecer">
+        <Montanas className="pointer-events-none absolute -right-6 -bottom-8 w-36 fill-current text-pico-blanco opacity-[0.07]" />
+        <span className="relative flex size-16 shrink-0 items-center justify-center rounded-chip bg-pico-blanco text-pico-azul ring-4 ring-pico-blanco/15">
+          <FotoCuenta className="size-14 text-lg" />
+        </span>
+        <div className="relative min-w-0">
+          <p className="truncate text-lg font-bold text-pico-blanco">{nombre}</p>
+          <p className="truncate text-sm text-pico-blanco/70">{correo}</p>
         </div>
       </div>
 
-      <nav aria-label="Lo tuyo" className="overflow-hidden rounded-tarjeta bg-pico-blanco shadow-tarjeta">
+      <nav aria-label="Lo tuyo" className="overflow-hidden rounded-tarjeta bg-pico-blanco shadow-tarjeta motion-safe:animate-aparecer motion-safe:[animation-delay:80ms]">
         <ul className="divide-y divide-gris-borde">
           {atajos.map(({ href, Icono, texto, detalle }) => (
             <li key={href}>
               <Link href={href} className="grupo-icono group flex items-center gap-3.5 px-5 py-4 transition-colors hover:bg-pico-azul-claro">
-                <span className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-pico-azul-claro text-pico-azul">
+                <span className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-pico-azul-claro text-pico-azul transition-colors duration-300 group-hover:bg-pico-blanco">
                   <Icono className="size-7" />
                 </span>
                 <span className="min-w-0 flex-1">

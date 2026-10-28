@@ -1,9 +1,8 @@
 import type { Metadata } from "next";
 import TarjetaCalculadora from "@/components/calculadoras/TarjetaCalculadora";
 import Contenedor from "@/components/ui/Contenedor";
-import EncabezadoPagina from "@/components/ui/EncabezadoPagina";
 import Revelar from "@/components/ui/Revelar";
-import LibretaMateriales from "@/components/calculadoras/LibretaMateriales";
+import TituloPagina from "@/components/ui/TituloPagina";
 import { CALCULADORAS } from "@/lib/calculadoras/registro";
 
 // Calculadoras de proyectos — responsable: persona B (rama `calculadoras`).
@@ -14,49 +13,33 @@ export const metadata: Metadata = {
   description: "Calculadoras de materiales de construcción: bloques, concreto, friso, cabillas, pintura, cerámica, techos y más.",
 };
 
-// Cómo se usa, en tres pasos cortos (pastillas bajo la descripción; en el teléfono se omiten).
+// Cómo se usa, en tres pasos cortos (bajo el título, unidos por una línea; en el teléfono, uno debajo del otro).
 const pasos = ["Mide tu obra", "Ve el material", "Pide en un clic"];
-
-/**
- * La libreta amarilla de materiales (la de la tira del inicio) grande en el lado derecho del encabezado, apoyada con un
- * giro leve, sobresaliendo por abajo y desvaneciéndose hacia la izquierda para dejar el texto limpio. Desde 1280px (antes tapa la descripción).
- */
-function LibretaDeFondo() {
-  return (
-    <div className="absolute inset-y-0 right-0 hidden w-1/2 [mask-image:linear-gradient(to_left,black_60%,transparent_100%)] xl:block">
-      <div className="absolute -top-[24%] right-[4%] w-[22rem] origin-top-right scale-[1.5] -rotate-[10deg] min-[1340px]:scale-[1.7] 2xl:right-[8%] 2xl:scale-[1.85]">
-        <LibretaMateriales />
-      </div>
-    </div>
-  );
-}
 
 export default function PaginaCalculadoras() {
   return (
     <>
-      {/* Encabezado de sección compacto, del mismo azul que el resto de la tienda. A la derecha, la libreta amarilla
-          de materiales girada y desvanecida hacia el texto; bajo la descripción, los tres pasos en pastillas. */}
-      <EncabezadoPagina
+    <Contenedor className="space-y-8 py-6 md:space-y-10 md:py-10">
+      {/* Sin el banner azul (pedido de persona B): título liviano y los tres pasos. */}
+      <TituloPagina
         titulo="Calcula tu proyecto"
         descripcion="Elige tu trabajo, pon las medidas y te decimos cuánto material llevar. Gratis y sin registrarte."
-        ruta={[{ texto: "Calculadoras" }]}
-        compacto
-        tono="plano"
-        fondo={<LibretaDeFondo />}
       >
-        <ol aria-label="Cómo funciona" className="hidden flex-wrap gap-2 sm:flex">
+        <ol aria-label="Cómo funciona" className="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-0">
           {pasos.map((titulo, i) => (
-            <li key={titulo} className="flex h-8 items-center gap-1.5 rounded-chip bg-pico-blanco/10 pr-3 pl-1 text-xs font-semibold ring-1 ring-pico-blanco/15">
-              <span className="flex size-6 items-center justify-center rounded-chip bg-pico-rojo text-[11px] font-bold text-pico-blanco" aria-hidden>
-                {i + 1}
+            <li key={titulo} className="flex items-center sm:gap-0">
+              {i > 0 && <span className="hidden h-px w-8 bg-pico-azul/20 sm:mx-2 sm:block lg:w-12" aria-hidden />}
+              <span className="flex h-10 items-center gap-2.5 rounded-chip bg-pico-blanco pr-4 pl-1.5 text-sm font-semibold text-pico-azul shadow-tarjeta">
+                <span className="flex size-7 items-center justify-center rounded-chip bg-pico-azul text-xs font-bold text-pico-blanco tabular-nums" aria-hidden>
+                  {i + 1}
+                </span>
+                {titulo}
               </span>
-              {titulo}
             </li>
           ))}
         </ol>
-      </EncabezadoPagina>
+      </TituloPagina>
 
-    <Contenedor className="space-y-8 py-8 md:space-y-10 md:py-12">
       <ul className="grid gap-3 sm:grid-cols-2 md:gap-4 lg:grid-cols-3 xl:grid-cols-5">
         {CALCULADORAS.map((calculadora, i) => (
           <li key={calculadora.slug}>

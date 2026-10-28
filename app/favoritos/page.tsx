@@ -16,8 +16,8 @@ export const metadata: Metadata = {
 export default function PaginaFavoritos() {
   return (
     <>
-      {/* Sin EncabezadoPagina (pedido de persona B): el título queda solo para lectores de pantalla. */}
-      <h1 className="sr-only">Mis favoritos</h1>
+      {/* Sin el banner azul (pedido de persona B): el título "Tus favoritos" (TituloPagina) va dentro de ListaFavoritos,
+          que sabe cuántos hay. */}
       <Contenedor className="py-6 md:py-10">
         <ListaFavoritos />
       </Contenedor>

@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { Check, CircleCheck, MapPinPlus, Pencil, Trash2 } from "lucide-react";
 import Boton from "@/components/ui/Boton";
+import TituloPagina from "@/components/ui/TituloPagina";
 import { MAXIMO_DIRECCIONES } from "@/lib/direcciones";
 import type { Direccion } from "@/types/cliente";
 import { useDirecciones } from "./almacenDirecciones";
@@ -15,12 +16,29 @@ const claseAccion =
 /** Cuánto tarda cada tarjeta en entrar después de la anterior (ms). */
 const CASCADA = 90;
 
-/** Las direcciones guardadas, cada una con su mapita, y el botón para agregar otra. */
+/** Página de direcciones completa: el título (con cuántas hay y "Agregar dirección"), cada una con su mapita y un
+ * recuadro al final para agregar otra. */
 export default function ListaDirecciones({ bienvenida }: { bienvenida?: string }) {
   const { direcciones, elegida, listo, lleno, elegir, quitar } = useDirecciones();
 
+  const agregar = lleno ? (
+    <p className="text-[13px] text-gris-texto sm:text-right">Llegaste al máximo de {MAXIMO_DIRECCIONES}.</p>
+  ) : (
+    <Boton href="/mis-direcciones/nueva" className="h-11! shrink-0 px-5!">
+      <MapPinPlus className="size-5 transition-transform duration-300 motion-safe:group-hover/boton:-rotate-12 motion-safe:group-hover/boton:scale-110" aria-hidden />
+      Agregar dirección
+    </Boton>
+  );
+
   return (
     <div className="flex flex-col gap-6 md:gap-8">
+      <TituloPagina
+        titulo="Tus direcciones"
+        contador={listo ? direcciones.length : undefined}
+        descripcion="Dónde recibes tus pedidos. Elige una en cada compra y el repartidor llega directo."
+        acciones={listo && direcciones.length > 0 ? agregar : undefined}
+      />
+
       {bienvenida && (
         <div className="relative flex items-start gap-4 overflow-hidden rounded-banner border border-gris-borde bg-pico-blanco p-5 shadow-tarjeta motion-safe:animate-aparecer md:items-center md:p-6">
           {/* Filete rojo que recorre el borde de arriba, como el del pie. */}
@@ -49,26 +67,7 @@ export default function ListaDirecciones({ bienvenida }: { bienvenida?: string }
       ) : direcciones.length === 0 ? (
         <Vacio />
       ) : (
-        <section aria-labelledby="titulo-direcciones" className="flex flex-col gap-4 md:gap-5">
-          <div className="flex items-center justify-between gap-4 motion-safe:animate-aparecer">
-            <h2 id="titulo-direcciones" className="flex items-center gap-2.5 text-xl font-bold text-pico-azul md:text-2xl">
-              Tus direcciones
-              <span
-                key={direcciones.length}
-                className="flex h-7 min-w-7 items-center justify-center rounded-chip bg-pico-azul px-2 text-sm font-bold text-pico-blanco tabular-nums motion-safe:animate-latido"
-              >
-                {direcciones.length}
-              </span>
-            </h2>
-            {lleno ? (
-              <p className="text-right text-[13px] text-gris-texto">Llegaste al máximo de {MAXIMO_DIRECCIONES}.</p>
-            ) : (
-              <Boton href="/mis-direcciones/nueva" className="h-11! shrink-0 px-4!">
-                <MapPinPlus className="size-5 transition-transform duration-300 motion-safe:group-hover/boton:-rotate-12 motion-safe:group-hover/boton:scale-110" aria-hidden />
-                Agregar<span className="hidden sm:inline"> dirección</span>
-              </Boton>
-            )}
-          </div>
+        <section aria-label="Direcciones guardadas">
           <ul className="grid auto-rows-fr gap-4 sm:grid-cols-2 md:gap-5 xl:grid-cols-3">
             {direcciones.map((d, i) => (
               <li key={d.id} className="motion-safe:animate-aparecer" style={{ animationDelay: `${i * CASCADA}ms` }}>
@@ -81,6 +80,11 @@ export default function ListaDirecciones({ bienvenida }: { bienvenida?: string }
                 />
               </li>
             ))}
+            {!lleno && (
+              <li className="motion-safe:animate-aparecer" style={{ animationDelay: `${direcciones.length * CASCADA}ms` }}>
+                <OtraDireccion />
+              </li>
+            )}
           </ul>
         </section>
       )}
@@ -107,6 +111,22 @@ function Vacio() {
         Agregar mi primera dirección
       </Boton>
     </div>
+  );
+}
+
+/** Último recuadro de la lista: punteado, invita a sumar otra dirección (el pin se levanta al pasar el mouse). */
+function OtraDireccion() {
+  return (
+    <Link
+      href="/mis-direcciones/nueva"
+      className="group flex h-full min-h-56 flex-col items-center justify-center gap-3 rounded-banner border-2 border-dashed border-pico-azul/20 bg-pico-blanco/50 p-6 text-center transition duration-300 ease-(--curva-suave) hover:border-pico-azul/50 hover:bg-pico-blanco hover:shadow-tarjeta focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-pico-azul"
+    >
+      <span className="flex size-14 items-center justify-center rounded-chip bg-pico-azul-claro text-pico-azul transition duration-300 ease-(--curva-suave) group-hover:bg-pico-azul group-hover:text-pico-blanco motion-safe:group-hover:-translate-y-1">
+        <MapPinPlus className="size-6" strokeWidth={1.75} aria-hidden />
+      </span>
+      <span className="font-bold text-pico-azul">Agregar otra dirección</span>
+      <span className="max-w-[24ch] text-[13px] leading-snug text-gris-texto">La obra, la oficina o donde te quede más cómodo recibir.</span>
+    </Link>
   );
 }
 

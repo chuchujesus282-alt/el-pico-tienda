@@ -1,10 +1,13 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
+import EstadoHorario from "@/components/horario/EstadoHorario";
 import AccionesUbicacion from "@/components/ubicanos/AccionesUbicacion";
 import MapaTienda from "@/components/ubicanos/MapaTienda";
 import Contenedor from "@/components/ui/Contenedor";
+import Revelar from "@/components/ui/Revelar";
 import TarjetaInfo from "@/components/ui/TarjetaInfo";
+import TituloPagina from "@/components/ui/TituloPagina";
 import { TIENDA } from "@/lib/tienda";
 import IconoUbicacion from "@/components/icons/pico/IconoUbicacion";
 import IconoRuta from "@/components/icons/pico/IconoRuta";
@@ -37,9 +40,13 @@ const datosEstructurados = {
 export default function PaginaUbicanos() {
   return (
     <>
-      {/* Sin EncabezadoPagina (pedido de persona B): el título queda solo para lectores de pantalla. */}
-      <h1 className="sr-only">Ubícanos</h1>
     <Contenedor className="space-y-6 py-6 md:space-y-8 md:py-10">
+      {/* Sin el banner azul (pedido de persona B): título liviano y, a la derecha, si la tienda está abierta ahora. */}
+      <TituloPagina
+        titulo="Ubícanos"
+        descripcion="Estamos en Fila de Mariches, en la carretera Petare–Santa Lucía. Toca el mapa para abrir la ruta en Google Maps, Waze o Apple Maps."
+        acciones={<EstadoHorario tono="claro" />}
+      />
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(datosEstructurados).replace(/</g, "\\u003c") }}
@@ -48,7 +55,8 @@ export default function PaginaUbicanos() {
       <MapaTienda />
 
       <div className="grid gap-4 md:gap-6 lg:grid-cols-[1.4fr_1fr_1fr]">
-        <TarjetaInfo icono={<IconoUbicacion className="size-6" />} titulo="Dirección">
+        <Revelar className="flex">
+        <TarjetaInfo icono={<IconoUbicacion className="size-6" />} titulo="Dirección" className="w-full">
           <address className="text-base leading-relaxed text-texto not-italic">
             <strong className="block font-semibold">{TIENDA.nombre}</strong>
             {TIENDA.direccion.map((linea) => (
@@ -67,8 +75,10 @@ export default function PaginaUbicanos() {
             <AccionesUbicacion />
           </div>
         </TarjetaInfo>
+        </Revelar>
 
-        <TarjetaInfo icono={<IconoRuta className="size-6" />} titulo="Cómo llegar">
+        <Revelar retraso={90} className="flex">
+        <TarjetaInfo icono={<IconoRuta className="size-6" />} titulo="Cómo llegar" className="w-full">
           <p className="text-sm leading-relaxed text-texto">
             Desde Petare, toma la carretera Petare–Santa Lucía en dirección a Mariches. Estamos en el{" "}
             <strong>kilómetro 6</strong>, en el sector <strong>El Limoncito</strong> de Fila de Mariches.
@@ -77,20 +87,23 @@ export default function PaginaUbicanos() {
             Si vienes en carro, Waze te lleva directo hasta la puerta.
           </p>
         </TarjetaInfo>
+        </Revelar>
 
-        <TarjetaInfo icono={<IconoTienda className="size-6" />} titulo="Retira tu pedido aquí">
-          <p className="text-sm leading-relaxed text-texto">
+        <Revelar retraso={180} className="flex">
+        <TarjetaInfo icono={<IconoTienda className="size-6" />} titulo="Retira tu pedido aquí" tono="oscuro" className="w-full">
+          <p className="text-sm leading-relaxed text-pico-blanco/85">
             Arma tu pedido en la web y envíalo por WhatsApp. Te confirmamos disponibilidad y forma de pago, y lo pasas buscando
             por la tienda.
           </p>
           <Link
             href="/"
-            className="group mt-auto inline-flex items-center gap-1.5 text-sm font-semibold text-pico-rojo hover:underline"
+            className="group mt-auto inline-flex h-11 items-center justify-center gap-1.5 self-start rounded-boton bg-pico-rojo px-5 text-sm font-semibold text-pico-blanco transition duration-200 hover:bg-pico-rojo-oscuro hover:shadow-boton-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-pico-blanco motion-safe:hover:-translate-y-0.5"
           >
             Ver productos
             <ArrowRight className="size-4 transition-transform motion-safe:group-hover:translate-x-1" aria-hidden />
           </Link>
         </TarjetaInfo>
+        </Revelar>
       </div>
     </Contenedor>
     </>

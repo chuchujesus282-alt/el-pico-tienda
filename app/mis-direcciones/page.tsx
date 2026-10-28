@@ -23,8 +23,7 @@ export default async function PaginaMisDirecciones({ searchParams }: PageProps<"
   const { bienvenida } = await searchParams;
   return (
     <>
-      {/* Sin EncabezadoPagina (pedido de persona B): el título queda solo para lectores de pantalla. */}
-      <h1 className="sr-only">Mis direcciones</h1>
+      {/* Sin el banner azul (pedido de persona B): el título "Tus direcciones" (TituloPagina) va dentro de ListaDirecciones. */}
       <Contenedor className="py-6 md:py-10">
         <ListaDirecciones bienvenida={nombreBienvenida(bienvenida)} />
       </Contenedor>

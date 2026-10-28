@@ -2,8 +2,7 @@ import type { Metadata } from "next";
 
 import FormularioDireccion from "@/components/direcciones/FormularioDireccion";
 import Contenedor from "@/components/ui/Contenedor";
-import EncabezadoPagina from "@/components/ui/EncabezadoPagina";
-import IconoUbicacion from "@/components/icons/pico/IconoUbicacion";
+import TituloPagina from "@/components/ui/TituloPagina";
 
 // Agregar o editar una dirección — responsable: persona B.
 // /mis-direcciones/nueva                          → dirección nueva.
@@ -24,16 +23,17 @@ function rutaInterna(valor: string | undefined): string | undefined {
 export default async function PaginaNuevaDireccion({ searchParams }: PageProps<"/mis-direcciones/nueva">) {
   const parametros = await searchParams;
   const editar = primero(parametros.editar);
+  const volver = rutaInterna(primero(parametros.volver));
   return (
     <>
-      <EncabezadoPagina
-        titulo={editar ? "Editar dirección" : "Agregar dirección"}
-        ruta={[{ texto: "Mis direcciones", href: "/mis-direcciones" }, { texto: editar ? "Editar" : "Agregar" }]}
-        icono={IconoUbicacion}
-        descripcion="Marca el punto en el mapa, ponle un nombre y dile al repartidor cómo llegar."
-      />
-      <Contenedor className="py-6 md:py-10">
-        <FormularioDireccion editarId={editar} volver={rutaInterna(primero(parametros.volver))} />
+      {/* Sin el banner azul (pedido de persona B): título liviano con el enlace para volver. */}
+      <Contenedor className="flex flex-col gap-6 py-6 md:gap-8 md:py-10">
+        <TituloPagina
+          titulo={editar ? "Editar dirección" : "Agregar dirección"}
+          descripcion="Marca el punto en el mapa, ponle un nombre y dile al repartidor cómo llegar."
+          volver={volver === "/finalizar-pedido" ? { href: volver, texto: "Volver a tu pedido" } : { href: "/mis-direcciones", texto: "Mis direcciones" }}
+        />
+        <FormularioDireccion editarId={editar} volver={volver} />
       </Contenedor>
     </>
   );
