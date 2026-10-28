@@ -161,7 +161,7 @@ describe("agrupar", () => {
     expect(productos.find((x) => x.id === "3M0015")!.imagen).toBe("/productos/3M0015.webp");
   });
 
-  it("pinturas Pineco: cada foto solo en su línea y tamaño; 1/4 de galón y Gold sin foto", () => {
+  it("pinturas Pineco: cada foto solo en su línea y tamaño; hidroesmalte 1/4 y Gold sin foto", () => {
     const pinturas = agrupar([
       p("PINECO015", 'PINECO PIPOL CLASE "B" GALON', 30, "PINECO"),
       p("PINECO016", 'PINECO PIPOL CLASE "B" TOBO', 110, "PINECO"),

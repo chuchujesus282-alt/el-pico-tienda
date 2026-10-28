@@ -27,3 +27,6 @@ Fotos oficiales del empaque que pasó persona B (fondo transparente pasado a bla
 | PINECO011.webp | PINECO HIDROESMALTE CLASE A GALON (empaque "Prestige Hidroesmalte", 3,785 L) |
 | PINECO002.webp | PINECO PRESTIGE CLASE A MATE GAL (3,785 L) |
 | PINECO003.webp | PINECO PRESTIGE CLASE A SATINADO GALON (3,785 L) |
+| PINECO001.webp | PINECO PRESTIGE CLASE A MATE TOBO (empaque Prestige interiores mate, 4 galones / 15,14 L) |
+| PINECO020.webp | PINECO ESMALTE 2 EN 1 ACRILICO DTM 1/4 (1/4 gal / 0,95 L) |
+| PINECO021.webp | PINECO CERAMI-K BRILLANTE 1/4 GALON (0,967 L) |

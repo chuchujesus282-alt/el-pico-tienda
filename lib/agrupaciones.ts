@@ -28,6 +28,9 @@ export const FOTOS_SAINT: Record<string, string> = {
   PINECO011: "/productos/PINECO011.webp", // hidroesmalte Prestige clase A, galón
   PINECO002: "/productos/PINECO002.webp", // Prestige clase A mate, galón
   PINECO003: "/productos/PINECO003.webp", // Prestige clase A satinado, galón
+  PINECO001: "/productos/PINECO001.webp", // Prestige clase A mate, tobo (4 galones)
+  PINECO020: "/productos/PINECO020.webp", // esmalte 2 en 1 acrílico DTM, 1/4 de galón
+  PINECO021: "/productos/PINECO021.webp", // Cerami-K brillante, 1/4 de galón
 };
 
 /** Cómo se dividen las medidas en el selector: milímetros/pulgadas, encastre del dado, o una sección propia que da la
