@@ -22,17 +22,50 @@ export const FOTOS_SAINT: Record<string, string> = {
   "3M0015": "/productos/3M0015.webp", // mopa de pulir azul doble cara 8" 3M
   // Pinturas Pineco: fotos oficiales del empaque, una por producto y tamaño (galón o tobo). Los de 1/4 de galón, el
   // Prestige Gold, el Prestige mate en tobo y el Cerami-K siguen sin foto: no llegó la de su empaque.
-  PINECO014: "/productos/PINECO014.webp", // esmalte 2 en 1 acrílico DTM, galón
-  PINECO015: "/productos/PINECO015.webp", // Pípol clase B, galón
-  PINECO016: "/productos/PINECO016.webp", // Pípol clase B, tobo (4 galones)
-  PINECO011: "/productos/PINECO011.webp", // hidroesmalte Prestige clase A, galón
-  PINECO002: "/productos/PINECO002.webp", // Prestige clase A mate, galón
-  PINECO003: "/productos/PINECO003.webp", // Prestige clase A satinado, galón
-  PINECO001: "/productos/PINECO001.webp", // Prestige clase A mate, tobo (4 galones)
-  PINECO020: "/productos/PINECO020.webp", // esmalte 2 en 1 acrílico DTM, 1/4 de galón
-  PINECO021: "/productos/PINECO021.webp", // Cerami-K brillante, 1/4 de galón
-  PINECO019: "/productos/PINECO011.webp", // hidroesmalte 1/4 de galón: la foto del galón (pedido de persona B)
+  PINECO014: "/productos/pineco/PINECO014.webp", // esmalte 2 en 1 acrílico DTM, galón
+  PINECO015: "/productos/pineco/PINECO015.webp", // Pípol clase B, galón
+  PINECO016: "/productos/pineco/PINECO016.webp", // Pípol clase B, tobo (4 galones)
+  PINECO011: "/productos/pineco/PINECO011.webp", // hidroesmalte Prestige clase A, galón
+  PINECO002: "/productos/pineco/PINECO002.webp", // Prestige clase A mate, galón
+  PINECO003: "/productos/pineco/PINECO003.webp", // Prestige clase A satinado, galón
+  PINECO001: "/productos/pineco/PINECO001.webp", // Prestige clase A mate, tobo (4 galones)
+  PINECO020: "/productos/pineco/PINECO020.webp", // esmalte 2 en 1 acrílico DTM, 1/4 de galón
+  PINECO021: "/productos/pineco/PINECO021.webp", // Cerami-K brillante, 1/4 de galón
+  PINECO019: "/productos/pineco/PINECO011.webp", // hidroesmalte 1/4 de galón: la foto del galón (pedido de persona B)
 };
+
+/**
+ * Fotos de pinturas Montana por su NOMBRE (en Saint, "MONTANA" va solo en la marca): una por línea y acabado.
+ * Montafix: en TODOS los que digan Montafix, por su acabado (sin acabado, la brillante), pedido de persona B. Las demás
+ * líneas (ABC, AV-2000, Dekoral): solo en el galón; el tobo y el 1/4 de galón son otro empaque.
+ */
+const M = "/productos/montana/";
+export function fotoPorNombre(nombre: string, marca: string | null): string | undefined {
+  const n = nombre.toUpperCase();
+  if (/COLLET/i.test(marca ?? "") || /COLLET/.test(n)) return fotoCollet(n);
+  if (!/MONTANA/i.test(marca ?? "") && !/MONTANA/.test(n)) return undefined;
+  if (/MONTAFIX/.test(n)) return `${M}${/SATINAD/.test(n) ? "montafix-satinado" : /\bMATE\b/.test(n) ? "montafix-mate" : "montafix-brillante"}.webp`;
+  const galon = /\bGAL(ON)?\b|\bGALON\b/.test(n) && !/TOBO|CU[NÑ]ETE|1\/4|\b4 ?GAL/.test(n);
+  if (!galon) return undefined;
+  if (/\bABC\b/.test(n)) return `${M}abc-mate.webp`;
+  if (/DEKORAL/.test(n)) return `${M}${/SATINAD/.test(n) ? "dekoral-satinado" : "dekoral-mate"}.webp`;
+  if (/AV-? ?2000/.test(n)) {
+    if (/BIO/.test(n)) return `${M}av2000-bioprotecto.webp`;
+    if (/SEDA/.test(n)) return `${M}av2000-brillo-de-seda.webp`;
+    if (/\bEXT/.test(n)) return `${M}av2000-exterior-mate.webp`;
+    if (/\bINT/.test(n)) return `${M}av2000-interior-mate.webp`;
+  }
+  return undefined;
+}
+
+/** Collet: Blanco Prestigio (tipo A) y Blanco Ocasión (tipo B), cada uno en galón o en tobo. El 1/4 de galón no lleva foto. */
+function fotoCollet(n: string): string | undefined {
+  const linea = /PRESTIG/.test(n) ? "prestigio" : /OCASI/.test(n) ? "ocasion" : null;
+  if (!linea || /1\/4/.test(n)) return undefined;
+  if (/TOBO|CU[NÑ]ETE|PAILA|\b[45] ?GAL/.test(n)) return `/productos/collet/${linea}-tobo.webp`;
+  if (/\bGAL(ON)?\b/.test(n)) return `/productos/collet/${linea}-galon.webp`;
+  return undefined;
+}
 
 /** Cómo se dividen las medidas en el selector: milímetros/pulgadas, encastre del dado, o una sección propia que da la
  * regla de cada producto ("Punta redonda", "Rosca fina NF", 'Diámetro 1/4"'…). */
@@ -285,7 +318,7 @@ export function agrupar(lista: Producto[]): {
   const productos = lista.map((p) => {
     const reemplazo = reemplazos.get(p.id);
     if (reemplazo) return reemplazo;
-    const foto = FOTOS_SAINT[p.id];
+    const foto = FOTOS_SAINT[p.id] ?? fotoPorNombre(p.nombre, p.marca);
     return foto && !p.imagen ? { ...p, imagen: foto } : p;
   });
 

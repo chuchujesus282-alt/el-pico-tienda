@@ -17,9 +17,9 @@ Fotos que pasó persona B para PROBAR los grupos de medidas (`lib/agrupaciones.t
 
 ## Pinturas Pineco (2026-10-28, persona B)
 
-Fotos oficiales del empaque que pasó persona B (fondo transparente pasado a blanco, 1080×1080). Cada una va SOLO en el producto de su línea y tamaño (`FOTOS_SAINT` en `lib/agrupaciones.ts`).
+Fotos oficiales del empaque que pasó persona B (fondo transparente pasado a blanco, envase completo con margen, 1080×1080), en `pineco/`. Cada una va SOLO en el producto de su línea y tamaño (`FOTOS_SAINT` en `lib/agrupaciones.ts`).
 
-| Archivo | Producto |
+| Archivo (en `pineco/`) | Producto |
 |---|---|
 | PINECO014.webp | PINECO ESMALTE 2 EN 1 ACRILICO DTM GALON (empaque "DTM Esmalte + Anticorrosivo", 3,785 L) |
 | PINECO015.webp | PINECO PIPOL CLASE "B" GALON (3,785 L) |
@@ -30,3 +30,18 @@ Fotos oficiales del empaque que pasó persona B (fondo transparente pasado a bla
 | PINECO001.webp | PINECO PRESTIGE CLASE A MATE TOBO (empaque Prestige interiores mate, 4 galones / 15,14 L) |
 | PINECO020.webp | PINECO ESMALTE 2 EN 1 ACRILICO DTM 1/4 (1/4 gal / 0,95 L) |
 | PINECO021.webp | PINECO CERAMI-K BRILLANTE 1/4 GALON (0,967 L) |
+
+## Pinturas Montana y Collet (2026-10-28, persona B)
+
+Fotos oficiales del empaque que pasó persona B (fondo pasado a blanco, envase completo con margen, 1080×1080). Van por NOMBRE del producto (`fotoPorNombre` en `lib/agrupaciones.ts`).
+
+| Archivo | Producto |
+|---|---|
+| montana/montafix-brillante.webp, -mate, -satinado | Todos los que digan MONTAFIX, según su acabado (sin acabado: brillante) |
+| montana/abc-mate.webp | ABC CAUCHO … GALON |
+| montana/dekoral-mate.webp, dekoral-satinado.webp | DEKORAL … GALON |
+| montana/av2000-exterior-mate.webp, -interior-mate, -brillo-de-seda, -bioprotecto | AV-2000 EXT/INT/SEDA/BIO … GALON |
+| montana/av2000-exterior-clasica.webp, av2000-exterior-mate-2.webp | Sin usar todavía (otras fotos de AV-2000 Exterior; la clásica con el fondo gris quitado) |
+| collet/prestigio-galon.webp, prestigio-tobo.webp | COLLET PRESTIGIO PINTURA "A" GALON / TOBO |
+| collet/ocasion-galon.webp, ocasion-tobo.webp | COLLET PINTURA OCASIÓN TIPO "B" GALON / TOBO |
+| collet/prestigio-tobo-y-galon.webp, ocasion-tobo-y-galon.webp | Sin usar todavía (tobo y galón juntos) |

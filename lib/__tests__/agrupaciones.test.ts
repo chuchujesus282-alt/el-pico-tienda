@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { agrupar, clasificar, leerMedida, valorMedida } from "@/lib/agrupaciones";
+import { agrupar, clasificar, fotoPorNombre, leerMedida, valorMedida } from "@/lib/agrupaciones";
 import type { Producto } from "@/types/catalogo";
 
 // Nombres tal como vienen de Saint (Herramientas, 1171).
@@ -161,6 +161,26 @@ describe("agrupar", () => {
     expect(productos.find((x) => x.id === "3M0015")!.imagen).toBe("/productos/3M0015.webp");
   });
 
+  it("pinturas Montana por nombre: Montafix en todos por acabado; las demás solo en el galón", () => {
+    const f = (nombre: string) => fotoPorNombre(nombre, "MONTANA");
+    expect(f("BASE MONTAFIX 1/4 GAL")).toBe("/productos/montana/montafix-brillante.webp");
+    expect(f("MONTAFIX SATINADO BLANCO GALON")).toBe("/productos/montana/montafix-satinado.webp");
+    expect(f("ABC CAUCHO BLANCO GALON")).toBe("/productos/montana/abc-mate.webp");
+    expect(f("ABC CAUCHO BLANCO TOBO 4 GAL")).toBeUndefined();
+    expect(f("COLORANTE AMARILLO LFY 1791")).toBeUndefined();
+    expect(fotoPorNombre("ABC CAUCHO BLANCO GALON", "PINECO")).toBeUndefined();
+  });
+
+  it("pinturas Collet: Blanco Prestigio y Blanco Ocasión, en galón o tobo", () => {
+    const f = (nombre: string) => fotoPorNombre(nombre, "COLLET");
+    expect(f("COLLET PINTURA BLANCO PRESTIGIO GALON")).toBe("/productos/collet/prestigio-galon.webp");
+    expect(f("COLLET PINTURA BLANCO PRESTIGIO TOBO")).toBe("/productos/collet/prestigio-tobo.webp");
+    expect(f("COLLET PINTURA BLANCO OCASION GAL")).toBe("/productos/collet/ocasion-galon.webp");
+    expect(f("COLLET PINTURA BLANCO OCASION TOBO")).toBe("/productos/collet/ocasion-tobo.webp");
+    expect(f("COLLET PINTURA BLANCO OCASION 1/4 GALON")).toBeUndefined();
+    expect(f("COLLET PINTURA BROCAL AMARILLO GALON")).toBeUndefined();
+  });
+
   it("pinturas Pineco: cada foto solo en su línea y tamaño; el hidroesmalte 1/4 usa la del galón; Gold sin foto", () => {
     const pinturas = agrupar([
       p("PINECO015", 'PINECO PIPOL CLASE "B" GALON', 30, "PINECO"),
@@ -169,9 +189,9 @@ describe("agrupar", () => {
       p("PINECO010", "PINECO PRESTIGE GOLD CLASE A MATE GALON", 50, "PINECO"),
     ]).productos;
     const foto = (id: string) => pinturas.find((x) => x.id === id)!.imagen;
-    expect(foto("PINECO015")).toBe("/productos/PINECO015.webp");
-    expect(foto("PINECO016")).toBe("/productos/PINECO016.webp");
-    expect(foto("PINECO019")).toBe("/productos/PINECO011.webp");
+    expect(foto("PINECO015")).toBe("/productos/pineco/PINECO015.webp");
+    expect(foto("PINECO016")).toBe("/productos/pineco/PINECO016.webp");
+    expect(foto("PINECO019")).toBe("/productos/pineco/PINECO011.webp");
     expect(foto("PINECO010")).toBeNull();
   });
 });
