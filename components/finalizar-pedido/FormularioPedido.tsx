@@ -195,27 +195,36 @@ export default function FormularioPedido({ itemsDirectos }: Props) {
 
   if (items.length === 0) {
     return (
-      <div className="flex flex-col items-center gap-3 rounded-banner border border-gris-borde bg-pico-blanco px-6 py-14 text-center shadow-tarjeta motion-safe:animate-aparecer">
-        <span className="flex size-20 items-center justify-center rounded-chip bg-logo-marino-claro">
-          <ShoppingCart className="size-10 text-logo-marino" strokeWidth={1.5} aria-hidden />
-        </span>
-        <p className="font-titulo text-2xl font-bold text-logo-marino">Tu carrito está vacío</p>
-        <p className="text-[13px] text-gris-texto">Agrega productos del catálogo para armar tu pedido.</p>
-        <Link
-          href="/"
-          className="group relative mt-2 inline-flex h-11 items-center gap-2 overflow-hidden rounded-boton bg-logo-rojo px-5 text-sm font-semibold text-pico-blanco transition duration-200 hover:bg-logo-rojo-oscuro hover:shadow-boton-hover motion-safe:hover:-translate-y-0.5"
-        >
-          <Brillo />
-          Ver productos
-        </Link>
-        <Link
-          href={RUTA_CALCULADORAS}
-          className="group mt-1 inline-flex items-center gap-1.5 rounded-boton px-2 py-1 text-[13px] font-semibold text-logo-marino transition-colors hover:text-logo-rojo focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-logo-marino"
-        >
-          <IconoCalculadora className="size-5 motion-safe:group-hover:animate-sacudir" />
-          ¿No sabes cuánto material necesitas? Calcúlalo
-        </Link>
-      </div>
+      <>
+        {/* Si se vació porque sus productos ya no están a la venta, el aviso lo dice (usePedidoEnCuenta). */}
+        {aviso}
+        <div className="flex flex-col items-center gap-3 rounded-banner border border-gris-borde bg-pico-blanco px-6 py-14 text-center shadow-tarjeta motion-safe:animate-aparecer">
+          <span className="flex size-20 items-center justify-center rounded-chip bg-logo-marino-claro">
+            <ShoppingCart className="size-10 text-logo-marino" strokeWidth={1.5} aria-hidden />
+          </span>
+          {/* "Comprar ahora" solo queda sin productos si el suyo ya no está a la venta. */}
+          <p className="font-titulo text-2xl font-bold text-logo-marino">
+            {itemsDirectos ? "Este producto ya no está a la venta" : "Tu carrito está vacío"}
+          </p>
+          <p className="text-[13px] text-gris-texto">
+            {itemsDirectos ? "Busca otro parecido en el catálogo." : "Agrega productos del catálogo para armar tu pedido."}
+          </p>
+          <Link
+            href="/"
+            className="group relative mt-2 inline-flex h-11 items-center gap-2 overflow-hidden rounded-boton bg-logo-rojo px-5 text-sm font-semibold text-pico-blanco transition duration-200 hover:bg-logo-rojo-oscuro hover:shadow-boton-hover motion-safe:hover:-translate-y-0.5"
+          >
+            <Brillo />
+            Ver productos
+          </Link>
+          <Link
+            href={RUTA_CALCULADORAS}
+            className="group mt-1 inline-flex items-center gap-1.5 rounded-boton px-2 py-1 text-[13px] font-semibold text-logo-marino transition-colors hover:text-logo-rojo focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-logo-marino"
+          >
+            <IconoCalculadora className="size-5 motion-safe:group-hover:animate-sacudir" />
+            ¿No sabes cuánto material necesitas? Calcúlalo
+          </Link>
+        </div>
+      </>
     );
   }
 
