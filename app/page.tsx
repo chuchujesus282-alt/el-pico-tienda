@@ -8,17 +8,12 @@ import CarruselMarcas from "@/components/inicio/CarruselMarcas";
 import ColumnasCategorias from "@/components/inicio/ColumnasCategorias";
 import NotaPedido from "@/components/inicio/NotaPedido";
 import SeccionCategoria from "@/components/inicio/SeccionCategoria";
-import {
-  bannersPrincipales,
-  bannersPromocionales,
-  marcasDeProductos,
-  seccionesCategoria,
-} from "@/components/inicio/contenidoInicio";
-import type { BannerInicio } from "@/components/inicio/contenidoInicio";
+import { marcasDeProductos, seccionesCategoria } from "@/components/inicio/contenidoInicio";
 import Contenedor from "@/components/ui/Contenedor";
 import Revelar from "@/components/ui/Revelar";
 import { getCategorias, getProductosDestacados } from "@/lib/catalogo";
-import type { Categoria, Producto } from "@/types/catalogo";
+import { elegirIndice, permiteForzarDia, porFormato, repartoDelIndice, rotacionActiva } from "@/lib/rotacionBanners";
+import type { Producto } from "@/types/catalogo";
 
 // Página principal — responsable: persona A. Ver la distribución en docs/guia-de-estilo.md.
 // Header, barra de categorías y Footer vienen de app/layout.tsx.
@@ -32,24 +27,17 @@ async function seguro<T>(promesa: Promise<T>, respaldo: T): Promise<T> {
   }
 }
 
-/** Slug de la categoría a la que lleva un banner, o undefined si apunta a otra cosa. */
-function slugDeBanner(banner: BannerInicio): string | undefined {
-  return banner.href.match(/^\/categoria\/([^/?#]+)/)?.[1];
-}
-
-/** Quita los banners que apuntan a una categoría que el catálogo no tiene (si se pudo consultar). */
-function soloCategoriasExistentes(banners: BannerInicio[], categorias: Categoria[]): BannerInicio[] {
-  if (categorias.length === 0) return banners;
-  const slugs = new Set(categorias.map((c) => c.slug));
-  return banners.filter((b) => {
-    const slug = slugDeBanner(b);
-    return !slug || slugs.has(slug);
-  });
-}
-
 const sinProductos: Producto[] = [];
 
-export default async function Inicio() {
+// Sin `revalidate`: el inicio ya se arma en cada visita (el índice de Saint se pide con no-store), así que el día de
+// la rotación de banners se calcula siempre al momento y cambia justo a la medianoche de Caracas. Si algún día esta
+// página pasa a ser estática, agrega `export const revalidate = 3600` para que no se quede en un día.
+export default async function Inicio({ searchParams }: PageProps<"/">) {
+  // Rotación de banners (lib/rotacionBanners.ts), calculada aquí en el servidor: el navegador recibe ya el reparto
+  // del día, sin parpadeos. ?bannerDay=0..4 fuerza un día, solo fuera de producción.
+  const forzado = permiteForzarDia() ? (await searchParams).bannerDay : undefined;
+  const banners = porFormato(repartoDelIndice(elegirIndice({ fecha: new Date(), activa: rotacionActiva(), forzado })));
+
   // Productos reales de Saint: los códigos de datos/destacados.json y, si faltan, la mezcla automática del día
   // (lib/destacados.ts). Mientras no haya "Más vendidos", esto reemplaza a los productos de ejemplo de antes.
   const [categorias, interesar, recomendados, productosPorSeccion] = await Promise.all([
@@ -60,11 +48,6 @@ export default async function Inicio() {
   ]);
 
   const todos = [...interesar, ...recomendados, ...productosPorSeccion.flat()];
-  const principales = soloCategoriasExistentes(bannersPrincipales, categorias);
-  const promocionales = soloCategoriasExistentes(bannersPromocionales, categorias);
-  // Las categorías que no tienen banner van en columnas: así todas quedan a la vista en el primer tramo.
-  const conBanner = new Set([...principales, ...promocionales].map(slugDeBanner));
-  const sinBanner = categorias.filter((c) => !conBanner.has(c.slug));
 
   const secciones = seccionesCategoria.flatMap((seccion, i) => {
     const categoria = categorias.find((c) => c.slug === seccion.slug);
@@ -84,7 +67,7 @@ export default async function Inicio() {
       <h1 className="sr-only">Centro Ferretero El Pico</h1>
 
       <div className="space-y-3 motion-safe:animate-aparecer md:space-y-4">
-        <BloqueBanners principales={principales} />
+        <BloqueBanners categorias={banners.central} />
         <NotaPedido />
       </div>
 
@@ -97,7 +80,7 @@ export default async function Inicio() {
           </Revelar>
 
           <Revelar>
-            <BannersPromocionales banners={promocionales} />
+            <BannersPromocionales categorias={banners.horizontal} />
           </Revelar>
 
           <Revelar>
@@ -108,9 +91,9 @@ export default async function Inicio() {
             <CarruselMarcas titulo="Marcas que encuentras aquí" marcas={marcasDeProductos(todos)} />
           </Revelar>
 
-          {/* Las categorías sin banner, lejos de los banners promocionales: abren la parte de la página por categorías. */}
+          {/* Las columnas verticales del día, lejos de los horizontales: abren la parte de la página por categorías. */}
           <Revelar>
-            <ColumnasCategorias categorias={sinBanner} />
+            <ColumnasCategorias categorias={banners.vertical} />
           </Revelar>
 
           {secciones[0]}

@@ -34,8 +34,13 @@ export type SeccionCategoriaInicio = {
   imagen: string | null;
 };
 
-export const bannersPrincipales: BannerInicio[] = [
-  {
+/**
+ * Datos de las variantes PROPIAS del carrusel central (por slug de la categoría). Qué categoría va en cada lugar cada
+ * día lo dice lib/rotacionBanners.ts; el registro de diseños, bannersPorCategoria.tsx. Las escenas de herramientas y
+ * pinturas se montan por `id` en BannerInicio: no cambies esos ids.
+ */
+export const bannersCentrales: Record<string, BannerInicio> = {
+  construccion: {
     id: "obra",
     imagen: null,
     alt: "Materiales de construcción en El Pico",
@@ -46,7 +51,7 @@ export const bannersPrincipales: BannerInicio[] = [
     variante: "azul",
     // Provisional a propósito: solo el texto sobre el azul, sin escena ni ícono (la escena se quitó el 2026-10-23).
   },
-  {
+  herramientas: {
     id: "herramientas",
     imagen: null,
     alt: "Herramientas en El Pico",
@@ -58,7 +63,7 @@ export const bannersPrincipales: BannerInicio[] = [
     variante: "oscuro",
     // Sin ícono: en su lugar flota un rotomartillo real (HerramientasAsomadas).
   },
-  {
+  pinturas: {
     id: "pinturas",
     imagen: null,
     alt: "Pinturas en El Pico",
@@ -70,7 +75,7 @@ export const bannersPrincipales: BannerInicio[] = [
     // Todo el banner es la pared pintada del color de turno; un rodillo la repinta (PinturaEnMovimiento).
     variante: "oscuro",
   },
-  {
+  cerrajeria: {
     id: "cerrajeria",
     imagen: null,
     alt: "Cerrajería en El Pico",
@@ -81,13 +86,14 @@ export const bannersPrincipales: BannerInicio[] = [
     variante: "azul",
     // Provisional a propósito: solo el texto sobre el azul, sin escena ni ícono.
   },
-];
+};
 
 /** Mensaje con el que se abre WhatsApp desde "¿No sabes qué necesitas?". */
 export const mensajeAsesoria = "¡Hola, El Pico! Necesito asesoría para saber qué comprar.";
 
-export const bannersPromocionales: BannerInicio[] = [
-  {
+/** Datos de las variantes PROPIAS de los banners horizontales (por slug de la categoría). */
+export const bannersHorizontales: Record<string, BannerInicio> = {
+  "seguridad-industrial": {
     id: "seguridad",
     imagen: null,
     alt: "Seguridad industrial en El Pico",
@@ -99,7 +105,7 @@ export const bannersPromocionales: BannerInicio[] = [
     variante: "azul",
     icono: IconoCasco,
   },
-  {
+  tornilleria: {
     id: "tornilleria",
     imagen: null,
     alt: "Tornillería en El Pico",
@@ -110,7 +116,7 @@ export const bannersPromocionales: BannerInicio[] = [
     variante: "claro",
     icono: IconoTornillo,
   },
-];
+};
 
 /** Logos por nombre de marca (tal como viene del sistema). Ej.: { AQUAFLEX: "/marcas/aquaflex.png" } */
 export const logosMarcas: Record<string, string> = {};
@@ -125,16 +131,22 @@ export function marcasDeProductos(productos: Producto[], limite = 12): Marca[] {
 }
 
 /**
- * Columnas de "Más categorías" (las categorías que no tienen banner salen solas, en el orden del catálogo). Aquí
- * solo se les pone foto y texto corto. Foto: vertical (3:4, idealmente 900×1200) en public/categorias/; sin foto
- * se ve el plano técnico del ícono de la categoría. Una categoría nunca sale dos veces: si tiene banner en el
- * inicio (carrusel o promocional), no va en columna.
+ * Texto corto y botón de cada categoría: los usan las columnas verticales (descripción de las tarjetas animadas y de
+ * `ColumnaCategoria`) y los banners GENÉRICOS de cualquier formato (bannersPorCategoria.tsx), con el nombre de la
+ * categoría como título. Son los mismos textos que ya tenían sus banners. `imagenColumna`: foto vertical (3:4,
+ * idealmente 900×1200) en public/categorias/ para la columna genérica; sin foto, el plano técnico de su ícono.
  */
-export const columnasCategorias: Record<string, { imagen: string | null; texto?: string }> = {
-  electricidad: { imagen: null, texto: "Cables, breakers, tomas e iluminación." },
-  griferia: { imagen: null, texto: "Grifos, duchas, llaves, sanitarios, repuestos, desagües y filtros." },
-  "hogar-y-jardin": { imagen: null, texto: "Mangueras, herramientas de jardín y más para tu casa." },
-  vehiculos: { imagen: null, texto: "Aceites, lubricantes y accesorios para tu carro." },
+export const textosCategoria: Record<string, { texto: string; textoBoton: string; imagenColumna?: string | null }> = {
+  herramientas: { texto: "Taladros, esmeriles y herramientas manuales para cada trabajo.", textoBoton: "Ver herramientas" },
+  construccion: { texto: "Cemento, bloques, pegos y más para construir sin paradas.", textoBoton: "Ver materiales" },
+  tornilleria: { texto: "Tornillos, tuercas, anclajes y fijaciones.", textoBoton: "Ver tornillería" },
+  cerrajeria: { texto: "Candados, cerraduras, cilindros y bisagras para tu casa o tu negocio.", textoBoton: "Ver cerrajería" },
+  electricidad: { texto: "Cables, breakers, tomas e iluminación.", textoBoton: "Ver electricidad" },
+  griferia: { texto: "Grifos, duchas, llaves, sanitarios, repuestos, desagües y filtros.", textoBoton: "Ver grifería" },
+  pinturas: { texto: "Pinturas, rodillos y brochas para darle color a tu casa.", textoBoton: "Ver pinturas" },
+  "hogar-y-jardin": { texto: "Mangueras, herramientas de jardín y más para tu casa.", textoBoton: "Ver hogar y jardín" },
+  "seguridad-industrial": { texto: "Cascos, guantes, botas y mascarillas.", textoBoton: "Ver seguridad" },
+  vehiculos: { texto: "Aceites, lubricantes y accesorios para tu carro.", textoBoton: "Ver vehículos" },
 };
 
 export const seccionesCategoria: SeccionCategoriaInicio[] = [
