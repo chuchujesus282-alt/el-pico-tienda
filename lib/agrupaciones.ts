@@ -60,7 +60,7 @@ export function fotoPorNombre(nombre: string, marca: string | null): string | un
 
 /**
  * Collet: Blanco Prestigio (tipo A) y Blanco Ocasión (tipo B) con su propio envase en galón o tobo. TODOS los demás
- * Collet llevan una foto genérica (pedido de persona B): Decosatín (blanca y azul, tipo A satinada) los satinados y los
+ * Collet llevan una foto genérica (pedido de persona B): los que empiezan por "Esmalte", la lata negra de esmalte; Decosatín (blanca y azul, tipo A satinada) los satinados y los
  * tipo "A"/"AA"; BasicPlus (blanca y roja) el resto.
  */
 const C = "/productos/collet/";
@@ -70,6 +70,7 @@ function fotoCollet(n: string): string {
     if (/TOBO|CU[NÑ]ETE|PAILA|\b[45] ?GAL/.test(n)) return `${C}${linea}-tobo.webp`;
     if (/\bGAL(ON)?\b/.test(n)) return `${C}${linea}-galon.webp`;
   }
+  if (/^(COLLET )?ESMALTE/.test(n)) return `${C}esmalte.webp`;
   if (/SATIN|"A{1,2}"|TIPO A\b/.test(n)) return `${C}decosatin.webp`;
   return `${C}basicplus.webp`;
 }

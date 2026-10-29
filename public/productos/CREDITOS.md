@@ -44,6 +44,7 @@ Fotos oficiales del empaque que pasó persona B (fondo pasado a blanco, envase c
 | montana/av2000-exterior-clasica.webp, av2000-exterior-mate-2.webp | Sin usar todavía (otras fotos de AV-2000 Exterior; la clásica con el fondo gris quitado) |
 | collet/prestigio-galon.webp, prestigio-tobo.webp | COLLET PRESTIGIO PINTURA "A" GALON / TOBO |
 | collet/ocasion-galon.webp, ocasion-tobo.webp | COLLET PINTURA OCASIÓN TIPO "B" GALON / TOBO |
-| collet/decosatin.webp | Collet satinados y tipo "A"/"AA" que no tienen foto propia (Satinada, Extremo, Cancha, esmalte satinado) |
-| collet/basicplus.webp | El resto de Collet sin foto propia (Deco Plus, esmaltes brillantes, brocal, alto tráfico, impermeabilizante, fondo herrería) |
+| collet/esmalte.webp | Collet que empiezan por "Esmalte" (brillantes y satinado) |
+| collet/decosatin.webp | Collet satinados y tipo "A"/"AA" que no tienen foto propia (Satinada, Extremo, Cancha) |
+| collet/basicplus.webp | El resto de Collet sin foto propia (Deco Plus, brocal, alto tráfico, impermeabilizante, fondo herrería) |
 | collet/prestigio-tobo-y-galon.webp, ocasion-tobo-y-galon.webp | Sin usar todavía (tobo y galón juntos) |

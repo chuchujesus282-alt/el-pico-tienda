@@ -174,7 +174,7 @@ describe("agrupar", () => {
     expect(fotoPorNombre("ABC CAUCHO BLANCO GALON", "PINECO")).toBeUndefined();
   });
 
-  it("pinturas Collet: Prestigio y Ocasión con su envase; los demás, Decosatín (satinado / tipo A) o BasicPlus", () => {
+  it("pinturas Collet: Prestigio y Ocasión con su envase; esmaltes, la lata de esmalte; los demás, Decosatín o BasicPlus", () => {
     const f = (nombre: string) => fotoPorNombre(nombre, "COLLET");
     expect(f('COLLET PRESTIGIO PINTURA "A" GALON')).toBe("/productos/collet/prestigio-galon.webp");
     expect(f('COLLET PRESTIGIO PINTURA "A" TOBO')).toBe("/productos/collet/prestigio-tobo.webp");
@@ -182,7 +182,8 @@ describe("agrupar", () => {
     expect(f('COLLET PINTURA OCASIÓN TIPO "B" TOBO')).toBe("/productos/collet/ocasion-tobo.webp");
     expect(f('COLLET PINTURA SATINADA TIPO "A" GALON')).toBe("/productos/collet/decosatin.webp");
     expect(f('COLLET EXTREMO PINTURA "AA" TOBO')).toBe("/productos/collet/decosatin.webp");
-    expect(f("COLLET ESMALTE SATINADO BLANCO GAL")).toBe("/productos/collet/decosatin.webp");
+    expect(f("COLLET ESMALTE SATINADO BLANCO GAL")).toBe("/productos/collet/esmalte.webp");
+    expect(f("COLLET ESMALTE BRILLANTE GRIS OSCURO 1/4")).toBe("/productos/collet/esmalte.webp");
     expect(f("COLLET PINTURA BROCAL AMARILLO GALON")).toBe("/productos/collet/basicplus.webp");
     expect(f("COLLET DECO PLUS PINTURA 1/4 GAL")).toBe("/productos/collet/basicplus.webp");
   });
