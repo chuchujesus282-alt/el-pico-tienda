@@ -5,6 +5,7 @@ import { db } from "@/lib/db";
 import { pedido, pedidoItem, type DireccionPedido } from "@/lib/db/esquema";
 import { getIndiceConEstado } from "@/lib/catalogo";
 import { permitidosPorTope } from "@/lib/eventos/reglas";
+import { preciosAlDia } from "@/lib/saint";
 import { getTasaBCV } from "@/lib/tasa";
 import type { Producto } from "@/types/catalogo";
 import { calcularPedido, type EnvioPedido } from "./reglas";
@@ -38,13 +39,32 @@ function mapaDe(productos: Producto[]): Map<string, Producto> {
 }
 
 /**
- * Guarda un pedido de la cuenta con los precios del catálogo y la tasa BCV de ESTE instante. Un mismo `id` se guarda
- * una sola vez (doble toque). Devuelve true si lo guardó. Lanza si la base de datos falla (quien llama lo atrapa).
+ * Precio ACTUAL de Saint de cada producto del pedido (&codigos=, sin caché; casi siempre reutiliza la consulta que hizo
+ * finalizar pedido segundos antes). El nombre sale de la lista guardada. Lo que no se pudo consultar no va en el mapa:
+ * calcularPedido usa el precio del navegador y lo marca `precioVerificado: false`.
+ */
+async function preciosDelPedido(envio: EnvioPedido): Promise<Map<string, Pick<Producto, "precio" | "nombre">>> {
+  const [{ precios }, indice] = await Promise.all([
+    preciosAlDia(envio.items.map((i) => i.id)),
+    getIndiceConEstado().catch(() => null),
+  ]);
+  const catalogo = indice ? mapaDe(indice.productos) : null;
+  const mapa = new Map<string, Pick<Producto, "precio" | "nombre">>();
+  for (const { id, nombre } of envio.items) {
+    const alDia = precios.get(id);
+    if (alDia) mapa.set(id, { precio: alDia.precio, nombre: catalogo?.get(id)?.nombre ?? nombre });
+  }
+  return mapa;
+}
+
+/**
+ * Guarda un pedido de la cuenta con los precios de Saint y la tasa BCV de ESTE instante. Un mismo `id` se guarda una
+ * sola vez (doble toque). Devuelve true si lo guardó. Lanza si la base de datos falla (quien llama lo atrapa).
  */
 export async function guardarPedido(userId: string, envio: EnvioPedido): Promise<boolean> {
   if (!(await dentroDelLimite(userId))) return false;
-  const [indice, tasa] = await Promise.all([getIndiceConEstado().catch(() => null), getTasaBCV()]);
-  const { items, totalUsd, totalBs } = calcularPedido(envio, indice ? mapaDe(indice.productos) : null, tasa?.tasa ?? null);
+  const [precios, tasa] = await Promise.all([preciosDelPedido(envio), getTasaBCV()]);
+  const { items, totalUsd, totalBs } = calcularPedido(envio, precios, tasa?.tasa ?? null);
 
   const filas = items.map((i, posicion) => ({
     posicion,

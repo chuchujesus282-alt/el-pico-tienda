@@ -150,10 +150,12 @@ export default function FormularioPedido({ itemsDirectos }: Props) {
   const [pago, setPago] = useState<MetodoPago | null>(null);
   const [combinados, setCombinados] = useState<MetodoPago[]>([]);
   // Datos (persona A, components/pedidos/): al enviar guarda el pedido en la cuenta y registra el evento; WhatsApp se
-  // abre igual. También pone el carrito al día con los precios de hoy. No cambia nada de cómo se ve.
-  const { alEnviar, ventana, bloqueado } = usePedidoEnCuenta({ conCarrito: !itemsDirectos, items: itemsDirectos ?? carrito.items });
-
-  const items = itemsDirectos ?? carrito.items;
+  // abre igual. Antes, confirma con Saint el precio actual de cada producto: `items` ya viene con el precio de hoy y sin
+  // lo que no está a la venta; `aviso` dice qué cambió; mientras `confirmando`, el botón espera.
+  const { alEnviar, ventana, bloqueado, items, confirmando, preciosPorConfirmar, aviso } = usePedidoEnCuenta({
+    conCarrito: !itemsDirectos,
+    items: itemsDirectos ?? carrito.items,
+  });
   const unidades = items.reduce((suma, i) => suma + i.cantidad, 0);
   const necesitaDireccion = retiro === "delivery" || retiro === "flete";
   const direccion = direcciones.find((d) => d.id === (direccionId ?? elegida?.id)) ?? null;
@@ -165,7 +167,7 @@ export default function FormularioPedido({ itemsDirectos }: Props) {
 
   const retiroListo = !!retiro && (!necesitaDireccion || !!direccion);
   const pagoListo = !!pago && (pago !== "combinado" || combinados.length >= 2);
-  const listo = retiroListo && pagoListo && items.length > 0;
+  const listo = retiroListo && pagoListo && items.length > 0 && !confirmando;
 
   const faltantes = [
     !retiro && "elige cómo retiras",
@@ -173,6 +175,8 @@ export default function FormularioPedido({ itemsDirectos }: Props) {
     !pago && "elige el método de pago",
     pago === "combinado" && combinados.length < 2 && "marca al menos dos métodos para el pago combinado",
   ].filter((f): f is string => !!f);
+  // Con todo elegido, el botón espera la confirmación de precios (normalmente un par de segundos).
+  if (faltantes.length === 0 && confirmando) faltantes.push("confirmando precios…");
 
   const alternarCombinado = (valor: MetodoPago) =>
     setCombinados((actuales) =>
@@ -215,7 +219,7 @@ export default function FormularioPedido({ itemsDirectos }: Props) {
     );
   }
 
-  const datosPedido = { items, retiro: retiro!, direccion: necesitaDireccion ? direccion : null, pago: pago!, combinados };
+  const datosPedido = { items, retiro: retiro!, direccion: necesitaDireccion ? direccion : null, pago: pago!, combinados, preciosPorConfirmar };
   const urlWhatsApp = listo ? enlaceWhatsApp(armarMensajeFinal(datosPedido)) : "";
 
   return (
@@ -389,6 +393,7 @@ export default function FormularioPedido({ itemsDirectos }: Props) {
             </div>
 
             <div className="mt-4">
+              {aviso}
               {listo ? (
                 <a
                   key="activo"

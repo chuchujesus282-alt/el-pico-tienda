@@ -1,11 +1,15 @@
 import "server-only";
 
+import { createHash } from "node:crypto";
+import { unstable_cache } from "next/cache";
 import type { Producto } from "@/types/catalogo";
 import { CATEGORIAS_SAINT, codigoSaint } from "@/lib/categoriasSaint";
 import { nombreLegible } from "@/lib/nombresSaint";
 import { agrupar, type Grupo } from "@/lib/agrupaciones";
 import { repartirPorCategoria } from "@/lib/repartirSaint";
 import { ancestros, armarArbol, type ArbolSaint } from "@/lib/arbolSaint";
+import { crearAlmacenSaint, type EntradaSaint, type LecturaSaint } from "@/lib/almacenSaint";
+import { enTandas, esCodigoValido, leerPrecios, type PrecioAlDia } from "@/lib/preciosSaint";
 
 // Productos REALES de Saint, por categoría (las del mapa de lib/categoriasSaint.ts). Solo se usa desde lib/catalogo.ts
 // y lib/tasa.ts. Responsable: persona A.
@@ -18,24 +22,33 @@ import { ancestros, armarArbol, type ArbolSaint } from "@/lib/arbolSaint";
 // precioBs ya incluye IVA y precioUsd = precioBs / tasa. Cada producto y subcategoría se reparte a su categoría de la
 // web por codCategoria (lib/repartirSaint.ts).
 //
-// Dos caminos (con las 10 categorías son 11.777 productos):
-// - La PÁGINA de una categoría pide SOLO esa categoría (getCategoriaSaint): pesa de 30 a 650 KB, así que la guarda la
-//   caché de Next 10 minutos, y si una categoría falla las demás siguen.
-// - El ÍNDICE (buscador, "Te puede interesar", carrito, favoritos, página de producto) pide TODAS en un pedido
-//   (getTodosSaint): pesa más de 2 MB (2,3 MB hoy), que la caché de Next NO guarda; la caché real es la memoria
-//   (`todas`), que dura los mismos 10 minutos. Si falla y no hay nada guardado, se arma categoría por categoría.
-// En los dos, la lista ya convertida (nombres legibles, claves de búsqueda) se reutiliza mientras la respuesta no
-// cambie; así filtrar, ordenar y paginar en cada visita toma milisegundos, y la búsqueda y las recomendaciones
-// (lib/indiceServidor.ts) reciben la MISMA lista y no se vuelven a preparar. Si Saint no responde, se sigue usando la
-// última lista buena; si nunca hubo una, se lanza ErrorSaint (la página muestra "No pudimos cargar los productos").
+// Cada categoría se pide y se guarda POR SEPARADO (con las 10 son 11.777 productos; la más grande, Herramientas, ocupa
+// ~0,8 MB en la caché, el 39% del límite de 2 MB):
+// - getCategoriaSaint(slug): la de una página de categoría.
+// - getTodosSaint(): el índice (buscador, "Te puede interesar", carrito, favoritos, destacados, página de producto)
+//   JUNTA las 10 guardadas; ya no hay un pedido con todas.
+// Capas (lógica en lib/almacenSaint.ts, con pruebas): memoria de este servidor (la lista ya convertida, revisada cada
+// minuto) → caché compartida entre servidores (unstable_cache, 10 minutos) → Saint. Los precios son los REALES de venta:
+// si lo guardado tiene más de 15 minutos, esa visita espera a Saint. Si Saint falla se sirve lo guardado (vencido o
+// en memoria); si nunca hubo nada, ErrorSaint (la página muestra "No pudimos cargar los productos").
+// La lista convertida se reutiliza mientras la respuesta no cambie (huella): filtrar y paginar toma milisegundos y la
+// búsqueda (lib/indiceServidor.ts) recibe la MISMA lista y no se vuelve a preparar.
+// Al enviar un pedido, el precio de cada producto se consulta al momento con &codigos= (preciosAlDia, abajo).
 //
 // NUNCA se copian existencias ni cantidades de inventario: de cada producto solo se toman los campos de abajo.
 
 const API_URL = process.env.PRODUCTOS_API_URL;
+/** Cada cuánto se renueva la caché compartida de una categoría (en segundo plano). */
 const REVALIDAR_SEGUNDOS = 600;
-/** Cada cuánto se vuelve a mirar la caché de Next (barato: si la respuesta no cambió, se reutiliza la lista). */
+/** Tope de antigüedad: más viejo que esto, la visita espera el pedido nuevo a Saint (precios reales de venta). */
+const TOPE_MS = 15 * 60_000;
+/** Cada cuánto la memoria de este servidor vuelve a mirar la caché compartida (una lectura por red en Vercel). */
 const MEMORIA_MS = 60_000;
 const ESPERA_MAXIMA_MS = 20_000;
+/** Aviso en los registros si una categoría se acerca al límite de 2 MB de la caché de Next. */
+const AVISO_TAMANO = 1.5 * 1024 * 1024;
+/** Sube este número si cambia lo que se guarda en la caché compartida (así no se leen entradas con el formato viejo). */
+const VERSION_CACHE = "v1";
 
 export class ErrorSaint extends Error {
   constructor(mensaje: string) {
@@ -64,17 +77,6 @@ export type CategoriaSaint = {
   /** Para cada tarjeta de `listado` (mismo orden): su instancia y todas las de arriba. Un grupo junta las de sus medidas. */
   ancestrosListado: Set<number>[];
 };
-
-/**
- * La última respuesta buena de cada categoría (su propio pedido, para la página de la categoría) y la del pedido con
- * TODAS (para el índice de búsqueda, el carrito y los favoritos). Cada una se reutiliza mientras su texto no cambie.
- */
-type Guardada = { datos: CategoriaSaint; texto: string; revisar: number };
-const guardadas = new Map<number, Guardada>();
-const pedidos = new Map<number, Promise<CategoriaSaint>>();
-type GuardadaTodas = { porSlug: Map<string, CategoriaSaint>; texto: string; revisar: number };
-let todas: GuardadaTodas | null = null;
-let pedidoTodas: Promise<Map<string, CategoriaSaint>> | null = null;
 
 /** "Llave ALLEN Combinada" → "llave allen combinada"; "Medición" → "medicion". */
 export function normalizar(texto: string): string {
@@ -173,19 +175,15 @@ function convertir(slug: string, crudo: unknown): CategoriaSaint {
 }
 
 /**
- * Pide a Saint y devuelve el texto. El mensaje de error nunca lleva la URL: tiene la clave.
- * `cacheNext: false` para el pedido con TODAS las categorías: pesa más de 2 MB, la caché de Next no lo guarda (lo
- * guarda la memoria) y, si se le pide, Next escribe un aviso en los registros CON LA URL (y la clave).
+ * Pide a Saint SIN caché (no-store: la respuesta no se guarda con su URL, que tiene la clave) y devuelve el texto. El
+ * mensaje de error nunca lleva la URL.
  */
-async function pedirTexto(codigos: number[], etiqueta: string, cacheNext = true): Promise<string> {
+async function pedirTexto(parametros: Record<string, string>, etiqueta: string, esperaMs = ESPERA_MAXIMA_MS): Promise<string> {
   if (!API_URL) throw new ErrorSaint("Falta PRODUCTOS_API_URL");
   const url = new URL(API_URL);
-  url.searchParams.set("categoria", codigos.join(","));
+  for (const [clave, valor] of Object.entries(parametros)) url.searchParams.set(clave, valor);
   try {
-    const respuesta = await fetch(url, {
-      ...(cacheNext ? { next: { revalidate: REVALIDAR_SEGUNDOS, tags: ["saint", etiqueta] } } : { cache: "no-store" as const }),
-      signal: AbortSignal.timeout(ESPERA_MAXIMA_MS),
-    });
+    const respuesta = await fetch(url, { cache: "no-store", signal: AbortSignal.timeout(esperaMs) });
     if (!respuesta.ok) throw new ErrorSaint(`Saint respondió ${respuesta.status} (${etiqueta})`);
     return await respuesta.text();
   } catch (error) {
@@ -202,132 +200,131 @@ function leerJson(texto: string, etiqueta: string): unknown {
   }
 }
 
-/** Una sola categoría: su respuesta pesa menos de 2 MB, así que la guarda la caché de Next (10 minutos). */
-async function pedirCategoria(slug: string, codigo: number): Promise<CategoriaSaint> {
-  const texto = await pedirTexto([codigo], `saint-${codigo}`);
-  const anterior = guardadas.get(codigo);
-  // La misma respuesta de antes (caché de Next): se reutiliza la lista ya convertida.
-  if (anterior && anterior.texto === texto) {
-    anterior.revisar = Date.now() + MEMORIA_MS;
-    return anterior.datos;
+const slugPorCodigo = new Map(Object.entries(CATEGORIAS_SAINT).map(([slug, codigo]) => [codigo, slug]));
+const MB = (caracteres: number) => `${(caracteres / 1e6).toFixed(2)} MB`;
+
+/**
+ * UNA categoría, directo a Saint. Se guarda solo su parte (lo que traiga otra codCategoria se descarta) con la huella
+ * del texto y la hora: es lo que guarda la caché compartida.
+ */
+async function pedirCategoria(codigo: number): Promise<EntradaSaint> {
+  const slug = slugPorCodigo.get(codigo) ?? String(codigo);
+  const inicio = performance.now();
+  const texto = await pedirTexto({ categoria: String(codigo) }, `categoría ${codigo}`);
+  const ms = Math.round(performance.now() - inicio);
+  const crudo = repartirPorCategoria(leerJson(texto, `categoría ${codigo}`), { [slug]: codigo }).get(slug);
+  const entrada: EntradaSaint = {
+    crudo,
+    huella: createHash("sha1").update(texto).digest("hex"),
+    pedidoEn: Date.now(),
+    caracteres: texto.length,
+  };
+  // La caché de Next no guarda entradas de más de 2 MB (las mide ya pasadas a JSON): aviso con margen.
+  const tamano = JSON.stringify(entrada).length;
+  if (tamano > AVISO_TAMANO) {
+    console.warn(
+      `[saint] aviso · ${slug} pesa ${MB(tamano)} en la caché compartida (límite 2 MB). Hay que partirla o guardar las filas ` +
+        "como listas (ver lib/saint.ts).",
+    );
   }
-  const partes = repartirPorCategoria(leerJson(texto, `categoría ${codigo}`), { [slug]: codigo });
-  const datos = convertir(slug, partes.get(slug));
-  guardadas.set(codigo, { datos, texto, revisar: Date.now() + MEMORIA_MS });
-  return datos;
+  console.info(`[saint] tiempo · ${slug} · pedido a Saint ${ms} ms · ${MB(texto.length)}`);
+  return entrada;
 }
 
 /**
- * Productos de Saint de UNA categoría de la web (para su página): pide solo esa categoría, así cada página carga lo
- * suyo y, si una categoría falla, las demás siguen. Lanza ErrorSaint si no hay datos (ni nuevos ni guardados).
+ * Caché COMPARTIDA entre servidores, una entrada por categoría. La clave es la que se elige aquí (nunca la URL: tiene
+ * la clave de Saint) y las etiquetas sirven para invalidarla (app/api/saint/invalidar).
+ *
+ * OJO: `unstable_cache` está marcado como reemplazado por "use cache" en Next 16, pero sigue funcionando. Conviene
+ * pasar a "use cache" cuando la tienda encienda `cacheComponents` (obliga a revisar todas las páginas) o antes si una
+ * versión de Next anuncia que lo quita. El cambio es directo: `"use cache"` + `cacheLife({ revalidate: 600, expire: 900 })`
+ * + `cacheTag(...)`, y el `expire` de 900 s haría solo el tope de 15 minutos (TOPE_MS en lib/almacenSaint.ts).
+ */
+const compartidas = new Map<number, () => Promise<EntradaSaint>>();
+function leerCompartida(codigo: number): Promise<EntradaSaint> {
+  let leer = compartidas.get(codigo);
+  if (!leer) {
+    leer = unstable_cache(() => pedirCategoria(codigo), ["saint-categoria", VERSION_CACHE, String(codigo)], {
+      revalidate: REVALIDAR_SEGUNDOS,
+      tags: [ETIQUETA_SAINT, etiquetaCategoria(codigo)],
+    });
+    compartidas.set(codigo, leer);
+  }
+  return leer();
+}
+
+/** Etiqueta de la caché compartida de una categoría (para invalidarla). */
+export const etiquetaCategoria = (codigo: number) => `saint-${codigo}`;
+export const ETIQUETA_SAINT = "saint";
+
+// Las páginas y las rutas de API cargan cada una su propia copia de este archivo: la memoria va en globalThis para que
+// haya UNA por servidor (así /api/saint/invalidar la vacía para todos al momento y nada se convierte dos veces).
+type MemoriaServidor = {
+  almacen: ReturnType<typeof crearAlmacenSaint<CategoriaSaint>>;
+  preciosRecientes: Map<string, { precio: PrecioAlDia | null; en: number }>;
+};
+const memoriaGlobal = globalThis as typeof globalThis & { __elPicoSaint?: MemoriaServidor };
+const { almacen, preciosRecientes } = (memoriaGlobal.__elPicoSaint ??= {
+  almacen: crearAlmacenSaint<CategoriaSaint>({
+    leerCompartida,
+    pedirDirecto: pedirCategoria,
+    convertir,
+    revisarCadaMs: MEMORIA_MS,
+    topeMs: TOPE_MS,
+    registrar: registrarLectura,
+    avisarFallo: (slug, error) =>
+      console.error(`[saint] ${slug}: ${error instanceof Error ? error.message : error}; se usa la última lista buena.`),
+  }),
+  preciosRecientes: new Map(),
+});
+
+/**
+ * Una línea en los registros (Vercel → Logs, buscar "[saint] tiempo") cada vez que una categoría se lee de la caché
+ * compartida (como mucho una vez por minuto y por categoría en cada servidor). Solo tiempos y tamaños, nunca la URL.
+ */
+function registrarLectura(l: LecturaSaint) {
+  const origen = {
+    cache: `caché ${l.msLectura} ms`,
+    saint: `caché vacía → Saint ${l.msLectura} ms`,
+    tope: `caché ${l.msLectura} ms, pasaba de 15 min → Saint ${l.msDirecto} ms`,
+    vencida: `caché ${l.msLectura} ms, pasaba de 15 min y Saint no respondió (${l.msDirecto} ms) → se sirve la guardada`,
+  }[l.origen];
+  const convertirTexto = l.msConvertir === undefined ? "sin cambios" : `convertir ${l.msConvertir} ms`;
+  console.info(
+    `[saint] tiempo · ${l.slug} · ${origen} · ${MB(l.caracteres)} · ${convertirTexto} · guardada hace ${Math.round(l.edadMs / 60_000)} min`,
+  );
+}
+
+/**
+ * Productos de Saint de UNA categoría de la web (para su página y para armar la lista completa). Lanza ErrorSaint si
+ * no hay datos (ni en Saint, ni en la caché compartida, ni en memoria).
  */
 export async function getCategoriaSaint(slug: string): Promise<CategoriaSaint> {
   const codigo = codigoSaint(slug);
   if (codigo === undefined) throw new ErrorSaint(`La categoría "${slug}" no tiene código de Saint`);
-
-  const guardada = guardadas.get(codigo);
-  if (guardada && guardada.revisar > Date.now()) return guardada.datos;
-
-  // Varias visitas a la vez comparten un solo pedido.
-  let pedido = pedidos.get(codigo);
-  if (!pedido) {
-    pedido = pedirCategoria(slug, codigo)
-      .catch((error: unknown) => {
-        const ultima = guardadas.get(codigo);
-        if (!ultima) throw error;
-        console.error(`[saint] ${error instanceof Error ? error.message : error}; se usa la última lista buena.`);
-        ultima.revisar = Date.now() + MEMORIA_MS; // no reintentar en cada visita mientras Saint está caído
-        return ultima.datos;
-      })
-      .finally(() => pedidos.delete(codigo));
-    pedidos.set(codigo, pedido);
-  }
-  return pedido;
+  return almacen.categoria(slug, codigo);
 }
 
 /** ¿La categoría muestra productos de Saint? */
 export const esCategoriaSaint = (slug: string) => codigoSaint(slug) !== undefined;
 
 /**
- * UN pedido con todas las categorías del mapa (&categoria=1171,1498,…), repartido por codCategoria. Pesa más de 2 MB:
- * la caché de Next no lo guarda, así que la memoria dura los 10 minutos completos.
- */
-async function pedirTodas(): Promise<Map<string, CategoriaSaint>> {
-  const inicio = performance.now();
-  const texto = await pedirTexto(Object.values(CATEGORIAS_SAINT), "saint-todas", false);
-  const msPedido = Math.round(performance.now() - inicio);
-  // Sin caché de Next, cada pedido va a Saint: la memoria dura los 10 minutos completos.
-  const vigencia = REVALIDAR_SEGUNDOS * 1000;
-  // La misma respuesta de antes: las MISMAS listas, así el índice de búsqueda no se vuelve a armar.
-  if (todas && todas.texto === texto) {
-    todas.revisar = Date.now() + vigencia;
-    registrarTiempo({ msPedido, caracteres: texto.length, sinCambios: true, primera: false });
-    return todas.porSlug;
-  }
-  const primera = !todas;
-  const inicioConvertir = performance.now();
-  const porSlug = new Map<string, CategoriaSaint>();
-  for (const [slug, parte] of repartirPorCategoria(leerJson(texto, "todas"), CATEGORIAS_SAINT)) {
-    porSlug.set(slug, convertir(slug, parte));
-  }
-  const msConvertir = Math.round(performance.now() - inicioConvertir);
-  todas = { porSlug, texto, revisar: Date.now() + vigencia };
-  registrarTiempo({ msPedido, msConvertir, caracteres: texto.length, sinCambios: false, primera, categorias: porSlug.size });
-  return porSlug;
-}
-
-/**
- * Una línea en los registros (Vercel → Logs, buscar "[saint] tiempo") cada vez que se le pide TODO a Saint, para
- * decidir si vale la pena servir la lista vencida mientras se renueva. Solo tiempos y tamaños: nunca la URL (tiene la
- * clave) ni productos. `primera: true` = el servidor arrancó sin lista (lo paga el visitante que llegó).
- */
-function registrarTiempo(datos: {
-  msPedido: number;
-  msConvertir?: number;
-  caracteres: number;
-  sinCambios: boolean;
-  primera: boolean;
-  categorias?: number;
-}) {
-  const convertirTexto = datos.sinCambios ? "sin cambios (no se convierte)" : `convertir y agrupar ${datos.msConvertir} ms`;
-  console.info(
-    `[saint] tiempo · pedido ${datos.msPedido} ms · ${(datos.caracteres / 1e6).toFixed(2)} MB · ${convertirTexto}` +
-      `${datos.categorias !== undefined ? ` · ${datos.categorias} categorías` : ""} · ${datos.primera ? "servidor recién encendido" : "renovación"}`,
-  );
-}
-
-/** Todas las categorías juntas, o la última lista buena. Lanza ErrorSaint si no hay ninguna de las dos. */
-function getTodasJuntas(): Promise<Map<string, CategoriaSaint>> {
-  if (todas && todas.revisar > Date.now()) return Promise.resolve(todas.porSlug);
-  pedidoTodas ??= pedirTodas()
-    .catch((error: unknown) => {
-      if (!todas) throw error;
-      console.error(`[saint] ${error instanceof Error ? error.message : error}; se usa la última lista buena.`);
-      todas.revisar = Date.now() + MEMORIA_MS; // no reintentar en cada visita mientras Saint está caído
-      return todas.porSlug;
-    })
-    .finally(() => {
-      pedidoTodas = null;
-    });
-  return pedidoTodas;
-}
-
-/**
- * Todos los productos de Saint (todas las categorías del mapa), para el índice de búsqueda, el carrito y los favoritos.
- * Primero, UN pedido con todas (o su última lista buena). Si eso falla y no hay nada guardado, se arma con los pedidos
- * de cada categoría que sí respondan. `completo: false` si alguna categoría falta (sus productos no es que no existan).
+ * Todos los productos de Saint (las categorías del mapa), para el índice de búsqueda, el carrito, los favoritos y los
+ * destacados: se JUNTAN las categorías guardadas, sin pedir todo a Saint. Mientras nada cambie, las mismas listas.
+ * `completo: false` si alguna categoría falta (sus productos no es que no existan).
  */
 export async function getTodosSaint(): Promise<{ listas: CategoriaSaint[]; completo: boolean }> {
-  const slugs = Object.keys(CATEGORIAS_SAINT);
-  try {
-    const porSlug = await getTodasJuntas();
-    return { listas: [...porSlug.values()], completo: porSlug.size === slugs.length };
-  } catch (error) {
-    console.error("[saint]", error instanceof Error ? error.message : error, "; se prueba categoría por categoría.");
-    const resultados = await Promise.allSettled(slugs.map((slug) => getCategoriaSaint(slug)));
-    const listas = resultados.flatMap((r) => (r.status === "fulfilled" ? [r.value] : []));
-    return { listas, completo: listas.length === slugs.length };
-  }
+  const { listas, completo, fallidas } = await almacen.todas(CATEGORIAS_SAINT);
+  if (fallidas.length > 0) console.error(`[saint] sin datos de: ${fallidas.join(", ")}`);
+  return { listas, completo };
+}
+
+/**
+ * Olvida lo que este servidor tiene en memoria (de una categoría o de todas). Lo usa app/api/saint/invalidar, junto con
+ * revalidateTag; los demás servidores lo notan en su próxima revisión (como mucho MEMORIA_MS).
+ */
+export function olvidarSaint(codigo?: number) {
+  almacen.olvidar(codigo);
 }
 
 /** Tasa BCV con la que Saint calculó los precios (respaldo de lib/tasa.ts). null si no hay. Nunca lanza. */
@@ -340,4 +337,77 @@ export async function getTasaSaint(): Promise<number | null> {
   } catch {
     return null;
   }
+}
+
+// --- Precios al día de productos sueltos (finalizar pedido y pedido guardado) ---
+
+/** Lo ya preguntado hace menos de esto se reutiliza: protege a Saint si muchos clientes abren el pago a la vez. */
+const PRECIOS_VIGENCIA_MS = 30_000;
+/** Si Saint tarda más, se sigue con los precios que tenía el cliente (nunca se frena una venta). */
+const PRECIOS_ESPERA_MS = 4_000;
+const categoriasPermitidas = new Set(Object.values(CATEGORIAS_SAINT));
+
+export type ResultadoPrecios = {
+  /** Precio de hoy de cada código que sigue a la venta. */
+  precios: Map<string, PrecioAlDia>;
+  /** Pedidos que Saint ya no vende (no vinieron en la respuesta). */
+  retirados: string[];
+  /** No se pudieron consultar (Saint no respondió o el código no es válido): se usa el precio que se tenía. */
+  sinVerificar: string[];
+};
+
+/**
+ * Precio ACTUAL de Saint (&codigos=, sin caché) de estos códigos: lo usan /api/precios-al-dia (antes de enviar por
+ * WhatsApp) y guardarPedido. Nunca lanza: lo que no se pudo consultar va en `sinVerificar`.
+ */
+export async function preciosAlDia(ids: string[]): Promise<ResultadoPrecios> {
+  const precios = new Map<string, PrecioAlDia>();
+  const retirados: string[] = [];
+  const sinVerificar: string[] = [];
+  const ahora = Date.now();
+  const porPedir: string[] = [];
+  for (const id of new Set(ids)) {
+    if (!esCodigoValido(id)) {
+      sinVerificar.push(id);
+      continue;
+    }
+    const reciente = preciosRecientes.get(id);
+    if (reciente && ahora - reciente.en < PRECIOS_VIGENCIA_MS) {
+      if (reciente.precio) precios.set(id, reciente.precio);
+      else retirados.push(id);
+    } else porPedir.push(id);
+  }
+
+  const inicio = performance.now();
+  await Promise.all(
+    enTandas(porPedir).map(async (tanda) => {
+      try {
+        const texto = await pedirTexto({ codigos: tanda.join(",") }, "precios al día", PRECIOS_ESPERA_MS);
+        const leidos = leerPrecios(leerJson(texto, "precios al día"), tanda, categoriasPermitidas);
+        const en = Date.now();
+        for (const [id, precio] of leidos.precios) {
+          precios.set(id, precio);
+          preciosRecientes.set(id, { precio, en });
+        }
+        for (const id of leidos.retirados) {
+          retirados.push(id);
+          preciosRecientes.set(id, { precio: null, en });
+        }
+      } catch (error) {
+        console.error(`[saint] precios al día: ${error instanceof Error ? error.message : error}`);
+        sinVerificar.push(...tanda);
+      }
+    }),
+  );
+  if (porPedir.length > 0) {
+    console.info(
+      `[saint] tiempo · precios al día · ${porPedir.length} códigos · ${Math.round(performance.now() - inicio)} ms` +
+        `${sinVerificar.length ? ` · ${sinVerificar.length} sin verificar` : ""}${retirados.length ? ` · ${retirados.length} ya no a la venta` : ""}`,
+    );
+  }
+  // Que no crezca sin fin: se limpia lo vencido de vez en cuando.
+  if (preciosRecientes.size > 5_000) {
+    for (const [id, { en }] of preciosRecientes) if (ahora - en >= PRECIOS_VIGENCIA_MS) preciosRecientes.delete(id);
+  }
+  return { precios, retirados, sinVerificar };
 }

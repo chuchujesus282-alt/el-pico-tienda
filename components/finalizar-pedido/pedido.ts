@@ -32,12 +32,14 @@ export type DatosPedido = {
   direccion: Direccion | null;
   pago: MetodoPago;
   combinados: MetodoPago[];
+  /** Saint no respondió al confirmar los precios: el mensaje lo dice (components/pedidos/usePedidoEnCuenta.tsx). */
+  preciosPorConfirmar?: boolean;
 };
 
 const etiquetaPago = (valor: MetodoPago) => METODOS_PAGO.find((m) => m.valor === valor)?.etiqueta ?? valor;
 
 /** Mensaje de WhatsApp con productos, forma de retiro (y dirección si aplica) y método de pago. */
-export function armarMensajeFinal({ items, retiro, direccion, pago, combinados }: DatosPedido): string {
+export function armarMensajeFinal({ items, retiro, direccion, pago, combinados, preciosPorConfirmar }: DatosPedido): string {
   const lineas = items.map(
     ({ producto, cantidad }) =>
       `• ${cantidad} x ${producto.nombre} (Cód. ${producto.id}) — ${formatearPrecio(producto.precio * cantidad)}`,
@@ -59,6 +61,7 @@ export function armarMensajeFinal({ items, retiro, direccion, pago, combinados }
     ...lineas,
     "",
     `Total referencial: ${formatearPrecio(totalCarrito(items))}`,
+    ...(preciosPorConfirmar ? ["Precios por confirmar"] : []),
     "",
     ...entrega,
     `Método de pago: ${metodo}`,

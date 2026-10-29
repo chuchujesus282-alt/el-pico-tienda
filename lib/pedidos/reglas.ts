@@ -93,12 +93,12 @@ export type ItemCalculado = {
 };
 
 /**
- * Montos del pedido: el precio de cada producto sale del catálogo de ese instante (no del navegador); si el catálogo
- * no lo tiene, se usa el del navegador y se marca `precioVerificado: false`. Bs = $ × tasa (sin tasa, Bs queda vacío).
+ * Montos del pedido: el precio de cada producto sale de Saint en ese instante (no del navegador); si no se pudo
+ * consultar, se usa el del navegador y se marca `precioVerificado: false`. Bs = $ × tasa (sin tasa, Bs queda vacío).
  */
 export function calcularPedido(
   envio: EnvioPedido,
-  catalogo: Map<string, Producto> | null,
+  catalogo: Map<string, Pick<Producto, "precio" | "nombre">> | null,
   tasa: number | null,
 ): { items: ItemCalculado[]; totalUsd: number; totalBs: number | null } {
   const conTasa = tasa !== null && Number.isFinite(tasa) && tasa > 0 ? tasa : null;
