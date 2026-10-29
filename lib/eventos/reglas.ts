@@ -14,12 +14,14 @@ export const TIPOS_EVENTO = [
 ] as const;
 export type TipoEvento = (typeof TIPOS_EVENTO)[number];
 
-/** Los que el navegador puede mandar hoy. "pedido_enviado" se activa en la fase 5. */
-const DESDE_NAVEGADOR = new Set<TipoEvento>(["producto_visto", "categoria_vista", "busqueda", "carrito", "favorito"]);
+/** Los que el navegador puede mandar (todos). */
+const DESDE_NAVEGADOR = new Set<TipoEvento>(TIPOS_EVENTO);
 
 /** Lo que se registra. Cada tipo usa solo sus campos; los demás se descartan. */
 export type Evento =
-  | { tipo: "producto_visto" | "carrito" | "favorito" | "pedido_enviado"; producto: string }
+  | { tipo: "producto_visto" | "carrito" | "favorito"; producto: string }
+  /** Uno por producto del pedido; `pedido` es un código al azar (UUID) común a todos los productos del mismo pedido. */
+  | { tipo: "pedido_enviado"; producto: string; pedido: string }
   | { tipo: "categoria_vista"; categoria: string; subcategoria?: string }
   | { tipo: "busqueda"; termino: string; resultados: number };
 
@@ -37,6 +39,7 @@ export const LIMITES = {
 
 const CODIGO_PRODUCTO = /^[A-Za-z0-9][A-Za-z0-9._/-]{0,29}$/;
 const SLUG = /^[a-z0-9][a-z0-9-]{0,39}$/;
+export const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 export const LARGO_TERMINO = 60;
 
 /**
@@ -96,6 +99,10 @@ export function limpiarEvento(crudo: unknown): Evento | null {
   }
   const producto = typeof e.producto === "string" ? e.producto.trim() : "";
   if (!CODIGO_PRODUCTO.test(producto)) return null;
+  if (tipo === "pedido_enviado") {
+    const pedido = typeof e.pedido === "string" ? e.pedido.toLowerCase() : "";
+    return UUID.test(pedido) ? { tipo, producto, pedido } : null;
+  }
   return { tipo, producto } as Evento;
 }
 
@@ -103,6 +110,8 @@ export function limpiarEvento(crudo: unknown): Evento | null {
 export function claveSinRepetir(e: Evento): string | null {
   if (e.tipo === "producto_visto") return `p:${e.producto}`;
   if (e.tipo === "categoria_vista") return `c:${e.categoria}|${e.subcategoria ?? ""}`;
+  // Un mismo pedido no cuenta dos veces el mismo producto (doble toque en "Enviar por WhatsApp").
+  if (e.tipo === "pedido_enviado") return `o:${e.pedido}|${e.producto}`;
   return null;
 }
 

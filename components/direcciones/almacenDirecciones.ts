@@ -7,6 +7,8 @@ import type { Direccion } from "@/types/cliente";
 // Direcciones de entrega del cliente en el navegador (localStorage), leídas con useSyncExternalStore,
 // igual que los favoritos. Guarda la lista y cuál eligió en el header ("Entregar en"). Cuando haya
 // cuentas, este almacén se sincroniza con la cuenta y las pantallas no cambian. Se sincroniza entre pestañas.
+// Con sesión, components/cuenta/SincronizarCuenta.tsx (persona A) lo copia a la cuenta y lo reemplaza con lo de la
+// cuenta usando suscribirDirecciones / obtenerDirecciones / reemplazarDirecciones (exportados junto a useDirecciones).
 
 const CLAVE = "el-pico:direcciones";
 
@@ -78,6 +80,9 @@ function guardarEstado(nuevo: Estado) {
 function idNuevo() {
   return typeof crypto !== "undefined" && "randomUUID" in crypto ? crypto.randomUUID() : `dir-${Date.now()}`;
 }
+
+// Para la sincronización con la cuenta (SincronizarCuenta): leer, escuchar y reemplazar todo de una vez.
+export { suscribir as suscribirDirecciones, obtener as obtenerDirecciones, guardarEstado as reemplazarDirecciones };
 
 /**
  * Direcciones del cliente: la lista, la elegida en el header y cómo guardarlas, elegirlas o borrarlas.

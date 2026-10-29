@@ -13,9 +13,16 @@ migración `drizzle/0002_eventos.sql`).
 | `busqueda` | Se abre `/buscar?q=` (no cada letra del buscador) | `termino` (minúsculas, máx. 60) y `resultados` (0 = sin resultados; llega hasta 60, el tope de `buscar()`: 60 = "60 o más") |
 | `carrito` | Se agrega un producto al carrito | `producto_id` (cada vez que se agrega) |
 | `favorito` | Se marca un favorito (no al quitarlo) | `producto_id` |
-| `pedido_enviado` | **Fase 5** (aún no se acepta) | — |
+| `pedido_enviado` | Se toca "Enviar pedido por WhatsApp" (con o sin cuenta) | `producto_id` y `pedido_codigo`: un evento por producto, todos con el mismo código al azar del pedido (no identifica a nadie; con cuenta es el mismo `id` de la tabla `pedido`). El mismo producto del mismo pedido no se repite (doble toque) |
 
 Todos llevan `visitante` (el código de la cookie) y `created_at` (**UTC**; las consultas lo pasan a Caracas).
+
+**Pedidos de clientes con cuenta** (fase 5, `lib/pedidos/`): además del evento, se guardan en `pedido` (fecha, tasa BCV
+de ese instante, total en $ y Bs, retiro, pago con los combinados y la dirección copiada) y `pedido_item` (código,
+nombre, cantidad, precio en $ y Bs; `precio_verificado = false` si Saint no respondió y se usó el precio que traía el
+navegador). Los pedidos NO se borran a los 12 meses (son el historial del cliente en "Mis pedidos"). De los
+visitantes sin cuenta solo quedan los eventos (y, pasados 12 meses, su resumen mensual por producto: el código de
+pedido no pasa al resumen, así que "qué se pide junto" mira solo los últimos 12 meses).
 
 ## Cómo funciona
 
@@ -49,8 +56,9 @@ Todos llevan `visitante` (el código de la cookie) y `created_at` (**UTC**; las 
 
 En los eventos NO se guardan IP, navegador, nombre, correo ni teléfono. Las búsquedas que parecen un correo, un
 teléfono o una cédula no se guardan (`pareceDatoPersonal`). **La política de privacidad (fase 6) debe mencionar la
-cookie `el-pico-visitante`** (para qué es, que no identifica a la persona, que dura 1 año y se cambia al cerrar sesión)
-y lo que se guarda en el navegador (`el-pico:perfil` para "Te puede interesar", `el-pico:eventos-recientes`).
+cookie `el-pico-visitante`** (para qué es, que no identifica a la persona, que dura 1 año y se cambia al cerrar sesión),
+que los pedidos y las direcciones de entrega se guardan en la cuenta (de los visitantes solo qué productos se
+pidieron, sin datos personales), y lo que se guarda en el navegador (`el-pico:perfil` para "Te puede interesar", `el-pico:eventos-recientes`).
 
 ## Consultas de ejemplo (en hora de Caracas)
 
@@ -156,6 +164,52 @@ group by 1, 2
 order by 1 desc, veces desc;
 ```
 
+**¿Qué productos se piden juntos?** (para las recomendaciones; con y sin cuenta, últimos 90 días. Cada par sale
+una vez: el de código menor a la izquierda)
+```sql
+select a.producto_id as producto,
+       b.producto_id as junto_con,
+       count(*) as pedidos
+from evento a
+join evento b on b.pedido_codigo = a.pedido_codigo and b.producto_id > a.producto_id and b.tipo = 'pedido_enviado'
+where a.tipo = 'pedido_enviado'
+  and a.created_at > now() - interval '90 days'
+group by 1, 2
+order by pedidos desc
+limit 50;
+```
+
+**¿Qué productos se piden más?** (con y sin cuenta, últimos 30 días: en cuántos pedidos aparece cada uno)
+```sql
+select producto_id,
+       count(distinct pedido_codigo) as pedidos
+from evento
+where tipo = 'pedido_enviado' and created_at > now() - interval '30 days'
+group by producto_id
+order by pedidos desc
+limit 50;
+```
+
+**¿Cómo retiran y cómo pagan los clientes con cuenta, mes a mes?** (con el pedido promedio en dólares)
+```sql
+select to_char(created_at at time zone 'America/Caracas', 'YYYY-MM') as mes,
+       retiro,
+       case when pago = 'combinado' then 'combinado: ' || array_to_string(pagos_combinados, ' + ') else pago end as pago,
+       count(*) as pedidos,
+       round(avg(total_usd), 2) as promedio_usd,
+       sum(total_usd) as total_usd
+from pedido
+group by 1, 2, 3
+order by mes desc, pedidos desc;
+```
+
+**¿Cuántos precios se guardaron sin poder comprobarlos con Saint?** (si hay muchos, Saint estuvo caído al pedir)
+```sql
+select count(*) filter (where not precio_verificado) as sin_verificar,
+       count(*) as productos_pedidos
+from pedido_item;
+```
+
 **¿Cuántos visitantes tienen cuenta?** (últimos 30 días)
 ```sql
 select count(distinct e.visitante) as visitantes,
@@ -169,7 +223,7 @@ where e.created_at > now() - interval '30 days';
 ```sql
 select relname as tabla, pg_size_pretty(pg_total_relation_size(relid)) as tamano
 from pg_catalog.pg_statio_user_tables
-where relname in ('evento', 'visitante_cuenta', 'resumen_evento_mes', 'resumen_busqueda_mes')
+where relname in ('evento', 'visitante_cuenta', 'resumen_evento_mes', 'resumen_busqueda_mes', 'pedido', 'pedido_item', 'direccion')
 order by pg_total_relation_size(relid) desc;
 ```
 

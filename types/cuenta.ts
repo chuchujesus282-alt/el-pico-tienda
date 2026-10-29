@@ -1,3 +1,4 @@
+import type { Direccion } from "@/types/cliente";
 // Cuenta del cliente y sus datos fiscales (para la factura). Si cambia, avisa al compañero.
 
 import type { ItemCarrito } from "./carrito";
@@ -37,5 +38,12 @@ export type PerfilCuenta = {
   fiscales: DatosFiscales | null;
 };
 
-/** Carrito (con los datos de hoy del catálogo) y favoritos (códigos, lo más reciente primero) guardados en la cuenta. */
-export type DatosCuenta = { carrito: ItemCarrito[]; favoritos: string[] };
+/**
+ * Carrito (con los datos de hoy del catálogo), favoritos (códigos, lo más reciente primero) y direcciones de entrega
+ * (con la elegida) guardados en la cuenta.
+ */
+export type DatosCuenta = {
+  carrito: ItemCarrito[];
+  favoritos: string[];
+  direcciones: { lista: Direccion[]; elegidaId: string | null };
+};

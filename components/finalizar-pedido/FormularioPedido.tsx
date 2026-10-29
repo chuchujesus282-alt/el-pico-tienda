@@ -26,6 +26,7 @@ import { enlaceWhatsApp, totalCarrito } from "@/lib/whatsapp";
 import type { ItemCarrito } from "@/types/carrito";
 import CheckDibujado from "@/components/icons/pico/CheckDibujado";
 import Opcion from "./Opcion";
+import { usePedidoEnCuenta } from "@/components/pedidos/usePedidoEnCuenta";
 import IconoCalculadora from "@/components/icons/pico/IconoCalculadora";
 import IconoMensaje from "@/components/icons/pico/IconoMensaje";
 import {
@@ -148,6 +149,9 @@ export default function FormularioPedido({ itemsDirectos }: Props) {
   const [direccionId, setDireccionId] = useState<string | null>(null);
   const [pago, setPago] = useState<MetodoPago | null>(null);
   const [combinados, setCombinados] = useState<MetodoPago[]>([]);
+  // Datos (persona A, components/pedidos/): al enviar guarda el pedido en la cuenta y registra el evento; WhatsApp se
+  // abre igual. También pone el carrito al día con los precios de hoy. No cambia nada de cómo se ve.
+  const { alEnviar, ventana, bloqueado } = usePedidoEnCuenta({ conCarrito: !itemsDirectos, items: itemsDirectos ?? carrito.items });
 
   const items = itemsDirectos ?? carrito.items;
   const unidades = items.reduce((suma, i) => suma + i.cantidad, 0);
@@ -211,8 +215,12 @@ export default function FormularioPedido({ itemsDirectos }: Props) {
     );
   }
 
+  const datosPedido = { items, retiro: retiro!, direccion: necesitaDireccion ? direccion : null, pago: pago!, combinados };
+  const urlWhatsApp = listo ? enlaceWhatsApp(armarMensajeFinal(datosPedido)) : "";
+
   return (
     <>
+      {ventana}
       <Pasos estados={[retiroListo, pagoListo, listo]} />
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,1fr)_23rem] lg:items-start">
@@ -384,11 +392,16 @@ export default function FormularioPedido({ itemsDirectos }: Props) {
               {listo ? (
                 <a
                   key="activo"
-                  href={enlaceWhatsApp(armarMensajeFinal({ items, retiro: retiro!, direccion, pago: pago!, combinados }))}
+                  href={urlWhatsApp}
+                  // 2 s después de tocarlo no responde (doble toque); solo se avisa al lector de pantalla, no cambia cómo se ve.
+                  aria-disabled={bloqueado || undefined}
                   target="_blank"
                   rel="noopener noreferrer"
-                  // Señal más fuerte del perfil de "Te puede interesar": lo que el cliente pidió.
-                  onClick={() => registrarSenales(items.map((i) => ({ tipo: "whatsapp", id: i.producto.id })))}
+                  onClick={(e) => {
+                    // Señal más fuerte del perfil de "Te puede interesar": lo que el cliente pidió.
+                    registrarSenales(items.map((i) => ({ tipo: "whatsapp", id: i.producto.id })));
+                    alEnviar(e, datosPedido, urlWhatsApp);
+                  }}
                   // Listo: el verde de WhatsApp (estado-abierto), con brillo y un latido al habilitarse.
                   className="group grupo-icono relative flex h-13 w-full items-center justify-center gap-2 overflow-hidden rounded-xl bg-estado-abierto text-base font-semibold text-pico-blanco transition duration-200 [--icono-acento:var(--color-pico-blanco)] hover:bg-estado-abierto/90 hover:shadow-boton-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-logo-marino motion-safe:animate-pop motion-safe:hover:-translate-y-0.5 motion-safe:active:scale-[0.98]"
                 >

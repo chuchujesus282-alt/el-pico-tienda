@@ -10,8 +10,18 @@ import { getIndiceConEstado } from "@/lib/catalogo";
 import { vincularVisitante } from "@/lib/eventos/servidor";
 import { correosDisponibles } from "@/lib/correo";
 import { db } from "@/lib/db";
-import { carritoItem, favorito, perfil, user } from "@/lib/db/esquema";
-import { limpiarCarrito, limpiarFavoritos, mezclarCarrito, mezclarFavoritos, type LineaCarrito } from "@/lib/mezclaCuenta";
+import { carritoItem, direccion, favorito, perfil, user } from "@/lib/db/esquema";
+import {
+  type DireccionesCuenta,
+  limpiarCarrito,
+  limpiarDirecciones,
+  limpiarFavoritos,
+  mezclarCarrito,
+  mezclarDirecciones,
+  mezclarFavoritos,
+  type LineaCarrito,
+} from "@/lib/mezclaCuenta";
+import { leerPedido, listarPedidos, tienePedidos, type DetallePedido, type ResumenPedido } from "@/lib/pedidos/servidor";
 import type { ItemCarrito } from "@/types/carrito";
 import type { DatosCuenta, DatosFiscales, NuevaCuenta, PerfilCuenta, ResultadoCuenta } from "@/types/cuenta";
 
@@ -238,20 +248,42 @@ export async function guardarPerfil(fiscales: DatosFiscales, aceptaPoliticas: bo
 // components/cuenta/SincronizarCuenta.tsx los copia a la cuenta. Al ENTRAR se juntan (lib/mezclaCuenta.ts); después,
 // en cada visita manda lo de la cuenta (así lo que quitaste en otro dispositivo no reaparece).
 
-async function leerLineas(userId: string): Promise<{ carrito: LineaCarrito[]; favoritos: string[] }> {
-  const [carrito, favoritos] = await Promise.all([
+async function leerLineas(
+  userId: string,
+): Promise<{ carrito: LineaCarrito[]; favoritos: string[]; direcciones: DireccionesCuenta }> {
+  const [carrito, favoritos, direcciones] = await Promise.all([
     db
       .select({ id: carritoItem.productoId, cantidad: carritoItem.cantidad })
       .from(carritoItem)
       .where(eq(carritoItem.userId, userId))
       .orderBy(asc(carritoItem.posicion)),
     db.select({ id: favorito.productoId }).from(favorito).where(eq(favorito.userId, userId)).orderBy(asc(favorito.posicion)),
+    db
+      .select({
+        id: direccion.id,
+        nombre: direccion.nombre,
+        descripcion: direccion.descripcion,
+        latitud: direccion.latitud,
+        longitud: direccion.longitud,
+        elegida: direccion.elegida,
+      })
+      .from(direccion)
+      .where(eq(direccion.userId, userId))
+      .orderBy(asc(direccion.posicion)),
   ]);
-  return { carrito, favoritos: favoritos.map((f) => f.id) };
+  const lista = direcciones.map(({ id, nombre, descripcion, latitud, longitud }) => ({ id, nombre, descripcion, latitud, longitud }));
+  return {
+    carrito,
+    favoritos: favoritos.map((f) => f.id),
+    direcciones: { lista, elegidaId: direcciones.find((d) => d.elegida)?.id ?? lista[0]?.id ?? null },
+  };
 }
 
 /** Reemplaza el carrito y/o los favoritos de la cuenta, cada uno en una sola transacción (borrar + insertar). */
-async function escribir(userId: string, { carrito, favoritos }: { carrito?: LineaCarrito[]; favoritos?: string[] }) {
+async function escribir(
+  userId: string,
+  { carrito, favoritos, direcciones }: { carrito?: LineaCarrito[]; favoritos?: string[]; direcciones?: DireccionesCuenta },
+) {
   const consultas: BatchItem<"pg">[] = [];
   if (carrito) {
     consultas.push(db.delete(carritoItem).where(eq(carritoItem.userId, userId)));
@@ -263,6 +295,16 @@ async function escribir(userId: string, { carrito, favoritos }: { carrito?: Line
     consultas.push(db.delete(favorito).where(eq(favorito.userId, userId)));
     if (favoritos.length > 0) {
       consultas.push(db.insert(favorito).values(favoritos.map((productoId, posicion) => ({ userId, productoId, posicion }))));
+    }
+  }
+  if (direcciones) {
+    consultas.push(db.delete(direccion).where(eq(direccion.userId, userId)));
+    if (direcciones.lista.length > 0) {
+      consultas.push(
+        db.insert(direccion).values(
+          direcciones.lista.map((d, posicion) => ({ userId, ...d, posicion, elegida: d.id === direcciones.elegidaId })),
+        ),
+      );
     }
   }
   if (consultas.length > 0) await db.batch(consultas as [BatchItem<"pg">, ...BatchItem<"pg">[]]);
@@ -289,7 +331,11 @@ async function conProductos(lineas: LineaCarrito[]): Promise<ItemCarrito[] | nul
  * Al entrar: junta lo del navegador con lo de la cuenta, lo guarda y devuelve el resultado para el navegador.
  * null si no hay sesión o algo falló (el navegador se queda con lo suyo y lo vuelve a intentar en la próxima visita).
  */
-export async function sincronizarAlEntrar(navegador: { carrito: unknown; favoritos: unknown }): Promise<DatosCuenta | null> {
+export async function sincronizarAlEntrar(navegador: {
+  carrito: unknown;
+  favoritos: unknown;
+  direcciones?: unknown;
+}): Promise<DatosCuenta | null> {
   const cliente = await usuarioActual();
   if (!cliente) return null;
   // Los eventos de este navegador (de antes de entrar y de después) quedan unidos a la cuenta. Nunca falla.
@@ -298,9 +344,11 @@ export async function sincronizarAlEntrar(navegador: { carrito: unknown; favorit
     const cuenta = await leerLineas(cliente.id);
     const carrito = mezclarCarrito(limpiarCarrito(navegador.carrito), cuenta.carrito);
     const favoritos = mezclarFavoritos(limpiarFavoritos(navegador.favoritos), cuenta.favoritos);
-    await escribir(cliente.id, { carrito, favoritos });
+    // Direcciones: las del navegador se suman sin duplicar (mismo id, o mismo nombre y casi el mismo punto).
+    const direcciones = mezclarDirecciones(limpiarDirecciones(navegador.direcciones), cuenta.direcciones);
+    await escribir(cliente.id, { carrito, favoritos, direcciones });
     const conDatos = await conProductos(carrito);
-    return conDatos ? { carrito: conDatos, favoritos } : null;
+    return conDatos ? { carrito: conDatos, favoritos, direcciones } : null;
   } catch (error) {
     console.error("[cuenta] No se pudo sincronizar el carrito y los favoritos:", error);
     return null;
@@ -316,9 +364,9 @@ export async function leerDatosCuenta(): Promise<DatosCuenta | null> {
   // También en cada visita: si la cookie del visitante se creó después de entrar, aquí queda vinculada.
   const vinculo = vincularVisitante(cliente.id);
   try {
-    const { carrito, favoritos } = await leerLineas(cliente.id);
+    const { carrito, favoritos, direcciones } = await leerLineas(cliente.id);
     const conDatos = await conProductos(carrito);
-    return conDatos ? { carrito: conDatos, favoritos } : null;
+    return conDatos ? { carrito: conDatos, favoritos, direcciones } : null;
   } catch (error) {
     console.error("[cuenta] No se pudo leer el carrito y los favoritos:", error);
     return null;
@@ -327,18 +375,53 @@ export async function leerDatosCuenta(): Promise<DatosCuenta | null> {
   }
 }
 
-/** Guarda en la cuenta el carrito y/o los favoritos tal como quedaron en el navegador. */
-export async function guardarDatosCuenta(datos: { carrito?: unknown; favoritos?: unknown }): Promise<boolean> {
+/** Guarda en la cuenta el carrito, los favoritos y/o las direcciones tal como quedaron en el navegador. */
+export async function guardarDatosCuenta(datos: { carrito?: unknown; favoritos?: unknown; direcciones?: unknown }): Promise<boolean> {
   const cliente = await usuarioActual();
   if (!cliente) return false;
   try {
     await escribir(cliente.id, {
       carrito: datos.carrito === undefined ? undefined : limpiarCarrito(datos.carrito),
       favoritos: datos.favoritos === undefined ? undefined : limpiarFavoritos(datos.favoritos),
+      direcciones: datos.direcciones === undefined ? undefined : limpiarDirecciones(datos.direcciones),
     });
     return true;
   } catch (error) {
     console.error("[cuenta] No se pudo guardar el carrito o los favoritos:", error);
     return false;
   }
+}
+
+/**
+ * Al tocar "Enviar por WhatsApp": ¿le preguntamos (sin obligarlo) su cédula/RIF y teléfono? Solo si tiene cuenta, no
+ * tiene datos para la factura y es su PRIMER pedido. Devuelve también su nombre, para llenar el campo. Nunca lanza.
+ */
+export async function datosParaPrimerPedido(): Promise<{ pedir: boolean; nombre: string }> {
+  try {
+    const cliente = await usuarioActual();
+    if (!cliente) return { pedir: false, nombre: "" };
+    const [conPerfil, conPedidos] = await Promise.all([
+      db.select({ id: perfil.userId }).from(perfil).where(eq(perfil.userId, cliente.id)).limit(1),
+      tienePedidos(cliente.id),
+    ]);
+    return { pedir: conPerfil.length === 0 && !conPedidos, nombre: cliente.name ?? "" };
+  } catch {
+    return { pedir: false, nombre: "" };
+  }
+}
+
+/* ---------- Mis pedidos (fase 5; lógica en lib/pedidos/) ---------- */
+
+/** Pedidos de la cuenta con sesión, del más reciente al más viejo. null si no hay sesión. */
+export async function misPedidos(pagina = 1, porPagina = 20): Promise<{ pedidos: ResumenPedido[]; total: number } | null> {
+  const cliente = await usuarioActual();
+  if (!cliente) return null;
+  return listarPedidos(cliente.id, pagina, porPagina);
+}
+
+/** Un pedido de la cuenta con sesión (null si no hay sesión, no existe o es de otra cuenta). */
+export async function miPedido(id: string): Promise<DetallePedido | null> {
+  const cliente = await usuarioActual();
+  if (!cliente || !/^[0-9a-f-]{36}$/i.test(id)) return null;
+  return leerPedido(cliente.id, id.toLowerCase());
 }

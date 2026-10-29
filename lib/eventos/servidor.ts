@@ -8,7 +8,7 @@ import { visitanteCuenta } from "@/lib/db/esquema";
 import { getCategorias, getIndiceConEstado } from "@/lib/catalogo";
 import { esCategoriaSaint, getCategoriaSaint } from "@/lib/saint";
 import type { Producto } from "@/types/catalogo";
-import { claveSinRepetir, type Evento, LIMITES, MINUTOS_SIN_REPETIR, permitidosPorTope } from "./reglas";
+import { type Evento, LIMITES, MINUTOS_SIN_REPETIR, permitidosPorTope } from "./reglas";
 
 // Eventos para análisis — lado del servidor: el visitante (cookie), el límite por visitante y por red, guardar,
 // vincular a la cuenta y resumir/borrar lo viejo. Lo usan app/api/eventos/route.ts y lib/cuenta.ts.
@@ -142,18 +142,23 @@ export async function guardarEventos(visitante: string, ip: string | null, event
     subcategoria: e.tipo === "categoria_vista" ? (e.subcategoria ?? null) : null,
     termino: e.tipo === "busqueda" ? e.termino : null,
     resultados: e.tipo === "busqueda" ? e.resultados : null,
-    sin_repetir: claveSinRepetir(e) !== null,
+    pedido_codigo: e.tipo === "pedido_enviado" ? e.pedido : null,
+    // Vistas: no se repiten en 30 minutos. Pedidos: el mismo producto del mismo pedido, nunca.
+    sin_repetir: e.tipo === "producto_visto" || e.tipo === "categoria_vista",
+    unico_en_pedido: e.tipo === "pedido_enviado",
   }));
 
   // Una sola consulta para todo el envío. "Sin repetir": no se guarda si el mismo visitante ya tiene ese evento
   // (mismo producto, o misma categoría y subcategoría) en los últimos 30 minutos.
   const { rows } = await db.execute<{ guardados: number }>(sql`
     with nuevos as (
-      insert into evento (tipo, visitante, producto_id, categoria, subcategoria, termino, resultados)
-      select e.tipo::tipo_evento, ${visitante}::uuid, e.producto_id, e.categoria, e.subcategoria, e.termino, e.resultados
+      insert into evento (tipo, visitante, producto_id, categoria, subcategoria, termino, resultados, pedido_codigo)
+      select e.tipo::tipo_evento, ${visitante}::uuid, e.producto_id, e.categoria, e.subcategoria, e.termino, e.resultados,
+             e.pedido_codigo::uuid
       from jsonb_to_recordset(${JSON.stringify(filas)}::jsonb) as e(
-        tipo text, producto_id text, categoria text, subcategoria text, termino text, resultados integer, sin_repetir boolean)
-      where not e.sin_repetir or not exists (
+        tipo text, producto_id text, categoria text, subcategoria text, termino text, resultados integer,
+        pedido_codigo text, sin_repetir boolean, unico_en_pedido boolean)
+      where (not e.sin_repetir or not exists (
         select 1 from evento x
         where x.visitante = ${visitante}::uuid
           and x.tipo = e.tipo::tipo_evento
@@ -161,7 +166,14 @@ export async function guardarEventos(visitante: string, ip: string | null, event
           and x.categoria is not distinct from e.categoria
           and x.subcategoria is not distinct from e.subcategoria
           and x.created_at > now() - make_interval(mins => ${MINUTOS_SIN_REPETIR})
-      )
+      ))
+      and (not e.unico_en_pedido or not exists (
+        select 1 from evento x
+        where x.visitante = ${visitante}::uuid
+          and x.tipo = 'pedido_enviado'
+          and x.pedido_codigo = e.pedido_codigo::uuid
+          and x.producto_id = e.producto_id
+      ))
       returning 1
     )
     select count(*)::int as guardados from nuevos`);

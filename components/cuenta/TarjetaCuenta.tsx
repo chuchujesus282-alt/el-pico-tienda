@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { ChevronRight, KeyRound } from "lucide-react";
+import IconoLista from "@/components/icons/pico/IconoLista";
 import { useCarrito } from "@/components/carrito/ProveedorCarrito";
 import { useFavoritos } from "@/components/favoritos/almacenFavoritos";
 import IconoCarrito from "@/components/icons/pico/IconoCarrito";
@@ -24,6 +25,7 @@ export default function TarjetaCuenta({ nombre, correo }: { nombre: string; corr
     { href: "/favoritos", Icono: IconoCorazon, texto: "Mis favoritos", detalle: cantidadFavoritos ? `${cantidadFavoritos} guardados` : "Aún no tienes" },
     { href: "/carrito", Icono: IconoCarrito, texto: "Mi carrito", detalle: cantidadTotal ? `${cantidadTotal} productos` : "Vacío" },
     { href: "/mis-direcciones", Icono: IconoUbicacion, texto: "Mis direcciones", detalle: "Dónde recibes tus pedidos" },
+    { href: "/mi-cuenta/pedidos", Icono: IconoLista, texto: "Mis pedidos", detalle: "Lo que enviaste por WhatsApp" },
   ];
 
   const salir = async () => {

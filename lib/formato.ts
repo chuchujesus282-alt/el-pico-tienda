@@ -42,6 +42,20 @@ export function formatearBs(bs: number): string {
   return `Bs. ${numeroVE.format(bs)}`;
 }
 
+const fechaCaracas = new Intl.DateTimeFormat("es-VE", {
+  timeZone: "America/Caracas",
+  day: "numeric",
+  month: "long",
+  year: "numeric",
+  hour: "numeric",
+  minute: "2-digit",
+});
+
+/** Fecha y hora en Caracas: "28 de octubre de 2026, 3:15 p. m." (las fechas se guardan en UTC). */
+export function formatearFecha(fecha: Date | string): string {
+  return fechaCaracas.format(new Date(fecha));
+}
+
 /**
  * Título legible del producto, con la marca incluida. Los de Saint ya traen el suyo (`titulo`, armado en
  * lib/nombresSaint.ts: su nombre ya empieza con la marca y tiene códigos que no deben pasar a minúscula).

@@ -6,8 +6,11 @@ import {
   bigint,
   boolean,
   date,
+  doublePrecision,
   index,
   integer,
+  jsonb,
+  numeric,
   pgEnum,
   pgTable,
   primaryKey,
@@ -16,6 +19,7 @@ import {
   uniqueIndex,
   uuid,
 } from "drizzle-orm/pg-core";
+import { sql } from "drizzle-orm";
 
 const creadoEn = () => timestamp("created_at", { withTimezone: true }).notNull().defaultNow();
 const actualizadoEn = () =>
@@ -190,6 +194,9 @@ export const evento = pgTable(
     subcategoria: text("subcategoria"), // código de Saint (o el nombre, en las categorías de ejemplo)
     termino: text("termino"), // búsqueda: minúsculas, máx. 60 caracteres
     resultados: integer("resultados"), // búsqueda: cuántos productos encontró (0 = sin resultados)
+    // pedido_enviado: código al azar común a los productos de un mismo pedido (no identifica a nadie; con cuenta, es
+    // el mismo id del pedido). Sirve para saber qué productos se piden juntos.
+    pedidoCodigo: uuid("pedido_codigo"),
     createdAt: creadoEn(),
   },
   (t) => [
@@ -240,4 +247,73 @@ export const resumenBusquedaMes = pgTable(
     sinResultados: integer("sin_resultados").notNull(),
   },
   (t) => [primaryKey({ columns: [t.mes, t.termino] })],
+);
+
+/* ---------- Pedidos y direcciones de la cuenta (fase 5; lib/pedidos/, docs/eventos.md) ---------- */
+
+/** Dirección copiada en el pedido tal como estaba al enviarlo (editarla o borrarla después no cambia el pedido). */
+export type DireccionPedido = { nombre: string; descripcion: string; latitud: number; longitud: number };
+
+/**
+ * Un pedido enviado por WhatsApp por un cliente CON cuenta (sin cuenta solo hay eventos "pedido_enviado").
+ * `id` lo genera el navegador (un doble toque no duplica). Montos en dólares y bolívares con la tasa BCV de ese
+ * instante (`tasa` y `total_bs` vacíos si no había tasa). Fechas en UTC.
+ */
+export const pedido = pgTable(
+  "pedido",
+  {
+    id: uuid("id").primaryKey(),
+    userId: text("user_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    tasa: numeric("tasa", { precision: 14, scale: 4, mode: "number" }),
+    totalUsd: numeric("total_usd", { precision: 14, scale: 2, mode: "number" }).notNull(),
+    totalBs: numeric("total_bs", { precision: 18, scale: 2, mode: "number" }),
+    retiro: text("retiro", { enum: ["pickup", "delivery", "flete"] }).notNull(),
+    pago: text("pago").notNull(), // "divisas", "pago-movil", … o "combinado"
+    pagosCombinados: text("pagos_combinados").array().notNull().default(sql`'{}'::text[]`),
+    direccion: jsonb("direccion").$type<DireccionPedido>(),
+    createdAt: creadoEn(),
+  },
+  (t) => [index("pedido_user_id_fecha_idx").on(t.userId, t.createdAt)],
+);
+
+/**
+ * Productos de un pedido, con sus precios de ese instante. `precio_verificado` es false si Saint no respondió y se
+ * guardó el precio que traía el navegador.
+ */
+export const pedidoItem = pgTable(
+  "pedido_item",
+  {
+    pedidoId: uuid("pedido_id")
+      .notNull()
+      .references(() => pedido.id, { onDelete: "cascade" }),
+    posicion: integer("posicion").notNull(),
+    productoId: text("producto_id").notNull(),
+    nombre: text("nombre").notNull(), // como viene de Saint (el del mensaje de WhatsApp)
+    cantidad: integer("cantidad").notNull(),
+    precioUsd: numeric("precio_usd", { precision: 14, scale: 2, mode: "number" }).notNull(),
+    precioBs: numeric("precio_bs", { precision: 18, scale: 2, mode: "number" }),
+    precioVerificado: boolean("precio_verificado").notNull(),
+  },
+  (t) => [primaryKey({ columns: [t.pedidoId, t.posicion] }), index("pedido_item_producto_id_idx").on(t.productoId)],
+);
+
+/** Direcciones de entrega de una cuenta (las mismas de "Mis direcciones"; el `id` lo genera el navegador). */
+export const direccion = pgTable(
+  "direccion",
+  {
+    userId: text("user_id")
+      .notNull()
+      .references(() => user.id, { onDelete: "cascade" }),
+    id: text("id").notNull(),
+    nombre: text("nombre").notNull(),
+    descripcion: text("descripcion").notNull(),
+    latitud: doublePrecision("latitud").notNull(),
+    longitud: doublePrecision("longitud").notNull(),
+    posicion: integer("posicion").notNull(),
+    elegida: boolean("elegida").notNull().default(false),
+    updatedAt: actualizadoEn(),
+  },
+  (t) => [primaryKey({ columns: [t.userId, t.id] })],
 );

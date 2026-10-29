@@ -75,7 +75,7 @@ describe("limpiarEvento", () => {
       null,
       "texto",
       { tipo: "otro", producto: "A1" },
-      { tipo: "pedido_enviado", producto: "A1" }, // fase 5
+      { tipo: "pedido_enviado", producto: "A1" }, // sin código de pedido
       { tipo: "producto_visto" },
       { tipo: "producto_visto", producto: "<script>" },
       { tipo: "producto_visto", producto: "A".repeat(40) },
