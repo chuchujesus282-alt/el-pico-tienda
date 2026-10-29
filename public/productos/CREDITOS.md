@@ -49,5 +49,6 @@ Fotos oficiales del empaque que pasó persona B (fondo pasado a blanco, envase c
 | collet/decoplus.webp | Collet que dicen "Deco Plus" (lata Decorativa Plus) |
 | collet/trafico-brocal.webp | Collet que dicen "brocal" o "tráfico" (lata Tráfico Brocal) |
 | collet/canchas.webp | Collet "p/cancha" (lata Canchas deportivas) |
-| collet/basicplus.webp | El resto de Collet sin foto propia (impermeabilizante) |
+| collet/impermeabilizante.webp | COLLET PINTURA IMPERMEABILIZANTE |
+| collet/basicplus.webp | Cualquier otro Collet sin foto propia (hoy ninguno) |
 | collet/prestigio-tobo-y-galon.webp, ocasion-tobo-y-galon.webp | Sin usar todavía (tobo y galón juntos) |

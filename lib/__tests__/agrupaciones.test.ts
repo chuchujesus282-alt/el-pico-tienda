@@ -186,7 +186,7 @@ describe("agrupar", () => {
     expect(f("COLLET ESMALTE BRILLANTE GRIS OSCURO 1/4")).toBe("/productos/collet/esmalte.webp");
     expect(f("COLLET PINTURA BROCAL AMARILLO GALON")).toBe("/productos/collet/trafico-brocal.webp");
     expect(f("COLLET PINTURA ALTO TRAFICO C/PERLA TOBO")).toBe("/productos/collet/trafico-brocal.webp");
-    expect(f("COLLET PINTURA IMPERMEABILIZANTE GALON")).toBe("/productos/collet/basicplus.webp");
+    expect(f("COLLET PINTURA IMPERMEABILIZANTE GALON")).toBe("/productos/collet/impermeabilizante.webp");
     expect(f('COLLET PINTURA P/CANCHA TIPO "A" TOBO')).toBe("/productos/collet/canchas.webp");
     expect(f("COLLET FONDO HERRERIA GRIS/NEGRO 1/4 GAL")).toBe("/productos/collet/esmalte.webp");
     expect(f("COLLET DECO PLUS PINTURA 1/4 GAL")).toBe("/productos/collet/decoplus.webp");
