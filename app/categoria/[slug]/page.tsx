@@ -123,14 +123,16 @@ export default async function PaginaCategoria({ params, searchParams }: PageProp
       <RegistrarEvento evento={{ tipo: "categoria_vista", categoria: slug, subcategoria: nivel ? String(nivel.codigo) : undefined }} />
 
       <Contenedor className="py-6 md:py-10">
-        <div className="lg:grid lg:grid-cols-[15rem_minmax(0,1fr)] lg:gap-8">
-          <aside aria-label="Filtros" className="hidden lg:block">
+        {/* En PC: arriba a la derecha la barra (cantidad, orden, chips); abajo, la caja de subcategorías y las tarjetas
+            empiezan a la MISMA altura (pedido de persona B: antes la caja arrancaba más arriba que las tarjetas). */}
+        <div className="lg:grid lg:grid-cols-[15rem_minmax(0,1fr)] lg:gap-x-8">
+          <aside aria-label="Filtros" className="hidden lg:col-start-1 lg:row-start-2 lg:block">
             <div className="sticky top-6 rounded-banner border border-gris-borde bg-pico-blanco p-5 shadow-tarjeta motion-safe:animate-aparecer [animation-delay:120ms]">
               {filtros}
             </div>
           </aside>
 
-          <div className="min-w-0">
+          <div className="min-w-0 lg:col-start-2 lg:row-start-1">
             <div className="mb-4 flex items-center justify-between gap-3">
               <PanelFiltrosMovil activos={filtrosActivos}>{filtros}</PanelFiltrosMovil>
               <p className="hidden text-sm text-gris-texto lg:block">
@@ -148,7 +150,9 @@ export default async function PaginaCategoria({ params, searchParams }: PageProp
             </div>
 
             <FiltrosActivos slug={slug} estado={estado} nivel={nivel?.nombre} />
+          </div>
 
+          <div className="min-w-0 lg:col-start-2 lg:row-start-2">
             {resultado.productos.length > 0 ? (
               <div key={claveVista} className="motion-safe:animate-aparecer">
                 <GrillaProductos productos={resultado.productos} titulo={`Productos de ${categoria.nombre}`} />
