@@ -59,5 +59,5 @@ Fotos oficiales del empaque que pasó persona B (fondo blanco, envase completo c
 
 | Archivo | Producto |
 |---|---|
-| manpica/trafico-tobo.webp | MANPICA TRAFICO … CNTE / CUÑETE 5 GAL y DEMARCACION … TOBO |
+| manpica/trafico-tobo-amarillo.webp | MANPICA TRAFICO … CNTE / CUÑETE 5 GAL y DEMARCACION … TOBO |
 | manpica/trafico-galon.webp | MANPICA TRAFICO … GALON |

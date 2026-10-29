@@ -177,9 +177,9 @@ describe("agrupar", () => {
   it("pinturas Manpica: tráfico y demarcación, tobo o galón; los demás sin foto", () => {
     const f = (nombre: string) => fotoPorNombre(nombre, "MANPICA");
     expect(f("MANPICA TRAFICO AMARILLO REFLECTIV GALON")).toBe("/productos/manpica/trafico-galon.webp");
-    expect(f("MANPICA TRAFICO AMARILLO REFLECTIVO CNTE")).toBe("/productos/manpica/trafico-tobo.webp");
-    expect(f("MANPICA TRAFICO REFLECTIVO CUÑETE 5 GAL")).toBe("/productos/manpica/trafico-tobo.webp");
-    expect(f("MANPICA DEMARCACION BROCAL AMARILLO TOBO")).toBe("/productos/manpica/trafico-tobo.webp");
+    expect(f("MANPICA TRAFICO AMARILLO REFLECTIVO CNTE")).toBe("/productos/manpica/trafico-tobo-amarillo.webp");
+    expect(f("MANPICA TRAFICO REFLECTIVO CUÑETE 5 GAL")).toBe("/productos/manpica/trafico-tobo-amarillo.webp");
+    expect(f("MANPICA DEMARCACION BROCAL AMARILLO TOBO")).toBe("/productos/manpica/trafico-tobo-amarillo.webp");
     expect(f("MANPICA ESMALTE BLANCO GALON")).toBeUndefined();
   });
 

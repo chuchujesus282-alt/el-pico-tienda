@@ -66,7 +66,7 @@ export function fotoPorNombre(nombre: string, marca: string | null): string | un
 function fotoManpica(n: string): string | undefined {
   if (!/TR[AÁ]FICO|DEMARCACI/.test(n)) return undefined;
   const tobo = /TOBO|PAILA|CU[NÑ]ETE|\bCNTE\b|\b[45] ?GAL/.test(n);
-  return `/productos/manpica/${tobo ? "trafico-tobo" : "trafico-galon"}.webp`;
+  return `/productos/manpica/${tobo ? "trafico-tobo-amarillo" : "trafico-galon"}.webp`;
 }
 
 /**
