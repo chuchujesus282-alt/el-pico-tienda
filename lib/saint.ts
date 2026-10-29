@@ -253,20 +253,47 @@ export const esCategoriaSaint = (slug: string) => codigoSaint(slug) !== undefine
  * la caché de Next no lo guarda, así que la memoria dura los 10 minutos completos.
  */
 async function pedirTodas(): Promise<Map<string, CategoriaSaint>> {
+  const inicio = performance.now();
   const texto = await pedirTexto(Object.values(CATEGORIAS_SAINT), "saint-todas", false);
+  const msPedido = Math.round(performance.now() - inicio);
   // Sin caché de Next, cada pedido va a Saint: la memoria dura los 10 minutos completos.
   const vigencia = REVALIDAR_SEGUNDOS * 1000;
   // La misma respuesta de antes: las MISMAS listas, así el índice de búsqueda no se vuelve a armar.
   if (todas && todas.texto === texto) {
     todas.revisar = Date.now() + vigencia;
+    registrarTiempo({ msPedido, caracteres: texto.length, sinCambios: true, primera: false });
     return todas.porSlug;
   }
+  const primera = !todas;
+  const inicioConvertir = performance.now();
   const porSlug = new Map<string, CategoriaSaint>();
   for (const [slug, parte] of repartirPorCategoria(leerJson(texto, "todas"), CATEGORIAS_SAINT)) {
     porSlug.set(slug, convertir(slug, parte));
   }
+  const msConvertir = Math.round(performance.now() - inicioConvertir);
   todas = { porSlug, texto, revisar: Date.now() + vigencia };
+  registrarTiempo({ msPedido, msConvertir, caracteres: texto.length, sinCambios: false, primera, categorias: porSlug.size });
   return porSlug;
+}
+
+/**
+ * Una línea en los registros (Vercel → Logs, buscar "[saint] tiempo") cada vez que se le pide TODO a Saint, para
+ * decidir si vale la pena servir la lista vencida mientras se renueva. Solo tiempos y tamaños: nunca la URL (tiene la
+ * clave) ni productos. `primera: true` = el servidor arrancó sin lista (lo paga el visitante que llegó).
+ */
+function registrarTiempo(datos: {
+  msPedido: number;
+  msConvertir?: number;
+  caracteres: number;
+  sinCambios: boolean;
+  primera: boolean;
+  categorias?: number;
+}) {
+  const convertirTexto = datos.sinCambios ? "sin cambios (no se convierte)" : `convertir y agrupar ${datos.msConvertir} ms`;
+  console.info(
+    `[saint] tiempo · pedido ${datos.msPedido} ms · ${(datos.caracteres / 1e6).toFixed(2)} MB · ${convertirTexto}` +
+      `${datos.categorias !== undefined ? ` · ${datos.categorias} categorías` : ""} · ${datos.primera ? "servidor recién encendido" : "renovación"}`,
+  );
 }
 
 /** Todas las categorías juntas, o la última lista buena. Lanza ErrorSaint si no hay ninguna de las dos. */

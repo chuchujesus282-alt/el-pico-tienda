@@ -73,6 +73,10 @@ export default function BannerInicio({ banner, sizes, tamano = "normal", priorit
   const Icono = banner.icono;
   const grande = tamano === "grande";
   const lateral = tamano === "lateral";
+  // Normal con ícono (los horizontales genéricos del inicio): el plano mide una parte del ANCHO DEL BANNER (no de la
+  // pantalla, @container) y el texto tiene reservado lo que queda a su izquierda, así ningún texto (el más largo de
+  // las 10 categorías) choca con el dibujo, sea cual sea el ancho del banner.
+  const conPlano = Boolean(Icono) && !grande && !lateral;
 
   return (
     <Destino
@@ -82,7 +86,7 @@ export default function BannerInicio({ banner, sizes, tamano = "normal", priorit
         grande ? "" : "shadow-tarjeta transition duration-200 hover:shadow-tarjeta-hover motion-safe:hover:-translate-y-1"
       } focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-pico-azul ${
         banner.imagen ? "bg-gris-borde" : estilo.fondo
-      } ${className}`}
+      } ${conPlano ? "@container" : ""} ${className}`}
     >
       {banner.imagen ? (
         <Image
@@ -96,13 +100,19 @@ export default function BannerInicio({ banner, sizes, tamano = "normal", priorit
         />
       ) : (
         <div className={`relative flex h-full flex-col justify-center gap-2 ${grande ? "hero-cascada " : ""}${
-          grande ? "p-5 md:gap-3 md:px-16 md:py-10 lg:gap-4 lg:px-24 2xl:px-28" : lateral ? "p-4 sm:p-5 md:p-6" : "gap-3 p-6 md:p-10 lg:px-12"
+          grande
+            ? "p-5 md:gap-3 md:px-16 md:py-10 lg:gap-4 lg:px-24 2xl:px-28"
+            : lateral
+              ? "p-4 sm:p-5 md:p-6"
+              : conPlano
+                ? "gap-3 p-6 pr-[calc(30cqw+1.75rem)]! @md:p-8 @2xl:p-10"
+                : "gap-3 p-6 md:p-10 lg:px-12"
         }`}>
           {Icono && (
             // Plano técnico del ícono a la derecha (entero, sin cortarse); flota apenas y sus piezas se animan al pasar el mouse.
             <span
               className={`pointer-events-none absolute top-1/2 -translate-y-1/2 motion-safe:animate-flotar ${
-                grande ? "right-4 hidden sm:block lg:right-20 2xl:right-28" : lateral ? "right-2 hidden sm:block" : "-right-2 md:right-4"
+                grande ? "right-4 hidden sm:block lg:right-20 2xl:right-28" : lateral ? "right-2 hidden sm:block" : "right-3 @md:right-4"
               }`}
               aria-hidden
             >
@@ -110,7 +120,7 @@ export default function BannerInicio({ banner, sizes, tamano = "normal", priorit
                 Icono={Icono}
                 tono={banner.variante === "claro" ? "oscuro" : "claro"}
                 className={`transition-transform duration-700 ease-(--curva-suave) group-hover:scale-105 ${
-                  grande ? "w-48 md:w-64 lg:w-80" : lateral ? "w-28 md:w-36" : "w-36 opacity-60 sm:opacity-100 md:w-48 lg:w-56"
+                  grande ? "w-48 md:w-64 lg:w-80" : lateral ? "w-28 md:w-36" : "w-[30cqw] max-w-56"
                 }`}
               />
             </span>
@@ -148,12 +158,15 @@ export default function BannerInicio({ banner, sizes, tamano = "normal", priorit
                 aria-hidden
               />
               <p
-                className={`relative max-w-[80%] font-bold text-balance ${estilo.titulo} ${
+                className={`relative ${conPlano ? "" : "max-w-[80%]"} font-bold text-balance ${estilo.titulo} ${
                   grande
                     ? "text-3xl leading-[1.05] tracking-tight md:text-5xl lg:max-w-[55%] lg:text-6xl"
                     : lateral
                       ? "text-base leading-tight sm:text-xl"
-                      : "text-2xl leading-tight md:text-3xl lg:text-4xl"
+                      : conPlano
+                        ? // Crece con el banner: "Seguridad industrial" o "Herramientas" caben en el más angosto.
+                          "text-[clamp(1.375rem,6.5cqw,2.25rem)] leading-tight"
+                        : "text-2xl leading-tight md:text-3xl lg:text-4xl"
                 }`}
               >
                 {banner.titulo}
@@ -164,12 +177,14 @@ export default function BannerInicio({ banner, sizes, tamano = "normal", priorit
           {banner.texto && (
             // En el banner grande y en móvil se omite el texto: no cabe con el título y el botón.
             <p
-              className={`relative max-w-[75%] text-sm ${estilo.texto} ${
+              className={`relative ${conPlano ? "" : "max-w-[75%]"} text-sm ${estilo.texto} ${
                 grande
                   ? `hidden sm:line-clamp-2 md:text-base lg:max-w-[50%] lg:text-lg ${banner.tituloPartes ? "md:max-w-[50%]" : ""}`
                   : lateral
                     ? "hidden sm:line-clamp-2"
-                    : "line-clamp-3 md:text-base lg:text-lg"
+                    : conPlano
+                      ? "line-clamp-3 @md:text-base @2xl:text-lg"
+                      : "line-clamp-3 md:text-base lg:text-lg"
               }`}
             >
               {banner.texto}
@@ -179,7 +194,13 @@ export default function BannerInicio({ banner, sizes, tamano = "normal", priorit
             // Es un span y no <Boton>: todo el banner ya es un enlace. Misma forma que Boton.
             <span
               className={`relative mt-1 h-10 w-fit items-center gap-1 rounded-boton px-4 text-sm font-semibold shadow-tarjeta transition duration-200 group-hover:shadow-boton-hover motion-safe:group-hover:-translate-y-0.5 ${estilo.boton} ${
-                grande ? "inline-flex md:mt-2 lg:h-12 lg:px-6 lg:text-base" : lateral ? "hidden sm:inline-flex" : "inline-flex md:mt-2 md:h-12 md:px-6 md:text-base"
+                grande
+                  ? "inline-flex md:mt-2 lg:h-12 lg:px-6 lg:text-base"
+                  : lateral
+                    ? "hidden sm:inline-flex"
+                    : conPlano
+                      ? "inline-flex @md:mt-2 @md:h-12 @md:px-6 @md:text-base"
+                      : "inline-flex md:mt-2 md:h-12 md:px-6 md:text-base"
               }`}
             >
               {banner.textoBoton}
