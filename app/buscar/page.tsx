@@ -6,12 +6,10 @@ import GrillaProductos from "@/components/producto/GrillaProductos";
 import RegistrarSenal from "@/components/recomendaciones/RegistrarSenal";
 import RegistrarEvento from "@/components/eventos/RegistrarEvento";
 import Contenedor from "@/components/ui/Contenedor";
-import EncabezadoPagina from "@/components/ui/EncabezadoPagina";
 import { getCategorias } from "@/lib/catalogo";
 import { indice } from "@/lib/indiceServidor";
 import { buscar, type IndiceBusqueda } from "@/lib/recomendaciones/busqueda";
 import type { Categoria } from "@/types/catalogo";
-import IconoLupa from "@/components/icons/pico/IconoLupa";
 
 // Resultados de búsqueda (/buscar?q=…) — responsable: persona A. Usa la búsqueda inteligente de lib/recomendaciones/
 // con el índice compartido del servidor (lib/indiceServidor.ts; el mismo de las sugerencias del header).
@@ -36,7 +34,8 @@ export default async function PaginaBuscar({ searchParams }: PageProps<"/buscar"
   } catch {
     return (
       <>
-        <EncabezadoPagina titulo="Buscar productos" ruta={[{ texto: "Buscar" }]} icono={IconoLupa} lupa={false} />
+        {/* Sin EncabezadoPagina (pedido de persona B): el título queda solo para lectores de pantalla. */}
+        <h1 className="sr-only">Buscar productos</h1>
         <Contenedor className="py-8 md:py-12">
         <p className="rounded-tarjeta border border-gris-borde bg-pico-blanco p-6 text-center text-sm text-gris-texto">
           No pudimos conectar con el catálogo en este momento. Intenta de nuevo en unos minutos.
@@ -52,13 +51,8 @@ export default async function PaginaBuscar({ searchParams }: PageProps<"/buscar"
 
   return (
     <>
-      <EncabezadoPagina
-        titulo={consulta ? `Resultados para “${consulta}”` : "Buscar productos"}
-        ruta={[{ texto: "Buscar" }]}
-        icono={IconoLupa}
-        lupa={false}
-        descripcion={cantidad > 0 ? `${cantidad} ${cantidad === 1 ? "producto" : "productos"}` : undefined}
-      />
+      {/* Sin EncabezadoPagina (pedido de persona B): el título queda solo para lectores de pantalla. */}
+      <h1 className="sr-only">{consulta ? `Resultados para “${consulta}”` : "Buscar productos"}</h1>
     <Contenedor className="space-y-6 py-6 md:py-10">
       {consulta && <RegistrarSenal senales={[{ tipo: "busqueda", termino: consulta }]} />}
       {/* Evento para análisis (lib/eventos/). "resultados" llega hasta 60 (el tope de buscar()): 60 = "60 o más". */}
