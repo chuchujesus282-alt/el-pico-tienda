@@ -1,13 +1,17 @@
 import IconoBase, { type PropsIcono } from "./IconoBase";
 
-/** Seguridad industrial: casco de obra con la cresta roja. */
+/**
+ * Seguridad industrial: el casco del banner del inicio (BannerTrabajaProtegido) a escala: cúpula con la franja roja
+ * al centro, nervaduras a los lados y el ala curva.
+ */
 export default function IconoCasco(props: PropsIcono) {
   return (
     <IconoBase {...props}>
       <g className="ia-balanceo">
-        <path d="M5.5 21.5a10.5 10.5 0 0 1 21 0" />
-        <path className="ac-relleno-borde" d="M14 11.3v10.2h4V11.3a10.6 10.6 0 0 0-4 0z" />
-        <path d="M3 21.5h26v1.3a1.7 1.7 0 0 1-1.7 1.7H4.7A1.7 1.7 0 0 1 3 22.8z" />
+        <path className="ac-relleno" d="M13.9 20.8V9Q16 8.3 18.1 9v11.8z" />
+        <path d="M6.5 20.8C6.5 12.7 10.9 8.6 16 8.6s9.5 4.1 9.5 12.2" />
+        <path d="M11.2 10.3c-1.3 2.7-1.7 6.5-1.5 10.2M20.8 10.3c1.3 2.7 1.7 6.5 1.5 10.2" strokeWidth="1.2" />
+        <path d="M3.4 21.2Q16 19.2 28.6 21.2q.5 1.7-1.4 2.2Q16 21.7 4.8 23.4q-1.9-.5-1.4-2.2z" />
       </g>
     </IconoBase>
   );
