@@ -32,8 +32,9 @@ export const INICIAL: RepartoBanners = {
   central2: "herramientas",
   central3: "pinturas",
   central4: "cerrajeria",
-  horizontal1: "tornilleria",
-  horizontal2: "seguridad-industrial",
+  // Como estaba antes de la rotación: el casco (azul) a la izquierda y el tornillo (claro) a la derecha.
+  horizontal1: "seguridad-industrial",
+  horizontal2: "tornilleria",
   vertical1: "electricidad",
   vertical2: "griferia",
   vertical3: "hogar-y-jardin",
