@@ -184,8 +184,11 @@ describe("agrupar", () => {
     expect(f('COLLET EXTREMO PINTURA "AA" TOBO')).toBe("/productos/collet/decosatin.webp");
     expect(f("COLLET ESMALTE SATINADO BLANCO GAL")).toBe("/productos/collet/esmalte.webp");
     expect(f("COLLET ESMALTE BRILLANTE GRIS OSCURO 1/4")).toBe("/productos/collet/esmalte.webp");
-    expect(f("COLLET PINTURA BROCAL AMARILLO GALON")).toBe("/productos/collet/basicplus.webp");
-    expect(f("COLLET DECO PLUS PINTURA 1/4 GAL")).toBe("/productos/collet/basicplus.webp");
+    expect(f("COLLET PINTURA BROCAL AMARILLO GALON")).toBe("/productos/collet/trafico-brocal.webp");
+    expect(f("COLLET PINTURA ALTO TRAFICO C/PERLA TOBO")).toBe("/productos/collet/trafico-brocal.webp");
+    expect(f("COLLET PINTURA IMPERMEABILIZANTE GALON")).toBe("/productos/collet/basicplus.webp");
+    expect(f("COLLET DECO PLUS PINTURA 1/4 GAL")).toBe("/productos/collet/decoplus.webp");
+    expect(f("COLLET DECO PLUS PINTURA TOBO")).toBe("/productos/collet/decoplus.webp");
   });
 
   it("pinturas Pineco: cada foto solo en su línea y tamaño; el hidroesmalte 1/4 usa la del galón; Gold sin foto", () => {
