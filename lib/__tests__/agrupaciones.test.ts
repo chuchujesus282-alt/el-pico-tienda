@@ -161,24 +161,30 @@ describe("agrupar", () => {
     expect(productos.find((x) => x.id === "3M0015")!.imagen).toBe("/productos/3M0015.webp");
   });
 
-  it("pinturas Montana por nombre: Montafix en todos por acabado; las demás solo en el galón", () => {
+  it("pinturas Montana por nombre: Montafix en todos por acabado; las demás en galón y tobo, no en 1/4", () => {
     const f = (nombre: string) => fotoPorNombre(nombre, "MONTANA");
     expect(f("BASE MONTAFIX 1/4 GAL")).toBe("/productos/montana/montafix-brillante.webp");
     expect(f("MONTAFIX SATINADO BLANCO GALON")).toBe("/productos/montana/montafix-satinado.webp");
     expect(f("ABC CAUCHO BLANCO GALON")).toBe("/productos/montana/abc-mate.webp");
-    expect(f("ABC CAUCHO BLANCO TOBO 4 GAL")).toBeUndefined();
+    expect(f("ABC CAUCHO BLANCO TOBO 4 GAL")).toBe("/productos/montana/abc-mate.webp");
+    expect(f("AV-2000 BRILLO SEDA BLANCO TOBO")).toBe("/productos/montana/av2000-brillo-de-seda.webp");
+    expect(f("DEKORAL BLANCO EN TOBO 4 GAL")).toBe("/productos/montana/dekoral-mate.webp");
+    expect(f("MONTANA EPOMON MASILLA 1/4 GALON")).toBeUndefined();
     expect(f("COLORANTE AMARILLO LFY 1791")).toBeUndefined();
     expect(fotoPorNombre("ABC CAUCHO BLANCO GALON", "PINECO")).toBeUndefined();
   });
 
-  it("pinturas Collet: Blanco Prestigio y Blanco Ocasión, en galón o tobo", () => {
+  it("pinturas Collet: Prestigio y Ocasión con su envase; los demás, Decosatín (satinado / tipo A) o BasicPlus", () => {
     const f = (nombre: string) => fotoPorNombre(nombre, "COLLET");
-    expect(f("COLLET PINTURA BLANCO PRESTIGIO GALON")).toBe("/productos/collet/prestigio-galon.webp");
-    expect(f("COLLET PINTURA BLANCO PRESTIGIO TOBO")).toBe("/productos/collet/prestigio-tobo.webp");
-    expect(f("COLLET PINTURA BLANCO OCASION GAL")).toBe("/productos/collet/ocasion-galon.webp");
-    expect(f("COLLET PINTURA BLANCO OCASION TOBO")).toBe("/productos/collet/ocasion-tobo.webp");
-    expect(f("COLLET PINTURA BLANCO OCASION 1/4 GALON")).toBeUndefined();
-    expect(f("COLLET PINTURA BROCAL AMARILLO GALON")).toBeUndefined();
+    expect(f('COLLET PRESTIGIO PINTURA "A" GALON')).toBe("/productos/collet/prestigio-galon.webp");
+    expect(f('COLLET PRESTIGIO PINTURA "A" TOBO')).toBe("/productos/collet/prestigio-tobo.webp");
+    expect(f('COLLET PINTURA OCASIÓN TIPO "B" GALON')).toBe("/productos/collet/ocasion-galon.webp");
+    expect(f('COLLET PINTURA OCASIÓN TIPO "B" TOBO')).toBe("/productos/collet/ocasion-tobo.webp");
+    expect(f('COLLET PINTURA SATINADA TIPO "A" GALON')).toBe("/productos/collet/decosatin.webp");
+    expect(f('COLLET EXTREMO PINTURA "AA" TOBO')).toBe("/productos/collet/decosatin.webp");
+    expect(f("COLLET ESMALTE SATINADO BLANCO GAL")).toBe("/productos/collet/decosatin.webp");
+    expect(f("COLLET PINTURA BROCAL AMARILLO GALON")).toBe("/productos/collet/basicplus.webp");
+    expect(f("COLLET DECO PLUS PINTURA 1/4 GAL")).toBe("/productos/collet/basicplus.webp");
   });
 
   it("pinturas Pineco: cada foto solo en su línea y tamaño; el hidroesmalte 1/4 usa la del galón; Gold sin foto", () => {

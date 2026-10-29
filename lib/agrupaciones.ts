@@ -37,7 +37,7 @@ export const FOTOS_SAINT: Record<string, string> = {
 /**
  * Fotos de pinturas Montana por su NOMBRE (en Saint, "MONTANA" va solo en la marca): una por línea y acabado.
  * Montafix: en TODOS los que digan Montafix, por su acabado (sin acabado, la brillante), pedido de persona B. Las demás
- * líneas (ABC, AV-2000, Dekoral): solo en el galón; el tobo y el 1/4 de galón son otro empaque.
+ * líneas (ABC, AV-2000, Dekoral): en el galón y en el tobo/paila/cuñete (la misma foto); el 1/4 de galón no.
  */
 const M = "/productos/montana/";
 export function fotoPorNombre(nombre: string, marca: string | null): string | undefined {
@@ -45,8 +45,8 @@ export function fotoPorNombre(nombre: string, marca: string | null): string | un
   if (/COLLET/i.test(marca ?? "") || /COLLET/.test(n)) return fotoCollet(n);
   if (!/MONTANA/i.test(marca ?? "") && !/MONTANA/.test(n)) return undefined;
   if (/MONTAFIX/.test(n)) return `${M}${/SATINAD/.test(n) ? "montafix-satinado" : /\bMATE\b/.test(n) ? "montafix-mate" : "montafix-brillante"}.webp`;
-  const galon = /\bGAL(ON)?\b|\bGALON\b/.test(n) && !/TOBO|CU[NÑ]ETE|1\/4|\b4 ?GAL/.test(n);
-  if (!galon) return undefined;
+  // Galón, y también tobo/paila/cuñete con la misma foto del galón (pedido de persona B: en la foto no se nota). El 1/4 no.
+  if (/1\/4/.test(n) || !/\bGAL|TOBO|PAILA|CU[NÑ]ETE/.test(n)) return undefined;
   if (/\bABC\b/.test(n)) return `${M}abc-mate.webp`;
   if (/DEKORAL/.test(n)) return `${M}${/SATINAD/.test(n) ? "dekoral-satinado" : "dekoral-mate"}.webp`;
   if (/AV-? ?2000/.test(n)) {
@@ -58,13 +58,20 @@ export function fotoPorNombre(nombre: string, marca: string | null): string | un
   return undefined;
 }
 
-/** Collet: Blanco Prestigio (tipo A) y Blanco Ocasión (tipo B), cada uno en galón o en tobo. El 1/4 de galón no lleva foto. */
-function fotoCollet(n: string): string | undefined {
+/**
+ * Collet: Blanco Prestigio (tipo A) y Blanco Ocasión (tipo B) con su propio envase en galón o tobo. TODOS los demás
+ * Collet llevan una foto genérica (pedido de persona B): Decosatín (blanca y azul, tipo A satinada) los satinados y los
+ * tipo "A"/"AA"; BasicPlus (blanca y roja) el resto.
+ */
+const C = "/productos/collet/";
+function fotoCollet(n: string): string {
   const linea = /PRESTIG/.test(n) ? "prestigio" : /OCASI/.test(n) ? "ocasion" : null;
-  if (!linea || /1\/4/.test(n)) return undefined;
-  if (/TOBO|CU[NÑ]ETE|PAILA|\b[45] ?GAL/.test(n)) return `/productos/collet/${linea}-tobo.webp`;
-  if (/\bGAL(ON)?\b/.test(n)) return `/productos/collet/${linea}-galon.webp`;
-  return undefined;
+  if (linea && !/1\/4/.test(n)) {
+    if (/TOBO|CU[NÑ]ETE|PAILA|\b[45] ?GAL/.test(n)) return `${C}${linea}-tobo.webp`;
+    if (/\bGAL(ON)?\b/.test(n)) return `${C}${linea}-galon.webp`;
+  }
+  if (/SATIN|"A{1,2}"|TIPO A\b/.test(n)) return `${C}decosatin.webp`;
+  return `${C}basicplus.webp`;
 }
 
 /** Cómo se dividen las medidas en el selector: milímetros/pulgadas, encastre del dado, o una sección propia que da la

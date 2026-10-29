@@ -38,10 +38,12 @@ Fotos oficiales del empaque que pasó persona B (fondo pasado a blanco, envase c
 | Archivo | Producto |
 |---|---|
 | montana/montafix-brillante.webp, -mate, -satinado | Todos los que digan MONTAFIX, según su acabado (sin acabado: brillante) |
-| montana/abc-mate.webp | ABC CAUCHO … GALON |
-| montana/dekoral-mate.webp, dekoral-satinado.webp | DEKORAL … GALON |
-| montana/av2000-exterior-mate.webp, -interior-mate, -brillo-de-seda, -bioprotecto | AV-2000 EXT/INT/SEDA/BIO … GALON |
+| montana/abc-mate.webp | ABC CAUCHO … GALON y TOBO |
+| montana/dekoral-mate.webp, dekoral-satinado.webp | DEKORAL … GALON y TOBO |
+| montana/av2000-exterior-mate.webp, -interior-mate, -brillo-de-seda, -bioprotecto | AV-2000 EXT/INT/SEDA/BIO … GALON y TOBO |
 | montana/av2000-exterior-clasica.webp, av2000-exterior-mate-2.webp | Sin usar todavía (otras fotos de AV-2000 Exterior; la clásica con el fondo gris quitado) |
 | collet/prestigio-galon.webp, prestigio-tobo.webp | COLLET PRESTIGIO PINTURA "A" GALON / TOBO |
 | collet/ocasion-galon.webp, ocasion-tobo.webp | COLLET PINTURA OCASIÓN TIPO "B" GALON / TOBO |
+| collet/decosatin.webp | Collet satinados y tipo "A"/"AA" que no tienen foto propia (Satinada, Extremo, Cancha, esmalte satinado) |
+| collet/basicplus.webp | El resto de Collet sin foto propia (Deco Plus, esmaltes brillantes, brocal, alto tráfico, impermeabilizante, fondo herrería) |
 | collet/prestigio-tobo-y-galon.webp, ocasion-tobo-y-galon.webp | Sin usar todavía (tobo y galón juntos) |
