@@ -52,3 +52,12 @@ Fotos oficiales del empaque que pasó persona B (fondo pasado a blanco, envase c
 | collet/impermeabilizante.webp | COLLET PINTURA IMPERMEABILIZANTE |
 | collet/basicplus.webp | Cualquier otro Collet sin foto propia (hoy ninguno) |
 | collet/prestigio-tobo-y-galon.webp, ocasion-tobo-y-galon.webp | Sin usar todavía (tobo y galón juntos) |
+
+## Pinturas Manpica (2026-10-28, persona B)
+
+Fotos oficiales del empaque que pasó persona B (fondo blanco, envase completo con margen, 1080×1080). Van por NOMBRE (`fotoManpica` en `lib/agrupaciones.ts`).
+
+| Archivo | Producto |
+|---|---|
+| manpica/trafico-tobo.webp | MANPICA TRAFICO … CNTE / CUÑETE 5 GAL y DEMARCACION … TOBO |
+| manpica/trafico-galon.webp | MANPICA TRAFICO … GALON |

@@ -174,6 +174,15 @@ describe("agrupar", () => {
     expect(fotoPorNombre("ABC CAUCHO BLANCO GALON", "PINECO")).toBeUndefined();
   });
 
+  it("pinturas Manpica: tráfico y demarcación, tobo o galón; los demás sin foto", () => {
+    const f = (nombre: string) => fotoPorNombre(nombre, "MANPICA");
+    expect(f("MANPICA TRAFICO AMARILLO REFLECTIV GALON")).toBe("/productos/manpica/trafico-galon.webp");
+    expect(f("MANPICA TRAFICO AMARILLO REFLECTIVO CNTE")).toBe("/productos/manpica/trafico-tobo.webp");
+    expect(f("MANPICA TRAFICO REFLECTIVO CUÑETE 5 GAL")).toBe("/productos/manpica/trafico-tobo.webp");
+    expect(f("MANPICA DEMARCACION BROCAL AMARILLO TOBO")).toBe("/productos/manpica/trafico-tobo.webp");
+    expect(f("MANPICA ESMALTE BLANCO GALON")).toBeUndefined();
+  });
+
   it("pinturas Collet: Prestigio y Ocasión con su envase; esmaltes, la lata de esmalte; los demás, Decosatín o BasicPlus", () => {
     const f = (nombre: string) => fotoPorNombre(nombre, "COLLET");
     expect(f('COLLET PRESTIGIO PINTURA "A" GALON')).toBe("/productos/collet/prestigio-galon.webp");

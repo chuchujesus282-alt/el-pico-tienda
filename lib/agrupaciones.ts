@@ -43,6 +43,7 @@ const M = "/productos/montana/";
 export function fotoPorNombre(nombre: string, marca: string | null): string | undefined {
   const n = nombre.toUpperCase();
   if (/COLLET/i.test(marca ?? "") || /COLLET/.test(n)) return fotoCollet(n);
+  if (/MANPICA/i.test(marca ?? "") || /MANPICA/.test(n)) return fotoManpica(n);
   if (!/MONTANA/i.test(marca ?? "") && !/MONTANA/.test(n)) return undefined;
   if (/MONTAFIX/.test(n)) return `${M}${/SATINAD/.test(n) ? "montafix-satinado" : /\bMATE\b/.test(n) ? "montafix-mate" : "montafix-brillante"}.webp`;
   // Galón, y también tobo/paila/cuñete con la misma foto del galón (pedido de persona B: en la foto no se nota). El 1/4 no.
@@ -56,6 +57,16 @@ export function fotoPorNombre(nombre: string, marca: string | null): string | un
     if (/\bINT/.test(n)) return `${M}av2000-interior-mate.webp`;
   }
   return undefined;
+}
+
+/**
+ * Manpica: solo pintura de tráfico y demarcación (pedido de persona B). En cuñete/tobo (CNTE, 5 GAL…), el tobo
+ * "Tráfico acrílico termoplástico"; en galón (o sin tamaño), la lata Manpi-Traf. Los demás Manpica, sin foto.
+ */
+function fotoManpica(n: string): string | undefined {
+  if (!/TR[AÁ]FICO|DEMARCACI/.test(n)) return undefined;
+  const tobo = /TOBO|PAILA|CU[NÑ]ETE|\bCNTE\b|\b[45] ?GAL/.test(n);
+  return `/productos/manpica/${tobo ? "trafico-tobo" : "trafico-galon"}.webp`;
 }
 
 /**
