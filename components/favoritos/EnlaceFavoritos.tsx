@@ -11,7 +11,7 @@ export default function EnlaceFavoritos({ className = "" }: { className?: string
     <Link
       href="/favoritos"
       aria-label={`Favoritos (${cantidad} ${cantidad === 1 ? "producto" : "productos"})`}
-      className={`group grupo-icono items-center gap-2 rounded-boton p-2.5 text-sm font-semibold text-pico-azul transition-colors hover:bg-pico-azul-claro focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-pico-azul ${className}`}
+      className={`group grupo-icono items-center gap-2 rounded-boton p-2.5 text-sm font-semibold text-pico-azul cursor-pointer ring-1 ring-transparent transition duration-200 hover:bg-pico-blanco hover:shadow-tarjeta hover:ring-pico-azul/15 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-pico-azul ${className}`}
     >
       <span className="relative">
         <IconoCorazon className="size-7" />
