@@ -46,9 +46,11 @@ export default function CarruselProductos({ titulo, productos, href, className =
           </>
         }
       />
+      {/* overflow-x recorta también lo que sale por abajo: pb-10 deja lugar a la sombra de la tarjeta levantada
+          (shadow-tarjeta-hover) y -mb-7 lo devuelve, así lo que sigue queda a la misma distancia (12px) que antes. */}
       <ul
         ref={fila}
-        className="sin-scrollbar -mx-[var(--margen-pagina)] flex snap-x snap-mandatory scroll-px-[var(--margen-pagina)] gap-3 overflow-x-auto px-[var(--margen-pagina)] pt-1 pb-3 md:mx-0 md:scroll-px-0 md:gap-4 md:px-0"
+        className="sin-scrollbar -mx-[var(--margen-pagina)] -mb-7 flex snap-x snap-mandatory scroll-px-[var(--margen-pagina)] gap-3 overflow-x-auto px-[var(--margen-pagina)] pt-1 pb-10 md:mx-0 md:scroll-px-0 md:gap-4 md:px-0"
       >
         {productos.map((producto, i) => (
           <li
