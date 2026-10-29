@@ -5,6 +5,7 @@ import IconoCarrito from "@/components/icons/pico/IconoCarrito";
 import BotonCarritoFlotante from "@/components/carrito/BotonCarritoFlotante";
 import { useCarrito } from "@/components/carrito/ProveedorCarrito";
 import BotonSubir from "./BotonSubir";
+import { claseAccionHeader } from "./accionHeader";
 
 export default function BotonCarrito() {
   const { cantidadTotal, abrir } = useCarrito();
@@ -27,7 +28,7 @@ export default function BotonCarrito() {
         type="button"
         onClick={abrir}
         // En el teléfono no se muestra: el carrito está en la barra inferior (BarraInferiorMovil).
-        className="group grupo-icono hidden items-center gap-2 md:flex rounded-boton p-2.5 text-sm font-semibold text-pico-azul cursor-pointer ring-1 ring-transparent transition duration-200 hover:bg-pico-blanco hover:shadow-tarjeta hover:ring-pico-azul/15 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-pico-azul"
+        className={`${claseAccionHeader()} hidden md:flex`}
         aria-label={`Abrir carrito (${cantidadTotal} ${cantidadTotal === 1 ? "producto" : "productos"})`}
       >
         <span className="relative" data-destino-carrito>

@@ -1,11 +1,10 @@
-import Link from "next/link";
 import BuscadorConSugerencias from "@/components/busqueda/BuscadorConSugerencias";
-import IconoCalculadora from "@/components/icons/pico/IconoCalculadora";
 import EnlaceCuenta from "@/components/cuenta/EnlaceCuenta";
 import SelectorDireccion from "@/components/direcciones/SelectorDireccion";
 import EnlaceFavoritos from "@/components/favoritos/EnlaceFavoritos";
 import Contenedor from "@/components/ui/Contenedor";
 import BotonCarrito from "./BotonCarrito";
+import EnlaceCalculadoras from "./EnlaceCalculadoras";
 import Logo from "./Logo";
 import MarcaDesplazamiento from "./MarcaDesplazamiento";
 import TasaBCV from "./TasaBCV";
@@ -39,13 +38,7 @@ export default function Header() {
 
         <div className="flex items-center gap-1 md:ml-auto md:gap-2">
           {/* Calculadoras de proyectos: mismo estilo y protagonismo que "Mi cuenta" y el carrito. */}
-          <Link
-            href="/calculadoras"
-            className="group grupo-icono flex items-center gap-2 rounded-boton p-2.5 text-sm font-semibold text-pico-azul cursor-pointer ring-1 ring-transparent transition duration-200 hover:bg-pico-blanco hover:shadow-tarjeta hover:ring-pico-azul/15 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-pico-azul"
-          >
-            <IconoCalculadora className="size-7" />
-            <span className="sr-only lg:not-sr-only">Calculadoras</span>
-          </Link>
+          <EnlaceCalculadoras />
           {/* Favoritos, Mi cuenta y el carrito: en el teléfono viven en la barra inferior (BarraInferiorMovil). */}
           <EnlaceFavoritos className="hidden md:flex" />
           <EnlaceCuenta className="hidden md:flex" />
