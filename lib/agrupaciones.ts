@@ -73,7 +73,7 @@ function fotoCollet(n: string): string {
   if (/^(COLLET )?ESMALTE/.test(n)) return `${C}esmalte.webp`;
   if (/DECO ?PLUS/.test(n)) return `${C}decoplus.webp`;
   if (/BROCAL|TR[AÁ]FICO/.test(n)) return `${C}trafico-brocal.webp`;
-  if (/SATIN|"A{1,2}"|TIPO A\b/.test(n)) return `${C}decosatin.webp`;
+  if (/SATIN|"A{1,2}"|TIPO A\b/.test(n)) return `${C}decosatin-blanco.webp`;
   return `${C}basicplus.webp`;
 }
 

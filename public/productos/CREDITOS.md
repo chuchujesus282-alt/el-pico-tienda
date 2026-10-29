@@ -45,7 +45,7 @@ Fotos oficiales del empaque que pasó persona B (fondo pasado a blanco, envase c
 | collet/prestigio-galon.webp, prestigio-tobo.webp | COLLET PRESTIGIO PINTURA "A" GALON / TOBO |
 | collet/ocasion-galon.webp, ocasion-tobo.webp | COLLET PINTURA OCASIÓN TIPO "B" GALON / TOBO |
 | collet/esmalte.webp | Collet que empiezan por "Esmalte" (brillantes y satinado) |
-| collet/decosatin.webp | Collet satinados y tipo "A"/"AA" que no tienen foto propia (Satinada, Extremo, Cancha) |
+| collet/decosatin-blanco.webp | Collet satinados y tipo "A"/"AA" que no tienen foto propia (Satinada, Extremo, Cancha) |
 | collet/decoplus.webp | Collet que dicen "Deco Plus" (lata Decorativa Plus) |
 | collet/trafico-brocal.webp | Collet que dicen "brocal" o "tráfico" (lata Tráfico Brocal) |
 | collet/basicplus.webp | El resto de Collet sin foto propia (impermeabilizante, fondo herrería) |

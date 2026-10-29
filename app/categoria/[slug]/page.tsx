@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import BannerCalculadoras from "@/components/calculadoras/BannerCalculadoras";
-import BuscarEnCategoria from "@/components/categoria/BuscarEnCategoria";
 import RegistrarEvento from "@/components/eventos/RegistrarEvento";
 import FiltrosActivos from "@/components/categoria/FiltrosActivos";
 import FiltrosCategoria from "@/components/categoria/FiltrosCategoria";
@@ -132,7 +131,6 @@ export default async function PaginaCategoria({ params, searchParams }: PageProp
           </aside>
 
           <div className="min-w-0">
-            <BuscarEnCategoria slug={slug} nombre={categoria.nombre} estado={estado} />
             <div className="mb-4 flex items-center justify-between gap-3">
               <PanelFiltrosMovil activos={filtrosActivos}>{filtros}</PanelFiltrosMovil>
               <p className="hidden text-sm text-gris-texto lg:block">
