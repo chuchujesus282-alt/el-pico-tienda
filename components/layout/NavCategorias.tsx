@@ -15,7 +15,7 @@ const SIN_BARRA = [
   "/calculadoras",
   "/como-comprar",
   "/contacto",
-  "/politicas-de-privacidad",
+  "/privacidad",
   "/iniciar-sesion",
   "/crear-cuenta",
   "/recuperar-contrasena",

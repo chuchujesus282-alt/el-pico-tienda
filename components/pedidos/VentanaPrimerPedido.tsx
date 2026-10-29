@@ -127,7 +127,7 @@ export default function VentanaPrimerPedido({ nombre, onEnviar, onCerrar }: Prop
               />
               <span className="text-sm leading-relaxed text-gris-texto">
                 Leí y acepto las{" "}
-                <Link href="/politicas-de-privacidad" target="_blank" className="font-semibold text-pico-azul underline underline-offset-4 hover:text-pico-rojo">
+                <Link href="/privacidad" target="_blank" className="font-semibold text-pico-azul underline underline-offset-4 hover:text-pico-rojo">
                   políticas de privacidad
                 </Link>
                 .

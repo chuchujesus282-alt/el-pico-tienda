@@ -37,7 +37,7 @@ export const opcionesCookieVisitante = {
 
 /** IP → código irreversible (HMAC con el secreto del sitio). Solo para el límite por red; la IP no se guarda. */
 export function resumenRed(ip: string | null): string {
-  const secreto = process.env.BETTER_AUTH_SECRET || process.env.AUTH_SECRET || "el-pico";
+  const secreto = process.env.BETTER_AUTH_SECRET || "el-pico";
   return createHmac("sha256", secreto).update(ip ?? "sin-ip").digest("hex").slice(0, 32);
 }
 

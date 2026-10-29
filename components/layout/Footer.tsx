@@ -23,7 +23,7 @@ const ayuda = [
   { texto: "Calculadoras de proyectos", href: "/calculadoras" },
   { texto: "Cómo comprar", href: "/como-comprar" },
   { texto: "Contacto", href: "/contacto" },
-  { texto: "Políticas de privacidad", href: "/politicas-de-privacidad" },
+  { texto: "Privacidad", href: "/privacidad" },
 ];
 
 function TituloColumna({ children }: { children: string }) {

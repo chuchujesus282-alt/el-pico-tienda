@@ -13,6 +13,8 @@ const nextConfig: NextConfig = {
     return [
       // "Plomería" pasó a llamarse "Grifería" (2026-10-28): los enlaces viejos y los buscadores llegan a la nueva.
       { source: "/categoria/plomeria", destination: "/categoria/griferia", permanent: true },
+      // Fase 6: la política de privacidad se mudó a /privacidad (los enlaces viejos siguen funcionando).
+      { source: "/politicas-de-privacidad", destination: "/privacidad", permanent: true },
     ];
   },
 };

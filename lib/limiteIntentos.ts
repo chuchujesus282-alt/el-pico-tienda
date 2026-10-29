@@ -1,4 +1,4 @@
-import { createHash } from "node:crypto";
+import { createHmac } from "node:crypto";
 
 // Límite de intentos para entrar, registrarse y pedir enlaces por correo. En Venezuela muchos clientes comparten la
 // misma IP pública (CGNAT de las operadoras), así que se cuenta por CORREO + IP con un tope bajo y por IP sola con un
@@ -22,10 +22,12 @@ export const REGLAS: Record<AccionLimitada, { correoIp?: Regla; ip: Regla }> = {
 
 export type ClaveLimite = { clave: string; regla: Regla };
 
-const resumen = (texto: string) => createHash("sha256").update(texto).digest("hex").slice(0, 32);
+// HMAC con el secreto del sitio (no un sha256 suelto): una IP resumida sin clave se podría adivinar probando todas.
+const resumen = (texto: string) =>
+  createHmac("sha256", process.env.BETTER_AUTH_SECRET || "el-pico").update(texto).digest("hex").slice(0, 32);
 
 /**
- * Claves a contar para una acción. Van resumidas (sha256): la tabla no guarda correos ni IP legibles.
+ * Claves a contar para una acción. Van resumidas (HMAC-sha256 con el secreto): la tabla no guarda correos ni IP legibles.
  * Sin IP (ej. en la computadora de desarrollo) se cuenta todo como una sola IP.
  */
 export function clavesLimite(accion: AccionLimitada, correo: string | null, ip: string | null): ClaveLimite[] {

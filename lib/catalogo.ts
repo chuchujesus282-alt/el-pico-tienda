@@ -18,11 +18,7 @@ import { codigoPorNombre, navegacion } from "@/lib/arbolSaint";
 // TODAS las categorías traen sus productos REALES de Saint (lib/saint.ts; mapa en lib/categoriasSaint.ts). Ya no hay
 // productos de ejemplo. Si Saint no responde, se lanza el error y la página muestra "No pudimos cargar los productos";
 // NUNCA se muestran productos inventados en su lugar.
-// CATALOGO_API_URL (opcional) queda solo para lo que todavía no trae Saint: "comprados juntos" (facturas del SQL).
 
-const API_URL = process.env.CATALOGO_API_URL?.replace(/\/$/, "");
-const API_TOKEN = process.env.CATALOGO_API_TOKEN;
-const REVALIDAR_SEGUNDOS = 300;
 const POR_PAGINA_DEFECTO = 24;
 
 export class ErrorCatalogo extends Error {
@@ -30,31 +26,6 @@ export class ErrorCatalogo extends Error {
     super(mensaje);
     this.name = "ErrorCatalogo";
   }
-}
-
-async function pedirApi<T>(ruta: string): Promise<T> {
-  let respuesta: Response;
-  try {
-    respuesta = await fetch(`${API_URL}${ruta}`, {
-      headers: { Authorization: `Bearer ${API_TOKEN ?? ""}` },
-      next: { revalidate: REVALIDAR_SEGUNDOS },
-    });
-  } catch {
-    throw new ErrorCatalogo(`No se pudo conectar con el catálogo (${ruta})`);
-  }
-  if (!respuesta.ok) {
-    throw new ErrorCatalogo(`El catálogo respondió ${respuesta.status} (${ruta})`, respuesta.status);
-  }
-  return (await respuesta.json()) as T;
-}
-
-function query(params: Record<string, string | number | undefined>): string {
-  const busqueda = new URLSearchParams();
-  for (const [clave, valor] of Object.entries(params)) {
-    if (valor !== undefined && valor !== "") busqueda.set(clave, String(valor));
-  }
-  const texto = busqueda.toString();
-  return texto ? `?${texto}` : "";
 }
 
 /** Las categorías de la tienda, en el orden del menú (lib/categorias.ts). */
@@ -210,14 +181,11 @@ export async function getIndiceProductos(): Promise<Producto[]> {
 }
 
 /**
- * Productos que suelen ir en la misma factura (de las facturas del SQL). Mientras no haya datos devuelve [].
- * Si falla, también []: es un extra y no debe romper la página de producto.
+ * Productos que suelen pedirse junto con este. Todavía no hay fuente: devuelve [] (los relacionados salen igual de
+ * lib/recomendaciones/). PENDIENTE: alimentarlo con los eventos "pedido_enviado" (mismo `pedido_codigo`; consulta
+ * "¿Qué productos se piden juntos?" en docs/eventos.md), sin hacer esperar a la página de producto.
  */
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export async function getCompradosJuntos(id: string, limite = 8): Promise<CompradoJunto[]> {
-  if (!API_URL) return [];
-  try {
-    return await pedirApi<CompradoJunto[]>(`/productos/${encodeURIComponent(id)}/comprados-juntos${query({ limite })}`);
-  } catch {
-    return [];
-  }
+  return [];
 }

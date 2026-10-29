@@ -66,7 +66,7 @@ export const auth = betterAuth({
   appName: "Centro Ferretero El Pico",
   baseURL: { allowedHosts: HOSTS, fallback: URL_RESPALDO, protocol: protocolo },
   trustedOrigins: HOSTS.map((h) => `${protocolo}://${h}`),
-  // Lee BETTER_AUTH_SECRET (o, si falta, AUTH_SECRET, la que ya existía con Auth.js).
+  // Firma con BETTER_AUTH_SECRET (OBLIGATORIA en .env.local y en Vercel; ver .env.example).
   database: drizzleAdapter(db, { provider: "pg", schema: { user, session, account, verification, rateLimit } }),
 
   emailAndPassword: {
