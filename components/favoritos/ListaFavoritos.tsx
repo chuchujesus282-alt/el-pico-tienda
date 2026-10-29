@@ -7,7 +7,7 @@ import GrillaProductos from "@/components/producto/GrillaProductos";
 import Boton from "@/components/ui/Boton";
 import TituloPagina from "@/components/ui/TituloPagina";
 import type { Producto } from "@/types/catalogo";
-import { useFavoritos } from "./almacenFavoritos";
+import { obtenerFavoritos, reemplazarFavoritos, useFavoritos } from "./almacenFavoritos";
 
 const sinSuscripcion = () => () => {};
 /** Como mucho estos códigos viajan al servidor (lo mismo que acepta /api/favoritos). */
@@ -65,6 +65,15 @@ export default function ListaFavoritos() {
     return () => control.abort();
   }, [clave]);
 
+  // Con el catálogo completo, los códigos que el servidor no encontró ya no existen: se quitan, así el contador del
+  // header dice lo mismo que la página (con sesión, SincronizarCuenta lo copia a la cuenta).
+  useEffect(() => {
+    if (!respuesta || respuesta.fallo || !respuesta.completo) return;
+    const actuales = obtenerFavoritos();
+    const vigentes = actuales.filter((id) => !respuesta.pedidos.has(id) || respuesta.porId.has(id));
+    if (vigentes.length < actuales.length) reemplazarFavoritos(vigentes);
+  }, [respuesta]);
+
   useEffect(() => {
     if (!agregados) return;
     const t = setTimeout(() => setAgregados(false), 1600);
@@ -73,8 +82,8 @@ export default function ListaFavoritos() {
 
   // Antes de leer el navegador no se sabe si hay favoritos: esqueletos en vez de "no tienes".
   const cargando = !montado || (ids.length > 0 && (respuesta === null || nuevos.length > 0) && !respuesta?.fallo);
-  // Mismo orden que la lista (lo último que guardó, primero). Lo que ya no está en el catálogo no se muestra (pero se
-  // queda guardado: si mañana vuelve, reaparece).
+  // Mismo orden que la lista (lo último que guardó, primero). Lo que ya no está en el catálogo no se muestra (y, si el
+  // catálogo llegó completo, se quita de la lista; ver arriba).
   const productos = ids.map((id) => respuesta?.porId.get(id)).filter((p): p is Producto => Boolean(p));
   const sinCatalogo = !cargando && ids.length > 0 && respuesta?.fallo === true;
   // Faltó una parte del catálogo y hay favoritos que no llegaron: se avisa en vez de darlos por desaparecidos.

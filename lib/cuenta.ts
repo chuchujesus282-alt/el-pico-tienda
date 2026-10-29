@@ -328,6 +328,18 @@ async function conProductos(lineas: LineaCarrito[]): Promise<ItemCarrito[] | nul
 }
 
 /**
+ * Quita de los favoritos los códigos que ya no están en el catálogo (si no, el contador del header los cuenta y
+ * /favoritos no los muestra). Solo con el catálogo completo: si una categoría de Saint no cargó, se quedan todos.
+ */
+async function favoritosVigentes(ids: string[]): Promise<string[]> {
+  if (ids.length === 0) return ids;
+  const { productos, completo } = await getIndiceConEstado();
+  if (!completo) return ids;
+  const existen = new Set(productos.map((p) => p.id));
+  return ids.filter((id) => existen.has(id));
+}
+
+/**
  * Al entrar: junta lo del navegador con lo de la cuenta, lo guarda y devuelve el resultado para el navegador.
  * null si no hay sesión o algo falló (el navegador se queda con lo suyo y lo vuelve a intentar en la próxima visita).
  */
@@ -343,7 +355,7 @@ export async function sincronizarAlEntrar(navegador: {
   try {
     const cuenta = await leerLineas(cliente.id);
     const carrito = mezclarCarrito(limpiarCarrito(navegador.carrito), cuenta.carrito);
-    const favoritos = mezclarFavoritos(limpiarFavoritos(navegador.favoritos), cuenta.favoritos);
+    const favoritos = await favoritosVigentes(mezclarFavoritos(limpiarFavoritos(navegador.favoritos), cuenta.favoritos));
     // Direcciones: las del navegador se suman sin duplicar (mismo id, o mismo nombre y casi el mismo punto).
     const direcciones = mezclarDirecciones(limpiarDirecciones(navegador.direcciones), cuenta.direcciones);
     await escribir(cliente.id, { carrito, favoritos, direcciones });
@@ -364,7 +376,12 @@ export async function leerDatosCuenta(): Promise<DatosCuenta | null> {
   // También en cada visita: si la cookie del visitante se creó después de entrar, aquí queda vinculada.
   const vinculo = vincularVisitante(cliente.id);
   try {
-    const { carrito, favoritos, direcciones } = await leerLineas(cliente.id);
+    const { carrito, favoritos: guardados, direcciones } = await leerLineas(cliente.id);
+    const favoritos = await favoritosVigentes(guardados);
+    // Si se quitó alguno, la cuenta también queda limpia (si falla, se vuelve a intentar en la próxima visita).
+    if (favoritos.length < guardados.length) {
+      await escribir(cliente.id, { favoritos }).catch((error) => console.error("[cuenta] No se pudieron limpiar los favoritos:", error));
+    }
     const conDatos = await conProductos(carrito);
     return conDatos ? { carrito: conDatos, favoritos, direcciones } : null;
   } catch (error) {
