@@ -12,10 +12,11 @@ import styles from "./BannerTornilleria.module.css";
 // Al pasar el mouse (o con el foco del teclado) el tornillo se inclina hacia el usuario (la vista lateral se aplana con
 // scaleY = cos y la de frente crece con scaleY = sen), aparece el aro y se atornilla dando 3 vueltas mientras la cabeza
 // se hunde, con un pequeño asiento al final. Es reversible: al salir se desatornilla (velocidad 1.3) y vuelve a verse de
-// lado, flotando. En el teléfono, desplazar la página con el dedo sobre el banner lo anima (animarAlDesplazar), un
-// toque quieto en el banner lo activa o desactiva y un toque en el botón navega.
-// Diferencias con el prototipo: llena el ancho y el alto de quien lo contiene (ver el CSS), el botón es un <Link>, el
-// botón sube con su sombra al pasar el mouse por el banner (efecto del banner anterior), con el BANNER de 560px o menos
+// lado, flotando. En el teléfono, desplazar la página con el dedo sobre el banner lo anima (animarAlDesplazar).
+// Diferencias con el prototipo: llena el ancho y el alto de quien lo contiene (ver el CSS); TODO el banner es un <Link>
+// a la categoría y el botón es solo el indicador (como el banner del casco, BannerTrabajaProtegido: un toque en
+// cualquier parte lleva a Tornillería); al pasar el mouse la raya roja se alarga y el botón sube con su sombra (mismos
+// efectos que el casco); con el BANNER de 560px o menos
 // el tornillo queda al lado y el texto a la escala del banner del casco (el prototipo subía la ilustración con la
 // PANTALLA ≤560px), sin window.__demo ni el texto de ayuda de arriba.
 
@@ -28,6 +29,12 @@ type Props = {
 
 type Ease = (x: number) => number;
 const clamp = (x: number) => Math.max(0, Math.min(1, x));
+
+/** "Tornillos, tuercas, anclajes y fijaciones." → "tornillos, tuercas, anclajes y fijaciones" (para el aria-label). */
+function enFrase(texto: string) {
+  const sinPunto = texto.trim().replace(/.$/, "");
+  return sinPunto.charAt(0).toLowerCase() + sinPunto.slice(1);
+}
 const seg = (t: number, s: number, d: number, e: Ease) => e(clamp((t - s) / d));
 const cubicOut: Ease = (x) => 1 - Math.pow(1 - x, 3);
 const cubicInOut: Ease = (x) => (x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2);
@@ -88,7 +95,7 @@ export default function BannerTornilleria({
   textoBoton = "Ver tornillería",
   href = "#tornilleria",
 }: Props) {
-  const bannerRef = useRef<HTMLElement>(null);
+  const bannerRef = useRef<HTMLAnchorElement>(null);
   const screwRef = useRef<SVGGElement>(null);
   const sideRef = useRef<SVGGElement>(null);
   const frontRef = useRef<SVGGElement>(null);
@@ -123,17 +130,10 @@ export default function BannerTornilleria({
       dir = -1;
     }
     const finePointer = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
-    const onClick = (e: MouseEvent) => {
-      if (!finePointer && !(e.target as Element).closest(`.${styles.btn}`)) {
-        if (on) turnOff();
-        else turnOn();
-      }
-    };
     banner.addEventListener("mouseenter", turnOn);
     banner.addEventListener("mouseleave", turnOff);
     banner.addEventListener("focusin", turnOn);
     banner.addEventListener("focusout", turnOff);
-    banner.addEventListener("click", onClick);
     // Teléfono: además, el toque que DESPLAZA la página con el dedo sobre el banner lo anima, y vuelve a reposo al
     // salir de la pantalla o cuando otra tarjeta animada toma el turno (como las tarjetas de categoría y el casco).
     const quitarTactil = finePointer ? null : animarAlDesplazar(banner, turnOn, turnOff);
@@ -173,7 +173,6 @@ export default function BannerTornilleria({
       banner.removeEventListener("mouseleave", turnOff);
       banner.removeEventListener("focusin", turnOn);
       banner.removeEventListener("focusout", turnOff);
-      banner.removeEventListener("click", onClick);
       quitarTactil?.();
       banner.style.removeProperty("--f");
     };
@@ -181,12 +180,17 @@ export default function BannerTornilleria({
 
   return (
     <div className={styles.contenedor}>
-      <section ref={bannerRef} className={`${styles.banner} ${plexMono.variable}`} aria-label={titulo}>
+      <Link
+        ref={bannerRef}
+        href={href}
+        aria-label={`${titulo}: ${enFrase(descripcion)}`}
+        className={`${styles.banner} ${plexMono.variable}`}
+      >
         <div className={styles.copy}>
           <div className={styles.rule} />
           <h2>{titulo}</h2>
           <p>{descripcion}</p>
-          <Link className={styles.btn} href={href}>
+          <span className={styles.btn}>
             {textoBoton}
             <svg viewBox="0 0 16 16" aria-hidden="true">
               <path
@@ -198,7 +202,7 @@ export default function BannerTornilleria({
                 strokeLinejoin="round"
               />
             </svg>
-          </Link>
+          </span>
         </div>
 
         <div className={styles.art} aria-hidden="true">
@@ -284,7 +288,7 @@ export default function BannerTornilleria({
             </g>
           </svg>
         </div>
-      </section>
+      </Link>
     </div>
   );
 }

@@ -40,6 +40,9 @@
   border-radius: 14px;
   overflow: hidden;
   color: var(--navy);
+  /* Todo el banner es un enlace (como el del casco). */
+  text-decoration: none;
+  outline: none;
   background:
     linear-gradient(var(--grid) 1px, transparent 1px) 0 0 / 32px 32px,
     linear-gradient(90deg, var(--grid) 1px, transparent 1px) 0 0 / 32px 32px,
@@ -66,11 +69,16 @@
   z-index: 2;
   min-width: 0;
 }
+.banner:focus-visible {
+  outline: 2px solid var(--signal);
+  outline-offset: 3px;
+}
 .rule {
   width: 46px;
   height: 4px;
   background: var(--signal);
   border-radius: 2px;
+  transition: width 0.3s ease;
 }
 .copy h2 {
   margin: 4px 0 0;
@@ -105,23 +113,18 @@
     transform 0.2s ease,
     box-shadow 0.2s ease;
 }
-.btn:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 8px 18px -10px rgba(15, 42, 74, 0.7);
-}
-.btn:focus-visible {
-  outline: 2px solid var(--signal);
-  outline-offset: 3px;
-}
 .btn svg {
   width: 14px;
   height: 14px;
   transition: transform 0.3s ease;
 }
 
-/* Efectos del banner de Tornillería anterior (BannerInicio), que se mantienen: al pasar el mouse por el banner, el
-   botón sube 2px con la sombra de botón y la flecha avanza. */
+/* Al pasar el mouse por el banner (los mismos efectos que el del casco): la raya roja se alarga, el botón sube 2px con
+   la sombra de botón y la flecha avanza. El banner se levanta desde BannersPromocionales. */
 @media (hover: hover) {
+  .banner:hover .rule {
+    width: 64px;
+  }
   .banner:hover .btn {
     box-shadow: var(--shadow-boton-hover);
   }
@@ -174,6 +177,11 @@
   }
   .rule {
     width: 40px;
+  }
+  @media (hover: hover) {
+    .banner:hover .rule {
+      width: 56px;
+    }
   }
   .copy h2 {
     margin: 2px 0 0;
