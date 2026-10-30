@@ -4,13 +4,14 @@ import CategoryCardPlomeria from "@/components/tarjetas-categoria/CategoryCardPl
 import CategoryCardJardin from "@/components/tarjetas-categoria/CategoryCardJardin";
 import CategoryCardVehiculos from "@/components/tarjetas-categoria/CategoryCardVehiculos";
 import CategoryCardSeguridad from "@/components/tarjetas-categoria/CategoryCardSeguridad";
+import CategoryCardTornilleria from "@/components/tarjetas-categoria/CategoryCardTornilleria";
 import BannerTornilleria from "@/components/inicio/BannerTornilleria";
 import BannerTrabajaProtegido from "@/components/inicio/BannerTrabajaProtegido";
 import { plexMono } from "@/components/tarjetas-categoria/fuentes";
 import styles from "./demo.module.css";
 
 // Página de prueba TEMPORAL (sin enlaces desde la tienda): muestra las tarjetas de categoría igual que sus prototipos
-// (tarjeta-electricidad-linea.html, tarjeta-plomeria-linea.html, tarjeta-jardin-linea.html, tarjeta-vehiculos-linea.html, tarjeta-seguridad-industrial.html) y los banners del casco (banner-trabaja-protegido.html) y de tornillería (banner-tornilleria.html, sobre su fondo claro), a 620px como sus prototipos, para compararlos. Pantalla completa (ver
+// (tarjeta-electricidad-linea.html, tarjeta-plomeria-linea.html, tarjeta-jardin-linea.html, tarjeta-vehiculos-linea.html, tarjeta-seguridad-industrial.html, tarjeta-tornilleria-vertical.html) y los banners del casco (banner-trabaja-protegido.html) y de tornillería (banner-tornilleria.html, sobre su fondo claro), a 620px como sus prototipos, para compararlos. Pantalla completa (ver
 // components/layout/pantallaCompleta.ts).
 
 export const metadata: Metadata = { title: "Tarjetas de categoría El Pico", robots: { index: false } };
@@ -28,6 +29,7 @@ export default function PaginaDemoTarjeta() {
           <CategoryCardJardin />
           <CategoryCardVehiculos />
           <CategoryCardSeguridad />
+          <CategoryCardTornilleria />
         </div>
         <div className={styles.banner}>
           <BannerTrabajaProtegido />

@@ -4,6 +4,7 @@ import CategoryCardElectricidad from "@/components/tarjetas-categoria/CategoryCa
 import CategoryCardJardin from "@/components/tarjetas-categoria/CategoryCardJardin";
 import CategoryCardPlomeria from "@/components/tarjetas-categoria/CategoryCardPlomeria";
 import CategoryCardSeguridad from "@/components/tarjetas-categoria/CategoryCardSeguridad";
+import CategoryCardTornilleria from "@/components/tarjetas-categoria/CategoryCardTornilleria";
 import CategoryCardVehiculos from "@/components/tarjetas-categoria/CategoryCardVehiculos";
 import { categorias } from "@/lib/categorias";
 import type { ComponenteIcono } from "@/types/icono";
@@ -78,6 +79,7 @@ export const bannersPorCategoria: Record<string, Variantes> = {
         </div>
       );
     },
+    vertical: tarjeta("tornilleria", CategoryCardTornilleria),
   },
   "seguridad-industrial": {
     horizontal: function Seguridad() {
