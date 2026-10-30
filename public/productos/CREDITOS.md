@@ -19,6 +19,8 @@ Fotos que pasó persona B para PROBAR los grupos de medidas (`lib/agrupaciones.t
 
 Fotos oficiales del empaque que pasó persona B (fondo transparente pasado a blanco, envase completo con margen, 1080×1080), en `pineco/`. Cada una va SOLO en el producto de su línea y tamaño (`FOTOS_SAINT` en `lib/agrupaciones.ts`).
 
+**Tamaños (2026-10-30):** cada archivo lleva el tamaño de la lata en el nombre: `-cuarto` (pequeña, 1/4), `-gal` (mediana, galón), `-tobo` (grande, tobo). Ej.: `PINECO014-gal.webp`, `PINECO016-tobo.webp`, `PINECO020-cuarto.webp`; el hidroesmalte 1/4 usa `PINECO011-cuarto.webp`.
+
 | Archivo (en `pineco/`) | Producto |
 |---|---|
 | PINECO014.webp | PINECO ESMALTE 2 EN 1 ACRILICO DTM GALON (empaque "DTM Esmalte + Anticorrosivo", 3,785 L) |
@@ -33,7 +35,7 @@ Fotos oficiales del empaque que pasó persona B (fondo transparente pasado a bla
 
 ## Pinturas Montana y Collet (2026-10-28, persona B)
 
-Fotos oficiales del empaque que pasó persona B (fondo pasado a blanco, envase completo con margen, 1080×1080). Van por NOMBRE del producto (`fotoPorNombre` en `lib/agrupaciones.ts`).
+Fotos oficiales del empaque que pasó persona B (fondo pasado a blanco, envase completo con margen, 1080×1080). Van por NOMBRE del producto (`fotoPorNombre` en `lib/agrupaciones.ts`). **Tamaños (2026-10-30):** las de Montana se guardan en tres versiones, `<nombre>-cuarto.webp` / `-gal.webp` / `-tobo.webp` (lata pequeña, mediana y grande); en la tabla va el nombre sin el tamaño.
 
 | Archivo | Producto |
 |---|---|

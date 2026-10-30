@@ -163,12 +163,12 @@ describe("agrupar", () => {
 
   it("pinturas Montana por nombre: Montafix en todos por acabado; las demás en galón y tobo, no en 1/4", () => {
     const f = (nombre: string) => fotoPorNombre(nombre, "MONTANA");
-    expect(f("BASE MONTAFIX 1/4 GAL")).toBe("/productos/montana/montafix-brillante.webp");
-    expect(f("MONTAFIX SATINADO BLANCO GALON")).toBe("/productos/montana/montafix-satinado.webp");
-    expect(f("ABC CAUCHO BLANCO GALON")).toBe("/productos/montana/abc-mate.webp");
-    expect(f("ABC CAUCHO BLANCO TOBO 4 GAL")).toBe("/productos/montana/abc-mate.webp");
-    expect(f("AV-2000 BRILLO SEDA BLANCO TOBO")).toBe("/productos/montana/av2000-brillo-de-seda.webp");
-    expect(f("DEKORAL BLANCO EN TOBO 4 GAL")).toBe("/productos/montana/dekoral-mate.webp");
+    expect(f("BASE MONTAFIX 1/4 GAL")).toBe("/productos/montana/montafix-brillante-cuarto.webp");
+    expect(f("MONTAFIX SATINADO BLANCO GALON")).toBe("/productos/montana/montafix-satinado-gal.webp");
+    expect(f("ABC CAUCHO BLANCO GALON")).toBe("/productos/montana/abc-mate-gal.webp");
+    expect(f("ABC CAUCHO BLANCO TOBO 4 GAL")).toBe("/productos/montana/abc-mate-tobo.webp");
+    expect(f("AV-2000 BRILLO SEDA BLANCO TOBO")).toBe("/productos/montana/av2000-brillo-de-seda-tobo.webp");
+    expect(f("DEKORAL BLANCO EN TOBO 4 GAL")).toBe("/productos/montana/dekoral-mate-tobo.webp");
     expect(f("MONTANA EPOMON MASILLA 1/4 GALON")).toBeUndefined();
     expect(f("COLORANTE AMARILLO LFY 1791")).toBeUndefined();
     expect(fotoPorNombre("ABC CAUCHO BLANCO GALON", "PINECO")).toBeUndefined();
@@ -212,9 +212,9 @@ describe("agrupar", () => {
       p("PINECO010", "PINECO PRESTIGE GOLD CLASE A MATE GALON", 50, "PINECO"),
     ]).productos;
     const foto = (id: string) => pinturas.find((x) => x.id === id)!.imagen;
-    expect(foto("PINECO015")).toBe("/productos/pineco/PINECO015.webp");
-    expect(foto("PINECO016")).toBe("/productos/pineco/PINECO016.webp");
-    expect(foto("PINECO019")).toBe("/productos/pineco/PINECO011.webp");
+    expect(foto("PINECO015")).toBe("/productos/pineco/PINECO015-gal.webp");
+    expect(foto("PINECO016")).toBe("/productos/pineco/PINECO016-tobo.webp");
+    expect(foto("PINECO019")).toBe("/productos/pineco/PINECO011-cuarto.webp");
     expect(foto("PINECO010")).toBeNull();
   });
 });

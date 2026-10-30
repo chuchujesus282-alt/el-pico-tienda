@@ -20,24 +20,25 @@ const FOTO_DADO_LARGO_ESTRIA_STANLEY = "/productos/grupos/dado-largo-estria-stan
 /** Fotos sueltas por código de Saint (public/productos/{codigo}.webp). */
 export const FOTOS_SAINT: Record<string, string> = {
   "3M0015": "/productos/3M0015.webp", // mopa de pulir azul doble cara 8" 3M
-  // Pinturas Pineco: fotos oficiales del empaque, una por producto y tamaño (galón o tobo). Los de 1/4 de galón, el
-  // Prestige Gold, el Prestige mate en tobo y el Cerami-K siguen sin foto: no llegó la de su empaque.
-  PINECO014: "/productos/pineco/PINECO014.webp", // esmalte 2 en 1 acrílico DTM, galón
-  PINECO015: "/productos/pineco/PINECO015.webp", // Pípol clase B, galón
-  PINECO016: "/productos/pineco/PINECO016.webp", // Pípol clase B, tobo (4 galones)
-  PINECO011: "/productos/pineco/PINECO011.webp", // hidroesmalte Prestige clase A, galón
-  PINECO002: "/productos/pineco/PINECO002.webp", // Prestige clase A mate, galón
-  PINECO003: "/productos/pineco/PINECO003.webp", // Prestige clase A satinado, galón
-  PINECO001: "/productos/pineco/PINECO001.webp", // Prestige clase A mate, tobo (4 galones)
-  PINECO020: "/productos/pineco/PINECO020.webp", // esmalte 2 en 1 acrílico DTM, 1/4 de galón
-  PINECO021: "/productos/pineco/PINECO021.webp", // Cerami-K brillante, 1/4 de galón
-  PINECO019: "/productos/pineco/PINECO011.webp", // hidroesmalte 1/4 de galón: la foto del galón (pedido de persona B)
+  // Pinturas Pineco: fotos oficiales del empaque, una por producto. Mismos tamaños que Collet (pedido de persona B):
+  // lata pequeña en 1/4 ("-cuarto"), mediana en galón ("-gal"), grande en tobo ("-tobo"). Prestige Gold, sin foto.
+  PINECO014: "/productos/pineco/PINECO014-gal.webp", // esmalte 2 en 1 acrílico DTM, galón
+  PINECO015: "/productos/pineco/PINECO015-gal.webp", // Pípol clase B, galón
+  PINECO016: "/productos/pineco/PINECO016-tobo.webp", // Pípol clase B, tobo (4 galones)
+  PINECO011: "/productos/pineco/PINECO011-gal.webp", // hidroesmalte Prestige clase A, galón
+  PINECO002: "/productos/pineco/PINECO002-gal.webp", // Prestige clase A mate, galón
+  PINECO003: "/productos/pineco/PINECO003-gal.webp", // Prestige clase A satinado, galón
+  PINECO001: "/productos/pineco/PINECO001-tobo.webp", // Prestige clase A mate, tobo (4 galones)
+  PINECO020: "/productos/pineco/PINECO020-cuarto.webp", // esmalte 2 en 1 acrílico DTM, 1/4 de galón
+  PINECO021: "/productos/pineco/PINECO021-cuarto.webp", // Cerami-K brillante, 1/4 de galón
+  PINECO019: "/productos/pineco/PINECO011-cuarto.webp", // hidroesmalte 1/4: la foto del galón, en pequeño (pedido de persona B)
 };
 
 /**
  * Fotos de pinturas Montana por su NOMBRE (en Saint, "MONTANA" va solo en la marca): una por línea y acabado.
  * Montafix: en TODOS los que digan Montafix, por su acabado (sin acabado, la brillante), pedido de persona B. Las demás
  * líneas (ABC, AV-2000, Dekoral): en el galón y en el tobo/paila/cuñete (la misma foto); el 1/4 de galón no.
+ * Mismos tamaños que Collet (pedido de persona B): la lata pequeña en 1/4, mediana en galón y grande en tobo.
  */
 const M = "/productos/montana/";
 export function fotoPorNombre(nombre: string, marca: string | null): string | undefined {
@@ -45,18 +46,26 @@ export function fotoPorNombre(nombre: string, marca: string | null): string | un
   if (/COLLET/i.test(marca ?? "") || /COLLET/.test(n)) return fotoCollet(n);
   if (/MANPICA/i.test(marca ?? "") || /MANPICA/.test(n)) return fotoManpica(n);
   if (!/MONTANA/i.test(marca ?? "") && !/MONTANA/.test(n)) return undefined;
-  if (/MONTAFIX/.test(n)) return `${M}${/SATINAD/.test(n) ? "montafix-satinado" : /\bMATE\b/.test(n) ? "montafix-mate" : "montafix-brillante"}.webp`;
-  // Galón, y también tobo/paila/cuñete con la misma foto del galón (pedido de persona B: en la foto no se nota). El 1/4 no.
-  if (/1\/4/.test(n) || !/\bGAL|TOBO|PAILA|CU[NÑ]ETE/.test(n)) return undefined;
-  if (/\bABC\b/.test(n)) return `${M}abc-mate.webp`;
-  if (/DEKORAL/.test(n)) return `${M}${/SATINAD/.test(n) ? "dekoral-satinado" : "dekoral-mate"}.webp`;
+  const linea = lineaMontana(n);
+  if (!linea) return undefined;
+  const tam = /1\/4/.test(n) ? "cuarto" : /TOBO|CU[NÑ]ETE|PAILA|\bCNTE\b|\b[45] ?GAL/.test(n) ? "tobo" : "gal";
+  return `${M}${linea}-${tam}.webp`;
+}
+
+/** La lata Montana que le toca a un nombre (sin el tamaño), o null si no tiene foto. */
+function lineaMontana(n: string): string | null {
+  if (/MONTAFIX/.test(n)) return /SATINAD/.test(n) ? "montafix-satinado" : /\bMATE\b/.test(n) ? "montafix-mate" : "montafix-brillante";
+  // Galón, y también tobo/paila/cuñete (pedido de persona B: en la foto no se nota). El 1/4 no.
+  if (/1\/4/.test(n) || !/\bGAL|TOBO|PAILA|CU[NÑ]ETE/.test(n)) return null;
+  if (/\bABC\b/.test(n)) return "abc-mate";
+  if (/DEKORAL/.test(n)) return /SATINAD/.test(n) ? "dekoral-satinado" : "dekoral-mate";
   if (/AV-? ?2000/.test(n)) {
-    if (/BIO/.test(n)) return `${M}av2000-bioprotecto.webp`;
-    if (/SEDA/.test(n)) return `${M}av2000-brillo-de-seda.webp`;
-    if (/\bEXT/.test(n)) return `${M}av2000-exterior-mate.webp`;
-    if (/\bINT/.test(n)) return `${M}av2000-interior-mate.webp`;
+    if (/BIO/.test(n)) return "av2000-bioprotecto";
+    if (/SEDA/.test(n)) return "av2000-brillo-de-seda";
+    if (/\bEXT/.test(n)) return "av2000-exterior-mate";
+    if (/\bINT/.test(n)) return "av2000-interior-mate";
   }
-  return undefined;
+  return null;
 }
 
 /**
