@@ -54,10 +54,10 @@ export default function ProductCard({ producto, prioritario = false, className =
         <h3 className="mt-1 line-clamp-2 text-[15px] leading-5 font-semibold text-pico-azul-oscuro transition-colors group-hover:text-pico-azul">
           {titulo}
         </h3>
-        {/* Casi del tamaño del nombre, en gris y negrita, para que se note también en el teléfono; ahí puede usar dos
+        {/* Casi del tamaño del nombre, en gris, para que se note también en el teléfono; ahí puede usar dos
             líneas ("Naranja intensidad / vinotinto"), desde 640px una con "…". */}
         {descripcion && (
-          <p className="mt-0.5 line-clamp-2 text-sm leading-[18px] font-semibold text-gris-texto sm:line-clamp-1">{descripcion}</p>
+          <p className="mt-0.5 line-clamp-2 text-sm leading-[18px] text-gris-texto sm:line-clamp-1">{descripcion}</p>
         )}
       </Link>
       {producto.variantes ? (

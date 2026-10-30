@@ -51,7 +51,7 @@ export default function CompraConVariantes({ variantes, seleccionInicial }: Prop
           <span className="ml-2 font-normal text-gris-texto">({variantes.length} disponibles)</span>
           {/* La descripción de Saint de la medida elegida (en las llaves Acesa, su referencia: "Ref. 01-755P-M-11"). */}
           {descripcionProducto(actual.producto) && (
-            <span className="mt-1 block text-base font-semibold text-gris-texto">{descripcionProducto(actual.producto)}</span>
+            <span className="mt-1 block text-base font-normal text-gris-texto">{descripcionProducto(actual.producto)}</span>
           )}
         </legend>
         {secciones.map((s) => (

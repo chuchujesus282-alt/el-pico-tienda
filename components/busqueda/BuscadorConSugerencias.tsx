@@ -182,7 +182,7 @@ export default function BuscadorConSugerencias({ className = "" }: { className?:
                   <span className="min-w-0 flex-1">
                     <span className="line-clamp-2 text-sm font-medium text-texto">{tituloProducto(producto)}</span>
                     {descripcionProducto(producto) && (
-                      <span className="block truncate text-[13px] font-semibold text-gris-texto">{descripcionProducto(producto)}</span>
+                      <span className="block truncate text-[13px] text-gris-texto">{descripcionProducto(producto)}</span>
                     )}
                   </span>
                   <Precio valor={producto.precio} tamano="pequeno" />
