@@ -54,7 +54,11 @@ export default function ProductCard({ producto, prioritario = false, className =
         <h3 className="mt-1 line-clamp-2 text-[15px] leading-5 font-semibold text-pico-azul-oscuro transition-colors group-hover:text-pico-azul">
           {titulo}
         </h3>
-        {descripcion && <p className="mt-0.5 truncate text-xs leading-4 text-gris-texto">{descripcion}</p>}
+        {/* Casi del tamaño del nombre y en otro tono, para que se note también en el teléfono; ahí puede usar dos
+            líneas ("Naranja intensidad / vinotinto"), desde 640px una con "…". */}
+        {descripcion && (
+          <p className="mt-0.5 line-clamp-2 text-sm leading-[18px] font-semibold text-pico-azul-medio sm:line-clamp-1">{descripcion}</p>
+        )}
       </Link>
       {producto.variantes ? (
         // Grupo de medidas (lib/agrupaciones.ts): "Desde" el más barato y se elige la medida en su página.

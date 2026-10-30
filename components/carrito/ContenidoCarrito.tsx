@@ -90,7 +90,7 @@ export default function ContenidoCarrito({ modo, alCerrar, claveCascada }: Props
                 <div className="min-w-0 flex-1">
                   <p className="line-clamp-2 text-sm leading-snug font-semibold text-texto">{tituloProducto(producto)}</p>
                   {descripcionProducto(producto) && (
-                    <p className="mt-0.5 truncate text-xs text-gris-texto">{descripcionProducto(producto)}</p>
+                    <p className="mt-0.5 line-clamp-2 text-[13px] leading-snug font-semibold text-pico-azul-medio">{descripcionProducto(producto)}</p>
                   )}
                   <p className="mt-0.5 text-xs text-gris-texto">Cód. {producto.id}</p>
                 </div>

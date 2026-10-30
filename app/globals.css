@@ -6,6 +6,9 @@
   --color-pico-azul: #0c2d4e;
   --color-pico-azul-oscuro: #071d33;
   --color-pico-azul-claro: #e7eef5;
+  /* Azul intermedio: la descripción de Saint bajo el nombre (el color de una pintura, "Ref. …"). Distinto del nombre
+     (azul marino) y del gris secundario; contraste ~7:1 sobre blanco. */
+  --color-pico-azul-medio: #2b5a8a;
   --color-pico-rojo: #c4161c;
   --color-pico-rojo-oscuro: #9e1117;
   --color-pico-blanco: #ffffff;

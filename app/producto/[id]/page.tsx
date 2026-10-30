@@ -106,7 +106,9 @@ export default async function PaginaProducto({ params, searchParams }: PageProps
               <h1 className="font-titulo text-[1.75rem] leading-tight font-bold text-logo-marino md:text-4xl">{titulo}</h1>
               {/* Descripción de Saint (el color, el modelo o "Ref. …"), completa. En un grupo de medidas va la de la
                   medida elegida, en CompraConVariantes. */}
-              {descripcion && <p className="-mt-1 text-base text-gris-texto">{descripcion}</p>}
+              {descripcion && (
+                <p className="-mt-1 font-titulo text-xl leading-snug font-semibold text-pico-azul-medio md:text-2xl">{descripcion}</p>
+              )}
               <EstrellasProducto productoId={producto.id} opiniones={opiniones} />
             </div>
 
