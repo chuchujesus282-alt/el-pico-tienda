@@ -1,5 +1,6 @@
 import type { Producto } from "@/types/catalogo";
 import { clasificarGenerico, GRUPOS_GENERICOS, ORDEN_SECCIONES } from "@/lib/agrupacionesGenericas";
+import { fotoGenerica } from "@/lib/fotosGenericas";
 
 // Agrupación de productos de Saint que son el MISMO producto en distintas medidas (llave combinada Acesa 8 mm, 10 mm…;
 // dados por marca y tipo). En la lista de la categoría cada grupo sale como UNA tarjeta ("Desde $X") y en su página se
@@ -362,7 +363,8 @@ export function agrupar(lista: Producto[]): {
   const productos = lista.map((p) => {
     const reemplazo = reemplazos.get(p.id);
     if (reemplazo) return reemplazo;
-    const foto = FOTOS_SAINT[p.id] ?? fotoPorNombre(p.nombre, p.marca);
+    // Después de las fotos por código y por nombre, la de referencia de los GENERICO por su tipo (lib/fotosGenericas.ts).
+    const foto = FOTOS_SAINT[p.id] ?? fotoPorNombre(p.nombre, p.marca) ?? fotoGenerica(p.nombre, p.marca);
     return foto && !p.imagen ? { ...p, imagen: foto } : p;
   });
 
