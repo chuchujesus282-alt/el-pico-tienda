@@ -1,3 +1,4 @@
+import { descripcionLegible } from "@/lib/nombresSaint";
 import type { Producto } from "@/types/catalogo";
 
 const numeroVE = new Intl.NumberFormat("es-VE", {
@@ -73,4 +74,12 @@ export function tituloProducto({ nombre, marca, titulo }: Pick<Producto, "nombre
     formateadas.splice(posicion > 0 ? posicion : formateadas.length, 0, capitalizar(marca));
   }
   return formateadas.join(" ");
+}
+
+/**
+ * Descripción de Saint lista para mostrar bajo el nombre ("Amarillo primavera", "Ref. 01-755P-M-11"), o null si el
+ * producto no tiene (no dejes espacio). Regla en lib/nombresSaint.ts (descripcionLegible).
+ */
+export function descripcionProducto({ descripcion }: Pick<Producto, "descripcion">): string | null {
+  return descripcion ? descripcionLegible(descripcion) : null;
 }

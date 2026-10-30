@@ -16,7 +16,8 @@ const CODIGO_PRODUCTO = /^[A-Za-z0-9][A-Za-z0-9._/-]{0,29}$/;
 /** Lo que manda el navegador (lo mismo que va en el mensaje de WhatsApp). */
 export type EnvioPedido = {
   id: string; // UUID generado en el navegador: un doble toque no duplica el pedido
-  items: { id: string; nombre: string; cantidad: number; precio: number }[];
+  // descripcion: la de Saint (Descrip2) que vio el cliente; respaldo si Saint no responde al guardar.
+  items: { id: string; nombre: string; descripcion: string | null; cantidad: number; precio: number }[];
   retiro: FormaRetiro;
   direccion: Pick<Direccion, "nombre" | "descripcion" | "latitud" | "longitud"> | null;
   pago: MetodoPago;
@@ -49,7 +50,7 @@ export function limpiarEnvioPedido(crudo: unknown): EnvioPedido | null {
     if (!Number.isFinite(cantidad) || cantidad < 1 || cantidad > MAXIMO_CANTIDAD) continue;
     if (!Number.isFinite(precio) || precio < 0 || precio > MAXIMO_PRECIO) continue;
     vistos.add(codigo);
-    items.push({ id: codigo, nombre: texto(it.nombre, 200) || codigo, cantidad, precio });
+    items.push({ id: codigo, nombre: texto(it.nombre, 200) || codigo, descripcion: texto(it.descripcion, 120) || null, cantidad, precio });
   }
   if (items.length === 0) return null;
 
@@ -85,6 +86,8 @@ const redondear = (n: number) => Math.round(n * 100) / 100;
 export type ItemCalculado = {
   productoId: string;
   nombre: string;
+  /** La de Saint (Descrip2), como viene; null si no tiene. */
+  descripcion: string | null;
   cantidad: number;
   precioUsd: number;
   precioBs: number | null;
@@ -98,16 +101,17 @@ export type ItemCalculado = {
  */
 export function calcularPedido(
   envio: EnvioPedido,
-  catalogo: Map<string, Pick<Producto, "precio" | "nombre">> | null,
+  catalogo: Map<string, Pick<Producto, "precio" | "nombre" | "descripcion">> | null,
   tasa: number | null,
 ): { items: ItemCalculado[]; totalUsd: number; totalBs: number | null } {
   const conTasa = tasa !== null && Number.isFinite(tasa) && tasa > 0 ? tasa : null;
-  const items = envio.items.map(({ id, nombre, cantidad, precio }) => {
+  const items = envio.items.map(({ id, nombre, descripcion, cantidad, precio }) => {
     const producto = catalogo?.get(id);
     const precioUsd = redondear(producto ? producto.precio : precio);
     return {
       productoId: id,
       nombre: producto?.nombre ?? nombre,
+      descripcion: producto ? (producto.descripcion ?? null) : descripcion,
       cantidad,
       precioUsd,
       precioBs: conTasa ? redondear(precioUsd * conTasa) : null,

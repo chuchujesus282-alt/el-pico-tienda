@@ -51,7 +51,13 @@ function registrarPedido({ items, retiro, direccion, pago, combinados }: DatosPe
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         id,
-        items: items.map(({ producto, cantidad }) => ({ id: producto.id, nombre: producto.nombre, cantidad, precio: producto.precio })),
+        items: items.map(({ producto, cantidad }) => ({
+          id: producto.id,
+          nombre: producto.nombre,
+          descripcion: producto.descripcion ?? null,
+          cantidad,
+          precio: producto.precio,
+        })),
         retiro,
         direccion: direccion
           ? { nombre: direccion.nombre, descripcion: direccion.descripcion, latitud: direccion.latitud, longitud: direccion.longitud }
@@ -65,7 +71,7 @@ function registrarPedido({ items, retiro, direccion, pago, combinados }: DatosPe
   }
 }
 
-type PrecioAlDia = { precio: number; precioBs?: number; tasa?: number };
+type PrecioAlDia = { precio: number; precioBs?: number; tasa?: number; descripcion?: string | null };
 type RespuestaPrecios = { productos: ({ id: string } & PrecioAlDia)[]; retirados: string[]; sinVerificar: string[] };
 
 /** Si Saint no responde en este tiempo, se envía con los precios que tenía el cliente (nunca se frena una venta). */
@@ -92,12 +98,18 @@ async function pedirPrecios(ids: string[]): Promise<RespuestaPrecios> {
   }
 }
 
+// La descripción de Saint también se pone al día: un carrito armado antes de que existiera no la tenía. Para un
+// grupo de medidas se respeta la del producto si Saint no manda una (undefined).
 const conPrecio = (producto: Producto, p: PrecioAlDia): Producto => ({
   ...producto,
   precio: p.precio,
   ...(p.precioBs !== undefined ? { precioBs: p.precioBs } : {}),
   ...(p.tasa !== undefined ? { tasa: p.tasa } : {}),
+  ...(p.descripcion !== undefined ? { descripcion: p.descripcion } : {}),
 });
+/** ¿Hay algo que poner al día (precio o descripción)? */
+const difiere = (producto: Producto, p: PrecioAlDia) =>
+  p.precio !== producto.precio || (p.descripcion !== undefined && (p.descripcion ?? null) !== (producto.descripcion ?? null));
 
 /**
  * Precios al día de finalizar pedido: al abrir la página (y al cambiar los productos, al volver a la pestaña y cada
@@ -155,7 +167,8 @@ function usePreciosAlDia(items: DatosPedido["items"], conCarrito: boolean) {
       if (fuera.size > 0) setRetirados((antes) => new Set([...antes, ...fuera]));
 
       // Desde el carrito: el carrito mismo queda al día (y la cuenta, que lo copia).
-      if (conCarrito && (nuevosCambios.length > 0 || nuevosQuitados.length > 0)) {
+      const algoDifiere = [...precios].some(([id, p]) => vistos.has(id) && difiere(vistos.get(id)!, p));
+      if (conCarrito && (algoDifiere || nuevosQuitados.length > 0)) {
         guardarItems(
           obtenerItems()
             .filter((i) => !fuera.has(i.producto.id))
@@ -214,7 +227,7 @@ function usePreciosAlDia(items: DatosPedido["items"], conCarrito: boolean) {
         .filter((i) => !retirados.has(i.producto.id))
         .map((i) => {
           const p = alDia.get(i.producto.id);
-          return p && p.precio !== i.producto.precio ? { ...i, producto: conPrecio(i.producto, p) } : i;
+          return p && difiere(i.producto, p) ? { ...i, producto: conPrecio(i.producto, p) } : i;
         }),
     [items, alDia, retirados],
   );

@@ -4,7 +4,7 @@ import { createHash } from "node:crypto";
 import { unstable_cache } from "next/cache";
 import type { Producto } from "@/types/catalogo";
 import { CATEGORIAS_SAINT, codigoSaint } from "@/lib/categoriasSaint";
-import { nombreLegible } from "@/lib/nombresSaint";
+import { limpiarDescripcion, nombreLegible } from "@/lib/nombresSaint";
 import { agrupar, type Grupo } from "@/lib/agrupaciones";
 import { repartirPorCategoria } from "@/lib/repartirSaint";
 import { ancestros, armarArbol, type ArbolSaint } from "@/lib/arbolSaint";
@@ -48,7 +48,7 @@ const ESPERA_MAXIMA_MS = 20_000;
 /** Aviso en los registros si una categoría se acerca al límite de 2 MB de la caché de Next. */
 const AVISO_TAMANO = 1.5 * 1024 * 1024;
 /** Sube este número si cambia lo que se guarda en la caché compartida (así no se leen entradas con el formato viejo). */
-const VERSION_CACHE = "v1";
+const VERSION_CACHE = "v2"; // v2: la respuesta trae "descripcion" (Descrip2)
 
 export class ErrorSaint extends Error {
   constructor(mensaje: string) {
@@ -108,7 +108,8 @@ function convertir(slug: string, crudo: unknown): CategoriaSaint {
   /** Instancia exacta de cada producto en el árbol de Saint (su `codInstancia`). */
   const instanciaDe = new Map<string, number>();
   for (const fila of datos.productos) {
-    const { codigo, nombre, marca, codSubcategoria, subcategoria, codInstancia, precioBs, precioUsd } = (fila ?? {}) as Record<string, unknown>;
+    const { codigo, nombre, descripcion, marca, codSubcategoria, subcategoria, codInstancia, precioBs, precioUsd } = (fila ??
+      {}) as Record<string, unknown>;
     if (!esTexto(codigo) || !esTexto(nombre)) continue;
     const id = codigo.trim();
     const precio = numero(precioUsd);
@@ -120,10 +121,12 @@ function convertir(slug: string, crudo: unknown): CategoriaSaint {
     const marcaReal = esTexto(marca) && marca.trim() !== "S/M" ? marca.trim() : null;
     const nombreLimpio = nombre.trim().replace(/\s+/g, " ");
     const bs = numero(precioBs);
+    const detalle = limpiarDescripcion(descripcion, nombreLimpio, id);
     const producto: Producto = {
       id,
       nombre: nombreLimpio,
       titulo: nombreLegible(nombreLimpio, marcaReal),
+      ...(detalle ? { descripcion: detalle } : {}),
       marca: marcaReal,
       precio: redondear(precio),
       ...(Number.isFinite(bs) && bs > 0 ? { precioBs: redondear(bs) } : {}),
@@ -138,7 +141,7 @@ function convertir(slug: string, crudo: unknown): CategoriaSaint {
 
   // Medidas del mismo producto (llaves combinadas Acesa, dados…): un grupo con su foto (lib/agrupaciones.ts, persona B).
   const { productos, listado, grupos, grupoDe } = agrupar(crudos);
-  const clave = (p: Producto) => normalizar(`${p.id} ${p.nombre} ${p.titulo ?? ""} ${p.marca ?? ""}`);
+  const clave = (p: Producto) => normalizar(`${p.id} ${p.nombre} ${p.titulo ?? ""} ${p.marca ?? ""} ${p.descripcion ?? ""}`);
   const claves = productos.map(clave);
   const clavesListado = listado.map((p) =>
     grupos.has(p.id) ? [clave(p), ...grupos.get(p.id)!.variantes.map((v) => clave(v.producto))].join(" ") : clave(p),

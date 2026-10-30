@@ -291,6 +291,7 @@ export const pedidoItem = pgTable(
     posicion: integer("posicion").notNull(),
     productoId: text("producto_id").notNull(),
     nombre: text("nombre").notNull(), // como viene de Saint (el del mensaje de WhatsApp)
+    descripcion: text("descripcion"), // la de Saint (Descrip2) al pedir: el color o la referencia; null si no tenía
     cantidad: integer("cantidad").notNull(),
     precioUsd: numeric("precio_usd", { precision: 14, scale: 2, mode: "number" }).notNull(),
     precioBs: numeric("precio_bs", { precision: 18, scale: 2, mode: "number" }),

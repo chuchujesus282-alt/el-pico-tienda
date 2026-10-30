@@ -1,4 +1,5 @@
 import { formatearPrecio } from "@/lib/formato";
+import { descripcionParaMensaje } from "@/lib/nombresSaint";
 import { totalCarrito } from "@/lib/whatsapp";
 import type { ItemCarrito } from "@/types/carrito";
 import { textoDireccion } from "@/lib/direcciones";
@@ -40,9 +41,11 @@ const etiquetaPago = (valor: MetodoPago) => METODOS_PAGO.find((m) => m.valor ===
 
 /** Mensaje de WhatsApp con productos, forma de retiro (y dirección si aplica) y método de pago. */
 export function armarMensajeFinal({ items, retiro, direccion, pago, combinados, preciosPorConfirmar }: DatosPedido): string {
+  // La descripción de Saint (el color, el modelo o "Ref. …") va justo después del nombre: es lo que le dice al
+  // vendedor cuál de los productos con el mismo nombre pidió el cliente. Como viene de Saint, igual que el nombre.
   const lineas = items.map(
     ({ producto, cantidad }) =>
-      `• ${cantidad} x ${producto.nombre} (Cód. ${producto.id}) — ${formatearPrecio(producto.precio * cantidad)}`,
+      `• ${cantidad} x ${producto.nombre}${producto.descripcion ? ` — ${descripcionParaMensaje(producto.descripcion)}` : ""} (Cód. ${producto.id}) — ${formatearPrecio(producto.precio * cantidad)}`,
   );
 
   const entrega =

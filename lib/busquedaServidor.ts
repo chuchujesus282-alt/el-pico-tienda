@@ -21,7 +21,7 @@ const LARGO_MAXIMO_ID = 64;
 /** Solo lo que necesita la fila de una sugerencia (foto, nombre y precio; el enlace va por id). */
 export type ProductoSugerido = Pick<
   Producto,
-  "id" | "titulo" | "nombre" | "marca" | "precio" | "imagen" | "categoriaSlug" | "subcategoria"
+  "id" | "titulo" | "nombre" | "descripcion" | "marca" | "precio" | "imagen" | "categoriaSlug" | "subcategoria"
 >;
 
 export type RespuestaSugerencias = {
@@ -32,10 +32,11 @@ export type RespuestaSugerencias = {
   listo: boolean;
 };
 
-const paraSugerencia = ({ id, titulo, nombre, marca, precio, imagen, categoriaSlug, subcategoria }: Producto): ProductoSugerido => ({
+const paraSugerencia = ({ id, titulo, nombre, descripcion, marca, precio, imagen, categoriaSlug, subcategoria }: Producto): ProductoSugerido => ({
   id,
   titulo,
   nombre,
+  descripcion,
   marca,
   precio,
   imagen,
@@ -44,13 +45,14 @@ const paraSugerencia = ({ id, titulo, nombre, marca, precio, imagen, categoriaSl
 });
 
 /**
- * Lo que usa ProductCard ("Te puede interesar" y Favoritos). La descripción, cuando la base de datos la traiga, NO
- * viaja: con muchos productos haría la respuesta varias veces más pesada.
+ * Lo que usa ProductCard ("Te puede interesar" y Favoritos). La descripción de Saint sí viaja: es corta (40
+ * caracteres como mucho) y distingue productos con el mismo nombre (el color de una pintura).
  */
-export const paraTarjeta = ({ id, nombre, titulo, marca, precio, imagen, categoriaSlug, subcategoria, ventas }: Producto): Producto => ({
+export const paraTarjeta = ({ id, nombre, titulo, descripcion, marca, precio, imagen, categoriaSlug, subcategoria, ventas }: Producto): Producto => ({
   id,
   nombre,
   titulo,
+  descripcion,
   marca,
   precio,
   imagen,

@@ -17,7 +17,7 @@ import IconoZelle from "@/components/icons/pico/IconoZelle";
 import { RUTA_CALCULADORAS } from "@/components/calculadoras/rutas";
 import { useCarrito } from "@/components/carrito/ProveedorCarrito";
 import { useDirecciones } from "@/components/direcciones/almacenDirecciones";
-import { tituloProducto } from "@/lib/formato";
+import { descripcionProducto, tituloProducto } from "@/lib/formato";
 import ImagenProducto from "@/components/producto/ImagenProducto";
 import Precio from "@/components/ui/Precio";
 import PrecioAnimado from "@/components/ui/PrecioAnimado";
@@ -366,6 +366,9 @@ export default function FormularioPedido({ itemsDirectos }: Props) {
                   </span>
                   <div className="min-w-0 flex-1">
                     <p className="line-clamp-2 text-sm font-medium text-texto">{tituloProducto(producto)}</p>
+                    {descripcionProducto(producto) && (
+                      <p className="truncate text-[12px] text-gris-texto">{descripcionProducto(producto)}</p>
+                    )}
                     <p className="text-[12px] text-gris-texto">Cód. {producto.id}</p>
                   </div>
                   <Precio valor={producto.precio * cantidad} tamano="pequeno" tono="logo" className="shrink-0 font-titulo" />

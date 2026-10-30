@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import { ArrowRight, Search } from "lucide-react";
 import ImagenProducto from "@/components/producto/ImagenProducto";
 import Precio from "@/components/ui/Precio";
-import { tituloProducto } from "@/lib/formato";
+import { descripcionProducto, tituloProducto } from "@/lib/formato";
 import type { ProductoSugerido, RespuestaSugerencias } from "@/lib/busquedaServidor";
 
 const ESPERA_MS = 150; // debounce: se pregunta al servidor cuando el cliente deja de escribir
@@ -179,7 +179,12 @@ export default function BuscadorConSugerencias({ className = "" }: { className?:
                     sizes="40px"
                     className="size-10 shrink-0 rounded-boton border border-gris-borde"
                   />
-                  <span className="line-clamp-2 min-w-0 flex-1 text-sm font-medium text-texto">{tituloProducto(producto)}</span>
+                  <span className="min-w-0 flex-1">
+                    <span className="line-clamp-2 text-sm font-medium text-texto">{tituloProducto(producto)}</span>
+                    {descripcionProducto(producto) && (
+                      <span className="block truncate text-xs text-gris-texto">{descripcionProducto(producto)}</span>
+                    )}
+                  </span>
                   <Precio valor={producto.precio} tamano="pequeno" />
                 </Link>
               </li>

@@ -3,6 +3,7 @@
 import { useState } from "react";
 import BotonFavorito from "@/components/favoritos/BotonFavorito";
 import type { Variante } from "@/lib/agrupaciones";
+import { descripcionProducto } from "@/lib/formato";
 import AccionesCompra from "./AccionesCompra";
 import BloquePrecio from "./BloquePrecio";
 import CodigoCompartir from "./CodigoCompartir";
@@ -48,6 +49,10 @@ export default function CompraConVariantes({ variantes, seleccionInicial }: Prop
         <legend className="mb-3 text-sm font-semibold text-logo-marino">
           Medida: <span className="font-titulo text-base font-bold">{actual.etiqueta}</span>
           <span className="ml-2 font-normal text-gris-texto">({variantes.length} disponibles)</span>
+          {/* La descripción de Saint de la medida elegida (en las llaves Acesa, su referencia: "Ref. 01-755P-M-11"). */}
+          {descripcionProducto(actual.producto) && (
+            <span className="mt-1 block font-normal text-gris-texto">{descripcionProducto(actual.producto)}</span>
+          )}
         </legend>
         {secciones.map((s) => (
           <div key={s.titulo ?? "todas"} role="radiogroup" aria-label={s.titulo ?? "Medidas"}>

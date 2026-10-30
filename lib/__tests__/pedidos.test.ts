@@ -61,7 +61,7 @@ describe("limpiarEnvioPedido", () => {
       pago: "combinado",
       combinados: ["divisas", "zelle", "zelle", "combinado", "otro"],
     });
-    expect(limpio?.items).toEqual([{ id: "A1", nombre: "X", cantidad: 2, precio: 1 }]);
+    expect(limpio?.items).toEqual([{ id: "A1", nombre: "X", descripcion: null, cantidad: 2, precio: 1 }]);
     expect(limpio?.direccion).toBeNull(); // con pick-up no se guarda dirección
     expect(limpio?.combinados).toEqual(["divisas", "zelle"]);
   });

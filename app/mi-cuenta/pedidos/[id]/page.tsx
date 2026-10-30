@@ -8,7 +8,7 @@ import Precio from "@/components/ui/Precio";
 import TituloPagina from "@/components/ui/TituloPagina";
 import { haySesion, miPedido } from "@/lib/cuenta";
 import { enlaceMapa } from "@/lib/direcciones";
-import { formatearBs, formatearFecha, tituloProducto } from "@/lib/formato";
+import { descripcionProducto, formatearBs, formatearFecha, tituloProducto } from "@/lib/formato";
 import { productosDeHoy } from "@/lib/pedidos/servidor";
 
 // Detalle de un pedido de la cuenta — responsable: persona A (fase 5). Solo el dueño lo ve (si no, 404).
@@ -54,10 +54,13 @@ export default async function PaginaPedido({ params }: PageProps<"/mi-cuenta/ped
           <ul className="divide-y divide-gris-borde">
             {pedido.items.map((i) => {
               const hoy = porId.get(i.productoId);
+              // La que se guardó al pedir (el color o la referencia que eligió); en pedidos de antes, la de hoy.
+              const descripcion = descripcionProducto({ descripcion: i.descripcion ?? hoy?.descripcion });
               return (
                 <li key={i.productoId} className="flex items-start justify-between gap-4 py-3">
                   <span className="min-w-0">
                     <span className="block font-medium text-texto">{hoy ? tituloProducto(hoy) : i.nombre}</span>
+                    {descripcion && <span className="block text-[13px] text-gris-texto">{descripcion}</span>}
                     <span className="block text-[13px] text-gris-texto">
                       Cód. {i.productoId} · {i.cantidad} × <Precio valor={i.precioUsd} tamano="pequeno" className="inline" />
                       {!hoy && " · ya no está en la tienda"}

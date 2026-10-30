@@ -40,19 +40,20 @@ function mapaDe(productos: Producto[]): Map<string, Producto> {
 
 /**
  * Precio ACTUAL de Saint de cada producto del pedido (&codigos=, sin caché; casi siempre reutiliza la consulta que hizo
- * finalizar pedido segundos antes). El nombre sale de la lista guardada. Lo que no se pudo consultar no va en el mapa:
- * calcularPedido usa el precio del navegador y lo marca `precioVerificado: false`.
+ * finalizar pedido segundos antes), con su descripción de hoy. El nombre sale de la lista guardada. Lo que no se pudo
+ * consultar no va en el mapa: calcularPedido usa el precio y la descripción del navegador y lo marca
+ * `precioVerificado: false`.
  */
-async function preciosDelPedido(envio: EnvioPedido): Promise<Map<string, Pick<Producto, "precio" | "nombre">>> {
+async function preciosDelPedido(envio: EnvioPedido): Promise<Map<string, Pick<Producto, "precio" | "nombre" | "descripcion">>> {
   const [{ precios }, indice] = await Promise.all([
     preciosAlDia(envio.items.map((i) => i.id)),
     getIndiceConEstado().catch(() => null),
   ]);
   const catalogo = indice ? mapaDe(indice.productos) : null;
-  const mapa = new Map<string, Pick<Producto, "precio" | "nombre">>();
+  const mapa = new Map<string, Pick<Producto, "precio" | "nombre" | "descripcion">>();
   for (const { id, nombre } of envio.items) {
     const alDia = precios.get(id);
-    if (alDia) mapa.set(id, { precio: alDia.precio, nombre: catalogo?.get(id)?.nombre ?? nombre });
+    if (alDia) mapa.set(id, { precio: alDia.precio, nombre: catalogo?.get(id)?.nombre ?? nombre, descripcion: alDia.descripcion });
   }
   return mapa;
 }
@@ -70,6 +71,7 @@ export async function guardarPedido(userId: string, envio: EnvioPedido): Promise
     posicion,
     producto_id: i.productoId,
     nombre: i.nombre,
+    descripcion: i.descripcion,
     cantidad: i.cantidad,
     precio_usd: i.precioUsd,
     precio_bs: i.precioBs,
@@ -86,11 +88,11 @@ export async function guardarPedido(userId: string, envio: EnvioPedido): Promise
       on conflict (id) do nothing
       returning id
     ), productos as (
-      insert into pedido_item (pedido_id, posicion, producto_id, nombre, cantidad, precio_usd, precio_bs, precio_verificado)
-      select n.id, i.posicion, i.producto_id, i.nombre, i.cantidad, i.precio_usd, i.precio_bs, i.precio_verificado
+      insert into pedido_item (pedido_id, posicion, producto_id, nombre, descripcion, cantidad, precio_usd, precio_bs, precio_verificado)
+      select n.id, i.posicion, i.producto_id, i.nombre, i.descripcion, i.cantidad, i.precio_usd, i.precio_bs, i.precio_verificado
       from nuevo n cross join jsonb_to_recordset(${JSON.stringify(filas)}::jsonb) as i(
-        posicion integer, producto_id text, nombre text, cantidad integer, precio_usd numeric, precio_bs numeric,
-        precio_verificado boolean)
+        posicion integer, producto_id text, nombre text, descripcion text, cantidad integer, precio_usd numeric,
+        precio_bs numeric, precio_verificado boolean)
       returning 1
     )
     select count(*)::int as guardado from nuevo`);
@@ -153,6 +155,8 @@ export type DetallePedido = {
   items: {
     productoId: string;
     nombre: string;
+    /** La de Saint al pedir (null en pedidos anteriores al 2026-10-30 o si no tenía). */
+    descripcion: string | null;
     cantidad: number;
     precioUsd: number;
     precioBs: number | null;
@@ -172,6 +176,7 @@ export async function leerPedido(userId: string, id: string): Promise<DetallePed
     .select({
       productoId: pedidoItem.productoId,
       nombre: pedidoItem.nombre,
+      descripcion: pedidoItem.descripcion,
       cantidad: pedidoItem.cantidad,
       precioUsd: pedidoItem.precioUsd,
       precioBs: pedidoItem.precioBs,

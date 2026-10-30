@@ -139,3 +139,45 @@ export function nombreLegible(nombre: string, marca?: string | null): string {
   if (largoMarca === 0) resultado[0] = resultado[0].charAt(0).toUpperCase() + resultado[0].slice(1);
   return resultado.join(" ");
 }
+
+// --- Descripción de Saint (Descrip2) ---
+// Muchas veces es lo que distingue productos con el mismo nombre (el color de una pintura: "AMARILLO PRIMAVERA"),
+// otras una referencia del fabricante ("01-755P-M-11") y muchas viene vacía. Regla automática para todo producto:
+// - Se guarda como viene, con los espacios juntos; no se guarda si está vacía o es igual al nombre o al código.
+// - En la tienda: si parece una referencia (sin espacios, con números y no es una medida como 2" o 10mm), "Ref. …";
+//   si no, el mismo formato que los nombres, y el separador "//" de Saint se muestra como "·".
+// - En el mensaje de WhatsApp: como viene (con "//"), con "Ref." si es una referencia.
+
+/** Una medida sola (2", 1/2", 1-1/2", 10mm, 4.5kg): no es una referencia aunque no tenga espacios. */
+const MEDIDA_SOLA =
+  /^(?:\d+(?:[.,]\d+)?|\d+\/\d+|\d+-\d+\/\d+)(?:"|''|mm|cm|m|mt|mts|pulg|lb|lbs|kg|g|gr|grs|gal|l|lt|lts|ml|oz|v|w|a|hp)$/i;
+
+/** Descripción de Saint limpia, o null si no aporta (vacía, igual al nombre o igual al código del producto). */
+export function limpiarDescripcion(descripcion: unknown, nombre: string, codigo: string): string | null {
+  if (typeof descripcion !== "string") return null;
+  const limpia = descripcion.trim().replace(/\s+/g, " ");
+  if (!limpia) return null;
+  const comparar = (texto: string) => texto.trim().replace(/\s+/g, " ").toUpperCase();
+  if (comparar(limpia) === comparar(nombre) || comparar(limpia) === comparar(codigo)) return null;
+  return limpia;
+}
+
+/** "01-755P-M-11", "05708" → true; "AMARILLO PRIMAVERA", '2"', "MADERA" → false. */
+export function esReferencia(descripcion: string): boolean {
+  return !/\s/.test(descripcion) && /\d/.test(descripcion) && !MEDIDA_SOLA.test(descripcion);
+}
+
+/** Para la tienda: "Ref. 01-755P-M-11", "Amarillo primavera", "Sin terminal · Para tierra". */
+export function descripcionLegible(descripcion: string): string {
+  if (esReferencia(descripcion)) return `Ref. ${descripcion}`;
+  return descripcion
+    .split(/\s*\/\/\s*/)
+    .map((parte) => nombreLegible(parte))
+    .filter(Boolean)
+    .join(" · ");
+}
+
+/** Para el mensaje de WhatsApp: como viene de Saint (el vendedor la reconoce así), con "Ref." si es una referencia. */
+export function descripcionParaMensaje(descripcion: string): string {
+  return esReferencia(descripcion) ? `Ref. ${descripcion}` : descripcion;
+}

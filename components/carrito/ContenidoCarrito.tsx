@@ -6,7 +6,7 @@ import { RUTA_CALCULADORAS } from "@/components/calculadoras/rutas";
 import Boton from "@/components/ui/Boton";
 import Precio from "@/components/ui/Precio";
 import ImagenProducto from "@/components/producto/ImagenProducto";
-import { tituloProducto } from "@/lib/formato";
+import { descripcionProducto, tituloProducto } from "@/lib/formato";
 import { useCarrito } from "./ProveedorCarrito";
 import IconoCalculadora from "@/components/icons/pico/IconoCalculadora";
 
@@ -89,6 +89,9 @@ export default function ContenidoCarrito({ modo, alCerrar, claveCascada }: Props
               <div className="flex items-start gap-2">
                 <div className="min-w-0 flex-1">
                   <p className="line-clamp-2 text-sm leading-snug font-semibold text-texto">{tituloProducto(producto)}</p>
+                  {descripcionProducto(producto) && (
+                    <p className="mt-0.5 truncate text-xs text-gris-texto">{descripcionProducto(producto)}</p>
+                  )}
                   <p className="mt-0.5 text-xs text-gris-texto">Cód. {producto.id}</p>
                 </div>
                 <button

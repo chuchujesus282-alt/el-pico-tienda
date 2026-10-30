@@ -21,7 +21,7 @@ import RegistrarEvento from "@/components/eventos/RegistrarEvento";
 import Contenedor from "@/components/ui/Contenedor";
 import EncabezadoPagina from "@/components/ui/EncabezadoPagina";
 import { getCategorias, getGrupo, getProducto } from "@/lib/catalogo";
-import { tituloProducto } from "@/lib/formato";
+import { descripcionProducto, tituloProducto } from "@/lib/formato";
 import { getOpiniones } from "@/lib/opiniones";
 import type { Categoria } from "@/types/catalogo";
 
@@ -67,6 +67,7 @@ export default async function PaginaProducto({ params, searchParams }: PageProps
     getOpiniones(producto.id).catch(() => []),
   ]);
   const titulo = tituloProducto(producto);
+  const descripcion = grupo ? null : descripcionProducto(producto);
 
   const enlaceSecundario =
     "group inline-flex items-center gap-1.5 rounded-boton text-sm font-semibold text-logo-marino hover:underline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-logo-marino";
@@ -103,15 +104,11 @@ export default async function PaginaProducto({ params, searchParams }: PageProps
                 )}
               </div>
               <h1 className="font-titulo text-[1.75rem] leading-tight font-bold text-logo-marino md:text-4xl">{titulo}</h1>
+              {/* Descripción de Saint (el color, el modelo o "Ref. …"), completa. En un grupo de medidas va la de la
+                  medida elegida, en CompraConVariantes. */}
+              {descripcion && <p className="-mt-1 text-base text-gris-texto">{descripcion}</p>}
               <EstrellasProducto productoId={producto.id} opiniones={opiniones} />
             </div>
-
-            {producto.descripcion && (
-              <div>
-                <h2 className="font-titulo text-base font-bold text-logo-marino">Descripción</h2>
-                <p className="mt-1 text-sm leading-relaxed whitespace-pre-line text-texto">{producto.descripcion}</p>
-              </div>
-            )}
 
             {grupo && seleccion ? (
               // Precio de la medida elegida + barra de medidas + cantidad y "Agregar al carrito".

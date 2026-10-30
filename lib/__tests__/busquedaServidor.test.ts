@@ -41,7 +41,7 @@ describe("/api/sugerencias (responderSugerencias + limpiarConsulta)", () => {
     expect(correccion).toBeNull();
     expect(productos.map((p) => p.id)).toContain(MARTILLO);
     expect(Object.keys(productos[0]).sort()).toEqual(
-      ["categoriaSlug", "id", "imagen", "marca", "nombre", "precio", "subcategoria", "titulo"].sort(),
+      ["categoriaSlug", "descripcion", "id", "imagen", "marca", "nombre", "precio", "subcategoria", "titulo"].sort(),
     );
     expect(productos.length).toBeLessThanOrEqual(6);
   });
@@ -68,7 +68,10 @@ describe("/api/favoritos (leerIds + elegirFavoritos)", () => {
   it("devuelve esos productos en el mismo orden y deja fuera los que no están", () => {
     const productos = elegirFavoritos(muestraSaint, [TALADRO, "NO-EXISTE", MARTILLO]);
     expect(productos.map((p) => p.id)).toEqual([TALADRO, MARTILLO]);
-    expect(productos[0]).not.toHaveProperty("descripcion");
+    // La descripción de Saint sí viaja (es corta y distingue productos con el mismo nombre); lo demás, no.
+    expect(Object.keys(productos[0]).sort()).toEqual(
+      ["categoriaSlug", "descripcion", "id", "imagen", "marca", "nombre", "precio", "subcategoria", "titulo", "ventas"].sort(),
+    );
   });
 });
 

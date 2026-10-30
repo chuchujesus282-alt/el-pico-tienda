@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { nombreLegible } from "@/lib/nombresSaint";
+import { descripcionLegible, descripcionParaMensaje, esReferencia, limpiarDescripcion, nombreLegible } from "@/lib/nombresSaint";
 
 describe("nombreLegible", () => {
   it("pasa a formato oración y escribe la marca del comienzo como marca", () => {
@@ -27,5 +27,39 @@ describe("nombreLegible", () => {
     expect(nombreLegible("HERRAMIENTAS ELECTRICAS")).toBe("Herramientas eléctricas");
     expect(nombreLegible("HERRAMIENTAS DE MEDICION")).toBe("Herramientas de medición");
     expect(nombreLegible("MECHA P/VIDRIO 1/4\" O 7MM", "TORNERIA")).toBe('Mecha p/vidrio 1/4" o 7mm');
+  });
+});
+
+describe("descripción de Saint (Descrip2)", () => {
+  const NOMBRE = "COLLET DECO PLUS PINTURA 1/4 GAL";
+
+  it("se guarda con los espacios juntos; nada si está vacía o repite el nombre o el código", () => {
+    expect(limpiarDescripcion("  AMARILLO   PRIMAVERA ", NOMBRE, "COLLET005")).toBe("AMARILLO PRIMAVERA");
+    expect(limpiarDescripcion("", NOMBRE, "COLLET005")).toBeNull();
+    expect(limpiarDescripcion("   ", NOMBRE, "COLLET005")).toBeNull();
+    expect(limpiarDescripcion(null, NOMBRE, "COLLET005")).toBeNull();
+    expect(limpiarDescripcion("collet  deco plus pintura 1/4 gal", NOMBRE, "COLLET005")).toBeNull();
+    expect(limpiarDescripcion("collet005", NOMBRE, "COLLET005")).toBeNull();
+  });
+
+  it("es una referencia si no tiene espacios, tiene números y no es una medida", () => {
+    for (const ref of ["01-755P-M-11", "05708", "S014-02", "MTS2", "TRU.1.3136"]) expect(esReferencia(ref)).toBe(true);
+    for (const no of ["AMARILLO PRIMAVERA", "MADERA", "BOSCH", '2"', '1/2"', '1-1/2"', "10mm", "4.5KG", "6632-10 12283"]) {
+      expect(esReferencia(no)).toBe(false);
+    }
+  });
+
+  it('en la tienda: "Ref. …" o el formato de los nombres, con // como ·', () => {
+    expect(descripcionLegible("01-755P-M-11")).toBe("Ref. 01-755P-M-11");
+    expect(descripcionLegible("AMARILLO PRIMAVERA")).toBe("Amarillo primavera");
+    expect(descripcionLegible("NARANJA INTENSIDAD / VINOTINTO")).toBe("Naranja intensidad / vinotinto");
+    expect(descripcionLegible("SIN TERMINAL // PARA TIERRA")).toBe("Sin terminal · Para tierra");
+    expect(descripcionLegible('2"')).toBe('2"');
+  });
+
+  it("en el mensaje de WhatsApp: como viene (con //), con Ref. si es una referencia", () => {
+    expect(descripcionParaMensaje("AMARILLO PRIMAVERA")).toBe("AMARILLO PRIMAVERA");
+    expect(descripcionParaMensaje("SIN TERMINAL // PARA TIERRA")).toBe("SIN TERMINAL // PARA TIERRA");
+    expect(descripcionParaMensaje("01-755P-M-11")).toBe("Ref. 01-755P-M-11");
   });
 });

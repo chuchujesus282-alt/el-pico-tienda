@@ -29,6 +29,13 @@
       "when": 1793235215508,
       "tag": "0003_pedidos_direcciones",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1793369814989,
+      "tag": "0004_shallow_wildside",
+      "breakpoints": true
     }
   ]
 }

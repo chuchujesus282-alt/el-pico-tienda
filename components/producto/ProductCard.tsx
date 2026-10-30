@@ -2,7 +2,7 @@ import Link from "next/link";
 import { ChevronRight } from "lucide-react";
 import BotonFavorito from "@/components/favoritos/BotonFavorito";
 import Precio from "@/components/ui/Precio";
-import { tituloProducto } from "@/lib/formato";
+import { descripcionProducto, tituloProducto } from "@/lib/formato";
 import type { Producto } from "@/types/catalogo";
 import BotonAgregar from "./BotonAgregar";
 import ImagenProducto from "./ImagenProducto";
@@ -23,6 +23,7 @@ type Props = {
  */
 export default function ProductCard({ producto, prioritario = false, className = "" }: Props) {
   const titulo = tituloProducto(producto);
+  const descripcion = descripcionProducto(producto);
   return (
     <article
       className={`group relative flex h-full flex-col rounded-2xl border border-gris-borde bg-pico-blanco p-3 shadow-tarjeta transition duration-300 ease-(--curva-suave) hover:border-pico-azul/20 hover:shadow-tarjeta-hover motion-safe:hover:-translate-y-1 ${className}`}
@@ -48,7 +49,12 @@ export default function ProductCard({ producto, prioritario = false, className =
           />
         </div>
         <p className="h-4 truncate text-[11px] leading-4 font-semibold tracking-[0.14em] text-gris-texto uppercase">{producto.marca ?? ""}</p>
-        <h3 className="mt-1 line-clamp-2 h-10 text-sm leading-5 font-medium text-texto transition-colors group-hover:text-pico-azul">{titulo}</h3>
+        {/* Nombre y, debajo, la descripción de Saint (el color, el modelo o "Ref. …"): distingue productos con el mismo
+            nombre. Sin descripción no ocupa lugar; los precios quedan alineados igual (van al pie de la tarjeta). */}
+        <h3 className="mt-1 line-clamp-2 text-[15px] leading-5 font-semibold text-pico-azul-oscuro transition-colors group-hover:text-pico-azul">
+          {titulo}
+        </h3>
+        {descripcion && <p className="mt-0.5 truncate text-xs leading-4 text-gris-texto">{descripcion}</p>}
       </Link>
       {producto.variantes ? (
         // Grupo de medidas (lib/agrupaciones.ts): "Desde" el más barato y se elige la medida en su página.

@@ -90,3 +90,23 @@ describe("búsqueda inteligente", () => {
     if (casi.tipo !== "completo") expect(casi.sugerencia).toContain("impermeabilizante");
   });
 });
+
+describe("búsqueda por la descripción de Saint", () => {
+  const base = { marca: "COLLET", imagen: null, categoriaSlug: "pinturas", subcategoria: "Pinturas" };
+  const catalogo = [
+    { ...base, id: "COLLET005", nombre: "COLLET DECO PLUS PINTURA 1/4 GAL", descripcion: "AMARILLO PRIMAVERA", precio: 9 },
+    { ...base, id: "COLLET021", nombre: "COLLET DECO PLUS PINTURA 1/4 GAL", descripcion: "AZUL INTENSIDAD", precio: 9 },
+    { ...base, id: "ACS0082", nombre: "ACESA LLAVE COMBINADA PROFESIONAL 11 mm", descripcion: "01-755P-M-11", marca: "ACESA", categoriaSlug: "herramientas", subcategoria: "Llaves", precio: 8 },
+  ];
+  const indiceDescripcion = crearIndice(catalogo);
+
+  it('"azul" encuentra la pintura de ese color, no las demás', () => {
+    const ids = buscar(indiceDescripcion, "pintura azul").productos.map((p) => p.id);
+    expect(ids[0]).toBe("COLLET021");
+    expect(ids).not.toContain("ACS0082");
+  });
+
+  it("una referencia del fabricante encuentra su producto", () => {
+    expect(buscar(indiceDescripcion, "01-755P-M-11").productos.map((p) => p.id)).toContain("ACS0082");
+  });
+});

@@ -9,7 +9,7 @@ import type { ProductoIndexado } from "./tipos";
 // (fuzzy), no le importa el orden de las palabras y acepta nuestra normalización tal cual.
 // Funciona igual en el servidor (página /buscar) y en el navegador (sugerencias mientras se escribe).
 
-type Documento = { id: string; nombre: string; tipo: string; marca: string; categoria: string };
+type Documento = { id: string; nombre: string; tipo: string; marca: string; categoria: string; descripcion: string };
 
 export type IndiceBusqueda = {
   motor: MiniSearch<Documento>;
@@ -33,14 +33,15 @@ export type ResultadoBusqueda = {
 const separar = (texto: string) => texto.split(" ").filter(Boolean);
 const igual = (termino: string) => termino;
 
-// Pesos de cada campo: el tipo de producto ("tornillo") pesa más que una palabra cualquiera del nombre.
-const PESOS = { tipo: 2, nombre: 1, marca: 0.8, categoria: 0.4 };
+// Pesos de cada campo: el tipo de producto ("tornillo") pesa más que una palabra cualquiera del nombre. La descripción
+// de Saint (el color "azul", la referencia "01-755P") encuentra productos, pero pesa menos que el nombre.
+const PESOS = { tipo: 2, nombre: 1, marca: 0.8, descripcion: 0.7, categoria: 0.4 };
 
 const cache = new WeakMap<Producto[], IndiceBusqueda>();
 
 const nuevoMotor = () =>
   new MiniSearch<Documento>({
-    fields: ["nombre", "tipo", "marca", "categoria"],
+    fields: ["nombre", "tipo", "marca", "categoria", "descripcion"],
     tokenize: separar,
     processTerm: igual,
     searchOptions: { tokenize: separar, processTerm: igual },
@@ -52,6 +53,7 @@ const documento = ({ producto, tokens, tipo }: ProductoIndexado): Documento => (
   tipo,
   marca: producto.marca ? palabrasClave(producto.marca).join(" ") : "",
   categoria: palabrasClave(`${producto.subcategoria ?? ""} ${producto.categoriaSlug.replace(/-/g, " ")}`).join(" "),
+  descripcion: producto.descripcion ? palabrasClave(producto.descripcion).join(" ") : "",
 });
 
 function sumarAlVocabulario(vocabulario: IndiceBusqueda["vocabulario"], { producto, tokens }: ProductoIndexado) {

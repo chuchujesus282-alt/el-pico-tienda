@@ -3,12 +3,15 @@
 // La API: máximo 50 códigos por pedido, solo letras, números y . _ - /; lee tasa y precios en cada pedido (sin caché).
 // Un código que no está a la venta (inactivo, sin precio, inexistente o de la categoría 1 "POR ARREGLAR") no viene.
 
+import { limpiarDescripcion } from "@/lib/nombresSaint";
+
 /** Máximo de códigos por pedido que acepta la API. */
 export const CODIGOS_POR_PEDIDO = 50;
 /** Lo que acepta la API en un código (lo demás responde 400 y tumbaría el pedido entero). */
 const CODIGO_VALIDO = /^[A-Za-z0-9._\-/]+$/;
 
-export type PrecioAlDia = { precio: number; precioBs?: number; tasa?: number };
+/** `descripcion`: la de hoy (lib/nombresSaint.ts, limpiarDescripcion), null si no tiene. */
+export type PrecioAlDia = { precio: number; precioBs?: number; tasa?: number; descripcion: string | null };
 
 export const esCodigoValido = (codigo: string) => codigo.length <= 64 && CODIGO_VALIDO.test(codigo);
 
@@ -39,7 +42,7 @@ export function leerPrecios(
   const pedidosSet = new Set(pedidos);
   const precios = new Map<string, PrecioAlDia>();
   for (const fila of datos.productos) {
-    const { codigo, codCategoria, precioUsd, precioBs } = (fila ?? {}) as Record<string, unknown>;
+    const { codigo, nombre, descripcion, codCategoria, precioUsd, precioBs } = (fila ?? {}) as Record<string, unknown>;
     if (typeof codigo !== "string") continue;
     const id = codigo.trim();
     if (!pedidosSet.has(id) || !categoriasPermitidas.has(numero(codCategoria))) continue;
@@ -50,6 +53,7 @@ export function leerPrecios(
       precio: redondear(precio),
       ...(Number.isFinite(bs) && bs > 0 ? { precioBs: redondear(bs) } : {}),
       ...(Number.isFinite(tasa) && tasa > 0 ? { tasa } : {}),
+      descripcion: limpiarDescripcion(descripcion, typeof nombre === "string" ? nombre : "", id),
     });
   }
   return { precios, retirados: pedidos.filter((id) => !precios.has(id)) };

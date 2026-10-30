@@ -13,7 +13,7 @@ const respuesta = {
   instancias: [],
   productos: [
     { codigo: "3M0015", codCategoria: 1171, precioUsd: 79.15, precioBs: 70356.95 },
-    { codigo: "ACS0082", codCategoria: 1171, precioUsd: 7.94, precioBs: 7055.74 },
+    { codigo: "ACS0082", nombre: "ACESA LLAVE COMBINADA PROFESIONAL  11 mm", descripcion: " 01-755P-M-11 ", codCategoria: 1171, precioUsd: 7.94, precioBs: 7055.74 },
     { codigo: "RARO01", codCategoria: 1, precioUsd: 3, precioBs: 2666.67 }, // categoría que no es de la web
     { codigo: "NOPEDI", codCategoria: 1498, precioUsd: 5, precioBs: 4444.45 }, // no se pidió
   ],
@@ -22,7 +22,8 @@ const respuesta = {
 describe("leerPrecios", () => {
   it("da el precio de hoy de lo pedido y marca lo que ya no está a la venta", () => {
     const { precios, retirados } = leerPrecios(respuesta, ["ACS0082", "3M0015", "NOEXISTE"], PERMITIDAS);
-    expect(precios.get("ACS0082")).toEqual({ precio: 7.94, precioBs: 7055.74, tasa: 888.89 });
+    expect(precios.get("ACS0082")).toEqual({ precio: 7.94, precioBs: 7055.74, tasa: 888.89, descripcion: "01-755P-M-11" });
+    expect(precios.get("3M0015")?.descripcion).toBeNull(); // sin descripción
     expect(precios.get("3M0015")?.precio).toBe(79.15);
     expect(retirados).toEqual(["NOEXISTE"]);
   });

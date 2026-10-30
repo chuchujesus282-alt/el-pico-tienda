@@ -13,7 +13,10 @@ export type Producto = {
   imagen: string | null; // URL absoluta o null
   categoriaSlug: string;
   subcategoria: string | null;
-  descripcion?: string | null; // texto largo para la página de producto; llegará de la base de datos
+  // Descripción de Saint (Descrip2), como viene, con los espacios juntos: el color, el modelo o la referencia del
+  // fabricante. Sin ella si viene vacía o repite el nombre o el código. Para mostrarla: descripcionProducto() de
+  // lib/formato.ts; para el mensaje de WhatsApp: descripcionParaMensaje() de lib/nombresSaint.ts.
+  descripcion?: string | null;
   ventas?: number; // unidades vendidas en los últimos 90 días; ordena los "más vendidos" (opcional)
   variantes?: number; // solo la tarjeta de un GRUPO (lib/agrupaciones.ts): cuántas medidas agrupa; precio = el más bajo
 };
