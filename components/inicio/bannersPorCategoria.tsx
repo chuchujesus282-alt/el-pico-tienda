@@ -3,6 +3,7 @@ import { iconoDeCategoria } from "@/components/icons/pico/porCategoria";
 import CategoryCardElectricidad from "@/components/tarjetas-categoria/CategoryCardElectricidad";
 import CategoryCardJardin from "@/components/tarjetas-categoria/CategoryCardJardin";
 import CategoryCardPlomeria from "@/components/tarjetas-categoria/CategoryCardPlomeria";
+import CategoryCardSeguridad from "@/components/tarjetas-categoria/CategoryCardSeguridad";
 import CategoryCardVehiculos from "@/components/tarjetas-categoria/CategoryCardVehiculos";
 import { categorias } from "@/lib/categorias";
 import type { ComponenteIcono } from "@/types/icono";
@@ -87,6 +88,7 @@ export const bannersPorCategoria: Record<string, Variantes> = {
         </div>
       );
     },
+    vertical: tarjeta("seguridad-industrial", CategoryCardSeguridad),
   },
   electricidad: { vertical: tarjeta("electricidad", CategoryCardElectricidad) },
   griferia: { vertical: tarjeta("griferia", CategoryCardPlomeria) },
