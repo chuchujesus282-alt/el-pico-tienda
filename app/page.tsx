@@ -29,9 +29,13 @@ async function seguro<T>(promesa: Promise<T>, respaldo: T): Promise<T> {
 
 const sinProductos: Producto[] = [];
 
-// Sin `revalidate`: el inicio ya se arma en cada visita (el índice de Saint se pide con no-store), así que el día de
-// la rotación de banners se calcula siempre al momento y cambia justo a la medianoche de Caracas. Si algún día esta
-// página pasa a ser estática, agrega `export const revalidate = 3600` para que no se quede en un día.
+// El inicio se arma en CADA visita (force-dynamic): muestra precios reales de venta (con el tope de 15 minutos de
+// lib/saint.ts) y el día de la rotación de banners cambia justo a la medianoche de Caracas. Sin esto, en producción
+// Next lo pre-generaba como página fija (los productos salen de unstable_cache y ?bannerDay no se lee en producción) y
+// Vercel servía la misma copia por horas: precios y marcas viejos (pasó el 2026-10-30). Es barato: los datos vienen de
+// la memoria y de la caché compartida de Saint.
+export const dynamic = "force-dynamic";
+
 export default async function Inicio({ searchParams }: PageProps<"/">) {
   // Rotación de banners (lib/rotacionBanners.ts), calculada aquí en el servidor: el navegador recibe ya el reparto
   // del día, sin parpadeos. ?bannerDay=0..4 fuerza un día, solo fuera de producción.
