@@ -60,7 +60,7 @@ export default async function PaginaPedido({ params }: PageProps<"/mi-cuenta/ped
                 <li key={i.productoId} className="flex items-start justify-between gap-4 py-3">
                   <span className="min-w-0">
                     <span className="block font-medium text-texto">{hoy ? tituloProducto(hoy) : i.nombre}</span>
-                    {descripcion && <span className="block text-[13px] font-semibold text-pico-azul-medio">{descripcion}</span>}
+                    {descripcion && <span className="block text-[13px] font-semibold text-gris-texto">{descripcion}</span>}
                     <span className="block text-[13px] text-gris-texto">
                       Cód. {i.productoId} · {i.cantidad} × <Precio valor={i.precioUsd} tamano="pequeno" className="inline" />
                       {!hoy && " · ya no está en la tienda"}

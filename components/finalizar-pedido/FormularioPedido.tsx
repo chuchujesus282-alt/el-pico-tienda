@@ -367,7 +367,7 @@ export default function FormularioPedido({ itemsDirectos }: Props) {
                   <div className="min-w-0 flex-1">
                     <p className="line-clamp-2 text-sm font-medium text-texto">{tituloProducto(producto)}</p>
                     {descripcionProducto(producto) && (
-                      <p className="line-clamp-2 text-[13px] leading-snug font-semibold text-pico-azul-medio">{descripcionProducto(producto)}</p>
+                      <p className="line-clamp-2 text-[13px] leading-snug font-semibold text-gris-texto">{descripcionProducto(producto)}</p>
                     )}
                     <p className="text-[12px] text-gris-texto">Cód. {producto.id}</p>
                   </div>
