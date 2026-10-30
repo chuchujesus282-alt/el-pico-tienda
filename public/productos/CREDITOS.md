@@ -42,15 +42,16 @@ Fotos oficiales del empaque que pasó persona B (fondo pasado a blanco, envase c
 | montana/dekoral-mate.webp, dekoral-satinado.webp | DEKORAL … GALON y TOBO |
 | montana/av2000-exterior-mate.webp, -interior-mate, -brillo-de-seda, -bioprotecto | AV-2000 EXT/INT/SEDA/BIO … GALON y TOBO |
 | montana/av2000-exterior-clasica.webp, av2000-exterior-mate-2.webp | Sin usar todavía (otras fotos de AV-2000 Exterior; la clásica con el fondo gris quitado) |
-| collet/prestigio-galon.webp, prestigio-tobo.webp | COLLET PRESTIGIO PINTURA "A" GALON / TOBO |
-| collet/ocasion-galon.webp, ocasion-tobo.webp | COLLET PINTURA OCASIÓN TIPO "B" GALON / TOBO |
-| collet/esmalte.webp | Collet que empiezan por "Esmalte" (brillantes y satinado) y el fondo de herrería |
-| collet/decosatin-blanco.webp | Collet satinados y tipo "A"/"AA" que no tienen foto propia (Satinada, Extremo) |
-| collet/decoplus.webp | Collet que dicen "Deco Plus" (lata Decorativa Plus) |
-| collet/trafico-brocal.webp | Collet que dicen "brocal" o "tráfico" (lata Tráfico Brocal) |
-| collet/canchas.webp | Collet "p/cancha" (lata Canchas deportivas) |
-| collet/impermeabilizante.webp | COLLET PINTURA IMPERMEABILIZANTE |
-| collet/basicplus.webp | Cualquier otro Collet sin foto propia (hoy ninguno) |
+| collet/<linea>-cuarto.webp, -gal.webp, -tobo.webp | Collet por línea y tamaño (`fotoCollet`): 1/4 la lata pequeña, galón mediana, tobo/paila/cuñete grande (misma foto a otra escala). Si una línea no tiene una versión, usa la de galón |
+| collet/prestigio-gal.webp, prestigio-tobo-grande.webp | COLLET PRESTIGIO PINTURA "A" GALON / TOBO |
+| collet/ocasion-gal.webp, ocasion-tobo-grande.webp | COLLET PINTURA OCASIÓN TIPO "B" GALON / TOBO |
+| collet/esmalte-gal.webp, esmalte-cuarto.webp | Collet que empiezan por "Esmalte" (brillantes y satinado) y el fondo de herrería |
+| collet/decosatin-gal.webp, -cuarto, -tobo | Collet satinados y tipo "A"/"AA" sin foto propia (Satinada, Extremo) |
+| collet/decoplus-gal.webp, -cuarto, -tobo | Collet que dicen "Deco Plus" (lata Decorativa Plus) |
+| collet/trafico-brocal-gal.webp, -tobo | Collet que dicen "brocal" o "tráfico" (lata Tráfico Brocal) |
+| collet/canchas-gal.webp, -tobo | Collet "p/cancha" (lata Canchas deportivas) |
+| collet/impermeabilizante-gal.webp, -cuarto | COLLET PINTURA IMPERMEABILIZANTE |
+| collet/basicplus-gal.webp | Cualquier otro Collet sin foto propia (hoy ninguno) |
 | collet/prestigio-tobo-y-galon.webp, ocasion-tobo-y-galon.webp | Sin usar todavía (tobo y galón juntos) |
 
 ## Pinturas Manpica (2026-10-28, persona B)

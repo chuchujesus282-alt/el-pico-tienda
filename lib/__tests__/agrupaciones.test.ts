@@ -185,21 +185,23 @@ describe("agrupar", () => {
 
   it("pinturas Collet: Prestigio y Ocasión con su envase; esmaltes, la lata de esmalte; los demás, Decosatín o BasicPlus", () => {
     const f = (nombre: string) => fotoPorNombre(nombre, "COLLET");
-    expect(f('COLLET PRESTIGIO PINTURA "A" GALON')).toBe("/productos/collet/prestigio-galon.webp");
-    expect(f('COLLET PRESTIGIO PINTURA "A" TOBO')).toBe("/productos/collet/prestigio-tobo.webp");
-    expect(f('COLLET PINTURA OCASIÓN TIPO "B" GALON')).toBe("/productos/collet/ocasion-galon.webp");
-    expect(f('COLLET PINTURA OCASIÓN TIPO "B" TOBO')).toBe("/productos/collet/ocasion-tobo.webp");
-    expect(f('COLLET PINTURA SATINADA TIPO "A" GALON')).toBe("/productos/collet/decosatin-blanco.webp");
-    expect(f('COLLET EXTREMO PINTURA "AA" TOBO')).toBe("/productos/collet/decosatin-blanco.webp");
-    expect(f("COLLET ESMALTE SATINADO BLANCO GAL")).toBe("/productos/collet/esmalte.webp");
-    expect(f("COLLET ESMALTE BRILLANTE GRIS OSCURO 1/4")).toBe("/productos/collet/esmalte.webp");
-    expect(f("COLLET PINTURA BROCAL AMARILLO GALON")).toBe("/productos/collet/trafico-brocal.webp");
-    expect(f("COLLET PINTURA ALTO TRAFICO C/PERLA TOBO")).toBe("/productos/collet/trafico-brocal.webp");
-    expect(f("COLLET PINTURA IMPERMEABILIZANTE GALON")).toBe("/productos/collet/impermeabilizante.webp");
-    expect(f('COLLET PINTURA P/CANCHA TIPO "A" TOBO')).toBe("/productos/collet/canchas.webp");
-    expect(f("COLLET FONDO HERRERIA GRIS/NEGRO 1/4 GAL")).toBe("/productos/collet/esmalte.webp");
-    expect(f("COLLET DECO PLUS PINTURA 1/4 GAL")).toBe("/productos/collet/decoplus.webp");
-    expect(f("COLLET DECO PLUS PINTURA TOBO")).toBe("/productos/collet/decoplus.webp");
+    expect(f('COLLET PRESTIGIO PINTURA "A" GALON')).toBe("/productos/collet/prestigio-gal.webp");
+    expect(f('COLLET PRESTIGIO PINTURA "A" TOBO')).toBe("/productos/collet/prestigio-tobo-grande.webp");
+    expect(f('COLLET PINTURA OCASIÓN TIPO "B" GALON')).toBe("/productos/collet/ocasion-gal.webp");
+    expect(f('COLLET PINTURA OCASIÓN TIPO "B" TOBO')).toBe("/productos/collet/ocasion-tobo-grande.webp");
+    expect(f('COLLET PINTURA SATINADA TIPO "A" GALON')).toBe("/productos/collet/decosatin-gal.webp");
+    expect(f('COLLET EXTREMO PINTURA "AA" TOBO')).toBe("/productos/collet/decosatin-tobo.webp");
+    expect(f("COLLET ESMALTE SATINADO BLANCO GAL")).toBe("/productos/collet/esmalte-gal.webp");
+    expect(f("COLLET ESMALTE BRILLANTE GRIS OSCURO 1/4")).toBe("/productos/collet/esmalte-cuarto.webp");
+    expect(f("COLLET PINTURA BROCAL AMARILLO GALON")).toBe("/productos/collet/trafico-brocal-gal.webp");
+    expect(f("COLLET PINTURA ALTO TRAFICO C/PERLA TOBO")).toBe("/productos/collet/trafico-brocal-tobo.webp");
+    expect(f("COLLET PINTURA IMPERMEABILIZANTE GALON")).toBe("/productos/collet/impermeabilizante-gal.webp");
+    expect(f('COLLET PINTURA P/CANCHA TIPO "A" TOBO')).toBe("/productos/collet/canchas-tobo.webp");
+    expect(f("COLLET FONDO HERRERIA GRIS/NEGRO 1/4 GAL")).toBe("/productos/collet/esmalte-cuarto.webp");
+    expect(f("COLLET DECO PLUS PINTURA 1/4 GAL")).toBe("/productos/collet/decoplus-cuarto.webp");
+    expect(f("COLLET PINTURA IMPERMEABILIZANTE 1/4 GAL")).toBe("/productos/collet/impermeabilizante-cuarto.webp");
+    expect(f('COLLET PINTURA SATINADA TIPO "A" 1/4 GAL')).toBe("/productos/collet/decosatin-cuarto.webp");
+    expect(f("COLLET DECO PLUS PINTURA TOBO")).toBe("/productos/collet/decoplus-tobo.webp");
   });
 
   it("pinturas Pineco: cada foto solo en su línea y tamaño; el hidroesmalte 1/4 usa la del galón; Gold sin foto", () => {

@@ -75,20 +75,31 @@ function fotoManpica(n: string): string | undefined {
  * tipo "A"/"AA"; BasicPlus (blanca y roja) el resto.
  */
 const C = "/productos/collet/";
+const COLLET_CUARTO = new Set(["esmalte", "decoplus", "impermeabilizante", "decosatin"]);
+const COLLET_TOBO: Record<string, string> = {
+  prestigio: "prestigio-tobo-grande",
+  ocasion: "ocasion-tobo-grande",
+  decoplus: "decoplus-tobo",
+  "trafico-brocal": "trafico-brocal-tobo",
+  canchas: "canchas-tobo",
+  decosatin: "decosatin-tobo",
+};
 function fotoCollet(n: string): string {
-  const linea = /PRESTIG/.test(n) ? "prestigio" : /OCASI/.test(n) ? "ocasion" : null;
-  if (linea && !/1\/4/.test(n)) {
-    if (/TOBO|CU[NÑ]ETE|PAILA|\b[45] ?GAL/.test(n)) return `${C}${linea}-tobo.webp`;
-    if (/\bGAL(ON)?\b/.test(n)) return `${C}${linea}-galon.webp`;
-  }
-  // El fondo de herrería lleva la lata de esmalte (pedido de persona B).
-  if (/^(COLLET )?ESMALTE|FONDO HERRER/.test(n)) return `${C}esmalte.webp`;
-  if (/DECO ?PLUS/.test(n)) return `${C}decoplus.webp`;
-  if (/BROCAL|TR[AÁ]FICO/.test(n)) return `${C}trafico-brocal.webp`;
-  if (/CANCHA/.test(n)) return `${C}canchas.webp`;
-  if (/IMPERMEABILIZ/.test(n)) return `${C}impermeabilizante.webp`;
-  if (/SATIN|"A{1,2}"|TIPO A\b/.test(n)) return `${C}decosatin-blanco.webp`;
-  return `${C}basicplus.webp`;
+  // Línea (la lata que se ve). El fondo de herrería lleva la de esmalte (pedido de persona B).
+  const linea = /PRESTIG/.test(n) ? "prestigio"
+    : /OCASI/.test(n) ? "ocasion"
+    : /^(COLLET )?ESMALTE|FONDO HERRER/.test(n) ? "esmalte"
+    : /DECO ?PLUS/.test(n) ? "decoplus"
+    : /BROCAL|TR[AÁ]FICO/.test(n) ? "trafico-brocal"
+    : /CANCHA/.test(n) ? "canchas"
+    : /IMPERMEABILIZ/.test(n) ? "impermeabilizante"
+    : /SATIN|"A{1,2}"|TIPO A\b/.test(n) ? "decosatin"
+    : "basicplus";
+  // Tamaño en el recuadro (pedido de persona B): 1/4 la lata pequeña, galón mediana ("-gal"), tobo/paila/cuñete la
+  // grande. Es la misma foto a otra escala, siempre completa; si la línea no tiene una versión, usa la del galón.
+  if (/1\/4/.test(n) && COLLET_CUARTO.has(linea)) return `${C}${linea}-cuarto.webp`;
+  if (/TOBO|CU[NÑ]ETE|PAILA|\bCNTE\b|\b[45] ?GAL/.test(n) && COLLET_TOBO[linea]) return `${C}${COLLET_TOBO[linea]}.webp`;
+  return `${C}${linea}-gal.webp`;
 }
 
 /** Cómo se dividen las medidas en el selector: milímetros/pulgadas, encastre del dado, o una sección propia que da la
