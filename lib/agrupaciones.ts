@@ -127,7 +127,7 @@ function fotoManpica(n: string): string | undefined {
  * Collet llevan una foto genérica (pedido de persona B): los que empiezan por "Esmalte", la lata negra de esmalte; Deco Plus, la lata verde de Decorativa Plus; brocal y tráfico, la gris de Tráfico Brocal; cancha, la verde de Canchas deportivas; impermeabilizante, la vinotinto; Decosatín (blanca y azul, tipo A satinada) los satinados y los
  * tipo "A"/"AA"; BasicPlus (blanca y roja) el resto.
  */
-const C = "/productos/collet/";
+const C = "/productos/collet-hd/";
 const COLLET_CUARTO = new Set(["esmalte", "decoplus", "impermeabilizante", "decosatin"]);
 const COLLET_TOBO: Record<string, string> = {
   prestigio: "prestigio-tobo-grande",
