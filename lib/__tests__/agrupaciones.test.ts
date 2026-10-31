@@ -247,6 +247,33 @@ describe("agrupar", () => {
     expect(FOTOS_SAINT.MANP0005).toBe("/productos/manpica/mastic500-cunete.webp");
   });
 
+  it("Adesi-Top: cada producto con su envase y tamaño (nombres reales de Saint); sin foto, nada", () => {
+    const f = (nombre: string) => fotoPorNombre(nombre, "ADESI-TOP")?.replace("/productos/adesitop/", "");
+    const casos: [string, string | undefined][] = [
+      ["ADESI-TOP #12 LIMPIADOR LITRO", "limpiador-ceramica-litro.webp"],
+      ["ADESI-TOP #05 DESENGRASANTE LITRO", "desengrasante-litro.webp"],
+      ["ADESI-TOP #205 IMPERMEABILIZANTE LITRO", "impermeabilizante-litro.webp"],
+      ["ADESI-TOP #205 IMPERMEABILIZANTE GALON", "impermeabilizante-gal.webp"],
+      ["ADESI-TOP SELLADOR BLANCO LITRO", "sellador-blanco-litro.webp"],
+      ["ADESI-TOP SELLADOR BLANCO GALON", "sellador-blanco-gal.webp"],
+      ["ADESI-TOP CRISTALIZADOR ROSADO GAL", "cristalizador-rosado-gal.webp"],
+      ["ADESI-TOP CRISTALIZADOR ROSADO LITRO", "cristalizador-rosado-litro.webp"],
+      ["ADESI-TOP CRISTALIZADOR BLANCO GALON", "cristalizador-blanco-gal.webp"],
+      // Sin foto oficial: no se rellena con otro producto.
+      ["ADESI-TOP #405 LATEX LITRO", undefined],
+      ["ADESI-TOP #100 SILICON GALON", undefined],
+      ["ADESI-TOP #400 IMPER GARRAFA 10LTS+SACO", undefined],
+      // Sin foto de ese tamaño, o sin tamaño en el nombre.
+      ["ADESI-TOP SELLADOR MATE #122S GALON", undefined],
+      ["ADESI-TOP CRISTALIZADOR BLANCO", undefined],
+      // Los que aún no están en Saint.
+      ["ADESI-TOP #110 RESALTADOR 946 ML", "resaltador-cuarto.webp"],
+      ["ADESI-TOP ACELERADOR DE FRAGUADO TOBO", "acelerador-tobo.webp"],
+      ["ADESI-TOP #120 HIDRO-OLEOREPELENTE GALON", "oleorepelente-gal.webp"],
+    ];
+    for (const [nombre, foto] of casos) expect(f(nombre), nombre).toBe(foto);
+  });
+
   it("pinturas Collet: Prestigio y Ocasión con su envase; esmaltes, la lata de esmalte; los demás, Decosatín o BasicPlus", () => {
     const f = (nombre: string) => fotoPorNombre(nombre, "COLLET");
     expect(f('COLLET PRESTIGIO PINTURA "A" GALON')).toBe("/productos/collet-hd/prestigio-gal.webp");

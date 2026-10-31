@@ -48,6 +48,7 @@ export function fotoPorNombre(nombre: string, marca: string | null): string | un
   const n = nombre.toUpperCase();
   if (/COLLET/i.test(marca ?? "") || /COLLET/.test(n)) return fotoCollet(n);
   if (/MANPICA/i.test(marca ?? "") || /MANPICA/.test(n)) return fotoManpica(n);
+  if (/ADESI/i.test(marca ?? "") || /ADESI/.test(n)) return fotoAdesiTop(n);
   if (!/MONTANA/i.test(marca ?? "") && !/MONTANA/.test(n)) return undefined;
   const linea = lineaMontana(n);
   if (!linea) return undefined;
@@ -120,6 +121,37 @@ function fotoManpica(n: string): string | undefined {
   if (!def.tamanos.includes(tam)) return undefined;
   const clave = `${def.linea}-${tam}`;
   return `${MP}${MANPICA_ARCHIVO[clave] ?? clave}.webp`;
+}
+
+/**
+ * Adesi-Top: fotos oficiales del envase por producto (pedido de persona B). Primera regla que calce; el número del
+ * producto (#05, #12, #120…) manda. Tamaño: litro (botella), 946 ml o 1/4 (lata pequeña), galón (bidón o lata), tobo
+ * (tobo de 19 L; el cristalizador rosado viene en pimpina). Sin tamaño en el nombre, o sin foto de ese tamaño, queda sin
+ * foto (no se rellena con otro envase). Sin foto: #100 silicón, #400 imper, #405 látex.
+ */
+const AT = "/productos/adesitop/";
+const ADESI_LINEAS: { regla: RegExp; linea: string; tamanos: string[] }[] = [
+  { regla: /ACELERADOR|FRAGUADO/, linea: "acelerador", tamanos: ["litro", "gal", "tobo"] },
+  { regla: /CRISTALIZ.*ROSAD/, linea: "cristalizador-rosado", tamanos: ["litro", "gal", "tobo"] },
+  { regla: /CRISTALIZ.*BLANCO/, linea: "cristalizador-blanco", tamanos: ["litro", "gal"] },
+  { regla: /#? ?\b05\b|DESENGRAS/, linea: "desengrasante", tamanos: ["litro", "gal", "tobo"] },
+  { regla: /#? ?\b120\b|OLEO ?-?REPELENTE/, linea: "oleorepelente", tamanos: ["litro", "gal", "tobo"] },
+  { regla: /#? ?\b205\b/, linea: "impermeabilizante", tamanos: ["litro", "gal", "tobo"] },
+  { regla: /#? ?\b12\b|LIMPIADOR.*CER[AÁ]MIC/, linea: "limpiador-ceramica", tamanos: ["litro", "gal", "tobo"] },
+  { regla: /#? ?\b110\b|RESALTADOR/, linea: "resaltador", tamanos: ["cuarto", "gal"] },
+  { regla: /SELLADOR BLANCO/, linea: "sellador-blanco", tamanos: ["litro", "gal"] },
+  { regla: /#? ?\b130\b|SELLADOR BRILL/, linea: "sellador-brillante", tamanos: ["cuarto", "gal"] },
+  { regla: /#? ?\b122S?\b|SELLADOR MATE/, linea: "sellador-mate", tamanos: ["cuarto"] },
+];
+function fotoAdesiTop(n: string): string | undefined {
+  const def = ADESI_LINEAS.find((l) => l.regla.test(n));
+  if (!def) return undefined;
+  const tam = /\bLITRO|\b1 ?LTS?\b|\b1 ?L\b/.test(n) ? "litro"
+    : /946|1\/4/.test(n) ? "cuarto"
+    : /TOBO|PAILA|CU[NÑ]ETE|PIMPINA|\b19 ?L|\b[45] ?GAL/.test(n) ? "tobo"
+    : /\bGAL/.test(n) ? "gal"
+    : null;
+  return tam && def.tamanos.includes(tam) ? `${AT}${def.linea}-${tam}.webp` : undefined;
 }
 
 /**
