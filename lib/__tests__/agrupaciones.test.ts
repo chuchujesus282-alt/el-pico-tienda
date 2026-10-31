@@ -247,6 +247,35 @@ describe("agrupar", () => {
     expect(FOTOS_SAINT.MANP0005).toBe("/productos/manpica/mastic500-cunete.webp");
   });
 
+  it("Cindu: cada línea con su envase; Impercindu, láminas y mantos sin foto", () => {
+    const f = (nombre: string) => fotoPorNombre(nombre, "CINDU")?.replace("/productos/cindu/", "");
+    const casos: [string, string | undefined][] = [
+      // Los reales de Saint: ninguno tiene foto en este lote.
+      ["IMPERCINDU PINTURA IMPERMEAB. TOBO", undefined],
+      ["IMPERCINDU PINTURA IMPERMEAB. GALON", undefined],
+      ["LAMINA CINDU CINDUTEJA ROJO 6.00MTS", undefined],
+      ["CINDU EKOADHESIVO LIQUIDO 1/4 GAL", undefined],
+      ["CINDU ROLLO MANTO ASFALTICO 3.15MM", undefined],
+      // Listos para cuando estén en Saint.
+      ['CINDUCOLOR PINTURA CLASE "A" GALON', "cinducolor-clase-a-gal.webp"],
+      ["CINDUCOLOR PINTURA EMULSIONADA CUÑETE", "cinducolor-tobo.webp"],
+      ["CINDUCOLOR VINIL ACRILICA BLANCO GALON", "cinducolor-vinil-gal.webp"],
+      ["CINDUCASA PINTURA BLANCO TOBO", "cinducasa-tobo.webp"],
+      ["CINDUCOLOR ANTIALCALINO GALON", "antialcalino-gal.webp"],
+      ["CINDUPRO PASTA PROFESIONAL CUÑETE", "cindupro-tobo.webp"],
+      ["CINDUPINTA SATINADA GALON", "cindupinta-satinada-gal.webp"],
+      ["CINDUCOLOR FONDO ANTICORROSIVO GRIS 1/4 GAL", "fondo-anticorrosivo-cuarto.webp"],
+      ["CINDUCOLOR ESMALTE SATINADO BLANCO GALON", "esmalte-satinado-gal.webp"],
+      ["CINDUCOLOR ESMALTE NEGRO 1/4 GAL", "esmalte-brillante-cuarto.webp"],
+      ["CINDUCOLOR ESMALTE NEGRO MATE GALON", undefined],
+      ["CINDU EKOCOLOR CUÑETE", "ekocolor-tobo.webp"],
+      ["CINDUTRAFICO AMARILLO GALON", "trafico-amarillo-gal.webp"],
+      ["CINDUTRAFICO BLANCO CUÑETE", "trafico-blanco-tobo.webp"],
+      ["CINDUTRAFICO BLANCO GALON", undefined], // no hay foto del galón blanco
+    ];
+    for (const [nombre, foto] of casos) expect(f(nombre), nombre).toBe(foto);
+  });
+
   it("Adesi-Top: cada producto con su envase y tamaño (nombres reales de Saint); sin foto, nada", () => {
     const f = (nombre: string) => fotoPorNombre(nombre, "ADESI-TOP")?.replace("/productos/adesitop/", "");
     const casos: [string, string | undefined][] = [

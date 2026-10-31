@@ -49,6 +49,7 @@ export function fotoPorNombre(nombre: string, marca: string | null): string | un
   if (/COLLET/i.test(marca ?? "") || /COLLET/.test(n)) return fotoCollet(n);
   if (/MANPICA/i.test(marca ?? "") || /MANPICA/.test(n)) return fotoManpica(n);
   if (/ADESI/i.test(marca ?? "") || /ADESI/.test(n)) return fotoAdesiTop(n);
+  if (/^CINDU$/i.test(marca ?? "") || /CINDU/.test(n)) return fotoCindu(n);
   if (!/MONTANA/i.test(marca ?? "") && !/MONTANA/.test(n)) return undefined;
   const linea = lineaMontana(n);
   if (!linea) return undefined;
@@ -152,6 +153,39 @@ function fotoAdesiTop(n: string): string | undefined {
     : /\bGAL/.test(n) ? "gal"
     : null;
   return tam && def.tamanos.includes(tam) ? `${AT}${def.linea}-${tam}.webp` : undefined;
+}
+
+/**
+ * Pinturas Cindu: fotos oficiales del envase por línea (pedido de persona B), listas para cuando estén en Saint. Primera
+ * regla que calce. Tamaño: 1/4 o 946 ml (lata pequeña), galón, tobo/cuñete/paila. Sin tamaño en el nombre o sin foto de
+ * ese tamaño, sin foto. Impercindu (CINDU015/016) NO tiene foto: la de EkoColor es otro producto. Las láminas, mantos y
+ * demás Cindu no calzan con ninguna regla.
+ */
+const CI = "/productos/cindu/";
+const CINDU_LINEAS: { regla: RegExp; linea: string; tamanos: string[] }[] = [
+  { regla: /TR[AÁ]FICO.*AMARILL|AMARILL.*TR[AÁ]FICO/, linea: "trafico-amarillo", tamanos: ["gal"] },
+  { regla: /TR[AÁ]FICO.*BLANCO|BLANCO.*TR[AÁ]FICO/, linea: "trafico-blanco", tamanos: ["tobo"] },
+  { regla: /EKO ?COLOR/, linea: "ekocolor", tamanos: ["tobo"] },
+  { regla: /ANTIALCALIN/, linea: "antialcalino", tamanos: ["gal", "tobo"] },
+  { regla: /CINDU ?PRO\b|PASTA/, linea: "cindupro", tamanos: ["gal", "tobo"] },
+  { regla: /CINDU ?CASA/, linea: "cinducasa", tamanos: ["gal", "tobo"] },
+  { regla: /CINDU ?PINTA/, linea: "cindupinta-satinada", tamanos: ["gal"] },
+  { regla: /FONDO|ANTICORROSIV/, linea: "fondo-anticorrosivo", tamanos: ["cuarto", "gal"] },
+  { regla: /ESMALTE.*SATINAD/, linea: "esmalte-satinado", tamanos: ["gal"] },
+  { regla: /ESMALTE.*\bMATE\b/, linea: "", tamanos: [] }, // sin foto
+  { regla: /ESMALTE/, linea: "esmalte-brillante", tamanos: ["cuarto", "gal"] }, // sin acabado: brillante
+  { regla: /VINIL|ACR[IÍ]LIC/, linea: "cinducolor-vinil", tamanos: ["gal", "tobo"] },
+  { regla: /CLASE ?"?A\b|TIPO ?"?A\b|"A"/, linea: "cinducolor-clase-a", tamanos: ["gal", "tobo"] },
+  { regla: /CINDU ?COLOR|EMULSIONAD/, linea: "cinducolor", tamanos: ["gal", "tobo"] },
+];
+function fotoCindu(n: string): string | undefined {
+  const def = CINDU_LINEAS.find((l) => l.regla.test(n));
+  if (!def) return undefined;
+  const tam = /1\/4|946/.test(n) ? "cuarto"
+    : /TOBO|PAILA|CU[NÑ]ETE|\bCNTE\b|\b[45] ?GAL/.test(n) ? "tobo"
+    : /\bGAL/.test(n) ? "gal"
+    : null;
+  return tam && def.tamanos.includes(tam) ? `${CI}${def.linea}-${tam}.webp` : undefined;
 }
 
 /**
