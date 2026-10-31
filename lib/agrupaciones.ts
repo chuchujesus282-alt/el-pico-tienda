@@ -80,8 +80,22 @@ function lineaMontana(n: string): string | null {
  * ese tamaño, el producto queda sin foto (pedido de persona B: no rellenar con otro envase). `tamanos: null` = una sola
  * foto, sin tamaño.
  */
+/** Una línea de envase: la regla del nombre, el archivo base y los tamaños con foto (`null` = una sola foto). */
+type LineaFoto = { regla: RegExp; linea: string; tamanos: string[] | null };
+/** Manpica, Adesi-Top y Cindu: la primera línea que calce + el tamaño leído del nombre. Sin foto de ese tamaño (o sin
+ * tamaño), undefined: nunca se rellena con otro envase. `archivo` renombra claves que conservan su archivo viejo. */
+function fotoDeTabla(n: string, carpeta: string, lineas: LineaFoto[], tam: string | null,
+  archivo: Record<string, string> = {}): string | undefined {
+  const def = lineas.find((l) => l.regla.test(n));
+  if (!def) return undefined;
+  if (!def.tamanos) return `${carpeta}${def.linea}.webp`;
+  if (!tam || !def.tamanos.includes(tam)) return undefined;
+  const clave = `${def.linea}-${tam}`;
+  return `${carpeta}${archivo[clave] ?? clave}.webp`;
+}
+
 const MP = "/productos/manpica/";
-const MANPICA_LINEAS: { regla: RegExp; linea: string; tamanos: string[] | null }[] = [
+const MANPICA_LINEAS: LineaFoto[] = [
   { regla: /TITAN.*CAUCHO|CAUCHO.*TITAN/, linea: "titan-caucho", tamanos: ["gal", "tobo"] },
   { regla: /TITAN.*2 ?EN ?1/, linea: "titan-fondo-2en1", tamanos: ["cuarto", "gal"] },
   { regla: /FONDO TITAN/, linea: "titan-fondo-anticorrosivo", tamanos: ["gal"] }, // el Titan p/herrería sin "2 en 1"
@@ -115,13 +129,8 @@ const MANPICA_LINEAS: { regla: RegExp; linea: string; tamanos: string[] | null }
 /** Tráfico conserva sus archivos de antes. */
 const MANPICA_ARCHIVO: Record<string, string> = { "trafico-gal": "trafico-galon", "trafico-tobo": "trafico-tobo-amarillo" };
 function fotoManpica(n: string): string | undefined {
-  const def = MANPICA_LINEAS.find((l) => l.regla.test(n));
-  if (!def) return undefined;
-  if (!def.tamanos) return `${MP}${def.linea}.webp`;
   const tam = /1\/4/.test(n) ? "cuarto" : /TOBO|PAILA|CU[NÑ]ETE|\bCNTE\b|\b[45] ?GAL/.test(n) ? "tobo" : "gal";
-  if (!def.tamanos.includes(tam)) return undefined;
-  const clave = `${def.linea}-${tam}`;
-  return `${MP}${MANPICA_ARCHIVO[clave] ?? clave}.webp`;
+  return fotoDeTabla(n, MP, MANPICA_LINEAS, tam, MANPICA_ARCHIVO);
 }
 
 /**
@@ -131,7 +140,7 @@ function fotoManpica(n: string): string | undefined {
  * foto (no se rellena con otro envase). Los 12 Adesi-Top de Saint tienen foto.
  */
 const AT = "/productos/adesitop/";
-const ADESI_LINEAS: { regla: RegExp; linea: string; tamanos: string[] }[] = [
+const ADESI_LINEAS: LineaFoto[] = [
   { regla: /ACELERADOR|FRAGUADO/, linea: "acelerador", tamanos: ["litro", "gal", "tobo"] },
   { regla: /CRISTALIZ.*ROSAD/, linea: "cristalizador-rosado", tamanos: ["litro", "gal", "tobo"] },
   { regla: /CRISTALIZ.*BLANCO/, linea: "cristalizador-blanco", tamanos: ["litro", "gal"] },
@@ -149,15 +158,13 @@ const ADESI_LINEAS: { regla: RegExp; linea: string; tamanos: string[] }[] = [
   { regla: /#? ?\b400\b/, linea: "imper400", tamanos: ["garrafa"] }, // garrafa de 10 L con saco
 ];
 function fotoAdesiTop(n: string): string | undefined {
-  const def = ADESI_LINEAS.find((l) => l.regla.test(n));
-  if (!def) return undefined;
   const tam = /GARRAFA|\b10 ?LTS?\b/.test(n) ? "garrafa"
     : /\bLITRO|\b1 ?LTS?\b|\b1 ?L\b/.test(n) ? "litro"
     : /946|1\/4/.test(n) ? "cuarto"
     : /TOBO|PAILA|CU[NÑ]ETE|PIMPINA|\b19 ?L|\b[45] ?GAL/.test(n) ? "tobo"
     : /\bGAL/.test(n) ? "gal"
     : null;
-  return tam && def.tamanos.includes(tam) ? `${AT}${def.linea}-${tam}.webp` : undefined;
+  return fotoDeTabla(n, AT, ADESI_LINEAS, tam);
 }
 
 /**
@@ -167,7 +174,7 @@ function fotoAdesiTop(n: string): string | undefined {
  * demás Cindu no calzan con ninguna regla.
  */
 const CI = "/productos/cindu/";
-const CINDU_LINEAS: { regla: RegExp; linea: string; tamanos: string[] }[] = [
+const CINDU_LINEAS: LineaFoto[] = [
   { regla: /TR[AÁ]FICO.*AMARILL|AMARILL.*TR[AÁ]FICO/, linea: "trafico-amarillo", tamanos: ["gal"] },
   { regla: /TR[AÁ]FICO.*BLANCO|BLANCO.*TR[AÁ]FICO/, linea: "trafico-blanco", tamanos: ["tobo"] },
   { regla: /EKO ?COLOR/, linea: "ekocolor", tamanos: ["tobo"] },
@@ -184,13 +191,11 @@ const CINDU_LINEAS: { regla: RegExp; linea: string; tamanos: string[] }[] = [
   { regla: /CINDU ?COLOR|EMULSIONAD/, linea: "cinducolor", tamanos: ["gal", "tobo"] },
 ];
 function fotoCindu(n: string): string | undefined {
-  const def = CINDU_LINEAS.find((l) => l.regla.test(n));
-  if (!def) return undefined;
   const tam = /1\/4|946/.test(n) ? "cuarto"
     : /TOBO|PAILA|CU[NÑ]ETE|\bCNTE\b|\b[45] ?GAL/.test(n) ? "tobo"
     : /\bGAL/.test(n) ? "gal"
     : null;
-  return tam && def.tamanos.includes(tam) ? `${CI}${def.linea}-${tam}.webp` : undefined;
+  return fotoDeTabla(n, CI, CINDU_LINEAS, tam);
 }
 
 /**
