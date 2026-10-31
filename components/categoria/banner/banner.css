@@ -353,163 +353,92 @@
 
 /* ===== Hogar y jardín (BannerJardin) ===== */
 
+/* La escena es un contenedor: herramientas y manguera se miden en cqh (% del alto del banner). */
+.bp .bj-escena {
+  container-type: size;
+}
+/* Cerca de madera: tablas verticales de ~46px con una ranura oscura entre ellas, veta fina y un listón horizontal. */
+.bp .bj-cerca {
+  background:
+    linear-gradient(to bottom, transparent 18%, color-mix(in srgb, var(--color-tablero-oscuro) 70%, transparent) 18% 18.6%, color-mix(in srgb, var(--color-pico-blanco) 14%, var(--color-tablero)) 18.6% 25%, color-mix(in srgb, var(--color-tablero-oscuro) 60%, transparent) 25% 25.8%, transparent 25.8%),
+    repeating-linear-gradient(90deg, color-mix(in srgb, var(--color-grama-oscuro) 85%, var(--color-tablero-oscuro)) 0 3px, transparent 3px 46px),
+    repeating-linear-gradient(90deg, transparent 0 3px, color-mix(in srgb, var(--color-pico-blanco) 12%, transparent) 3px 6px, transparent 6px 40px, color-mix(in srgb, var(--color-tablero-oscuro) 18%, transparent) 40px 46px),
+    repeating-linear-gradient(0deg, transparent 0 11px, color-mix(in srgb, var(--color-tablero-oscuro) 10%, transparent) 11px 12px, transparent 12px 29px),
+    linear-gradient(180deg, color-mix(in srgb, var(--color-pico-blanco) 8%, var(--color-tablero)), var(--color-tablero-oscuro));
+}
 
-/* Agua. Los trazos no se deforman al estirarse el SVG. */
-.bp .bj-agua path,
-.bp .bj-agua ellipse {
-  vector-effect: non-scaling-stroke;
-  fill: none;
-  stroke-linecap: round;
+/* Manguera: tubo verde sombreado (oscuro abajo, brillo arriba), franja naranja y trenzado. */
+.bp .bj-tubo-sombra {
+  stroke: var(--color-grama-oscuro);
 }
-.bp .bj-cuerpo {
-  stroke: color-mix(in srgb, var(--color-pico-blanco) 40%, transparent);
-  filter: blur(1.5px);
+.bp .bj-tubo {
+  stroke: var(--color-grama);
 }
-.bp .bj-corre {
-  stroke: color-mix(in srgb, var(--color-pico-blanco) 85%, transparent);
-  stroke-dasharray: 22 4 9 3 14 5;
-  filter: blur(0.4px);
+.bp .bj-tubo-luz {
+  stroke: color-mix(in srgb, var(--color-grama-claro) 70%, var(--color-pico-blanco));
+  opacity: 0.75;
 }
-.bp .bj-gotas {
-  stroke: color-mix(in srgb, var(--color-pico-blanco) 95%, transparent);
-  stroke-dasharray: 0.1 7;
-  stroke-dashoffset: 0;
+.bp .bj-tubo-franja {
+  stroke: color-mix(in srgb, var(--color-amarillo-obra) 55%, var(--color-pico-rojo));
+  opacity: 0.85;
 }
-.bp .bj-mojado {
-  fill: color-mix(in srgb, var(--color-texto) 70%, transparent);
-  filter: blur(6px);
-  opacity: 0.45;
-  mix-blend-mode: multiply;
-  transition: opacity 2.5s ease;
+.bp .bj-trenza {
+  stroke: color-mix(in srgb, var(--color-grama-oscuro) 40%, transparent);
 }
-.bp[data-agua="cerrada"] .bj-mojado {
-  opacity: 0;
-  transition-duration: 6s;
+.bp .bj-casquillo {
+  fill: color-mix(in srgb, var(--color-amarillo-obra) 55%, var(--color-pico-rojo));
 }
-.bp .bj-anillo {
-  stroke: color-mix(in srgb, var(--color-pico-blanco) 70%, transparent);
-  stroke-width: 1px;
+.bp .bj-pico {
+  fill: var(--color-pico-azul-oscuro);
+}
+
+/* Agua de la boquilla: gotas que se forman y caen; con clic, un chorro corto en abanico hacia la grama. */
+.bp .bj-gota,
+.bp .bj-chorro {
+  width: 0.9cqh;
+  height: 1.4cqh;
+  border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+  background: color-mix(in srgb, var(--color-agua) 85%, transparent);
   opacity: 0;
 }
-.bp .bj-salto {
-  fill: color-mix(in srgb, var(--color-pico-blanco) 90%, transparent);
-  opacity: 0;
-}
-/* Llave cerrada: el agua se apaga suave. */
-.bp .bj-agua {
-  transition: opacity 0.6s ease;
-}
-.bp[data-agua="cerrada"] .bj-agua > g > g {
-  opacity: 0;
-  transition: opacity 0.6s ease;
-}
-/* Activo (mouse/foco/toque): el chorro llega más lejos. */
-.bp .bj-barrido {
-  transform-origin: 104% 6%;
-  transform: scale(calc(1 + var(--activo) * 0.08));
-  transition: transform 0.6s var(--bp-curva);
+.bp .bj-chorro {
+  width: 0.7cqh;
+  height: 2.6cqh;
+  border-radius: 1cqh;
 }
 
 @media (prefers-reduced-motion: no-preference) {
-  /* La manguera va y viene: el chorro barre los canteros. */
-  .bp .bj-barrido > * {
-    animation: bj-barrer 7s ease-in-out infinite;
+  .bp .bj-gota {
+    animation: bj-gota 2.6s cubic-bezier(0.55, 0, 0.9, 0.45) calc(var(--i) * 0.87s) infinite;
   }
-  .bp .bj-corre {
-    animation: bj-correr 0.55s linear var(--r) infinite;
-  }
-  .bp .bj-gotas {
-    animation: bj-correr-gotas 0.8s linear var(--r) infinite;
-  }
-  .bp .bj-anillo {
-    animation: bj-anillo 0.9s ease-out var(--r) infinite;
-  }
-  .bp .bj-salto-1 {
-    animation: bj-salto-1 0.7s cubic-bezier(0.3, 0, 0.7, 1) var(--r) infinite;
-  }
-  .bp .bj-salto-2 {
-    animation: bj-salto-2 0.8s cubic-bezier(0.3, 0, 0.7, 1) calc(var(--r) + 0.2s) infinite;
-  }
-  .bp .bj-salto-3 {
-    animation: bj-salto-3 0.75s cubic-bezier(0.3, 0, 0.7, 1) calc(var(--r) + 0.4s) infinite;
-  }
-  /* Fuera de pantalla, todo quieto. */
-  .bp[data-pausa] .bj-agua * {
-    animation-play-state: paused;
-  }
-}
-@media (prefers-reduced-motion: reduce) {
-  /* Quieto pero visible: el agua se ve como un chorro fijo. */
-  .bp .bj-anillo {
-    opacity: 0.6;
+  .bp .bj-chorro {
+    animation: bj-chorro 0.9s cubic-bezier(0.3, 0, 0.8, 0.6) calc(var(--i) * 0.07s) both;
   }
 }
 
-@keyframes bj-barrer {
+@keyframes bj-gota {
   0%,
-  100% {
-    translate: 0 0;
-  }
-  50% {
-    translate: -9px 2px;
-  }
-}
-@keyframes bj-correr {
-  to {
-    stroke-dashoffset: -40;
-  }
-}
-@keyframes bj-correr-gotas {
-  to {
-    stroke-dashoffset: -14.2;
-  }
-}
-@keyframes bj-anillo {
-  0% {
-    opacity: 0.8;
-    scale: 0.3;
-  }
-  100% {
+  45% {
     opacity: 0;
-    scale: 1.3;
+    transform: translate(0, 0) scale(0.3);
+  }
+  55% {
+    opacity: 1;
+    transform: translate(0, 0) scale(1);
+  }
+  100% {
+    opacity: 0.2;
+    transform: translate(-0.6cqh, 26cqh) scale(0.9, 1.3);
   }
 }
-@keyframes bj-salto-1 {
+@keyframes bj-chorro {
   0% {
     opacity: 1;
-    translate: 0 0;
-  }
-  50% {
-    translate: -1.6px -3px;
+    transform: translate(0, 0) rotate(28deg);
   }
   100% {
     opacity: 0;
-    translate: -2.6px 0.5px;
+    transform: translate(calc(-14cqh - var(--i) * 0.9cqh), calc(24cqh + var(--i) * 0.4cqh)) rotate(28deg);
   }
 }
-@keyframes bj-salto-2 {
-  0% {
-    opacity: 1;
-    translate: 0 0;
-  }
-  50% {
-    translate: 1.8px -2.4px;
-  }
-  100% {
-    opacity: 0;
-    translate: 3px 0.6px;
-  }
-}
-@keyframes bj-salto-3 {
-  0% {
-    opacity: 1;
-    translate: 0 0;
-  }
-  50% {
-    translate: 0.4px -3.6px;
-  }
-  100% {
-    opacity: 0;
-    translate: 0.8px 0.4px;
-  }
-}
+
