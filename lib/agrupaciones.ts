@@ -33,6 +33,8 @@ export const FOTOS_SAINT: Record<string, string> = {
   PINECO020: "/productos/pineco/PINECO020-cuarto.webp", // esmalte 2 en 1 acrílico DTM, 1/4 de galón
   PINECO021: "/productos/pineco/PINECO021-cuarto.webp", // Cerami-K brillante, 1/4 de galón
   PINECO019: "/productos/pineco/PINECO011-cuarto.webp", // hidroesmalte 1/4: la foto del galón, en pequeño (pedido de persona B)
+  // Mastic 500 sin tamaño en el nombre: Saint dice "CUÑETE DE 5GAL" en la descripción (el tobo de 4 gal es MANP0023).
+  MANP0005: "/productos/manpica/mastic500-cunete.webp",
 };
 
 /**
@@ -70,32 +72,38 @@ function lineaMontana(n: string): string | null {
 }
 
 /**
- * Manpica: pintura de tráfico y demarcación, y la línea Titan (pedido de persona B). Tráfico: en cuñete/tobo (CNTE,
- * 5 GAL…), el tobo "Tráfico acrílico termoplástico"; en galón (o sin tamaño), la lata Manpi-Traf. Los demás Manpica,
- * sin foto.
+ * Manpica: fotos oficiales del envase por línea (pedido de persona B). Se busca la PRIMERA regla que calce con el
+ * nombre (el orden importa: Titan antes que el fondo de herrería). Tamaño como Collet: 1/4 la lata pequeña ("-cuarto",
+ * 600 px), galón la mediana ("-gal", 760), tobo/paila/cuñete la grande ("-tobo", 1000); si la línea no tiene ese
+ * tamaño, la del galón. `tamanos: null` = una sola foto, sin tamaño. Los Manpica que no calzan, sin foto (esmaltes,
+ * minio, grafiado, Etherna, 55-01…).
  */
+const MP = "/productos/manpica/";
+const MANPICA_LINEAS: { regla: RegExp; linea: string; tamanos: string[] | null }[] = [
+  { regla: /TITAN.*CAUCHO|CAUCHO.*TITAN/, linea: "titan-caucho", tamanos: ["gal", "tobo"] },
+  { regla: /TITAN.*2 ?EN ?1/, linea: "titan-fondo-2en1", tamanos: ["cuarto", "gal"] },
+  { regla: /FONDO TITAN/, linea: "titan-fondo-anticorrosivo", tamanos: ["gal"] }, // el Titan p/herrería sin "2 en 1"
+  { regla: /TR[AÁ]FICO|DEMARCACI/, linea: "trafico", tamanos: ["gal", "tobo"] },
+  { regla: /FONDO 3\b/, linea: "fondo3", tamanos: ["cuarto", "gal"] },
+  { regla: /ANTIALCALIN/, linea: "antialcalino", tamanos: ["cuarto", "gal", "tobo"] },
+  { regla: /CROMATO/, linea: "cromato-zinc", tamanos: ["cuarto", "gal"] },
+  { regla: /FONDO.*HERRER/, linea: "fondo-herreria", tamanos: ["cuarto", "gal"] },
+  { regla: /MASTIC-? ?1000/, linea: "mastic1000", tamanos: null }, // masilla para vidrio, un solo envase
+  { regla: /MASTIC-? ?500/, linea: "mastic500", tamanos: ["cuarto", "gal", "tobo"] }, // el cuñete, por código (FOTOS_SAINT)
+  { regla: /MANPITEX/, linea: "manpitex", tamanos: ["gal", "tobo"] },
+  { regla: /MANPICANCHA/, linea: "manpicancha", tamanos: ["gal", "tobo"] },
+  { regla: /TEXTUREX/, linea: "texturex", tamanos: ["gal", "tobo"] },
+  { regla: /EPOX/, linea: "epoxi-kit", tamanos: null }, // galón + catalizador, los dos envases
+];
+/** Tráfico conserva sus archivos de antes. */
+const MANPICA_ARCHIVO: Record<string, string> = { "trafico-gal": "trafico-galon", "trafico-tobo": "trafico-tobo-amarillo" };
 function fotoManpica(n: string): string | undefined {
-  if (/TITAN/.test(n)) return fotoTitan(n);
-  if (!/TR[AÁ]FICO|DEMARCACI/.test(n)) return undefined;
-  const tobo = /TOBO|PAILA|CU[NÑ]ETE|\bCNTE\b|\b[45] ?GAL/.test(n);
-  return `/productos/manpica/${tobo ? "trafico-tobo-amarillo" : "trafico-galon"}.webp`;
-}
-
-/**
- * Manpica Titan (fotos oficiales del envase, pedido de persona B): caucho mate (galón y tobo), Fondo Esmalte 2 en 1
- * (1/4 y galón) y Fondo Anticorrosivo (el fondo para herrería sin "2 en 1"). Mismos tamaños que Collet: lata pequeña
- * en 1/4, mediana en galón y grande en tobo; si una línea no tiene ese tamaño, la del galón.
- */
-const TITAN_TAMANOS: Record<string, string[]> = {
-  caucho: ["gal", "tobo"],
-  "fondo-2en1": ["cuarto", "gal"],
-  "fondo-anticorrosivo": ["gal"],
-};
-function fotoTitan(n: string): string | undefined {
-  const linea = /CAUCHO/.test(n) ? "caucho" : /2 ?EN ?1/.test(n) ? "fondo-2en1" : /FONDO/.test(n) ? "fondo-anticorrosivo" : null;
-  if (!linea) return undefined;
+  const def = MANPICA_LINEAS.find((l) => l.regla.test(n));
+  if (!def) return undefined;
+  if (!def.tamanos) return `${MP}${def.linea}.webp`;
   const tam = /1\/4/.test(n) ? "cuarto" : /TOBO|PAILA|CU[NÑ]ETE|\bCNTE\b|\b[45] ?GAL/.test(n) ? "tobo" : "gal";
-  return `/productos/manpica/titan-${linea}-${TITAN_TAMANOS[linea].includes(tam) ? tam : "gal"}.webp`;
+  const clave = `${def.linea}-${def.tamanos.includes(tam) ? tam : "gal"}`;
+  return `${MP}${MANPICA_ARCHIVO[clave] ?? clave}.webp`;
 }
 
 /**

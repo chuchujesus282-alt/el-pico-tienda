@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { agrupar, clasificar, fotoPorNombre, leerMedida, valorMedida } from "@/lib/agrupaciones";
+import { agrupar, clasificar, FOTOS_SAINT, fotoPorNombre, leerMedida, valorMedida } from "@/lib/agrupaciones";
 import type { Producto } from "@/types/catalogo";
 
 // Nombres tal como vienen de Saint (Herramientas, 1171).
@@ -191,7 +191,38 @@ describe("agrupar", () => {
     expect(f("MANPICA FONDO TITAN 2 EN 1 P/HERR. GALON")).toBe(`${T}fondo-2en1-gal.webp`);
     expect(f("MANPICA FONDO TITAN 2 EN 1 P/HERR 1/4GAL")).toBe(`${T}fondo-2en1-cuarto.webp`);
     expect(f("MANPICA FONDO TITAN P/HERRERIA GALON")).toBe(`${T}fondo-anticorrosivo-gal.webp`);
-    expect(f("MANPICA FONDO HERRERIA NEGRO GALON")).toBeUndefined();
+  });
+
+  it("pinturas Manpica: cada línea con su envase y tamaño (nombres reales de Saint)", () => {
+    const f = (nombre: string) => fotoPorNombre(nombre, "MANPICA")?.replace("/productos/manpica/", "");
+    const casos: [string, string | undefined][] = [
+      ["MANPICA FONDO 3 NEGRO 1/4 GALON", "fondo3-cuarto.webp"],
+      ["MANPICA FONDO 3 BLANCO O ALUMINIO GALON", "fondo3-gal.webp"],
+      ["MANPICA FONDO ANTIALCALINO 1/4 GALON", "antialcalino-cuarto.webp"],
+      ["MANPICA FONDO ANTIALCALINO GALON", "antialcalino-gal.webp"],
+      ["MANPICA FONDO ANTIALCALINO CUÑETE", "antialcalino-tobo.webp"],
+      ["MANPICA FONDO CROMATO DE ZINC 1/4", "cromato-zinc-cuarto.webp"],
+      ["MANPICA FONDO CROMATO DE ZINC GAL", "cromato-zinc-gal.webp"],
+      ["MANPICA FONDO GRIS/ROJO P/HERRER 1/4 GAL", "fondo-herreria-cuarto.webp"],
+      ["MANPICA FONDO HERRERIA NEGRO GALON", "fondo-herreria-gal.webp"],
+      ["MANPICA FONDO DE HERRERIA GALON GRIS", "fondo-herreria-gal.webp"],
+      ["MANPICA FONDO TITAN P/HERRERIA GALON", "titan-fondo-anticorrosivo-gal.webp"],
+      ["MANPICA MASTIC-1000 MASILLA VIDRIO KG", "mastic1000.webp"],
+      ["MANPICA MASTIC-500 PASTA P/PARED 1/4 GAL", "mastic500-cuarto.webp"],
+      ["MANPICA MASTIC-500 PASTA P/PARED GAL", "mastic500-gal.webp"],
+      ["MANPICA MASTIC-500 PASTA P/PARED TOBO", "mastic500-tobo.webp"],
+      ["MANPICA MANPITEX INTERIOR/EXTERIOR CNTE", "manpitex-tobo.webp"],
+      ["MANPICA MANPICANCHA GALON", "manpicancha-gal.webp"],
+      ["MANPICA MANPICANCHA TOBO 4 GALONES", "manpicancha-tobo.webp"],
+      ["MANPICA TEXTUREX SOLO INTERIORES GAL", "texturex-gal.webp"],
+      ["MANPICA TEXTUREX CUÑETE", "texturex-tobo.webp"],
+      ["MANPICA KIT PINTURA EPOXICA GAL+CATALIZ", "epoxi-kit.webp"],
+      ["MANPICA FONDO MINIO GALON", undefined],
+      ["MANPICA ETHERNA MATE BLANCO TOBO", undefined],
+    ];
+    for (const [nombre, foto] of casos) expect(f(nombre), nombre).toBe(foto);
+    // El Mastic 500 sin tamaño en el nombre es el cuñete (por código).
+    expect(FOTOS_SAINT.MANP0005).toBe("/productos/manpica/mastic500-cunete.webp");
   });
 
   it("pinturas Collet: Prestigio y Ocasión con su envase; esmaltes, la lata de esmalte; los demás, Decosatín o BasicPlus", () => {
