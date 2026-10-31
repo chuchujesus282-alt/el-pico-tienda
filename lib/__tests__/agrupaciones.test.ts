@@ -179,7 +179,7 @@ describe("agrupar", () => {
     expect(f("MANPICA TRAFICO AMARILLO REFLECTIV GALON")).toBe("/productos/manpica/trafico-galon.webp");
     expect(f("MANPICA TRAFICO AMARILLO REFLECTIVO CNTE")).toBe("/productos/manpica/trafico-tobo-amarillo.webp");
     expect(f("MANPICA TRAFICO REFLECTIVO CUÑETE 5 GAL")).toBe("/productos/manpica/trafico-tobo-amarillo.webp");
-    expect(f("MANPICA DEMARCACION BROCAL AMARILLO TOBO")).toBe("/productos/manpica/trafico-tobo-amarillo.webp");
+    expect(f("MANPICA DEMARCACION BROCAL AMARILLO TOBO")).toBe("/productos/manpica/brocales-tobo.webp");
     expect(f("MANPICA ESMALTE BLANCO GALON")).toBeUndefined();
   });
 
@@ -217,6 +217,18 @@ describe("agrupar", () => {
       ["MANPICA TEXTUREX SOLO INTERIORES GAL", "texturex-gal.webp"],
       ["MANPICA TEXTUREX CUÑETE", "texturex-tobo.webp"],
       ["MANPICA KIT PINTURA EPOXICA GAL+CATALIZ", "epoxi-kit.webp"],
+      ["MANPICA DEMARCACION BROCAL AMARILLO TOBO", "brocales-tobo.webp"],
+      ["MANPICA PINTURA 55-01 TIPO B TOBO 4GAL", "caucho5501-tobo.webp"],
+      ["MANPICA PINTURA 55-01 GALON", undefined], // solo hay foto del tobo: no se rellena
+      ["MANPICA ESMALTE ESPECIAL ALUMINIO 1/4GAL", "aluminio-cuarto.webp"],
+      ["MANPICA ESMALTE ESPECIAL ALUMINIO GALON", "aluminio-gal.webp"],
+      ["MANPICA ESMALTE SATINADO 1/4GAL", "esmalte-satinado-cuarto.webp"],
+      ["MANPICA ESMALTE SATINADO GALON", "esmalte-satinado-gal.webp"],
+      ["MANPICA ESMALTE NEGRO BRILLANTE GALON", "esmalte-brillante-gal.webp"],
+      ["MANPICA ESMALTE NEGRO MATE GALON", "esmalte-mate-gal.webp"],
+      ["MANPICA ESMALTE BLANCO GALON", undefined], // "brillante o mate" solo en la descripción
+      ["MANPICA ESMALTE SINTETICO SEC RAPIDO GAL", undefined],
+      ["MANPICA FONDO 3 BLANCO O ALUMINIO GALON", "fondo3-gal.webp"],
       ["MANPICA FONDO MINIO GALON", undefined],
       ["MANPICA ETHERNA MATE BLANCO TOBO", undefined],
     ];
