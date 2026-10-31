@@ -183,6 +183,17 @@ describe("agrupar", () => {
     expect(f("MANPICA ESMALTE BLANCO GALON")).toBeUndefined();
   });
 
+  it("pinturas Manpica Titan: caucho, fondo 2 en 1 y fondo anticorrosivo, cada uno con su tamaño", () => {
+    const f = (nombre: string) => fotoPorNombre(nombre, "MANPICA");
+    const T = "/productos/manpica/titan-";
+    expect(f('MANPICA TITAN CAUCHO TIPO "C" GALON')).toBe(`${T}caucho-gal.webp`);
+    expect(f('MANPICA TITAN CAUCHO TIPO "C" TOBO')).toBe(`${T}caucho-tobo.webp`);
+    expect(f("MANPICA FONDO TITAN 2 EN 1 P/HERR. GALON")).toBe(`${T}fondo-2en1-gal.webp`);
+    expect(f("MANPICA FONDO TITAN 2 EN 1 P/HERR 1/4GAL")).toBe(`${T}fondo-2en1-cuarto.webp`);
+    expect(f("MANPICA FONDO TITAN P/HERRERIA GALON")).toBe(`${T}fondo-anticorrosivo-gal.webp`);
+    expect(f("MANPICA FONDO HERRERIA NEGRO GALON")).toBeUndefined();
+  });
+
   it("pinturas Collet: Prestigio y Ocasión con su envase; esmaltes, la lata de esmalte; los demás, Decosatín o BasicPlus", () => {
     const f = (nombre: string) => fotoPorNombre(nombre, "COLLET");
     expect(f('COLLET PRESTIGIO PINTURA "A" GALON')).toBe("/productos/collet/prestigio-gal.webp");

@@ -70,13 +70,32 @@ function lineaMontana(n: string): string | null {
 }
 
 /**
- * Manpica: solo pintura de tráfico y demarcación (pedido de persona B). En cuñete/tobo (CNTE, 5 GAL…), el tobo
- * "Tráfico acrílico termoplástico"; en galón (o sin tamaño), la lata Manpi-Traf. Los demás Manpica, sin foto.
+ * Manpica: pintura de tráfico y demarcación, y la línea Titan (pedido de persona B). Tráfico: en cuñete/tobo (CNTE,
+ * 5 GAL…), el tobo "Tráfico acrílico termoplástico"; en galón (o sin tamaño), la lata Manpi-Traf. Los demás Manpica,
+ * sin foto.
  */
 function fotoManpica(n: string): string | undefined {
+  if (/TITAN/.test(n)) return fotoTitan(n);
   if (!/TR[AÁ]FICO|DEMARCACI/.test(n)) return undefined;
   const tobo = /TOBO|PAILA|CU[NÑ]ETE|\bCNTE\b|\b[45] ?GAL/.test(n);
   return `/productos/manpica/${tobo ? "trafico-tobo-amarillo" : "trafico-galon"}.webp`;
+}
+
+/**
+ * Manpica Titan (fotos oficiales del envase, pedido de persona B): caucho mate (galón y tobo), Fondo Esmalte 2 en 1
+ * (1/4 y galón) y Fondo Anticorrosivo (el fondo para herrería sin "2 en 1"). Mismos tamaños que Collet: lata pequeña
+ * en 1/4, mediana en galón y grande en tobo; si una línea no tiene ese tamaño, la del galón.
+ */
+const TITAN_TAMANOS: Record<string, string[]> = {
+  caucho: ["gal", "tobo"],
+  "fondo-2en1": ["cuarto", "gal"],
+  "fondo-anticorrosivo": ["gal"],
+};
+function fotoTitan(n: string): string | undefined {
+  const linea = /CAUCHO/.test(n) ? "caucho" : /2 ?EN ?1/.test(n) ? "fondo-2en1" : /FONDO/.test(n) ? "fondo-anticorrosivo" : null;
+  if (!linea) return undefined;
+  const tam = /1\/4/.test(n) ? "cuarto" : /TOBO|PAILA|CU[NÑ]ETE|\bCNTE\b|\b[45] ?GAL/.test(n) ? "tobo" : "gal";
+  return `/productos/manpica/titan-${linea}-${TITAN_TAMANOS[linea].includes(tam) ? tam : "gal"}.webp`;
 }
 
 /**
