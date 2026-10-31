@@ -76,8 +76,7 @@ function lineaMontana(n: string): string | null {
  * nombre (el orden importa: Titan antes que el fondo de herrería). Tamaño como Collet: 1/4 la lata pequeña ("-cuarto",
  * 600 px), galón la mediana ("-gal", 760), tobo/paila/cuñete la grande ("-tobo", 1000). Si la línea NO tiene foto de
  * ese tamaño, el producto queda sin foto (pedido de persona B: no rellenar con otro envase). `tamanos: null` = una sola
- * foto, sin tamaño. Sin foto a propósito: esmaltes sin acabado en el nombre ("BRILLANTE O MATE" solo en la
- * descripción), esmalte "A" en colores, blanco ostra, sintético de secado rápido, minio, grafiado, Etherna, pizarra.
+ * foto, sin tamaño.
  */
 const MP = "/productos/manpica/";
 const MANPICA_LINEAS: { regla: RegExp; linea: string; tamanos: string[] | null }[] = [
@@ -86,11 +85,20 @@ const MANPICA_LINEAS: { regla: RegExp; linea: string; tamanos: string[] | null }
   { regla: /FONDO TITAN/, linea: "titan-fondo-anticorrosivo", tamanos: ["gal"] }, // el Titan p/herrería sin "2 en 1"
   { regla: /BROCAL/, linea: "brocales", tamanos: ["gal", "tobo"] }, // "Pintura para brocales emulsionada"
   { regla: /TR[AÁ]FICO|DEMARCACI/, linea: "trafico", tamanos: ["gal", "tobo"] },
-  { regla: /55-?01/, linea: "caucho5501", tamanos: ["tobo"] }, // Caucho 5501 mate clase B; el galón aún sin foto
+  { regla: /55-?01/, linea: "caucho5501", tamanos: ["gal", "tobo"] }, // Caucho 5501 mate clase B
+  // "Caucho satinado premium": el Caucho 5501 satinado (pedido de persona B).
+  { regla: /CAUCHO SATINADO PREMIUM/, linea: "caucho5501-satinado", tamanos: ["gal", "tobo"] },
+  { regla: /ETHERNA.*SATINAD/, linea: "etherna-satinado", tamanos: ["gal", "tobo"] },
+  { regla: /ETHERNA.*\bMATE\b/, linea: "etherna-mate", tamanos: ["gal", "tobo"] },
+  { regla: /PIZARRA/, linea: "pizarra", tamanos: ["cuarto", "gal"] },
+  { regla: /GRAFIAD|MANPIGRAF/, linea: "grafiado", tamanos: ["gal", "tobo"] },
+  { regla: /\bMINIO\b/, linea: "minio", tamanos: ["cuarto", "gal"] }, // palabra entera: "ALUMINIO" no cuenta
   { regla: /ESMALTE.*ALUMINIO/, linea: "aluminio", tamanos: ["cuarto", "gal"] },
+  { regla: /ESMALTE.*(SEC(ADO)? RAPIDO|SINTETICO)/, linea: "esmalte-secado-rapido", tamanos: ["cuarto", "gal"] },
   { regla: /ESMALTE.*SATINAD/, linea: "esmalte-satinado", tamanos: ["cuarto", "gal"] },
-  { regla: /ESMALTE.*BRILLANTE/, linea: "esmalte-brillante", tamanos: ["cuarto", "gal"] },
   { regla: /ESMALTE.*\bMATE\b/, linea: "esmalte-mate", tamanos: ["cuarto", "gal"] },
+  // Brillante, y también los que no dicen acabado y los de colores (solo vienen en brillante), pedido de persona B.
+  { regla: /ESMALTE/, linea: "esmalte-brillante", tamanos: ["cuarto", "gal"] },
   { regla: /FONDO 3\b/, linea: "fondo3", tamanos: ["cuarto", "gal"] },
   { regla: /ANTIALCALIN/, linea: "antialcalino", tamanos: ["cuarto", "gal", "tobo"] },
   { regla: /CROMATO/, linea: "cromato-zinc", tamanos: ["cuarto", "gal"] },

@@ -180,7 +180,7 @@ describe("agrupar", () => {
     expect(f("MANPICA TRAFICO AMARILLO REFLECTIVO CNTE")).toBe("/productos/manpica/trafico-tobo-amarillo.webp");
     expect(f("MANPICA TRAFICO REFLECTIVO CUÑETE 5 GAL")).toBe("/productos/manpica/trafico-tobo-amarillo.webp");
     expect(f("MANPICA DEMARCACION BROCAL AMARILLO TOBO")).toBe("/productos/manpica/brocales-tobo.webp");
-    expect(f("MANPICA ESMALTE BLANCO GALON")).toBeUndefined();
+    expect(f("MANPICA ESMALTE BLANCO GALON")).toBe("/productos/manpica/esmalte-brillante-gal.webp");
   });
 
   it("pinturas Manpica Titan: caucho, fondo 2 en 1 y fondo anticorrosivo, cada uno con su tamaño", () => {
@@ -219,18 +219,28 @@ describe("agrupar", () => {
       ["MANPICA KIT PINTURA EPOXICA GAL+CATALIZ", "epoxi-kit.webp"],
       ["MANPICA DEMARCACION BROCAL AMARILLO TOBO", "brocales-tobo.webp"],
       ["MANPICA PINTURA 55-01 TIPO B TOBO 4GAL", "caucho5501-tobo.webp"],
-      ["MANPICA PINTURA 55-01 GALON", undefined], // solo hay foto del tobo: no se rellena
+      ["MANPICA PINTURA 55-01 GALON", "caucho5501-gal.webp"],
+      ["MANPICA CAUCHO SATINADO PREMIUM GALON", "caucho5501-satinado-gal.webp"],
+      ["MANPICA ETHERNA SATINADO BLANCO TOBO", "etherna-satinado-tobo.webp"],
+      ["MANPICA ETHERNA MATE BLANCO GALON", "etherna-mate-gal.webp"],
+      ["MANPICA PINTURA P/PIZARRA NEGRO 1/4 GAL", "pizarra-cuarto.webp"],
+      ["MANPICA GRAFIADO BLANCO CUÑETE", "grafiado-tobo.webp"],
+      ["MANPICA FONDO MINIO 1/4 GAL", "minio-cuarto.webp"],
+      ["MANPICA ESMALTE SINTETICO SEC RAPIDO 1/4", "esmalte-secado-rapido-cuarto.webp"],
+      ['MANPICA ESMALTE "A" EN COLORES GALON', "esmalte-brillante-gal.webp"],
+      ["MANPICA ESMALTE BLANCO OSTRA 1/4 GALON", "esmalte-brillante-cuarto.webp"],
+      ["MANPICA MASTIC-500 PASTA PARA PARED", "mastic500-gal.webp"], // por nombre; el código MANP0005 lo lleva al cuñete
       ["MANPICA ESMALTE ESPECIAL ALUMINIO 1/4GAL", "aluminio-cuarto.webp"],
       ["MANPICA ESMALTE ESPECIAL ALUMINIO GALON", "aluminio-gal.webp"],
       ["MANPICA ESMALTE SATINADO 1/4GAL", "esmalte-satinado-cuarto.webp"],
       ["MANPICA ESMALTE SATINADO GALON", "esmalte-satinado-gal.webp"],
       ["MANPICA ESMALTE NEGRO BRILLANTE GALON", "esmalte-brillante-gal.webp"],
       ["MANPICA ESMALTE NEGRO MATE GALON", "esmalte-mate-gal.webp"],
-      ["MANPICA ESMALTE BLANCO GALON", undefined], // "brillante o mate" solo en la descripción
-      ["MANPICA ESMALTE SINTETICO SEC RAPIDO GAL", undefined],
+      ["MANPICA ESMALTE BLANCO GALON", "esmalte-brillante-gal.webp"], // sin acabado en el nombre: brillante
+      ["MANPICA ESMALTE SINTETICO SEC RAPIDO GAL", "esmalte-secado-rapido-gal.webp"],
       ["MANPICA FONDO 3 BLANCO O ALUMINIO GALON", "fondo3-gal.webp"],
-      ["MANPICA FONDO MINIO GALON", undefined],
-      ["MANPICA ETHERNA MATE BLANCO TOBO", undefined],
+      ["MANPICA FONDO MINIO GALON", "minio-gal.webp"],
+      ["MANPICA ETHERNA MATE BLANCO TOBO", "etherna-mate-tobo.webp"],
     ];
     for (const [nombre, foto] of casos) expect(f(nombre), nombre).toBe(foto);
     // El Mastic 500 sin tamaño en el nombre es el cuñete (por código).
