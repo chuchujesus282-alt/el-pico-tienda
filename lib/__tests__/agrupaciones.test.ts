@@ -288,10 +288,9 @@ describe("agrupar", () => {
       ["ADESI-TOP CRISTALIZADOR ROSADO GAL", "cristalizador-rosado-gal.webp"],
       ["ADESI-TOP CRISTALIZADOR ROSADO LITRO", "cristalizador-rosado-litro.webp"],
       ["ADESI-TOP CRISTALIZADOR BLANCO GALON", "cristalizador-blanco-gal.webp"],
-      // Sin foto oficial: no se rellena con otro producto.
-      ["ADESI-TOP #405 LATEX LITRO", undefined],
-      ["ADESI-TOP #100 SILICON GALON", undefined],
-      ["ADESI-TOP #400 IMPER GARRAFA 10LTS+SACO", undefined],
+      ["ADESI-TOP #405 LATEX LITRO", "latex-litro.webp"],
+      ["ADESI-TOP #100 SILICON GALON", "hidrorepelente-gal.webp"],
+      ["ADESI-TOP #400 IMPER GARRAFA 10LTS+SACO", "imper400-garrafa.webp"],
       // Sin foto de ese tamaño, o sin tamaño en el nombre.
       ["ADESI-TOP SELLADOR MATE #122S GALON", undefined],
       ["ADESI-TOP CRISTALIZADOR BLANCO", undefined],

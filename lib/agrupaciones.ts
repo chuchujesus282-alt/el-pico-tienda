@@ -128,7 +128,7 @@ function fotoManpica(n: string): string | undefined {
  * Adesi-Top: fotos oficiales del envase por producto (pedido de persona B). Primera regla que calce; el número del
  * producto (#05, #12, #120…) manda. Tamaño: litro (botella), 946 ml o 1/4 (lata pequeña), galón (bidón o lata), tobo
  * (tobo de 19 L; el cristalizador rosado viene en pimpina). Sin tamaño en el nombre, o sin foto de ese tamaño, queda sin
- * foto (no se rellena con otro envase). Sin foto: #100 silicón, #400 imper, #405 látex.
+ * foto (no se rellena con otro envase). Los 12 Adesi-Top de Saint tienen foto.
  */
 const AT = "/productos/adesitop/";
 const ADESI_LINEAS: { regla: RegExp; linea: string; tamanos: string[] }[] = [
@@ -143,11 +143,16 @@ const ADESI_LINEAS: { regla: RegExp; linea: string; tamanos: string[] }[] = [
   { regla: /SELLADOR BLANCO/, linea: "sellador-blanco", tamanos: ["litro", "gal"] },
   { regla: /#? ?\b130\b|SELLADOR BRILL/, linea: "sellador-brillante", tamanos: ["cuarto", "gal"] },
   { regla: /#? ?\b122S?\b|SELLADOR MATE/, linea: "sellador-mate", tamanos: ["cuarto"] },
+  { regla: /#? ?\b405\b|L[AÁ]TEX/, linea: "latex", tamanos: ["litro"] },
+  // Hidro-repelente #100 a base de silicón (en Saint "#100 SILICON GALON"; la lata de la foto es la misma, a escala).
+  { regla: /#? ?\b100\b|HIDRO-? ?REPELENTE/, linea: "hidrorepelente", tamanos: ["cuarto", "gal"] },
+  { regla: /#? ?\b400\b/, linea: "imper400", tamanos: ["garrafa"] }, // garrafa de 10 L con saco
 ];
 function fotoAdesiTop(n: string): string | undefined {
   const def = ADESI_LINEAS.find((l) => l.regla.test(n));
   if (!def) return undefined;
-  const tam = /\bLITRO|\b1 ?LTS?\b|\b1 ?L\b/.test(n) ? "litro"
+  const tam = /GARRAFA|\b10 ?LTS?\b/.test(n) ? "garrafa"
+    : /\bLITRO|\b1 ?LTS?\b|\b1 ?L\b/.test(n) ? "litro"
     : /946|1\/4/.test(n) ? "cuarto"
     : /TOBO|PAILA|CU[NÑ]ETE|PIMPINA|\b19 ?L|\b[45] ?GAL/.test(n) ? "tobo"
     : /\bGAL/.test(n) ? "gal"
