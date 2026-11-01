@@ -1,11 +1,14 @@
 /*
- * Banner de Seguridad industrial, portado de banner-seguridad-v5.html. Excepción a la regla de tokens del CLAUDE.md
- * (como las tarjetas de categoría): colores del prototipo. `--f-mono` y `--f-display` vienen de BannerPlano.
- * Clases globales: `on` (activo), `in` (cada llamada), `apto` (sello). Las luces van en `fondo`: cubren todo el banner.
+ * Banner de Seguridad industrial, portado de banner-seguridad-v4.html. Excepción a la regla de tokens del CLAUDE.md
+ * (como las tarjetas de categoría): colores del prototipo. `--f-mono` y `--f-display` vienen de BannerPlano; los
+ * degradados de cada material llegan como variables (--g-casco…) porque sus ids cambian por instancia.
+ * Reposo: plano técnico (piezas azul oscuro con contorno claro). Clases globales: `on` (activo), `scan` (la línea de
+ * inspección corre), `ok` (en cada pieza ya revisada y en su casilla) y `apto` (terminó).
  */
 
 .svg {
-  --ink: #0b1d33;
+  --deep: #0a1f38;
+  --stroke: #c3ccd8;
   --trace: rgba(190, 215, 245, 0.55);
   --ok: #2fd27a;
 }
@@ -15,9 +18,9 @@
   font-size: 7.5px;
   letter-spacing: 0.08em;
 }
-.ol {
-  stroke: var(--ink);
-  stroke-width: 1.5;
+.ln {
+  stroke: var(--stroke);
+  stroke-width: 1.8;
   stroke-linejoin: round;
   stroke-linecap: round;
 }
@@ -26,148 +29,148 @@
   stroke: var(--trace);
   stroke-width: 1;
 }
+.dash {
+  fill: none;
+  stroke: var(--trace);
+  stroke-width: 1;
+  stroke-dasharray: 3 4;
+}
 
-/* ---------- luces (sobre todo el banner, se funden con el fondo) ---------- */
-.luz,
-.baliza,
-.luzApto {
-  position: absolute;
-  inset: 0;
-  z-index: -1;
-  pointer-events: none;
+/* ---------- materiales: plano en reposo, color al revisarse (`ok`) ---------- */
+.f {
+  fill: var(--deep);
+  transition: fill 0.45s;
 }
-/* la luz general sale al activarse (en reposo, plano frío como los demás banners) */
-.luz {
+.item:global(.ok) .fCasco {
+  fill: var(--g-casco);
+}
+.item:global(.ok) .fMica {
+  fill: var(--g-mica);
+}
+.item:global(.ok) .fN95 {
+  fill: var(--g-n95);
+}
+.item:global(.ok) .fCarnaza {
+  fill: var(--g-carnaza);
+}
+.item:global(.ok) .fRojo {
+  fill: #e3262f;
+}
+.item:global(.ok) .fBota {
+  fill: var(--g-bota);
+}
+.item:global(.ok) .fAcero {
+  fill: var(--g-acero);
+}
+.item:global(.ok) .fNegro {
+  fill: #1c222c;
+}
+.reflejo {
+  stroke: #fff;
+  stroke-width: 2;
+  stroke-linecap: round;
   opacity: 0;
-  transition: opacity 0.6s;
-  background: radial-gradient(30% 95% at 70% 55%, rgba(255, 138, 42, 0.16), rgba(255, 138, 42, 0.06) 45%, transparent 80%);
+  transition: opacity 0.45s;
 }
-.baliza {
+.item:global(.ok) .reflejo {
+  opacity: 0.5;
+}
+
+/* Cada pieza se eleva al aprobarse, con halo y sombra suave; al terminar todas flotan. */
+.pieza {
+  transition: transform 0.5s cubic-bezier(0.3, 1.5, 0.5, 1);
+}
+.item:global(.ok) .pieza {
+  transform: translateY(-5px);
+}
+.halo,
+.som {
   opacity: 0;
-  background: radial-gradient(22% 60% at 92% 30%, rgba(255, 176, 32, 0.35), rgba(255, 176, 32, 0.1) 45%, transparent 80%);
+  transition: opacity 0.5s;
 }
-:global(.on) > .baliza {
-  animation: destello 0.9s ease-in-out infinite;
+.item:global(.ok) .halo,
+.item:global(.ok) .som {
+  opacity: 1;
 }
-@keyframes destello {
+:global(.apto) .item:global(.ok) .pieza {
+  animation: flota 2.4s ease-in-out infinite;
+}
+@keyframes flota {
   0%,
   100% {
-    opacity: 0.1;
+    transform: translateY(-5px);
   }
   50% {
-    opacity: 1;
-  }
-}
-.luzApto {
-  opacity: 0;
-  transition: opacity 0.8s;
-  background: radial-gradient(34% 90% at 86% 50%, rgba(47, 210, 122, 0.2), rgba(47, 210, 122, 0.07) 45%, transparent 85%);
-}
-:global(.apto) > .luzApto {
-  opacity: 1;
-}
-@media (max-width: 819.98px) {
-  .luz {
-    background: radial-gradient(60% 50% at 55% 75%, rgba(255, 138, 42, 0.16), transparent 80%);
-  }
-  .baliza {
-    background: radial-gradient(40% 40% at 85% 65%, rgba(255, 176, 32, 0.3), transparent 80%);
-  }
-  .luzApto {
-    background: radial-gradient(70% 55% at 75% 78%, rgba(47, 210, 122, 0.2), transparent 85%);
+    transform: translateY(-9px);
   }
 }
 
-/* ---------- reflejo del chaleco ---------- */
-.reflejo {
-  opacity: 0;
+/* Círculo de cada pieza: en reposo, punteado que gira despacio; revisada, verde y fijo. */
+.anillo {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: girarAnillo 24s linear infinite;
+  transition:
+    stroke 0.3s,
+    opacity 0.3s;
 }
-:global(.on) .reflejo {
-  opacity: 1;
+.item:global(.ok) .anillo {
+  stroke: var(--ok);
+  stroke-dasharray: none;
+  opacity: 0.7;
+  animation: none;
+}
+@keyframes girarAnillo {
+  to {
+    transform: rotate(360deg);
+  }
 }
 
-/* ---------- llamadas técnicas ---------- */
-.lin {
-  fill: none;
-  stroke: var(--ok);
-  stroke-width: 1.2;
-  stroke-dasharray: 1;
-  stroke-dashoffset: 1;
-  transition: stroke-dashoffset 0.35s ease;
-}
-.dot {
-  fill: var(--ok);
+/* check de cada pieza */
+.chk {
   opacity: 0;
   transform-box: fill-box;
   transform-origin: center;
-  transform: scale(0);
+  transform: scale(0.3);
   transition:
-    opacity 0.3s,
-    transform 0.3s cubic-bezier(0.3, 1.7, 0.5, 1);
+    opacity 0.2s,
+    transform 0.35s cubic-bezier(0.3, 1.7, 0.5, 1);
 }
-.ping {
-  fill: none;
-  stroke: var(--ok);
-  stroke-width: 1.2;
-  opacity: 0;
-  transform-box: fill-box;
-  transform-origin: center;
-}
-.lbl {
-  opacity: 0;
-  transform: translateX(var(--dx, 6px));
-  transition:
-    opacity 0.3s 0.2s,
-    transform 0.35s 0.2s;
-}
-.lbl rect {
-  fill: rgba(7, 21, 38, 0.88);
-  stroke: rgba(47, 210, 122, 0.6);
-}
-.svg .t1 {
-  font-family: var(--f-display);
-  font-weight: 700;
-  font-size: 9.5px;
-  fill: #fff;
-  letter-spacing: 0.06em;
-}
-.svg .t2 {
-  font-size: 6.8px;
-  fill: #a9bad0;
-}
-.visto {
-  fill: none;
-  stroke: var(--ink);
-  stroke-width: 1.3;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-}
-.llamada:global(.in) .lin {
-  stroke-dashoffset: 0;
-}
-.llamada:global(.in) .dot {
+.item:global(.ok) .chk {
   opacity: 1;
   transform: scale(1);
 }
-.llamada:global(.in) .lbl {
-  opacity: 1;
-  transform: none;
-}
-.llamada:global(.in) .ping {
-  animation: ping 1.6s ease-out infinite;
-}
-@keyframes ping {
-  from {
-    opacity: 0.8;
-    transform: scale(1);
-  }
-  to {
-    opacity: 0;
-    transform: scale(4);
-  }
+.visto {
+  fill: none;
+  stroke: #0b1d33;
+  stroke-width: 2.2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
 }
 
-/* ---------- sello ---------- */
+/* línea de inspección */
+.scan {
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+:global(.scan) .scan {
+  opacity: 1;
+}
+.linea {
+  stroke: var(--ok);
+  stroke-width: 2;
+  filter: drop-shadow(0 0 4px #2fd27a);
+}
+
+/* contador / estado */
+.svg .estado {
+  transition: fill 0.3s;
+}
+:global(.apto) .svg .estado {
+  fill: var(--ok);
+}
+
+/* sello "EQUIPO COMPLETO" */
 .sello {
   opacity: 0;
   transform-box: fill-box;
@@ -191,25 +194,44 @@
 .svg .selloTxt {
   font-family: var(--f-display);
   font-weight: 700;
-  font-size: 9px;
+  font-size: 10px;
   fill: var(--ok);
-  letter-spacing: 0.12em;
+  letter-spacing: 0.14em;
 }
 
-@media (prefers-reduced-motion: reduce) {
-  :global(.on) > .baliza,
-  .llamada:global(.in) .ping {
-    animation: none;
-  }
-  .lin,
-  .dot,
-  .lbl,
-  .sello,
-  .luzApto {
-    transition-duration: 0.01s;
-    transition-delay: 0s;
-  }
+/* luz verde: sale al activarse y se funde con el fondo */
+.luz {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.8s;
+  background: radial-gradient(50% 110% at 70% 55%, rgba(47, 210, 122, 0.13), rgba(47, 210, 122, 0.05) 45%, transparent 80%);
 }
 :global(.on) > .luz {
   opacity: 1;
+}
+@media (max-width: 819.98px) {
+  .luz {
+    background: radial-gradient(75% 55% at 50% 78%, rgba(47, 210, 122, 0.15), transparent 80%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .anillo,
+  :global(.apto) .item:global(.ok) .pieza {
+    animation: none;
+  }
+  .f,
+  .pieza,
+  .halo,
+  .som,
+  .chk,
+  .sello,
+  .scan,
+  .luz,
+  .reflejo {
+    transition-duration: 0.01s;
+  }
 }
