@@ -9,7 +9,8 @@ import styles from "./BannerVehiculos.module.css";
  * Banner de la categoría Vehículos, estilo "plano técnico". Portado TAL CUAL del prototipo aprobado
  * banner-vehiculos-v1.html: SVG (piso con zona de carga, gato botella, llave en cruz, caucho 205/55 R16, triángulo de
  * seguridad y traspaleta con su carga: bidón 20W50 y cajas), secuencia y tiempos sin cambios:
- * traspaleta y caucho salen de cuadro y vuelven rodando, el timón bombea 3 veces y la carga sube (CARGA 1.250 kg),
+ * traspaleta y caucho se desvanecen y entran rodando desde cerca (2026-10-31: antes "salían de cuadro", pero el dibujo
+ * no llega al borde del banner y se veían saltar, el caucho encima del gato), el timón bombea 3 veces y la carga sube (CARGA 1.250 kg),
  * el gato botella bombea 4 veces y el pistón sube, y el triángulo destella (clase global `vivo`).
  * Al salir todo baja (450 ms) y vuelve a su sitio (400 ms); `on` se sostiene hasta que baja, como el prototipo.
  * Diferencias con el prototipo: solo el nombre de la categoría en la etiqueta (sin "Mueve y mantén tus", kicker ni
@@ -17,14 +18,27 @@ import styles from "./BannerVehiculos.module.css";
  * triángulo destella suave; pedido de persona B).
  */
 
-const OFF_TP = 470; // fuera de cuadro
-const OFF_C = -330;
+// Desde dónde entran rodando (cerca: el dibujo no llega al borde del banner, así que "salir de cuadro" se veía como
+// un salto; ahora se desvanecen en su sitio y entran apareciendo).
+const OFF_TP = 120;
+const OFF_C = -64;
 
 const ease = (t: number) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
 const out = (t: number) => 1 - Math.pow(1 - t, 3);
 const inq = (t: number) => t * t * t;
 
-type Estado = { tx: number; lift: number; tim: number; cx: number; ram: number; pal: number; cargo: number };
+type Estado = {
+  tx: number;
+  lift: number;
+  tim: number;
+  cx: number;
+  ram: number;
+  pal: number;
+  cargo: number;
+  /** Opacidad de la traspaleta y del caucho (0..1). */
+  opT: number;
+  opC: number;
+};
 
 function crearMotor(raiz: HTMLElement): Motor {
   const q = <T extends Element>(p: string) => raiz.querySelector<T>(`[data-p="${p}"]`)!;
@@ -40,9 +54,11 @@ function crearMotor(raiz: HTMLElement): Motor {
     palanca = q<SVGGElement>("palanca"),
     carga = q<SVGTextElement>("carga");
 
-  const S: Estado = { tx: 0, lift: 0, tim: 0, cx: 0, ram: 0, pal: 0, cargo: 0 };
+  const S: Estado = { tx: 0, lift: 0, tim: 0, cx: 0, ram: 0, pal: 0, cargo: 0, opT: 1, opC: 1 };
   function draw() {
     tp.setAttribute("transform", `translate(${370 + S.tx} 226)`);
+    tp.setAttribute("opacity", S.opT.toFixed(3));
+    caucho.setAttribute("opacity", S.opC.toFixed(3));
     ruedaD.setAttribute("transform", `translate(248 -11) rotate(${(S.tx / 11) * 57.3})`);
     lift.setAttribute("transform", `translate(0 ${-S.lift})`);
     timon.setAttribute("transform", `rotate(${S.tim} 250 -64)`);
@@ -103,15 +119,22 @@ function crearMotor(raiz: HTMLElement): Motor {
   async function activar() {
     ++gen;
     raiz.classList.add("on");
-    // el plano real sale de cuadro y vuelve rodando (como el caucho de la tarjeta)
-    const fuera = await Promise.all([
-      tween(420, (p) => ((S.tx = OFF_TP * p), draw()), inq),
-      tween(420, (p) => ((S.cx = OFF_C * p), draw()), inq),
-    ]);
-    if (!fuera.every(Boolean)) return;
-    if (!(await wait(150))) return;
-    const a = tween(1500, (p) => ((S.tx = OFF_TP * (1 - p)), draw()), out);
-    const b = wait(250).then((ok) => ok && tween(1300, (p) => ((S.cx = OFF_C * (1 - p)), draw()), out));
+    // traspaleta y caucho se desvanecen en su sitio y entran rodando desde cerca, apareciendo (la rueda y el rin giran)
+    const o0 = S.opT,
+      c0 = S.opC;
+    if (!(await tween(200, (p) => ((S.opT = o0 * (1 - p)), (S.opC = c0 * (1 - p)), draw()), inq))) return;
+    S.tx = OFF_TP;
+    S.cx = OFF_C;
+    draw();
+    if (!(await wait(80))) return;
+    const a = tween(
+      1100,
+      (p, t) => ((S.tx = OFF_TP * (1 - p)), (S.opT = Math.min(1, t / 0.35)), draw()),
+      out,
+    );
+    const b = wait(180).then(
+      (ok) => ok && tween(950, (p, t) => ((S.cx = OFF_C * (1 - p)), (S.opC = Math.min(1, t / 0.35)), draw()), out),
+    );
     if (!(await a) || !(await b)) return;
     // traspaleta: 3 bombeos con el timón, la carga se eleva
     if (
@@ -141,6 +164,9 @@ function crearMotor(raiz: HTMLElement): Motor {
     const s = { ...S };
     if (
       !(await tween(450, (p) => {
+        // si se cortó a mitad de la entrada, las piezas vuelven a verse
+        S.opT = s.opT + (1 - s.opT) * p;
+        S.opC = s.opC + (1 - s.opC) * p;
         S.lift = s.lift * (1 - p);
         S.ram = s.ram * (1 - p);
         S.tim = s.tim * (1 - p);
