@@ -6,38 +6,25 @@ import type { PropsBannerPropio } from "./CategoriaBanner";
 import styles from "./BannerTornilleria.module.css";
 
 /**
- * Banner de la categoría Tornillería, estilo "plano técnico". Portado del prototipo aprobado banner-tornilleria-v1.html:
- * tablón de pino en corte con un tornillo de madera #10 × 2½" y su destornillador, arandelas y clavos, un perno
- * hexagonal ⅜" × 3" con su tuerca y un tarugo de 8 mm, con sus cotas.
- * Activo: el destornillador baja a la cabeza, el tornillo gira y se hunde en la madera (la rosca avanza, salen virutas,
- * TORQUE 0 → 4,8 N·m) mientras la tuerca baja girando por el perno (clase global `vivo`: la rosca bajo la etiqueta
- * gira); al final el destornillador se retira. Al salir todo vuelve (420 ms). Tiempos y colores del prototipo.
- * Diferencias con el prototipo: el tornillo y los hilos se dibujan en el servidor (el prototipo los armaba con JS; el
- * motor solo cambia atributos), solo el nombre en la etiqueta (sin "Todo para fijar en", kicker ni subtítulo) y, en
- * reposo, el tarugo flota apenas.
+ * Banner de la categoría Tornillería, estilo "plano técnico". Portado del prototipo banner-tornilleria-v2.html (pedido de
+ * persona B: "aplícalo y embellécelo"): una tabla de pino sobre la mesa con 5 tornillos (3 ya a ras, uno a medias y uno
+ * parado), un taladro rojo de 20 V sostenido con guante y, a la derecha, tornillos sueltos con su cota.
+ * Activo: el taladro aprieta el 4.º tornillo, se levanta, pasa al 5.º y lo aprieta (aserrín, el mandril gira, el
+ * contador sube a 5 / 5 y se ilumina); al salir todo vuelve (450 ms).
+ * Además del prototipo: sombra del taladro en la tabla, luz del taladro que se prende al girar, vibración leve, onda
+ * cuando un tornillo queda a ras y las cabezas Phillips bajo la etiqueta (decoración `cabezas`).
+ * Solo el nombre en la etiqueta, como toda la familia (sin "Todo para fijar en", kicker ni subtítulo del prototipo).
+ * Clases globales en la raíz: `on` (BannerPlano), `gira` (el taladro está girando) y `listo` (5 / 5).
  */
 
-const CX = 190,
-  LEN = 100,
-  PITCH = 8;
-const T0 = -10,
-  T1 = 80; // y del tornillo: arriba / clavado
+const LEN = 50, // tornillo: cabeza en y=0, punta en y=LEN
+  SURF = 178; // la cara de arriba de la tabla
+const XS = [230, 290, 350, 420, 490],
+  D0 = [1, 1, 1, 0.45, 0]; // cuánto entró cada tornillo (1 = a ras)
+const X0 = XS[3]; // el taladro empieza sobre el 4.º
 
-/** Hilos del tornillo (avanzan con `fase`). */
-function hilosTornillo(fase: number) {
-  const d: string[] = [];
-  for (let y = 30 + (((fase % PITCH) + PITCH) % PITCH); y < LEN - 14; y += PITCH) {
-    const w = y > LEN - 30 ? 7 - ((y - (LEN - 30)) / 16) * 4 : 9.5;
-    d.push(`M${(CX - w).toFixed(2)} ${(y + 3).toFixed(2)}L${(CX + w).toFixed(2)} ${(y - 3).toFixed(2)}`);
-  }
-  return d.join("");
-}
-/** Hilos del perno (bajan con `fase`). */
-function hilosPerno(fase: number) {
-  let d = "";
-  for (let y = 74 + (((fase % 7) + 7) % 7); y < 212; y += 7) d += `M526 ${(y + 2.5).toFixed(2)}L554 ${(y - 2.5).toFixed(2)}`;
-  return d;
-}
+const cabeza = (depth: number) => SURF - LEN + depth * LEN - 1;
+const f2 = (n: number) => n.toFixed(2);
 
 const ease = (t: number) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
 const out = (t: number) => 1 - Math.pow(1 - t, 3);
@@ -46,76 +33,85 @@ const lin = (t: number) => t;
 function crearMotor(raiz: HTMLElement): Motor {
   const q = <T extends Element>(p: string) => raiz.querySelector<T>(`[data-p="${p}"]`)!;
   const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  const tornillo = q<SVGGElement>("tornillo"),
-    destor = q<SVGGElement>("destor"),
-    hoyo = q<SVGRectElement>("hoyo"),
-    torque = q<SVGTextElement>("torque"),
-    tuerca = q<SVGGElement>("tuerca"),
-    caraT = q<SVGPathElement>("caraT"),
-    perno = q<SVGPathElement>("hilosP"),
-    viruta = q<SVGGElement>("viruta");
-  const hilosT = [...raiz.querySelectorAll<SVGPathElement>('[data-p="hilosT"]')];
+  const taladro = q<SVGGElement>("taladro"),
+    sombra = q<SVGEllipseElement>("sombra"),
+    mandril = q<SVGGElement>("mandril"),
+    cont = q<SVGTextElement>("cont"),
+    aserrin = q<SVGGElement>("aserrin"),
+    onda = q<SVGEllipseElement>("onda");
+  const tornillos = XS.map((x, i) => ({
+    x,
+    g: q<SVGGElement>(`t${i}`),
+    cruz: q<SVGGElement>(`cruz${i}`),
+    depth: D0[i],
+    rot: 0,
+  }));
+  type T = (typeof tornillos)[number];
 
-  const S = { ty: T0, dy: 0, tq: 0, ny: 50, nr: 0 };
-  let fase = 0,
-    faseP = 0;
-  // Cada parte se dibuja por separado: el tornillo, la tuerca y el torque cambian en momentos distintos, y así cada
-  // cuadro solo toca lo que se movió (el texto del torque, solo cuando cambia su décima).
-  const hilos = { t: "", p: "" };
-  const drawHilos = () => {
-    const d = hilosTornillo(fase);
-    if (d === hilos.t) return;
-    hilos.t = d;
-    hilosT.forEach((h) => h.setAttribute("d", d));
+  const dibujarTornillo = (s: T) => {
+    s.g.setAttribute("transform", `translate(${s.x} ${f2(cabeza(s.depth))})`);
+    // La cruz Phillips se angosta y ensancha: así se ve girar la cabeza.
+    s.cruz.setAttribute("transform", `scale(${f2(Math.abs(Math.cos(s.rot)) * 0.8 + 0.2)} 1)`);
   };
-  const drawPerno = () => {
-    const d = hilosPerno(faseP);
-    if (d === hilos.p) return;
-    hilos.p = d;
-    perno.setAttribute("d", d);
-  };
-  function drawTornillo() {
-    tornillo.setAttribute("transform", `translate(0 ${(S.ty + 60).toFixed(2)})`);
-    destor.setAttribute("transform", `translate(0 ${(S.ty + 60 + S.dy).toFixed(2)})`);
-    hoyo.setAttribute("height", Math.max(0, S.ty + 60 + LEN - 150 - 6).toFixed(2));
-  }
-  let torqueTexto = "";
-  function drawTorque() {
-    const texto = `TORQUE ${S.tq.toFixed(1)} N·m`;
-    if (texto !== torqueTexto) torque.textContent = torqueTexto = texto;
-  }
-  function drawTuerca() {
-    tuerca.setAttribute("transform", `translate(0 ${S.ny.toFixed(2)})`);
-    const k = Math.abs(Math.cos(((S.nr * Math.PI) / 180) * 3));
-    caraT.setAttribute("d", `M${(540 - 14 * k).toFixed(2)} 0H${(540 + 14 * k).toFixed(2)}V20H${(540 - 14 * k).toFixed(2)}Z`);
-  }
-  const draw = () => (drawTornillo(), drawTorque(), drawTuerca());
 
-  // Virutas de madera: salen del hoyo y se borran solas.
-  function virutas() {
+  let dx = X0,
+    dy = cabeza(D0[3]),
+    lift = 0,
+    ml = 0,
+    hechos = 3;
+  const dibujarTaladro = () => {
+    taladro.setAttribute("transform", `translate(${f2(dx)} ${f2(dy - lift)})`);
+    // La sombra en la tabla sigue al taladro y se achica y aclara cuando se levanta.
+    const l = Math.min(1, lift / 30);
+    sombra.setAttribute("cx", f2(dx + 6));
+    sombra.setAttribute("rx", f2(24 - 8 * l));
+    sombra.style.opacity = f2(0.5 - 0.28 * l);
+  };
+  const girarMandril = () => {
+    ml = (ml + 2.2) % 7;
+    mandril.setAttribute("transform", `translate(${f2(ml - 3.5)} 0)`);
+  };
+  const contar = () => {
+    cont.textContent = `TORNILLOS ${hechos} / 5`;
+    raiz.classList.toggle("listo", hechos === 5);
+  };
+
+  function soltarAserrin(x: number) {
     if (reduce) return;
-    for (let i = 0; i < 2; i++) {
-      const c = document.createElementNS("http://www.w3.org/2000/svg", "path");
-      c.setAttribute("d", "M0 0q3 -3 6 0");
-      c.setAttribute("transform", "translate(190 150)");
-      viruta.appendChild(c);
-      const dx = (Math.random() < 0.5 ? -1 : 1) * (10 + Math.random() * 30),
-        dy = -6 - Math.random() * 16;
+    for (let i = 0; i < 3; i++) {
+      const c = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+      c.setAttribute("cx", String(x));
+      c.setAttribute("cy", String(SURF));
+      c.setAttribute("r", f2(1 + Math.random() * 1.4));
+      aserrin.appendChild(c);
+      const vx = (Math.random() - 0.5) * 40,
+        vy = -4 - Math.random() * 9;
       c.animate(
         [
-          { transform: "translate(190px,150px) rotate(0deg)", opacity: 1 },
-          { transform: `translate(${190 + dx}px,${150 + dy + 10}px) rotate(${Math.random() * 360}deg)`, opacity: 0 },
+          { transform: "translate(0,0)", opacity: 1 },
+          { transform: `translate(${f2(vx)}px,${f2(vy + 10)}px)`, opacity: 0 },
         ],
-        { duration: 500, easing: "ease-out" },
+        { duration: 480, easing: "ease-out" },
       ).onfinish = () => c.remove();
     }
+  }
+  function ondaEn(x: number) {
+    if (reduce) return;
+    onda.setAttribute("cx", String(x));
+    onda.animate(
+      [
+        { opacity: 0.9, transform: "scale(0.4)" },
+        { opacity: 0, transform: "scale(1.9)" },
+      ],
+      { duration: 700, easing: "cubic-bezier(.16,1,.3,1)" },
+    );
   }
 
   // ---------- tiempo: cada encender/apagar sube `gen` y corta lo anterior ----------
   let gen = 0,
-    destruido = false,
-    chispero = 0;
+    destruido = false;
   const rafs = new Set<number>();
+  const timers = new Set<number>();
   const tween = (d: number, f: (p: number) => void, e: (t: number) => number = ease) => {
     const g = gen;
     const dur = reduce ? 10 : d;
@@ -136,75 +132,86 @@ function crearMotor(raiz: HTMLElement): Motor {
       k(s);
     });
   };
-  const pararVirutas = () => {
-    clearInterval(chispero);
-    chispero = 0;
+  const esperar = (ms: number) => {
+    const g = gen;
+    return new Promise<boolean>((r) => {
+      const id = window.setTimeout(() => {
+        timers.delete(id);
+        r(g === gen && !destruido);
+      }, reduce ? 10 : ms);
+      timers.add(id);
+    });
   };
 
-  async function activar() {
-    const g = ++gen;
-    raiz.classList.add("on");
-    // 1. el destornillador baja hasta la cabeza
-    raiz.classList.remove("ajustado");
-    S.dy = -40;
-    drawTornillo();
-    if (!(await tween(320, (p) => ((S.dy = -40 * (1 - p)), drawTornillo()), out))) return;
-    raiz.classList.add("vivo");
-    // 2. el tornillo gira y se hunde en la madera (la rosca avanza), virutas
-    chispero = window.setInterval(() => {
-      if (g !== gen || destruido) return pararVirutas();
-      if (S.ty + 60 + LEN > 150) virutas();
-    }, 70);
-    // en paralelo: la tuerca baja girando por el perno
-    const tuercaBaja = tween(
-      1300,
-      (p) => {
-        S.ny = 50 + 144 * p;
-        S.nr = 720 * p;
-        faseP = -p * 80;
-        drawPerno();
-        drawTuerca();
-      },
-      lin,
-    );
+  async function atornillar(i: number) {
+    const s = tornillos[i];
+    raiz.classList.add("gira");
+    const d0 = s.depth;
     const ok = await tween(
-      1400,
+      900 * (1 - d0) + 150,
       (p) => {
-        S.ty = T0 + (T1 - T0) * p;
-        fase = p * 72;
-        S.tq = 4.8 * Math.pow(p, 1.6);
-        drawHilos();
-        drawTornillo();
-        drawTorque();
+        s.depth = d0 + (1 - d0) * p;
+        s.rot += 0.5;
+        girarMandril();
+        dy = cabeza(s.depth);
+        dibujarTornillo(s);
+        dibujarTaladro();
+        if (Math.random() < 0.5) soltarAserrin(s.x);
       },
       lin,
     );
-    pararVirutas();
-    if (!ok || !(await tuercaBaja)) return;
-    raiz.classList.remove("vivo");
-    // Ajustado: onda en la cabeza del tornillo y el torque se ilumina (clase global `ajustado`).
-    raiz.classList.add("ajustado");
-    // 3. el destornillador se retira
-    await tween(320, (p) => ((S.dy = -46 * p), drawTornillo()), out);
+    raiz.classList.remove("gira");
+    if (!ok) return false;
+    hechos = Math.max(hechos, i + 1);
+    contar();
+    ondaEn(s.x);
+    return true;
+  }
+  async function moverA(i: number) {
+    const s = tornillos[i];
+    if (!(await tween(220, (p) => ((lift = 30 * p), dibujarTaladro()), out))) return false;
+    const x0 = dx,
+      y0 = dy;
+    if (
+      !(await tween(380, (p) => {
+        dx = x0 + (s.x - x0) * p;
+        dy = y0 + (cabeza(s.depth) - y0) * p;
+        dibujarTaladro();
+      }))
+    )
+      return false;
+    return tween(200, (p) => ((lift = 30 * (1 - p)), dibujarTaladro()), out);
   }
 
+  async function activar() {
+    ++gen;
+    if (!(await atornillar(3))) return;
+    if (!(await esperar(120))) return;
+    if (!(await moverA(4))) return;
+    if (!(await atornillar(4))) return;
+    await tween(260, (p) => ((lift = 24 * p), dibujarTaladro()), out);
+  }
   async function reposo() {
-    const g = ++gen;
-    pararVirutas();
-    // `on` se queda hasta que todo vuelve (BannerPlano ya la quitó; el prototipo la quita al final).
-    raiz.classList.add("on");
-    raiz.classList.remove("vivo", "ajustado");
-    const s = { ...S };
-    const ok = await tween(420, (p) => {
-      S.ty = s.ty + (T0 - s.ty) * p;
-      S.dy = s.dy * (1 - p);
-      S.ny = s.ny + (50 - s.ny) * p;
-      S.tq = s.tq * (1 - p);
-      fase = 72 * (1 - p);
-      drawHilos();
-      draw();
+    ++gen;
+    raiz.classList.remove("gira", "listo");
+    const st = tornillos.map((s) => s.depth),
+      x0 = dx,
+      y0 = dy,
+      l0 = lift;
+    const ok = await tween(450, (p) => {
+      tornillos.forEach((s, i) => {
+        s.depth = st[i] + (D0[i] - st[i]) * p;
+        dibujarTornillo(s);
+      });
+      dx = x0 + (X0 - x0) * p;
+      lift = l0 * (1 - p);
+      dy = y0 + (cabeza(D0[3]) - y0) * p;
+      dibujarTaladro();
     });
-    if (ok && g === gen) raiz.classList.remove("on");
+    if (ok) {
+      hechos = 3;
+      contar();
+    }
   }
 
   return {
@@ -213,173 +220,198 @@ function crearMotor(raiz: HTMLElement): Motor {
     destruir() {
       destruido = true;
       gen++;
-      pararVirutas();
       rafs.forEach((id) => cancelAnimationFrame(id));
-      raiz.classList.remove("vivo", "ajustado");
+      timers.forEach((id) => clearTimeout(id));
+      raiz.classList.remove("gira", "listo");
     },
   };
 }
 
-/** El tornillo de madera: cabeza plana Phillips, vástago y la rosca (origen: la cabeza arriba en y=0). */
-function Tornillo({ s }: { s: typeof styles }) {
+/** Tornillo de madera: cabeza en y=0 (con la cruz Phillips `data-p=cruz{n}` que se angosta al girar), punta en y=LEN. */
+function Tornillo({ zinc, cruz }: { zinc: string; cruz?: string }) {
+  const s = styles;
+  let rosca = "";
+  for (let y = 10; y < LEN - 6; y += 5) rosca += `M-5 ${y + 2}L5 ${y - 1.5}`;
   return (
     <>
-      <path className={`${s.fill} ${s.fZinc} ${s.ln}`} d={`M${CX - 17} 0H${CX + 17}L${CX + 7} 12H${CX - 7}Z`} />
-      <path d={`M${CX - 6} 3H${CX + 6}M${CX} 0V8`} stroke="#0b1d33" strokeWidth="2.2" fill="none" strokeLinecap="round" />
-      <path className={`${s.fill} ${s.fZinc} ${s.ln}`} d={`M${CX - 7} 12H${CX + 7}V${LEN - 18}L${CX} ${LEN}L${CX - 7} ${LEN - 18}Z`} />
-      <path data-p="hilosT" className={s.hilo} d={hilosTornillo(0)} />
+      <path d={`M-3.5 4H3.5V${LEN - 10}L0 ${LEN}L-3.5 ${LEN - 10}Z`} fill={`url(#${zinc})`} className={s.olFino} />
+      <path d={rosca} className={s.rosca} />
+      <ellipse cx="0" cy="1" rx="9" ry="3.4" fill={`url(#${zinc})`} className={s.olFino} />
+      <ellipse cx="-3" cy="0" rx="3" ry="1" className={s.brilloCabeza} />
+      <g data-p={cruz}>
+        <path d="M-4.5 1H4.5M0 -0.6V2.6" className={s.cruz} />
+      </g>
     </>
   );
 }
 
 export default function BannerTornilleria({ nombre }: PropsBannerPropio) {
-  const id = useId().replace(/:/g, "");
-  const encima = `encima-${id}`,
-    dentro = `dentro-${id}`,
-    clipPerno = `perno-${id}`,
-    mango = `mango-${id}`;
+  const p = `tn${useId().replace(/:/g, "")}`;
+  const zinc = `${p}zinc`,
+    rojo = `${p}rojo`,
+    frente = `${p}frente`,
+    sombraG = `${p}sombra`,
+    clipMandril = `${p}mandril`,
+    manga = `${p}manga`;
   const s = styles;
-  const F = s.fill;
   return (
     <BannerPlano
       nombre={nombre}
       ariaLabel={`Categoría ${nombre}`}
-      colorInicial="#b9c3cf"
+      colorInicial="#c4cdd8"
       crearMotor={crearMotor}
-      decoracion="rosca"
+      decoracion="cabezas"
       variables={
         {
-          "--brillo": "radial-gradient(55% 120% at 62% 60%, rgba(185,195,207,.16), rgba(184,137,90,.08) 45%, transparent 72%)",
+          "--brillo": "radial-gradient(48% 110% at 60% 74%, rgba(221,176,122,.2), rgba(196,205,216,.06) 50%, transparent 72%)",
           "--brillo-on": "1",
           "--etiqueta-pad": "2px 26px 0",
           "--etiqueta-sombra": "0 10px 24px -10px rgba(227, 38, 47, 0.6)",
         } as CSSProperties
       }
     >
-      <svg viewBox="0 0 780 260" preserveAspectRatio="xMidYMid meet" aria-hidden focusable="false" className={s.svg}>
+      <svg viewBox="150 0 630 250" preserveAspectRatio="xMidYMid meet" aria-hidden focusable="false" className={s.svg}>
         <defs>
-          <clipPath id={encima}>
-            <rect x="0" y="0" width="780" height="150" />
+          <linearGradient id={zinc} x1="0" x2="1">
+            <stop offset="0" stopColor="#9aa7b7" />
+            <stop offset=".45" stopColor="#eef2f6" />
+            <stop offset="1" stopColor="#8592a3" />
+          </linearGradient>
+          <linearGradient id={rojo} x1="0" x2="1">
+            <stop offset="0" stopColor="#b81c24" />
+            <stop offset=".4" stopColor="#ef3a42" />
+            <stop offset="1" stopColor="#a8171f" />
+          </linearGradient>
+          <linearGradient id={frente} x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stopColor="#c48d57" />
+            <stop offset="1" stopColor="#a26e3e" />
+          </linearGradient>
+          <radialGradient id={sombraG}>
+            <stop offset="0" stopColor="#000" stopOpacity=".5" />
+            <stop offset="1" stopColor="#000" stopOpacity="0" />
+          </radialGradient>
+          <linearGradient id={manga} gradientUnits="userSpaceOnUse" x1="100" y1="-130" x2="240" y2="-290">
+            <stop offset="0" stopColor="#24364f" />
+            <stop offset=".55" stopColor="#24364f" stopOpacity=".85" />
+            <stop offset="1" stopColor="#24364f" stopOpacity="0" />
+          </linearGradient>
+          <clipPath id={clipMandril}>
+            <path d="M-14 -58H18L14 -26H-10Z" />
           </clipPath>
-          <clipPath id={dentro}>
-            <rect x="40" y="150" width="300" height="98" />
-          </clipPath>
-          <clipPath id={clipPerno}>
-            <rect x="500" y="0" width="80" height="260" />
-          </clipPath>
-          <clipPath id={mango}>
-            <rect x="178" y="-58" width="24" height="38" rx="5" />
-          </clipPath>
+          {XS.map((x, i) => (
+            <clipPath key={i} id={`${p}c${i}`}>
+              <rect x={x - 20} y="0" width="40" height={SURF + 1} />
+            </clipPath>
+          ))}
         </defs>
 
-        <text data-p="torque" className={s.torque} x="760" y="24" textAnchor="end">
-          TORQUE 0.0 N·m
+        <text data-p="cont" className={s.cont} x="760" y="22" textAnchor="end">
+          TORNILLOS 3 / 5
         </text>
 
-        {/* ===== 1. tablón de madera en corte + tornillo ===== */}
-        <rect className={`${F} ${s.fMadera} ${s.ln}`} x="40" y="150" width="300" height="98" rx="2" />
-        <path className={s.veta} d="M48 166Q120 158 190 168T332 162M48 190Q130 198 210 188T332 194M48 216Q110 210 170 218T332 214M48 236Q120 232 200 238T332 234" />
-        <text className={s.bp} x="44" y="258" style={{ fontSize: 7 }}>
-          TABLA PINO 2&quot; · CORTE
-        </text>
+        {/* mesa */}
+        <path d="M150 214H780" className={s.mesa} />
+        <path className={s.cota} d="M150 220H780" />
+
+        {/* ===== tabla de pino ===== */}
+        <ellipse cx="370" cy="216" rx="232" ry="8" fill={`url(#${sombraG})`} />
+        <path d="M170 186L200 170H570L540 186Z" className={`${s.ol} ${s.maderaArriba}`} />
+        <path d="M170 186H540V212H170Z" fill={`url(#${frente})`} className={s.ol} />
+        <path d="M540 186L570 170V196L540 212Z" className={`${s.ol} ${s.maderaOscura}`} />
+        {/* vetas, anillos en el canto, nudo y el filo con luz */}
+        <path className={s.veta} d="M210 176Q300 172 380 176T560 174M196 181Q290 184 360 180T548 182" />
+        <path className={s.vetaFrente} d="M180 196Q260 192 330 198T530 194M180 204Q290 208 400 202T532 206" />
+        <path className={s.vetaFrente} d="M546 186Q556 190 552 200M552 182Q564 188 560 198" />
+        <ellipse cx="300" cy="200" rx="7" ry="3" className={s.vetaFrente} />
+        <path d="M172 186.6H539" className={s.filo} />
         <g className={s.bp}>
-          <path className={s.cota} d="M224 50V150M219 50h10M219 150h10" />
-          <text transform="translate(236 108) rotate(-90)" style={{ fontSize: 7 }}>
-            2½&quot;
+          <path className={s.cota} d="M170 236H540M170 231v10M540 231v10" />
+          <path d="M174 236l-5 -3v6z" className={s.flecha} />
+          <text x="330" y="232">
+            40 cm
           </text>
-          <text x="112" y="40" style={{ fontSize: 7 }}>
-            TORNILLO MADERA #10 × 2½&quot;
+          <text x="176" y="164" style={{ fontSize: 7 }}>
+            TABLA PINO 1×8
           </text>
         </g>
-        {/* hoyo del tornillo dentro de la madera */}
-        <rect data-p="hoyo" x="180" y="150" width="20" height="0" fill="#5c3d20" />
-        {/* tornillo (se mueve en y): encima de la madera, y lo de adentro, translúcido */}
-        <g data-p="tornillo" transform="translate(0 50)">
-          <g clipPath={`url(#${encima})`}>
-            <Tornillo s={s} />
-          </g>
-          <g clipPath={`url(#${dentro})`} opacity=".55">
-            <Tornillo s={s} />
-          </g>
-        </g>
-        {/* punta de destornillador */}
-        <g data-p="destor" transform="translate(0 50)">
-          <rect className={`${F} ${s.fZinc} ${s.ln}`} x="184" y="-20" width="12" height="46" rx="2" />
-          <path className={`${F} ${s.fZinc} ${s.ln}`} d="M184 26H196L192 36H188Z" />
-          <rect className={`${F} ${s.fRojo} ${s.ln}`} x="176" y="-60" width="28" height="42" rx="6" />
-          {/* estrías del mango: corren de lado mientras atornilla, como si el mango girara */}
-          <g clipPath={`url(#${mango})`}>
-            <path className={`${s.cota} ${s.estrias}`} d="M174 -54V-24M182 -54V-24M190 -54V-24M198 -54V-24M206 -54V-24" style={{ stroke: "#0b1d33" }} />
-          </g>
-        </g>
-        {/* ajustado: onda que sale de la cabeza del tornillo ya a ras de la madera */}
-        <ellipse className={s.onda} cx="190" cy="150" rx="22" ry="6" />
-        <g data-p="viruta" className={s.viruta} />
 
-        {/* ===== 2. arandelas + clavos ===== */}
-        <g transform="translate(380 196)">
-          {[22, 14, 6].map((cy) => (
-            <g key={cy}>
-              <ellipse className={`${F} ${s.fZinc} ${s.ln}`} cx="0" cy={cy} rx="26" ry="7" />
-              <ellipse className={s.ln} cx="0" cy={cy} rx="9" ry="2.6" fill="#0f2a4a" style={{ strokeWidth: 1 }} />
+        {/* sombra del taladro sobre la tabla (la mueve el motor) */}
+        <ellipse data-p="sombra" cx={X0 + 6} cy={SURF + 1} rx="24" ry="4" fill={`url(#${sombraG})`} opacity=".5" />
+
+        {/* ===== tornillos en la tabla (lo que entró queda oculto bajo la cara de arriba) ===== */}
+        {XS.map((x, i) => (
+          <g key={i} clipPath={`url(#${p}c${i})`}>
+            <g data-p={`t${i}`} transform={`translate(${x} ${f2(cabeza(D0[i]))})`}>
+              <Tornillo zinc={zinc} cruz={`cruz${i}`} />
             </g>
-          ))}
-        </g>
-        <text className={s.bp} x="352" y="244" style={{ fontSize: 7 }}>
-          ARANDELA ½&quot;
-        </text>
-        <g>
-          <g transform="translate(430 226) rotate(-8)">
-            <path className={`${F} ${s.fZinc} ${s.ln}`} d="M0 0H62L70 -3L62 -6H0Z" />
-            <rect className={`${F} ${s.fZinc} ${s.ln}`} x="-4" y="-9" width="4" height="12" rx="1" />
           </g>
-          <g transform="translate(434 214) rotate(-14)">
-            <path className={`${F} ${s.fZinc} ${s.ln}`} d="M0 0H52L59 -2.5L52 -5H0Z" />
-            <rect className={`${F} ${s.fZinc} ${s.ln}`} x="-4" y="-8" width="4" height="11" rx="1" />
-          </g>
-        </g>
-        <text className={s.bp} x="438" y="196" style={{ fontSize: 7 }}>
-          CLAVO 2&quot;
-        </text>
+        ))}
+        <ellipse data-p="onda" className={s.onda} cx={XS[3]} cy={SURF} rx="14" ry="4" />
+        <g data-p="aserrin" className={s.aserrin} />
 
-        {/* ===== 3. perno + tuerca ===== */}
-        <rect className={`${F} ${s.fZinc} ${s.ln}`} x="508" y="214" width="64" height="12" rx="1" />
-        <path className={s.cota} d="M524 214V226M540 214V226M556 214V226" />
-        <g clipPath={`url(#${clipPerno})`}>
-          <rect className={`${F} ${s.fZinc} ${s.ln}`} x="528" y="70" width="24" height="144" />
-          <path data-p="hilosP" className={s.hilo} d={hilosPerno(0)} />
+        {/* ===== tornillos sueltos en la mesa ===== */}
+        <g transform="translate(596 211) rotate(-84)">
+          <Tornillo zinc={zinc} />
+        </g>
+        <g transform="translate(646 212) rotate(-92)">
+          <Tornillo zinc={zinc} />
+        </g>
+        <g transform="translate(700 210) rotate(-104)">
+          <Tornillo zinc={zinc} />
         </g>
         <g className={s.bp}>
-          <path className={s.cota} d="M500 70H580" style={{ strokeDasharray: "2 3" }} />
-          <text x="586" y="150" style={{ fontSize: 7 }}>
-            PERNO HEX
+          <path className={s.cota} d="M592 226H750" style={{ strokeDasharray: "2 3" }} />
+          <text x="596" y="238">
+            #8 × 1½&quot; · PUNTA BROCA
           </text>
-          <text x="586" y="160" style={{ fontSize: 7 }}>
-            ⅜&quot; × 3&quot;
-          </text>
-          <path className={s.cota} d="M596 70V214M591 70h10M591 214h10" />
         </g>
-        {/* tuerca (se mueve) */}
-        <g data-p="tuerca" transform="translate(0 50)">
-          <path className={`${F} ${s.fZincOsc} ${s.ln}`} d="M512 0H568V20H512Z" />
-          <path className={s.cota} d="M526 0V20M554 0V20" style={{ stroke: "#0b1d33" }} />
-          <path data-p="caraT" className={`${F} ${s.fZinc} ${s.ln}`} d="M526 0H554V20H526Z" />
-        </g>
-        <text className={s.bp} x="610" y="54" style={{ fontSize: 7 }}>
-          TUERCA ⅜&quot;
-        </text>
 
-        {/* ===== 4. tarugo (en reposo flota apenas) ===== */}
-        <g transform="translate(690 120)">
-          <g className={s.flota}>
-            <path className={`${F} ${s.fRojo} ${s.ln}`} d="M-8 0H8L6 80L0 90L-6 80Z" />
-            <path className={s.cota} d="M-8 14H8M-8 28H8M-8 42H8M-7 56H7M-6 70H6" style={{ stroke: "#0b1d33" }} />
-            <rect className={`${F} ${s.fRojo} ${s.ln}`} x="-13" y="-6" width="26" height="7" rx="2" />
+        {/* ===== taladro + guante (la punta, en 0,0, va sobre la cabeza del tornillo) ===== */}
+        <g data-p="taladro" transform={`translate(${X0} ${f2(cabeza(D0[3]))})`}>
+          <g className={s.vibra}>
+            <g transform="scale(.78)">
+              {/* brazo */}
+              {/* la manga se desvanece hacia arriba: en ningún tamaño se ve dónde termina */}
+              <path d="M60 -150L210 -300H330L150 -112Z" fill={`url(#${manga})`} />
+              <path d="M60 -150L150 -112" className={s.ol} />
+              <path d="M70 -158L120 -112" className={s.puno} />
+              {/* batería + mango */}
+              <rect x="28" y="-132" width="88" height="34" rx="9" className={`${s.ol} ${s.negro}`} />
+              <rect x="108" y="-152" width="40" height="70" rx="6" className={`${s.ol} ${s.negro}`} />
+              <rect x="108" y="-124" width="40" height="7" className={s.rojoPlano} />
+              <circle cx="128" cy="-104" r="3.2" className={s.led} />
+              <rect x="34" y="-98" width="12" height="13" rx="3" className={`${s.ol} ${s.rojoPlano}`} />
+              {/* cuerpo del motor */}
+              <rect x="-26" y="-178" width="56" height="112" rx="20" fill={`url(#${rojo})`} className={s.ol} />
+              <path d="M-18 -168Q-21 -122 -18 -78" className={s.reflejo} />
+              <path d="M-12 -164V-136M-2 -164V-136M8 -164V-136" className={s.rejilla} />
+              <rect x="-20" y="-186" width="44" height="18" rx="7" className={`${s.ol} ${s.negro}`} />
+              <text x="-14" y="-108" className={s.voltaje}>
+                20V
+              </text>
+              {/* collar y mandril */}
+              <rect x="-22" y="-70" width="48" height="12" rx="3" className={`${s.ol} ${s.negro}`} />
+              <path d="M-14 -58H18L14 -26H-10Z" fill={`url(#${zinc})`} className={s.ol} />
+              <g clipPath={`url(#${clipMandril})`}>
+                <g data-p="mandril">
+                  <path d="M-15 -54V-30M-8 -54V-30M-1 -54V-30M6 -54V-30M13 -54V-30M20 -54V-30" className={s.estrias} />
+                </g>
+              </g>
+              {/* punta */}
+              <rect x="-1" y="-26" width="6" height="26" fill={`url(#${zinc})`} className={s.olFino} />
+              {/* guante */}
+              <path d="M44 -142Q42 -152 56 -152H102Q114 -152 112 -140L110 -96Q108 -84 96 -84H58Q46 -84 46 -96Z" className={`${s.ol} ${s.guante}`} />
+              <path d="M58 -98Q58 -88 66 -88M74 -98Q74 -88 82 -88M90 -98Q90 -88 98 -88" className={s.costura} />
+              <path d="M46 -130Q30 -138 34 -150Q40 -160 58 -152" className={`${s.ol} ${s.guante}`} />
+              <path d="M100 -152Q118 -176 132 -170L122 -140Z" className={`${s.ol} ${s.guanteOsc}`} />
+              {/* arcos de velocidad mientras gira */}
+              <g className={s.vel}>
+                <path d="M-28 -36A26 10 0 0 0 30 -36" />
+                <path d="M-22 -48A20 8 0 0 0 24 -48" style={{ opacity: 0.6 }} />
+              </g>
+            </g>
           </g>
         </g>
-        <text className={s.bp} x="664" y="236" style={{ fontSize: 7 }}>
-          TARUGO 8 mm
-        </text>
       </svg>
     </BannerPlano>
   );

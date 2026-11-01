@@ -364,38 +364,66 @@
   transform: rotate(45deg);
 }
 
-/* Rosca de tornillo (Tornillería): se despliega bajo la etiqueta con `on` y gira mientras el tornillo entra (`vivo`). */
-.rosca {
+/* Cabezas de tornillo Phillips (Tornillería): 5 bajo la etiqueta; con `on` giran, cada una a destiempo. */
+.cabezas {
   position: absolute;
-  top: calc(100% + 6px);
-  right: -8px;
-  left: 8px;
-  height: 10px;
-  border-top: 1.5px solid #b9c3cf;
-  border-bottom: 1.5px solid #b9c3cf;
-  border-radius: 1px;
-  background: repeating-linear-gradient(115deg, #b9c3cf 0 3px, #7f8b99 3px 5px, transparent 5px 9px);
-  transform: skewX(-12deg) scaleX(0);
-  transform-origin: left;
-  transition: transform 0.6s cubic-bezier(0.3, 0.7, 0.2, 1) 0.1s;
+  top: calc(100% + 8px);
+  left: 12px;
+  display: flex;
+  gap: 9px;
   pointer-events: none;
 }
-:global(.on) .rosca {
-  transform: skewX(-12deg) scaleX(1);
+.cabezas > span {
+  position: relative;
+  width: 13px;
+  height: 13px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #f3f6fa, #c4cdd8 50%, #8592a3);
+  box-shadow:
+    inset 0 -1.5px 0 #6f7c8c,
+    0 2px 4px rgba(0, 0, 0, 0.35);
 }
-:global(.vivo) .rosca {
-  animation: girarRosca 0.35s linear infinite;
+.cabezas i {
+  position: absolute;
+  inset: 0;
 }
-@keyframes girarRosca {
+.cabezas i::before,
+.cabezas i::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 7px;
+  height: 1.6px;
+  border-radius: 1px;
+  background: #0b1d33;
+  transform: translate(-50%, -50%);
+}
+.cabezas i::after {
+  transform: translate(-50%, -50%) rotate(90deg);
+}
+:global(.on) .cabezas i {
+  animation: girarCabeza 0.6s linear infinite;
+}
+.cabezas > span:nth-child(2) i {
+  animation-delay: -0.12s;
+}
+.cabezas > span:nth-child(3) i {
+  animation-delay: -0.24s;
+}
+.cabezas > span:nth-child(4) i {
+  animation-delay: -0.36s;
+}
+.cabezas > span:nth-child(5) i {
+  animation-delay: -0.48s;
+}
+@keyframes girarCabeza {
   to {
-    background-position: 9px 0;
+    transform: rotate(360deg);
   }
 }
 @media (prefers-reduced-motion: reduce) {
-  .rosca {
-    transition-duration: 0.01s;
-  }
-  :global(.vivo) .rosca {
+  :global(.on) .cabezas i {
     animation: none;
   }
 }
