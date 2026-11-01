@@ -223,7 +223,8 @@
   }
 }
 
-/* Brillo azul del agua (el de BannerPlano está apagado con --brillo-on: 0). */
+/* Brillo azul del agua (el de BannerPlano está apagado con --brillo-on: 0). Va sobre todo el banner (prop `fondo`),
+   así se difumina con el fondo; antes, dentro de la ilustración, se cortaba en recto. Varias paradas: sin borde. */
 .brilloAgua {
   position: absolute;
   inset: 0;
@@ -231,7 +232,23 @@
   pointer-events: none;
   opacity: 0;
   transition: opacity 1s;
-  background: radial-gradient(98% 120% at 39% 60%, rgba(79, 195, 255, 0.22), transparent 70%);
+  background: radial-gradient(
+    50% 100% at 66% 60%,
+    rgba(79, 195, 255, 0.24),
+    rgba(79, 195, 255, 0.12) 35%,
+    rgba(79, 195, 255, 0.04) 60%,
+    transparent 85%
+  );
+}
+@media (max-width: 819.98px) {
+  .brilloAgua {
+    background: radial-gradient(
+      80% 55% at 50% 78%,
+      rgba(79, 195, 255, 0.24),
+      rgba(79, 195, 255, 0.1) 40%,
+      transparent 85%
+    );
+  }
 }
 :global(.agua) .brilloAgua {
   opacity: 1;

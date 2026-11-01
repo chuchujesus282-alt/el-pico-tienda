@@ -191,8 +191,8 @@ export default function BannerSeguridad({ nombre }: PropsBannerPropio) {
           "--palabra-movil-max": "2.1rem",
         } as CSSProperties
       }
+      fondo={<div className={s.brilloApto} aria-hidden />}
     >
-      <div className={s.brilloApto} aria-hidden />
       <svg viewBox="170 0 610 260" preserveAspectRatio="xMidYMid meet" aria-hidden focusable="false" className={s.svg}>
         <text className={s.bp} x="290" y="20" style={{ fontSize: 7 }}>
           VISTA EXPLOTADA · EQUIPO DE PROTECCIÓN PERSONAL

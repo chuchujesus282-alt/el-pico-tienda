@@ -210,8 +210,8 @@ export default function BannerCerrajeria({ nombre }: PropsBannerPropio) {
           "--etiqueta-sombra": "0 10px 24px -10px rgba(227, 38, 47, 0.6)",
         } as CSSProperties
       }
+      fondo={<div className={s.brilloAbierto} aria-hidden />}
     >
-      <div className={s.brilloAbierto} aria-hidden />
       <svg viewBox="0 0 780 260" preserveAspectRatio="xMidYMid meet" aria-hidden focusable="false" className={s.svg}>
         <defs>
           <clipPath id={clipCil}>

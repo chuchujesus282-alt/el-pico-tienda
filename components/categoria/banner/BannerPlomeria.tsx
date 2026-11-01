@@ -304,8 +304,8 @@ export default function BannerPlomeria({ nombre }: PropsBannerPropio) {
           "--etiqueta-sombra": "0 10px 24px -10px rgba(227, 38, 47, 0.6)",
         } as CSSProperties
       }
+      fondo={<div className={s.brilloAgua} aria-hidden />}
     >
-      <div className={s.brilloAgua} aria-hidden />
       <svg viewBox="0 0 780 260" preserveAspectRatio="xMidYMid meet" aria-hidden focusable="false" className={s.svg}>
         <defs>
           <linearGradient id={aguaG} x1="0" y1="0" x2="0" y2="1">

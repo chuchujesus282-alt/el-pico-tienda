@@ -60,6 +60,11 @@ type Props = {
    * --palabra-movil-min/-vw/-max, --etiqueta-pad, --etiqueta-sombra. Sin ellas, los valores de Pinturas.
    */
   variables?: CSSProperties;
+  /**
+   * Luces propias de la escena (ej. el brillo azul del agua en Grifería). Van sobre TODO el banner, detrás del texto y
+   * del dibujo, para que se difuminen con el fondo (dentro de la ilustración quedaban cortadas en recto).
+   */
+  fondo?: ReactNode;
 };
 
 /**
@@ -80,6 +85,7 @@ export default function BannerPlano({
   crearMotor,
   decoracion = "gotas",
   variables,
+  fondo,
 }: Props) {
   const raizRef = useRef<HTMLElement>(null);
 
@@ -147,6 +153,7 @@ export default function BannerPlano({
       >
         <div className={styles.velo} aria-hidden />
         <div className={styles.brillo} aria-hidden />
+        {fondo}
 
         {/* Lupa solo en el teléfono, como en EncabezadoPagina: ahí el buscador del header no sale. */}
         <Link href="/buscar" aria-label="Buscar productos" className={styles.lupa}>
