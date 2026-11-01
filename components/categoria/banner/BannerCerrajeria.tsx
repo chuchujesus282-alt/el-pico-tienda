@@ -6,118 +6,55 @@ import type { PropsBannerPropio } from "./CategoriaBanner";
 import styles from "./BannerCerrajeria.module.css";
 
 /**
- * Banner de la categoría Cerrajería, estilo "plano técnico". Portado del prototipo aprobado banner-cerrajeria-v1.html:
- * candado de latón a la izquierda, corte longitudinal de un cilindro de 5 pines (cuerpo, rotor, línea de corte, pines
- * de llave y de empuje con sus resortes) y su vista frontal.
- * Activo: la llave entra (1,25 s) y cada diente levanta su pin hasta la línea de corte; con los 5 alineados la línea se
- * prende en verde (clase global `abierto`, "ESTADO · ABIERTO"), el rotor gira 90° en la vista frontal y el arco del
- * candado salta y gira. Al salir todo vuelve y la llave sale. Tiempos y colores del prototipo.
- * Diferencias con el prototipo: los pines, resortes y el perfil de la llave se calculan aquí y se dibujan en el
- * servidor (el prototipo los armaba con JS), solo el nombre en la etiqueta (sin "Protege tu casa con", kicker ni
- * subtítulo) y, en reposo, el candado se mece apenas.
+ * Banner de la categoría Cerrajería, estilo "plano técnico". Portado del prototipo banner-cerrajeria-v7.html: una reja
+ * de hierro de dos hojas (barrotes con puntas de lanza y volutas) entre dos pilares, cerrada con un candado de latón en
+ * su portacandado, y un llavero de El Pico colgado de un clavo.
+ * Activo: la llave sale del llavero (que se mece), vuela hasta el candado, entra y gira; el estado pasa a ABIERTO (clase
+ * global `abierto`: los pines bajo la etiqueta se alinean y la línea de corte se prende en verde), el arco salta y se
+ * voltea, el candado cae colgando y la hoja derecha se abre sobre su bisagra. Al salir todo vuelve en orden.
+ * Diferencias con el prototipo: solo el nombre en la etiqueta (sin kicker, "Protege tu casa con" ni subtítulo), el ● del
+ * estado dibujado (no depende de la fuente), en reposo el llavero se mece apenas y las luces (`fondo`) cubren todo el
+ * banner.
  */
 
-// ---------- mecanismo de pines (rotor: y 130–200 · línea de corte y=130 · sin llave, el pin descansa en y=170) ----------
-const XS = [220, 280, 340, 400, 460];
-const L = [18, 30, 12, 26, 22]; // largo de cada pin de llave
-const DRV = 30; // largo del pin de empuje
-const BASE = 170;
-
-/** Dibujo de un pin con su resorte, levantado `lift`. */
-function geomPin(x: number, l: number, lift: number) {
-  const kBottom = BASE - lift,
-    kTop = kBottom - l,
-    dTop = kTop - DRV;
-  const kp = `M${x - 8} ${kTop + 3}Q${x - 8} ${kTop} ${x - 5} ${kTop}H${x + 5}Q${x + 8} ${kTop} ${x + 8} ${kTop + 3}V${kBottom - 6}L${x} ${kBottom}L${x - 8} ${kBottom - 6}Z`;
-  const top = 46,
-    h = dTop - top,
-    n = 7;
-  let sp = `M${x} ${top}`;
-  for (let k = 1; k <= n; k++) sp += `L${x + (k % 2 ? -6 : 6)} ${(top + (h * k) / n).toFixed(2)}`;
-  return { kp, drvY: dTop, sp };
-}
-
-// ---------- llave: perfil de dientes que empuja cada pin a su altura ----------
-const KEY_Y = 200,
-  TIP_X = 186,
-  OFF0 = 330;
-const PERFIL: [number, number][] = [
-  [TIP_X, 196],
-  [TIP_X + 14, 184],
-  ...XS.flatMap((x, i): [number, number][] => {
-    const y = BASE - (40 - L[i]);
-    return [
-      [x - 7, y],
-      [x + 7, y],
-    ];
-  }),
-  [486, 160],
-  [528, 160],
-];
-const CUERPO_LLAVE = `M${PERFIL.map((p) => p.join(" ")).join("L")}L528 ${KEY_Y - 2}L${TIP_X} ${KEY_Y - 2}Z`;
-
-/** Altura del perfil de la llave en x (coordenadas de la llave); null fuera de ella. */
-function alturaLlave(xl: number): number | null {
-  if (xl < PERFIL[0][0] || xl > PERFIL[PERFIL.length - 1][0]) return null;
-  for (let i = 1; i < PERFIL.length; i++) {
-    const [x0, y0] = PERFIL[i - 1],
-      [x1, y1] = PERFIL[i];
-    if (xl <= x1) return y0 + ((y1 - y0) * (xl - x0)) / (x1 - x0 || 1);
-  }
-  return null;
-}
+const LLAVE_REPOSO = { x: 414, y: 164, r: 174 };
 
 const ease = (t: number) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
 const out = (t: number) => 1 - Math.pow(1 - t, 3);
 const back = (t: number) => 1 + 2.4 * Math.pow(t - 1, 3) + 1.4 * Math.pow(t - 1, 2);
+const f2 = (n: number) => n.toFixed(2);
 
 function crearMotor(raiz: HTMLElement): Motor {
   const q = <T extends Element>(p: string) => raiz.querySelector<T>(`[data-p="${p}"]`)!;
   const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   const llave = q<SVGGElement>("llave"),
+    cabeza = q<SVGGElement>("cabeza"),
     arco = q<SVGGElement>("arco"),
-    frontal = q<SVGGElement>("frontal"),
+    candado = q<SVGGElement>("candado"),
+    hojaR = q<SVGGElement>("hojaR"),
+    placaR = q<SVGGElement>("placaR"),
+    llavero = q<SVGGElement>("llavero"),
     estado = q<SVGTextElement>("estado");
-  const pines = XS.map((x, i) => ({
-    x,
-    l: L[i],
-    kp: q<SVGPathElement>(`kp${i}`),
-    drv: q<SVGRectElement>(`drv${i}`),
-    sp: q<SVGPathElement>(`sp${i}`),
-  }));
 
-  let off = OFF0,
-    arcoY = 0,
-    arcoR = 0,
-    rot = 0;
-  // Altura con la que se dibujó cada pin la última vez: solo se redibuja el que la llave movió (la mayor parte del
-  // recorrido, la llave avanza sin tocar la mayoría de los pines).
-  const dibujado = pines.map(() => 0);
-  const drawKey = () => {
-    llave.setAttribute("transform", `translate(${off.toFixed(2)} 0)`);
-    pines.forEach((p, i) => {
-      const t = alturaLlave(p.x - off);
-      const lift = Math.min(40 - p.l + 0.01, t === null ? 0 : Math.max(0, BASE - t));
-      if (Math.abs(lift - dibujado[i]) < 0.05) return;
-      dibujado[i] = lift;
-      const g = geomPin(p.x, p.l, lift);
-      p.kp.setAttribute("d", g.kp);
-      p.drv.setAttribute("y", g.drvY.toFixed(2));
-      p.sp.setAttribute("d", g.sp);
-    });
-  };
-  const drawArco = () => arco.setAttribute("transform", `translate(0 ${(-arcoY).toFixed(2)}) rotate(${arcoR.toFixed(2)} 52 142)`);
-  const drawFront = () => frontal.setAttribute("transform", `rotate(${rot.toFixed(2)})`);
-  const ponerEstado = (abierto: boolean) => {
-    raiz.classList.toggle("abierto", abierto);
-    estado.textContent = abierto ? "ESTADO · ABIERTO" : "ESTADO · CERRADO";
-  };
+  const S = { kx: LLAVE_REPOSO.x, ky: LLAVE_REPOSO.y, kr: LLAVE_REPOSO.r, giro: 0, alza: 0, vuelta: 0, lx: 0, ly: 0, lr: 0, reja: 0, mece: 0 };
+  function draw() {
+    llave.setAttribute("transform", `translate(${f2(S.kx + S.lx)} ${f2(S.ky + S.ly)}) rotate(${f2(S.kr + S.lr)}) scale(.72)`);
+    // la cabeza de la llave se angosta al girar
+    cabeza.setAttribute("transform", `translate(0 42) scale(${Math.max(0.25, Math.abs(Math.cos((S.giro * Math.PI) / 2))).toFixed(3)} 1) translate(0 -42)`);
+    const k = Math.cos(S.vuelta * Math.PI);
+    arco.setAttribute("transform", `translate(0 ${f2(-S.alza)}) translate(541 0) scale(${k.toFixed(3)} 1) translate(-541 0)`);
+    candado.setAttribute("transform", `translate(${f2(S.lx)} ${f2(S.ly)}) rotate(${f2(S.lr)} 550 177)`);
+    // la hoja derecha gira sobre su bisagra (pilar derecho, x=634)
+    const e = `translate(634 0) scale(${(1 - 0.72 * S.reja).toFixed(3)} 1) translate(-634 0)`;
+    hojaR.setAttribute("transform", e);
+    placaR.setAttribute("transform", e);
+    llavero.setAttribute("transform", `translate(420 104) rotate(${f2(S.mece)})`);
+  }
 
-  // ---------- tiempo: cada encender/apagar sube `gen` y corta lo anterior ----------
   let gen = 0,
     destruido = false;
   const rafs = new Set<number>();
-  const tween = (d: number, f: (p: number) => void, e: (t: number) => number = ease) => {
+  const tween = (d: number, f: (p: number, t: number) => void, e: (t: number) => number = ease) => {
     const g = gen;
     const dur = reduce ? 10 : d;
     return new Promise<boolean>((r) => {
@@ -125,7 +62,7 @@ function crearMotor(raiz: HTMLElement): Motor {
       const k = (n: number) => {
         if (g !== gen || destruido) return r(false);
         const t = Math.min(1, (n - s) / dur);
-        f(e(t));
+        f(e(t), t);
         if (t < 1) {
           const id = requestAnimationFrame((m) => {
             rafs.delete(id);
@@ -137,47 +74,73 @@ function crearMotor(raiz: HTMLElement): Motor {
       k(s);
     });
   };
+  const ponerEstado = (abierto: boolean) => {
+    raiz.classList.toggle("abierto", abierto);
+    estado.textContent = abierto ? "ABIERTO" : "CERRADO";
+  };
 
   async function activar() {
     ++gen;
-    raiz.classList.add("on");
-    llave.style.opacity = "1";
-    // 1. la llave entra: cada diente levanta su pin
-    if (!(await tween(1250, (p) => ((off = OFF0 * (1 - p)), drawKey()), out))) return;
-    // 2. todos los pines en la línea de corte → el rotor gira
+    // 1. la llave sale del llavero (que se mece) y vuela hasta quedar bajo el candado, punta arriba
+    const x0 = S.kx,
+      y0 = S.ky,
+      r0 = S.kr;
+    void tween(1200, (_, t) => ((S.mece = 9 * Math.exp(-3 * t) * Math.sin(t * 13)), draw()), (t) => t);
+    if (
+      !(await tween(700, (p) => {
+        S.kx = x0 + (550 - x0) * p;
+        S.ky = y0 + (212 - y0) * p - 46 * Math.sin(Math.PI * p);
+        S.kr = r0 + (360 - r0) * p;
+        draw();
+      }))
+    )
+      return;
+    S.kr = 0;
+    // 2. entra por abajo en el candado
+    if (!(await tween(260, (p) => ((S.ky = 212 - 20 * p), draw()), out))) return;
+    // 3. gira
+    if (!(await tween(360, (p) => ((S.giro = p), draw()), back))) return;
     ponerEstado(true);
-    if (!(await tween(420, (p) => ((rot = 90 * p), drawFront()), back))) return;
-    // 3. el arco del candado salta y gira
-    if (!(await tween(260, (p) => ((arcoY = 16 * p), drawArco()), out))) return;
-    await tween(420, (p) => ((arcoR = -28 * p), drawArco()), back);
+    // 4. el arco salta y se voltea
+    if (!(await tween(200, (p) => ((S.alza = 10 * p), draw()), out))) return;
+    if (!(await tween(380, (p) => ((S.vuelta = p), draw())))) return;
+    // 5. el candado (con la llave) cae colgando
+    if (!(await tween(380, (p) => ((S.lx = -12 * p), (S.ly = 8 * p), (S.lr = -10 * p), draw()), back))) return;
+    // 6. la reja se abre
+    await tween(700, (p) => ((S.reja = p), draw()), out);
   }
-
   async function reposo() {
-    const g = ++gen;
-    // `on` se queda hasta que la llave sale (BannerPlano ya la quitó; el prototipo la quita al final).
-    raiz.classList.add("on");
+    ++gen;
     ponerEstado(false);
-    const a = { y: arcoY, r: arcoR, rot, off };
-    const ok = await tween(300, (p) => {
-      arcoR = a.r * (1 - p);
-      arcoY = a.y * (1 - p);
-      rot = a.rot * (1 - p);
-      drawArco();
-      drawFront();
+    const a = { ...S };
+    if (!(await tween(380, (p) => ((S.reja = a.reja * (1 - p)), draw())))) return;
+    if (
+      !(await tween(320, (p) => {
+        const k = 1 - p;
+        S.lx = a.lx * k;
+        S.ly = a.ly * k;
+        S.lr = a.lr * k;
+        S.vuelta = a.vuelta * k;
+        S.alza = a.alza * k;
+        S.giro = a.giro * k;
+        S.mece = a.mece * k;
+        draw();
+      }))
+    )
+      return;
+    const b = { ...S };
+    // la llave vuelve al llavero (por el camino corto)
+    const vuelta = ((((LLAVE_REPOSO.r - b.kr) % 360) + 540) % 360) - 180; // giro más corto, entre -180 y 180
+    const rFin = b.kr + vuelta;
+    await tween(500, (p) => {
+      S.kx = b.kx + (LLAVE_REPOSO.x - b.kx) * p;
+      S.ky = b.ky + (LLAVE_REPOSO.y - b.ky) * p;
+      S.kr = b.kr + (rFin - b.kr) * p;
+      draw();
     });
-    if (!ok) return;
-    const salio = await tween(
-      500,
-      (p) => {
-        off = a.off + (OFF0 - a.off) * p;
-        drawKey();
-        llave.style.opacity = String(1 - p * p);
-      },
-      (t) => t * t,
-    );
-    if (salio && g === gen) raiz.classList.remove("on");
   }
 
+  draw();
   return {
     encender: () => void activar(),
     apagar: () => void reposo(),
@@ -190,10 +153,52 @@ function crearMotor(raiz: HTMLElement): Motor {
   };
 }
 
+/** Hoja de reja entre x0 y x1: barrotes con puntas de lanza, travesaños y volutas arriba. */
+function Hoja({ x0, x1, hierro, hierroV }: { x0: number; x1: number; hierro: string; hierroV: string }) {
+  const s = styles;
+  const barrotes: number[] = [];
+  for (let x = x0 + 8; x < x1 - 4; x += 13) barrotes.push(x);
+  const volutas: number[] = [];
+  for (let x = x0 + 14; x < x1 - 10; x += 26) volutas.push(x);
+  return (
+    <>
+      {barrotes.map((x) => (
+        <g key={x}>
+          <rect x={x - 2.2} y="84" width="4.4" height="132" fill={`url(#${hierro})`} />
+          <path d={`M${x} 72L${x + 4} 82L${x + 2.2} 84H${x - 2.2}L${x - 4} 82Z`} fill="#3e4d62" className={s.ol} style={{ strokeWidth: 1 }} />
+        </g>
+      ))}
+      {[86, 150, 212].map((y) => (
+        <rect key={y} x={x0} y={y - 4} width={x1 - x0} height="8" rx="1.5" fill={`url(#${hierroV})`} className={s.ol} style={{ strokeWidth: 1.1 }} />
+      ))}
+      {volutas.map((x) => (
+        <path key={x} d={`M${x} 112Q${x + 6} 98 ${x + 12} 112Q${x + 18} 126 ${x + 24} 112`} fill="none" stroke="#3e4d62" strokeWidth="2.2" />
+      ))}
+      <rect x={x0} y="82" width={x1 - x0} height="136" fill="none" stroke="#0b1d33" strokeWidth="1.4" />
+    </>
+  );
+}
+
+/** Llave con la punta en el origen, la hoja hacia +y y la cabeza abajo (`data-p` en la cabeza, para girarla). */
+function Llave({ acero, cromo, cabeza }: { acero: string; cromo: string; cabeza?: string }) {
+  const s = styles;
+  return (
+    <>
+      <path d="M-3 0L3 3V30H-3Z" fill={`url(#${acero})`} className={s.ol} style={{ strokeWidth: 1 }} />
+      <path d="M3 6h3v3h-3M3 13h3v3h-3M3 20h3v3h-3" fill={`url(#${acero})`} className={s.ol} style={{ strokeWidth: 0.8 }} />
+      <rect x="-6" y="29" width="12" height="4" rx="1.2" fill={`url(#${cromo})`} className={s.ol} style={{ strokeWidth: 1 }} />
+      <g data-p={cabeza}>
+        <path d="M0 32A11 10 0 1 1 0 52A11 10 0 1 1 0 32Z" fill={`url(#${cromo})`} className={s.ol} style={{ strokeWidth: 1 }} />
+        <circle cx="0" cy="46" r="2.6" fill="#0f2a4a" className={s.ol} style={{ strokeWidth: 0.9 }} />
+      </g>
+    </>
+  );
+}
+
 export default function BannerCerrajeria({ nombre }: PropsBannerPropio) {
-  const id = useId().replace(/:/g, "");
-  const clipCil = `cil-${id}`,
-    clipCandado = `candado-${id}`;
+  const p = `cj${useId().replace(/:/g, "")}`;
+  const g = (n: string) => `${p}${n}`;
+  const u = (n: string) => `url(#${p}${n})`;
   const s = styles;
   return (
     <BannerPlano
@@ -204,105 +209,138 @@ export default function BannerCerrajeria({ nombre }: PropsBannerPropio) {
       decoracion="pines"
       variables={
         {
-          "--brillo": "radial-gradient(55% 120% at 60% 55%, rgba(212,168,67,.20), transparent 70%)",
-          "--brillo-on": "1",
+          "--brillo-on": "0", // las luces van en `fondo`
           "--etiqueta-pad": "2px 26px 0",
           "--etiqueta-sombra": "0 10px 24px -10px rgba(227, 38, 47, 0.6)",
         } as CSSProperties
       }
-      fondo={<div className={s.brilloAbierto} aria-hidden />}
+      fondo={
+        <>
+          <div className={s.luz} aria-hidden />
+          <div className={s.luzAbierto} aria-hidden />
+        </>
+      }
     >
-      <svg viewBox="0 0 780 260" preserveAspectRatio="xMidYMid meet" aria-hidden focusable="false" className={s.svg}>
+      {/* encuadre ajustado a la reja (el del prototipo, 250 8 510 252, dejaba la escena pequeña en el banner) */}
+      <svg viewBox="384 20 316 234" preserveAspectRatio="xMidYMid meet" aria-hidden focusable="false" className={s.svg}>
         <defs>
-          <clipPath id={clipCil}>
-            <rect x="150" y="40" width="370" height="160" rx="10" />
-          </clipPath>
-          <clipPath id={clipCandado}>
-            <rect x="36" y="138" width="88" height="80" rx="10" />
-          </clipPath>
+          <linearGradient id={g("hierro")} x1="0" x2="1">
+            <stop offset="0" stopColor="#1b2533" />
+            <stop offset=".45" stopColor="#3e4d62" />
+            <stop offset="1" stopColor="#18212e" />
+          </linearGradient>
+          <linearGradient id={g("hierroV")} x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stopColor="#4a5a70" />
+            <stop offset="1" stopColor="#1b2533" />
+          </linearGradient>
+          <linearGradient id={g("laton")} x1="0" x2="1">
+            <stop offset="0" stopColor="#a77f2a" />
+            <stop offset=".32" stopColor="#ecca6e" />
+            <stop offset=".6" stopColor="#d4a843" />
+            <stop offset="1" stopColor="#8f6a1e" />
+          </linearGradient>
+          <linearGradient id={g("acero")} x1="0" x2="1">
+            <stop offset="0" stopColor="#7f8b99" />
+            <stop offset=".42" stopColor="#eef2f6" />
+            <stop offset=".62" stopColor="#c4cdd8" />
+            <stop offset="1" stopColor="#7f8b99" />
+          </linearGradient>
+          <linearGradient id={g("cromo")} x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stopColor="#f3f6f9" />
+            <stop offset=".55" stopColor="#b9c3cf" />
+            <stop offset="1" stopColor="#7f8b99" />
+          </linearGradient>
+          <radialGradient id={g("sombra")}>
+            <stop offset="0" stopColor="#000" stopOpacity=".42" />
+            <stop offset="1" stopColor="#000" stopOpacity="0" />
+          </radialGradient>
+          <linearGradient id={g("piso")} x1="0" x2="1">
+            <stop offset="0" stopColor="#c3ccd8" stopOpacity="0" />
+            <stop offset=".2" stopColor="#c3ccd8" stopOpacity=".7" />
+            <stop offset=".8" stopColor="#c3ccd8" stopOpacity=".7" />
+            <stop offset="1" stopColor="#c3ccd8" stopOpacity="0" />
+          </linearGradient>
         </defs>
 
-        <text data-p="estado" className={s.estado} x="150" y="24">
-          ESTADO · CERRADO
+        <text x="420" y="34">
+          LÁMINA · REJA DE 2 HOJAS CON PORTACANDADO
         </text>
-        <text className={s.bp} x="520" y="24" textAnchor="end" style={{ fontSize: 7 }}>
-          CORTE LONGITUDINAL · CILINDRO 5 PINES
-        </text>
-
-        {/* ===== candado (izquierda); en reposo se mece apenas ===== */}
-        <g className={s.mece}>
-          <g data-p="arco">
-            <path className={s.ln} d="M52 142V108A28 28 0 0 1 108 108V142" fill="none" style={{ strokeWidth: 7 }} />
-            <path d="M52 142V108A28 28 0 0 1 108 108V142" fill="none" stroke="#0a1f38" strokeWidth="3" />
-          </g>
-          <rect className={`${s.fill} ${s.fCandado} ${s.ln}`} x="36" y="138" width="88" height="80" rx="10" />
-          {/* reflejo dorado que cruza el cuerpo del candado al abrirse */}
-          <g clipPath={`url(#${clipCandado})`}>
-            <rect className={s.reflejo} x="16" y="130" width="22" height="96" />
-          </g>
-          <circle cx="80" cy="172" r="6" fill="#0b1d33" />
-          <path d="M77 176h6l2 18h-10z" fill="#0b1d33" />
-          <path className={s.cota} d="M44 150H116M44 206H116" />
-        </g>
-        <text className={s.bp} x="36" y="236" style={{ fontSize: 7 }}>
-          CANDADO 50 mm
+        <circle cx="636" cy="31.5" r="2.6" className={s.estadoPunto} />
+        <text data-p="estado" className={s.estado} x="690" y="34" textAnchor="end">
+          CERRADO
         </text>
 
-        {/* ===== cilindro en corte ===== */}
-        <rect className={`${s.fill} ${s.fCuerpo} ${s.ln}`} x="150" y="40" width="370" height="160" rx="10" />
-        <g clipPath={`url(#${clipCil})`}>
-          <rect className={`${s.fill} ${s.fRotor}`} x="150" y="130" width="370" height="70" />
-        </g>
-        <path className={s.ln} d="M150 130H520" style={{ strokeWidth: 1.5, opacity: 0.6 }} />
-        <line className={s.corte} x1="140" y1="130" x2="530" y2="130" />
-        <text className={s.bp} x="152" y="124" style={{ fontSize: 7 }}>
-          LÍNEA DE CORTE
-        </text>
-        <text className={s.bp} x="160" y="214" style={{ fontSize: 7 }}>
-          ROTOR
-        </text>
-        <text className={s.bp} x="160" y="56" style={{ fontSize: 7 }}>
-          CUERPO
-        </text>
+        {/* piso */}
+        <ellipse cx="540" cy="228" rx="150" ry="6" fill={u("sombra")} />
+        <path d="M300 226H770" stroke={u("piso")} strokeWidth="1.5" />
 
-        {/* cámaras, resortes y pines (el motor los mueve con la llave) */}
-        {XS.map((x, i) => {
-          const g = geomPin(x, L[i], 0);
-          return (
-            <g key={x}>
-              <rect x={x - 11} y="44" width="22" height="128" rx="3" fill="rgba(7,21,38,.75)" stroke="rgba(190,215,245,.55)" strokeWidth="1" />
-              <path data-p={`sp${i}`} className={s.resorte} d={g.sp} />
-              <rect data-p={`drv${i}`} className={`${s.fill} ${s.fAcero} ${s.ln}`} x={x - 8} y={g.drvY} width="16" height={DRV} rx="3" style={{ strokeWidth: 1.5 }} />
-              <path data-p={`kp${i}`} className={`${s.fill} ${s.fLaton} ${s.ln}`} d={g.kp} style={{ strokeWidth: 1.5 }} />
+        {/* pilares */}
+        <rect x="430" y="66" width="16" height="160" rx="2" fill={u("hierro")} className={s.ol} />
+        <rect x="426" y="60" width="24" height="8" rx="2" fill={u("hierroV")} className={s.ol} />
+        <rect x="634" y="66" width="16" height="160" rx="2" fill={u("hierro")} className={s.ol} />
+        <rect x="630" y="60" width="24" height="8" rx="2" fill={u("hierroV")} className={s.ol} />
+
+        {/* clavo con el llavero, en el pilar izquierdo */}
+        <circle cx="420" cy="104" r="3" fill={u("cromo")} className={s.ol} />
+        <path d="M420 104H430" stroke="#7f8b99" strokeWidth="2.4" />
+        <g data-p="llavero" transform="translate(420 104)">
+          <g className={s.mece}>
+            <circle cx="0" cy="14" r="11" fill="none" stroke="#0b1d33" strokeWidth="4" />
+            <circle cx="0" cy="14" r="11" fill="none" stroke={u("acero")} strokeWidth="2.2" />
+            <g transform="translate(5 62) rotate(188) scale(.72)">
+              <Llave acero={g("acero")} cromo={g("cromo")} />
             </g>
-          );
-        })}
-        {/* bocallave */}
-        <path className={s.cota} d="M170 172H520M170 200H520" style={{ strokeDasharray: "2 3" }} />
-        {/* al abrir, cada pin enciende su punto en la línea de corte, de izquierda a derecha */}
-        {XS.map((x, i) => (
-          <circle key={x} className={s.alineado} cx={x} cy="130" r="3.5" style={{ transitionDelay: `${i * 60}ms` }} />
-        ))}
-
-        {/* vista frontal (arriba a la derecha) */}
-        <g transform="translate(700 72)">
-          <circle r="34" className={`${s.fill} ${s.fCuerpo} ${s.ln}`} />
-          <g data-p="frontal">
-            <circle r="22" className={`${s.fill} ${s.fRotor} ${s.ln}`} style={{ strokeWidth: 1.5 }} />
-            <path d="M-2 -12H2V8L5 12H-5L-2 8Z" fill="#0b1d33" />
+            <g transform="translate(-3 26) rotate(6)">
+              <rect x="-8" y="0" width="16" height="22" rx="4" fill="#e3262f" className={s.ol} />
+              <circle cx="0" cy="5" r="2" fill="#0b1d33" />
+              <text x="0" y="17" textAnchor="middle" className={s.llaveroTxt}>
+                PICO
+              </text>
+            </g>
           </g>
-          <circle r="3" cx="0" cy="-28" fill="rgba(190,215,245,.55)" />
         </g>
-        <text className={s.bp} x="664" y="124" style={{ fontSize: 7 }}>
-          VISTA FRONTAL
-        </text>
 
-        {/* llave: fuera de cuadro e invisible hasta activarse */}
-        <g data-p="llave" transform={`translate(${OFF0} 0)`} style={{ opacity: 0 }}>
-          <path className={`${s.fill} ${s.fLaton} ${s.ln}`} d={CUERPO_LLAVE} style={{ strokeWidth: 1.5 }} />
-          <path className={s.cota} d={`M${TIP_X + 20} 190H520`} />
-          <path className={`${s.fill} ${s.fLaton} ${s.ln}`} d="M528 150H548Q610 132 618 176Q610 222 548 206H528Z" />
-          <circle cx="596" cy="178" r="9" fill="#0f2a4a" stroke="#c3ccd8" strokeWidth="1.5" />
+        {/* hojas: la izquierda fija, la derecha abre */}
+        <g>
+          <Hoja x0={446} x1={540} hierro={g("hierro")} hierroV={g("hierroV")} />
+        </g>
+        <g data-p="hojaR">
+          <Hoja x0={540} x1={634} hierro={g("hierro")} hierroV={g("hierroV")} />
+        </g>
+
+        {/* portacandado: armella en la hoja izquierda + placa en la derecha */}
+        <rect x="520" y="136" width="18" height="14" rx="2" fill={u("cromo")} className={s.ol} />
+        <g data-p="placaR">
+          <rect x="542" y="136" width="18" height="14" rx="2" fill={u("cromo")} className={s.ol} />
+          <path d="M546 136V128Q546 124 550 124Q554 124 554 128V136" fill="none" stroke={u("acero")} strokeWidth="3" />
+        </g>
+
+        {/* llave que viaja (detrás del cuerpo del candado para que "entre") */}
+        <g data-p="llave" transform={`translate(${LLAVE_REPOSO.x} ${LLAVE_REPOSO.y}) rotate(${LLAVE_REPOSO.r}) scale(.72)`}>
+          <Llave acero={g("acero")} cromo={g("cromo")} cabeza="cabeza" />
+        </g>
+
+        {/* candado */}
+        <g data-p="candado">
+          <g data-p="arco">
+            <path d="M541 166V146A9 9 0 0 1 559 146V166" fill="none" stroke="#0b1d33" strokeWidth="7" />
+            <path d="M541 166V146A9 9 0 0 1 559 146V166" fill="none" stroke={u("acero")} strokeWidth="4.5" />
+          </g>
+          <rect x="532" y="160" width="36" height="34" rx="6" fill={u("laton")} className={s.ol} />
+          <rect x="536" y="163" width="28" height="7" rx="3" fill="#f5da92" opacity=".5" />
+          <path d="M547 178H553" stroke="#8f6a1e" strokeWidth="1.2" />
+          <rect x="548" y="192" width="4" height="2.5" rx="1" fill="#0b1d33" />
+        </g>
+
+        {/* cotas */}
+        <g opacity=".85">
+          <path className={s.cota} d="M446 244H634M446 239v10M634 239v10" />
+          <path d="M450 244l-5 -3v6z" fill="#e3262f" />
+          <text x="520" y="240">
+            1.20 m
+          </text>
+          <path className={s.cota} d="M662 66V226M657 66h10M657 226h10" />
+          <text transform="translate(676 160) rotate(-90)">1.00 m</text>
         </g>
       </svg>
     </BannerPlano>

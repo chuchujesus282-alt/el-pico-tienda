@@ -1,84 +1,49 @@
 "use client";
 
-import type { CSSProperties } from "react";
+import { useId, type CSSProperties } from "react";
 import BannerPlano, { type Motor } from "@/components/categoria/banner-plano/BannerPlano";
 import type { PropsBannerPropio } from "./CategoriaBanner";
 import styles from "./BannerSeguridad.module.css";
 
 /**
- * Banner de la categoría Seguridad industrial, estilo "plano técnico". Portado del prototipo aprobado
- * banner-seguridad-v1.html: vista explotada del EPP (casco, lentes, mascarilla N95, guantes y botas punta de acero)
- * alrededor de la silueta de un trabajador, con su checklist.
- * Activo: la silueta pasa a trazo firme, las piezas toman su material y van a su sitio una por una; cada una marca su
- * fila del checklist y su casilla bajo la etiqueta. Con las 5, el sello "APTO PARA OBRA" (clase global `apto`, que
- * también prende el brillo verde). Al salir se desmarca todo y las piezas vuelven a la vista explotada.
- * Diferencias con el prototipo: ~35% más rápido (pedido de persona B), las guías, burbujas y filas se dibujan en el
- * servidor (el prototipo las armaba con JS), solo el nombre en la etiqueta (sin kicker ni subtítulo, como todos los
- * banners propios) y, en reposo, las piezas flotan apenas.
+ * Banner de la categoría Seguridad industrial, estilo "plano técnico". Portado del prototipo banner-seguridad-v5.html:
+ * un trabajador con todo su equipo (casco, lentes, chaleco reflectivo, guantes y botas) en la obra, con un cono, una
+ * barrera con baliza y el andamio en plano al fondo.
+ * Activo: la baliza destella, un reflejo cruza el chaleco y, una por una, salen las 5 llamadas técnicas de cada pieza
+ * (línea, punto con pulso y etiqueta con su norma) mientras se marcan las 5 casillas bajo la etiqueta (clase global
+ * `ok` en cada `data-casilla`); al final cae el sello "APTO PARA OBRA" (clase global `apto`) y el reflejo vuelve a
+ * pasar cada 1,8 s. Al salir todo vuelve.
+ * Diferencias con el prototipo: solo el nombre en la etiqueta (sin kicker, "Equipos de" ni subtítulo, como toda la
+ * familia), etiquetas un poco más grandes para que se lean al tamaño del banner, el ✓ del sello dibujado (no depende
+ * de la fuente) y las luces (`fondo`) cubren todo el banner.
  */
 
-type Pieza = { item: number; a: [number, number]; b: [number, number]; s: [number, number] };
-
-/** Piezas: posición explotada (a) → puesta (b); s = escala puesta; item = fila del checklist. */
-const PIEZAS: Pieza[] = [
-  { item: 0, a: [340, 56], b: [470, 52], s: [1, 1] }, // casco
-  { item: 1, a: [340, 104], b: [470, 62], s: [1, 0.9] }, // lentes
-  { item: 2, a: [340, 150], b: [470, 73], s: [1, 0.85] }, // mascarilla
-  { item: 3, a: [586, 112], b: [433, 163], s: [1, 1] }, // guante izq.
-  { item: 3, a: [612, 112], b: [507, 163], s: [1, 1] }, // guante der.
-  { item: 4, a: [580, 190], b: [455, 222], s: [1, 1] }, // bota izq.
-  { item: 4, a: [612, 190], b: [481, 222], s: [1, 1] }, // bota der.
+type Llamada = { p: [number, number]; e: [number, number]; lado: "L" | "R"; t: string; d: string };
+const LLAMADAS: Llamada[] = [
+  { p: [470, 52], e: [432, 30], lado: "L", t: "CASCO", d: "ANSI Z89.1 · RATCHET" },
+  { p: [478, 73], e: [540, 50], lado: "R", t: "LENTES", d: "POLICARBONATO Z87+" },
+  { p: [458, 140], e: [402, 120], lado: "L", t: "CHALECO", d: "REFLECTIVO CLASE 2" },
+  { p: [508, 170], e: [540, 150], lado: "R", t: "GUANTES", d: "CARNAZA REFORZADA" },
+  { p: [490, 218], e: [540, 202], lado: "R", t: "BOTAS", d: "PUNTA DE ACERO" },
 ];
-/** Orden en que se ponen (los pares van juntos). */
-const GRUPOS = [[0], [1], [2], [3, 4], [5, 6]];
-const ITEMS = ["CASCO", "LENTES", "MASCARILLA N95", "GUANTES", "BOTAS P/ACERO"];
-const BURBUJAS: [number, number][] = [
-  [300, 56],
-  [300, 104],
-  [300, 150],
-  [640, 112],
-  [640, 190],
-];
+const ANCHO = 112; // ancho de cada etiqueta
 
-// Tiempos (ms). El prototipo: 300 / 640 / 220 / 250 / 520.
-const ARRANQUE = 180;
-const PONER = 440;
-const ENTRE = 130;
-const ANTES_SELLO = 150;
-const QUITAR = 380;
-
-const ease = (t: number) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
-const transformDe = (x: number, y: number, sx = 1, sy = 1) =>
-  `translate(${x.toFixed(1)} ${y.toFixed(1)})${sx !== 1 || sy !== 1 ? ` scale(${sx.toFixed(3)} ${sy.toFixed(3)})` : ""}`;
+const REFLEJO_X = 420;
 
 function crearMotor(raiz: HTMLElement): Motor {
+  const q = <T extends Element>(p: string) => raiz.querySelector<T>(`[data-p="${p}"]`)!;
   const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  const piezas = PIEZAS.map((p, i) => ({
-    ...p,
-    g: raiz.querySelector<SVGGElement>(`[data-p="p${i}"]`)!,
-    x: p.a[0],
-    y: p.a[1],
-    k: 0, // 0 = explotada, 1 = puesta (escala)
-  }));
-  const filas = [...raiz.querySelectorAll<SVGGElement>("[data-fila]")];
+  const halo = q<SVGCircleElement>("halo"),
+    reflejo = q<SVGRectElement>("reflejo");
+  const llamadas = LLAMADAS.map((_, i) => q<SVGGElement>(`llamada${i}`));
   const casillas = [...raiz.querySelectorAll<HTMLElement>("[data-casilla]")];
-  const contador = raiz.querySelector<SVGTextElement>('[data-p="cont"]')!;
+  let destello: Animation | null = null;
 
-  const draw = (p: (typeof piezas)[number]) =>
-    p.g.setAttribute("transform", transformDe(p.x, p.y, 1 + (p.s[0] - 1) * p.k, 1 + (p.s[1] - 1) * p.k));
-
-  function marcar(n: number) {
-    filas.forEach((f, i) => f.classList.toggle("ok", i < n));
-    casillas.forEach((c, i) => c.classList.toggle("ok", i < n));
-    contador.textContent = `${n}/5`;
-  }
-
-  // ---------- tiempo: cada encender/apagar sube `gen` y corta lo anterior ----------
   let gen = 0,
     destruido = false;
   const rafs = new Set<number>();
   const timers = new Set<number>();
-  const tween = (d: number, f: (p: number) => void) => {
+  const tween = (d: number, f: (t: number) => void) => {
     const g = gen;
     const dur = reduce ? 10 : d;
     return new Promise<boolean>((r) => {
@@ -86,7 +51,7 @@ function crearMotor(raiz: HTMLElement): Motor {
       const k = (n: number) => {
         if (g !== gen || destruido) return r(false);
         const t = Math.min(1, (n - s) / dur);
-        f(ease(t));
+        f(t);
         if (t < 1) {
           const id = requestAnimationFrame((m) => {
             rafs.delete(id);
@@ -98,7 +63,7 @@ function crearMotor(raiz: HTMLElement): Motor {
       k(s);
     });
   };
-  const wait = (ms: number) => {
+  const esperar = (ms: number) => {
     const g = gen;
     return new Promise<boolean>((r) => {
       const id = window.setTimeout(
@@ -111,63 +76,54 @@ function crearMotor(raiz: HTMLElement): Motor {
       timers.add(id);
     });
   };
-
-  /** Lleva la pieza a su sitio (o de vuelta) en arco. */
-  function mover(p: (typeof piezas)[number], puesta: boolean, arco: number, dur: number) {
-    const [tx, ty] = puesta ? p.b : p.a;
-    const fx = p.x,
-      fy = p.y,
-      k0 = p.k,
-      k1 = puesta ? 1 : 0;
-    return tween(dur, (q) => {
-      p.x = fx + (tx - fx) * q;
-      p.y = fy + (ty - fy) * q - arco * Math.sin(Math.PI * q);
-      p.k = k0 + (k1 - k0) * q;
-      draw(p);
-    });
-  }
+  const barrer = (d: number) => tween(d, (t) => reflejo.setAttribute("x", (REFLEJO_X + 90 * t).toFixed(1)));
 
   async function activar() {
-    ++gen;
-    raiz.classList.add("on");
-    if (!(await wait(ARRANQUE))) return;
-    for (const [gi, grupo] of GRUPOS.entries()) {
-      const ok = await Promise.all(grupo.map((i) => mover(piezas[i], true, gi < 3 ? 18 : 14, PONER)));
-      if (!ok.every(Boolean)) return;
-      marcar(gi + 1);
-      if (!(await wait(ENTRE))) return;
-    }
-    if (!(await wait(ANTES_SELLO))) return;
-    raiz.classList.add("apto");
-  }
-
-  async function reposo() {
     const g = ++gen;
-    // `on` se queda hasta que las piezas vuelven (BannerPlano ya la quitó; el prototipo la quita al final).
-    raiz.classList.add("on");
+    if (!reduce)
+      destello = halo.animate([{ opacity: 0.15 }, { opacity: 1 }, { opacity: 0.15 }], {
+        duration: 900,
+        iterations: Infinity,
+      });
+    void barrer(900);
+    for (let i = 0; i < llamadas.length; i++) {
+      if (!(await esperar(i ? 230 : 300))) return;
+      llamadas[i].classList.add("in");
+      casillas[i]?.classList.add("ok");
+    }
+    if (!(await esperar(350))) return;
+    raiz.classList.add("apto");
+    while (g === gen) {
+      if (!(await esperar(1800))) return;
+      if (!(await barrer(800))) return;
+    }
+  }
+  function reposo() {
+    gen++;
     raiz.classList.remove("apto");
-    marcar(0);
-    await Promise.all(piezas.map((p) => mover(p, false, 10, QUITAR)));
-    if (g === gen && !destruido) raiz.classList.remove("on");
+    destello?.cancel();
+    destello = null;
+    llamadas.forEach((l) => l.classList.remove("in"));
+    casillas.forEach((c) => c.classList.remove("ok"));
+    reflejo.setAttribute("x", String(REFLEJO_X));
   }
 
   return {
     encender: () => void activar(),
-    apagar: () => void reposo(),
+    apagar: reposo,
     destruir() {
       destruido = true;
-      gen++;
+      reposo();
       rafs.forEach((id) => cancelAnimationFrame(id));
       timers.forEach((id) => clearTimeout(id));
-      raiz.classList.remove("apto");
     },
   };
 }
 
-/** Rayado del piso: trazos cortos cada 18 unidades. */
-const RAYADO_PISO = Array.from({ length: 21 }, (_, k) => `M${268 + k * 18} 226l-8 8`).join("");
-
 export default function BannerSeguridad({ nombre }: PropsBannerPropio) {
+  const p = `sg${useId().replace(/:/g, "")}`;
+  const g = (n: string) => `${p}${n}`;
+  const u = (n: string) => `url(#${p}${n})`;
   const s = styles;
   return (
     <BannerPlano
@@ -178,8 +134,7 @@ export default function BannerSeguridad({ nombre }: PropsBannerPropio) {
       decoracion="casillas"
       variables={
         {
-          "--brillo": "radial-gradient(45% 110% at 62% 50%, rgba(245,196,0,.14), transparent 70%)",
-          "--brillo-on": "1",
+          "--brillo-on": "0", // las luces van en `fondo`
           "--etiqueta-pad": "2px 26px 0",
           "--etiqueta-sombra": "0 10px 24px -10px rgba(227, 38, 47, 0.6)",
           // "SEGURIDAD INDUSTRIAL" es largo: letra más chica para que quepa en una línea.
@@ -191,119 +146,195 @@ export default function BannerSeguridad({ nombre }: PropsBannerPropio) {
           "--palabra-movil-max": "2.1rem",
         } as CSSProperties
       }
-      fondo={<div className={s.brilloApto} aria-hidden />}
+      fondo={
+        <>
+          <div className={s.luz} aria-hidden />
+          <div className={s.baliza} aria-hidden />
+          <div className={s.luzApto} aria-hidden />
+        </>
+      }
     >
-      <svg viewBox="170 0 610 260" preserveAspectRatio="xMidYMid meet" aria-hidden focusable="false" className={s.svg}>
-        <text className={s.bp} x="290" y="20" style={{ fontSize: 7 }}>
-          VISTA EXPLOTADA · EQUIPO DE PROTECCIÓN PERSONAL
-        </text>
+      <svg viewBox="200 0 580 260" preserveAspectRatio="xMidYMid meet" aria-hidden focusable="false" className={s.svg}>
+        <defs>
+          <linearGradient id={g("casco")} x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stopColor="#ffe46a" />
+            <stop offset="1" stopColor="#e0a800" />
+          </linearGradient>
+          <linearGradient id={g("vest")} x1="0" x2="1">
+            <stop offset="0" stopColor="#e85a0c" />
+            <stop offset=".5" stopColor="#ff8a2a" />
+            <stop offset="1" stopColor="#e85a0c" />
+          </linearGradient>
+          <linearGradient id={g("ref")} x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stopColor="#f3f6f9" />
+            <stop offset="1" stopColor="#a6b1be" />
+          </linearGradient>
+          <linearGradient id={g("camisa")} x1="0" x2="1">
+            <stop offset="0" stopColor="#2d4d78" />
+            <stop offset=".5" stopColor="#3d6596" />
+            <stop offset="1" stopColor="#2d4d78" />
+          </linearGradient>
+          <linearGradient id={g("pant")} x1="0" x2="1">
+            <stop offset="0" stopColor="#1e3150" />
+            <stop offset=".5" stopColor="#2a4268" />
+            <stop offset="1" stopColor="#1e3150" />
+          </linearGradient>
+          <linearGradient id={g("guante")} x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stopColor="#e2b676" />
+            <stop offset="1" stopColor="#b8853f" />
+          </linearGradient>
+          <linearGradient id={g("bota")} x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stopColor="#7a5636" />
+            <stop offset="1" stopColor="#3f2a17" />
+          </linearGradient>
+          <linearGradient id={g("mica")} x1="0" x2="1">
+            <stop offset="0" stopColor="#9fd8ff" stopOpacity=".9" />
+            <stop offset="1" stopColor="#3b86c4" stopOpacity=".85" />
+          </linearGradient>
+          <linearGradient id={g("brillo")} x1="0" x2="1">
+            <stop offset="0" stopColor="#fff" stopOpacity="0" />
+            <stop offset=".5" stopColor="#fff" stopOpacity=".95" />
+            <stop offset="1" stopColor="#fff" stopOpacity="0" />
+          </linearGradient>
+          <radialGradient id={g("sombra")}>
+            <stop offset="0" stopColor="#000" stopOpacity=".45" />
+            <stop offset="1" stopColor="#000" stopOpacity="0" />
+          </radialGradient>
+          <radialGradient id={g("halo")}>
+            <stop offset="0" stopColor="#ffb020" stopOpacity=".85" />
+            <stop offset="1" stopColor="#ffb020" stopOpacity="0" />
+          </radialGradient>
+          <linearGradient id={g("piso")} x1="0" x2="1">
+            <stop offset="0" stopColor="#c3ccd8" stopOpacity="0" />
+            <stop offset=".2" stopColor="#c3ccd8" stopOpacity=".6" />
+            <stop offset=".8" stopColor="#c3ccd8" stopOpacity=".6" />
+            <stop offset="1" stopColor="#c3ccd8" stopOpacity="0" />
+          </linearGradient>
+          <clipPath id={g("clipRef")}>
+            <rect x="452" y="128" width="16" height="7" />
+            <rect x="472" y="128" width="16" height="7" />
+            <rect x="452" y="146" width="16" height="7" />
+            <rect x="472" y="146" width="16" height="7" />
+            <rect x="455" y="100" width="6" height="28" transform="rotate(-8 458 114)" />
+            <rect x="479" y="100" width="6" height="28" transform="rotate(8 482 114)" />
+          </clipPath>
+        </defs>
+
+        {/* andamio de fondo (plano) */}
+        <g opacity=".5">
+          <path
+            className={s.cota}
+            d="M560 226V40M640 226V40M560 70H640M560 130H640M560 190H640M560 70L640 130M640 130L560 190"
+            style={{ strokeDasharray: "3 4" }}
+          />
+          <path className={s.cota} d="M300 226V60M360 226V60M300 90H360M300 160H360" style={{ strokeDasharray: "3 4" }} />
+        </g>
 
         {/* piso */}
-        <path className={s.cota} d={`M260 226H640${RAYADO_PISO}`} />
+        <path d="M220 226H770" stroke={u("piso")} strokeWidth="1.5" />
+        <ellipse cx="470" cy="228" rx="56" ry="5" fill={u("sombra")} />
 
-        {/* cota de altura */}
-        <g className={s.bp}>
-          <path className={s.cota} d="M410 44V226M405 44h10M405 226h10" />
-          <path d="M410 48l-3 -5h6z" fill="#e3262f" />
-          <text transform="translate(402 150) rotate(-90)" style={{ fontSize: 7 }}>
-            1.75 m
-          </text>
+        {/* barrera con baliza */}
+        <g transform="translate(690 0)">
+          <ellipse cx="0" cy="228" rx="52" ry="4" fill={u("sombra")} />
+          <path d="M-38 226L-30 156M38 226L30 156" stroke="#d8dde4" strokeWidth="5" strokeLinecap="round" />
+          <rect x="-46" y="150" width="92" height="18" rx="2" fill="#f3f6fa" className={s.ol} />
+          <path d="M-34 150h12l-18 18h-12zM-10 150h12l-18 18h-12zM14 150h12l-18 18h-12zM38 150h8v4l-14 14h-12z" fill="#e3262f" />
+          <rect x="-46" y="150" width="92" height="18" rx="2" fill="none" className={s.ol} />
+          <circle data-p="halo" cx="0" cy="128" r="40" fill={u("halo")} opacity=".15" />
+          <rect x="-10" y="138" width="20" height="12" rx="2" fill="#1c222c" className={s.ol} />
+          <path d="M-8 138V128A8 8 0 0 1 8 128V138Z" fill="#ffb020" className={s.ol} />
+          <path d="M-4 130A4 4 0 0 1 0 125" fill="none" stroke="#fff" strokeWidth="1.6" opacity=".7" strokeLinecap="round" />
+        </g>
+        {/* cono */}
+        <g transform="translate(380 226)">
+          <ellipse cx="0" cy="2" rx="28" ry="3" fill={u("sombra")} />
+          <path d="M-24 0H24L21 -6H-21Z" fill="#1c222c" className={s.ol} />
+          <path d="M-16 -6L-4 -58H4L16 -6Z" fill="#ff7a1a" className={s.ol} />
+          <path d="M-12 -22L-8 -38H8L12 -22Z" fill={u("ref")} />
         </g>
 
-        {/* trabajador: discontinuo en reposo, trazo firme al activarse */}
-        <g className={s.figura}>
-          <circle cx="470" cy="62" r="15" />
-          <path d="M464 77V84H476V77" />
-          <path d="M446 88Q446 84 452 84H488Q494 84 494 88L498 150H442Z" />
-          <path d="M446 90L432 152Q430 158 434 158" />
-          <path d="M494 90L508 152Q510 158 506 158" />
-          <path d="M446 150L450 204H464L468 150" />
-          <path d="M472 150L476 204H490L494 150" />
-        </g>
-
-        {/* guías de la vista explotada */}
-        <path
-          className={`${s.dash} ${s.bp}`}
-          d={PIEZAS.map((p) => `M${p.a[0]} ${p.a[1]}L${p.b[0]} ${p.b[1] - (p.item === 4 ? 10 : 0)}`).join("")}
-        />
-
-        {/* ===== piezas de EPP (el motor las mueve con transform) ===== */}
-        <g data-p="p0" transform={transformDe(...PIEZAS[0].a)}>
-          <g className={s.flota}>
-            <path className={`${s.fill} ${s.fCasco} ${s.ln}`} d="M-22 4A22 21 0 0 1 22 4Z" />
-            <path className={`${s.fill} ${s.fCasco} ${s.ln} ${s.w15}`} d="M-28 4H28V9H-28Z" />
-            <path className={s.cota} d="M0 -16V3M-10 -12Q-12 -4 -12 3M10 -12Q12 -4 12 3" />
+        {/* ===== trabajador ===== */}
+        <g>
+          {/* botas */}
+          <path d="M446 204H468V218Q468 226 460 226H440Q436 226 436 222Q436 214 446 212Z" fill={u("bota")} className={s.ol} />
+          <path d="M472 204H494V212Q504 214 504 222Q504 226 500 226H480Q472 226 472 218Z" fill={u("bota")} className={s.ol} />
+          <path d="M436 222H468M472 222H504" stroke="#1c222c" strokeWidth="3" />
+          {/* pantalón */}
+          <path d="M446 156H494L496 206H473L470 176L467 206H444Z" fill={u("pant")} className={s.ol} />
+          {/* brazos */}
+          <path d="M444 104Q432 108 430 120L426 160H438L444 126Z" fill={u("camisa")} className={s.ol} />
+          <path d="M496 104Q508 108 510 120L514 160H502L496 126Z" fill={u("camisa")} className={s.ol} />
+          {/* torso */}
+          <path d="M446 100Q470 92 494 100V160H446Z" fill={u("camisa")} className={s.ol} />
+          {/* chaleco */}
+          <path d="M446 100Q452 98 458 96L466 120V160H446Z M494 100Q488 98 482 96L474 120V160H494Z" fill={u("vest")} className={s.ol} />
+          <rect x="452" y="128" width="16" height="7" fill={u("ref")} />
+          <rect x="472" y="128" width="16" height="7" fill={u("ref")} />
+          <rect x="452" y="146" width="16" height="7" fill={u("ref")} />
+          <rect x="472" y="146" width="16" height="7" fill={u("ref")} />
+          <rect x="455" y="100" width="6" height="28" fill={u("ref")} transform="rotate(-8 458 114)" />
+          <rect x="479" y="100" width="6" height="28" fill={u("ref")} transform="rotate(8 482 114)" />
+          {/* reflejo que cruza las cintas (solo activo) */}
+          <g clipPath={u("clipRef")} className={s.reflejo}>
+            <rect data-p="reflejo" x={REFLEJO_X} y="96" width="22" height="70" fill={u("brillo")} transform="skewX(-18)" />
           </g>
+          {/* guantes */}
+          <path d="M424 158H440V170Q440 178 432 178Q424 178 424 170Z" fill={u("guante")} className={s.ol} />
+          <path d="M500 158H516V170Q516 178 508 178Q500 178 500 170Z" fill={u("guante")} className={s.ol} />
+          <path d="M424 160H440M500 160H516" stroke="#e3262f" strokeWidth="4" />
+          {/* cuello y cabeza */}
+          <rect x="464" y="86" width="12" height="12" rx="3" fill="#d79c6c" className={s.ol} />
+          <ellipse cx="470" cy="72" rx="15" ry="17" fill="#e6ae80" className={s.ol} />
+          <ellipse cx="455" cy="74" rx="3" ry="4.5" fill="#d79c6c" className={s.ol} />
+          <ellipse cx="485" cy="74" rx="3" ry="4.5" fill="#d79c6c" className={s.ol} />
+          <path d="M465 82Q470 86 475 82" fill="none" stroke="#7a4a2c" strokeWidth="1.6" strokeLinecap="round" />
+          {/* lentes */}
+          <path d="M455 70H485" stroke="#1c222c" strokeWidth="2" />
+          <path
+            d="M456 68H469V74Q469 78 465 78H460Q456 78 456 74Z M471 68H484V74Q484 78 480 78H475Q471 78 471 74Z"
+            fill={u("mica")}
+            className={s.ol}
+            style={{ strokeWidth: 1.2 }}
+          />
+          {/* casco */}
+          <path d="M452 62A18 17 0 0 1 488 62Z" fill={u("casco")} className={s.ol} />
+          <path d="M447 62H493Q495 66 491 66H449Q445 66 447 62Z" fill="#e0a800" className={s.ol} />
+          <path d="M468 46H472V62H468Z" fill="#f2c200" opacity=".8" />
+          <path d="M458 52A14 13 0 0 1 466 46" fill="none" stroke="#fff" strokeWidth="2.2" opacity=".6" strokeLinecap="round" />
         </g>
-        <g data-p="p1" transform={transformDe(...PIEZAS[1].a)}>
-          <g className={s.flota} style={{ animationDelay: "-0.6s" }}>
-            <rect className={`${s.fill} ${s.fMica} ${s.ln} ${s.w15}`} x="-15" y="-5" width="13" height="10" rx="3" />
-            <rect className={`${s.fill} ${s.fMica} ${s.ln} ${s.w15}`} x="2" y="-5" width="13" height="10" rx="3" />
-            <path className={`${s.ln} ${s.w15}`} d="M-2 -2H2M-15 -2L-19 -1M15 -2L19 -1" />
-          </g>
-        </g>
-        <g data-p="p2" transform={transformDe(...PIEZAS[2].a)}>
-          <g className={s.flota} style={{ animationDelay: "-1.2s" }}>
-            <path className={`${s.ln} ${s.w1}`} d="M-10 -3L-18 -9M10 -3L18 -9M-10 3L-17 7M10 3L17 7" />
-            <ellipse className={`${s.fill} ${s.fN95} ${s.ln} ${s.w15}`} rx="11" ry="8" />
-            <circle r="2.5" className={`${s.fill} ${s.ln} ${s.w1}`} />
-          </g>
-        </g>
-        {[3, 4].map((i) => (
-          <g key={i} data-p={`p${i}`} transform={transformDe(...PIEZAS[i].a)}>
-            <g className={s.flota} style={{ animationDelay: `${-1.8 - (i - 3) * 0.3}s` }}>
-              <path className={`${s.fill} ${s.fCarnaza} ${s.ln} ${s.w15}`} d="M-7 -6H7V8Q7 13 0 13Q-7 13 -7 8Z" />
-              <path className={s.cota} d="M-4 9V13M0 9V13M4 9V13" />
-              <path className={`${s.fill} ${s.fCarnaza} ${s.ln} ${s.w15}`} d={i === 3 ? "M-7 -1L-12 4" : "M7 -1L12 4"} />
-              <rect className={`${s.fill} ${s.fCarnaza} ${s.ln} ${s.w12}`} x="-8" y="-11" width="16" height="6" rx="1.5" />
+
+        {/* ===== llamadas técnicas (salen una por una con la clase global `in`) ===== */}
+        {LLAMADAS.map((c, i) => {
+          const lx = c.lado === "L" ? c.e[0] - ANCHO : c.e[0];
+          const y = c.e[1];
+          return (
+            <g key={i} data-p={`llamada${i}`} className={s.llamada}>
+              <path className={s.lin} pathLength={1} d={`M${c.p[0]} ${c.p[1]}L${c.e[0]} ${y}`} />
+              <circle className={s.ping} cx={c.p[0]} cy={c.p[1]} r="3" />
+              <circle className={s.dot} cx={c.p[0]} cy={c.p[1]} r="3" />
+              <g className={s.lbl} style={{ "--dx": c.lado === "L" ? "-6px" : "6px" } as CSSProperties}>
+                <rect x={lx} y={y - 12} width={ANCHO} height="24" rx="4" />
+                <text className={s.t1} x={lx + 7} y={y - 1}>
+                  {c.t}
+                </text>
+                <text className={s.t2} x={lx + 7} y={y + 8}>
+                  {c.d}
+                </text>
+                <circle cx={lx + ANCHO - 9} cy={y - 3} r="4.2" fill="#2fd27a" />
+                <path d={`M${lx + ANCHO - 11} ${y - 3}L${lx + ANCHO - 9.5} ${y - 1.4}L${lx + ANCHO - 6.8} ${y - 4.6}`} className={s.visto} />
+              </g>
             </g>
-          </g>
-        ))}
-        {[5, 6].map((i) => (
-          <g key={i} data-p={`p${i}`} transform={transformDe(...PIEZAS[i].a)}>
-            <path className={`${s.fill} ${s.fBota} ${s.ln} ${s.w15}`} d="M-9 -24H6V-6H12Q18 -6 18 1V4H-9Z" />
-            <path className={`${s.fill} ${s.fAcero}`} d="M8 -5Q16 -5 16 1V3H8Z" />
-            <path className={s.cota} d="M-9 0H18" />
-          </g>
-        ))}
+          );
+        })}
 
-        {/* burbujas numeradas */}
-        <g className={s.bp}>
-          {BURBUJAS.map(([x, y], i) => (
-            <g key={i}>
-              <circle cx={x} cy={y} r="8" className={s.cota} />
-              <text x={x} y={y + 3} textAnchor="middle" style={{ fontSize: 7 }}>
-                0{i + 1}
-              </text>
-            </g>
-          ))}
-        </g>
-
-        {/* ===== checklist ===== */}
-        <g transform="translate(650 44)">
-          <rect width="116" height="160" rx="6" fill="rgba(7,21,38,.7)" stroke="rgba(190,215,245,.55)" />
-          <text x="10" y="18" style={{ fontSize: 8 }}>
-            CHECKLIST EPP
-          </text>
-          <text data-p="cont" x="106" y="18" textAnchor="end" style={{ fontSize: 8 }}>
-            0/5
-          </text>
-          <path className={s.cota} d="M8 26H108M8 128H108" />
-          {ITEMS.map((t, i) => (
-            <g key={t} data-fila={i} className={s.fila} transform={`translate(10 ${36 + i * 18})`}>
-              <rect className={s.caja} width="11" height="11" rx="2" />
-              <path className={s.tick} d="M2.5 6L4.8 8.3L8.8 3.2" />
-              <text x="18" y="9" style={{ fontSize: 7.5 }}>
-                0{i + 1} {t}
-              </text>
-            </g>
-          ))}
-          <text className={s.estado} x="58" y="148" textAnchor="middle" style={{ fontSize: 8 }}>
-            PENDIENTE
-          </text>
+        {/* sello "APTO PARA OBRA" (clase global `apto`) */}
+        {/* sobre la baliza, en el hueco del andamio: no tapa ninguna llamada */}
+        <g transform="translate(700 92)">
           <g className={s.sello}>
-            <rect x="8" y="134" width="100" height="20" rx="3" fill="none" stroke="var(--c)" strokeWidth="2" />
-            <text x="58" y="147.5" textAnchor="middle" textLength="88" lengthAdjust="spacingAndGlyphs" className={s.selloTexto}>
+            <rect x="-70" y="-11" width="140" height="22" rx="4" fill="rgba(7,21,38,.85)" stroke="#2fd27a" strokeWidth="1.5" />
+            <path d="M-56 0l4 4 7 -8" className={s.selloVisto} />
+            <text x="7" y="4" textAnchor="middle" className={s.selloTxt}>
               APTO PARA OBRA
             </text>
           </g>

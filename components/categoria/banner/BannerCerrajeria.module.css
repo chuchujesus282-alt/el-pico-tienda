@@ -1,27 +1,22 @@
 /*
- * Ilustración del banner de Cerrajería, portada de banner-cerrajeria-v1.html (prototipo aprobado). Excepción a la regla
- * de tokens del CLAUDE.md (como las tarjetas de categoría): colores escritos aquí, idénticos al prototipo. `--f-mono`
- * viene de BannerPlano. Clases globales en la raíz del banner: `on` (activo) y `abierto` (pines alineados).
+ * Banner de Cerrajería, portado de banner-cerrajeria-v7.html. Excepción a la regla de tokens del CLAUDE.md (como las
+ * tarjetas de categoría): colores del prototipo. `--f-mono` y `--f-display` vienen de BannerPlano.
+ * Clases globales: `on` (activo) y `abierto` (la llave giró). Las luces van en `fondo`: cubren todo el banner.
  */
 
 .svg {
-  --deep: #0a1f38;
-  --stroke: #c3ccd8;
   --trace: rgba(190, 215, 245, 0.55);
-  --laton: #d4a843;
-  --acero: #aab5c3;
   --ok: #2fd27a;
 }
 .svg text {
   font-family: var(--f-mono);
   fill: var(--trace);
-  font-size: 9px;
+  font-size: 7.5px;
   letter-spacing: 0.08em;
 }
-
-.ln {
-  stroke: var(--stroke);
-  stroke-width: 2;
+.ol {
+  stroke: #0b1d33;
+  stroke-width: 1.4;
   stroke-linejoin: round;
   stroke-linecap: round;
 }
@@ -30,162 +25,78 @@
   stroke: var(--trace);
   stroke-width: 1;
 }
-.bp {
-  transition: opacity 0.5s;
-}
-:global(.on) .bp {
-  opacity: 0.3;
-}
-
-/* Rellenos: plano en reposo, latón y acero al activarse. */
-.fill {
-  fill: var(--deep);
-  transition: fill 0.5s;
-}
-:global(.on) .fCuerpo {
-  fill: rgba(212, 168, 67, 0.22);
-}
-:global(.on) .fRotor {
-  fill: rgba(212, 168, 67, 0.42);
-}
-:global(.on) .fLaton,
-:global(.on) .fCandado {
-  fill: var(--laton);
-}
-:global(.on) .fAcero {
-  fill: var(--acero);
-}
-.resorte {
-  fill: none;
-  stroke: var(--trace);
-  stroke-width: 1.3;
-  transition: stroke 0.5s;
-}
-:global(.on) .resorte {
-  stroke: var(--acero);
+.svg .llaveroTxt {
+  font-family: var(--f-display);
+  font-weight: 700;
+  font-size: 5.5px;
+  fill: #fff;
+  letter-spacing: 0.04em;
 }
 
-/* Línea de corte: punteada; con los pines alineados, verde y encendida. */
-.corte {
-  stroke: var(--trace);
-  stroke-width: 1;
-  stroke-dasharray: 5 4;
-  transition: stroke 0.3s;
-}
-:global(.abierto) .corte {
-  stroke: var(--ok);
-  stroke-width: 2;
-  stroke-dasharray: none;
-  filter: drop-shadow(0 0 4px var(--ok));
-}
-.svg .estado {
+/* Estado: CERRADO en gris; ABIERTO en verde. */
+.svg .estado,
+.estadoPunto {
   transition: fill 0.3s;
 }
-:global(.abierto) .svg .estado {
+.estadoPunto {
+  fill: var(--trace);
+}
+:global(.abierto) .svg .estado,
+:global(.abierto) .estadoPunto {
   fill: var(--ok);
 }
 
-/* Al abrir: un punto verde por pin en la línea de corte (cada uno con su retraso, en el JSX). */
-.alineado {
-  fill: var(--ok);
-  opacity: 0;
-  transform-box: fill-box;
-  transform-origin: center;
-  transform: scale(0);
-  transition:
-    opacity 0.2s,
-    transform 0.35s cubic-bezier(0.3, 1.6, 0.5, 1);
-  filter: drop-shadow(0 0 3px var(--ok));
-}
-:global(.abierto) .alineado {
-  opacity: 1;
-  transform: scale(1);
-}
-
-/* Al abrir: un reflejo de luz cruza el cuerpo de latón del candado una vez. */
-.reflejo {
-  fill: #fff6d8;
-  opacity: 0;
-  transform: skewX(-20deg);
-}
-:global(.abierto) .reflejo {
-  animation: reflejo 0.9s cubic-bezier(0.16, 1, 0.3, 1) 0.35s;
-}
-@keyframes reflejo {
-  0% {
-    opacity: 0;
-    transform: skewX(-20deg) translateX(0);
-  }
-  20% {
-    opacity: 0.55;
-  }
-  100% {
-    opacity: 0;
-    transform: skewX(-20deg) translateX(130px);
-  }
-}
-
-/* Brillo verde al abrir (el dorado del activo es el de BannerPlano, con --brillo). */
-.brilloAbierto {
+/* ---------- luces (sobre todo el banner, se funden con el fondo) ---------- */
+.luz,
+.luzAbierto {
   position: absolute;
   inset: 0;
   z-index: -1;
   pointer-events: none;
+}
+.luz {
+  background: radial-gradient(36% 95% at 66% 58%, rgba(212, 168, 67, 0.13), rgba(212, 168, 67, 0.05) 45%, transparent 80%);
+}
+.luzAbierto {
   opacity: 0;
   transition: opacity 0.6s;
-  /* Sobre todo el banner (prop `fondo`): se difumina con el fondo en vez de cortarse en el borde de la ilustración. */
-  background: radial-gradient(
-    40% 85% at 55% 50%,
-    rgba(47, 210, 122, 0.16),
-    rgba(47, 210, 122, 0.07) 40%,
-    transparent 85%
-  );
+  background: radial-gradient(30% 80% at 70% 55%, rgba(47, 210, 122, 0.15), rgba(47, 210, 122, 0.05) 45%, transparent 80%);
 }
-@media (max-width: 819.98px) {
-  .brilloAbierto {
-    background: radial-gradient(
-      70% 55% at 35% 78%,
-      rgba(47, 210, 122, 0.16),
-      rgba(47, 210, 122, 0.06) 45%,
-      transparent 85%
-    );
-  }
-}
-:global(.abierto) .brilloAbierto {
+:global(.abierto) > .luzAbierto {
   opacity: 1;
 }
+@media (max-width: 819.98px) {
+  .luz {
+    background: radial-gradient(60% 50% at 55% 75%, rgba(212, 168, 67, 0.14), transparent 80%);
+  }
+  .luzAbierto {
+    background: radial-gradient(60% 50% at 55% 75%, rgba(47, 210, 122, 0.16), transparent 80%);
+  }
+}
 
-/* Reposo: el candado se mece apenas desde el arco. Se detiene al activarse y con "reducir movimiento". */
+/* Reposo: el llavero se mece apenas en su clavo. Activo, lo mueve el motor. */
 .mece {
-  transform-origin: 80px 100px;
-  animation: mecer 3.6s ease-in-out infinite alternate;
+  animation: mecer 3.4s ease-in-out infinite alternate;
 }
 :global(.on) .mece {
   animation: none;
 }
 @keyframes mecer {
   from {
-    transform: rotate(-1.5deg);
+    transform: rotate(-2deg);
   }
   to {
-    transform: rotate(1.5deg);
+    transform: rotate(2deg);
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .mece,
-  :global(.abierto) .reflejo {
+  .mece {
     animation: none;
   }
-  .alineado {
-    transition-duration: 0.01s;
-  }
-  .bp,
-  .fill,
-  .resorte,
-  .corte,
+  .luzAbierto,
   .svg .estado,
-  .brilloAbierto {
+  .estadoPunto {
     transition-duration: 0.01s;
   }
 }
