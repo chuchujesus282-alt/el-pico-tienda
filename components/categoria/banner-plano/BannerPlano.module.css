@@ -617,6 +617,29 @@
   overflow: visible;
 }
 
+/*
+ * Modo `plano` (prop): escenas dibujadas a todo color pasan a plano técnico en reposo, como las demás: cada pieza azul
+ * oscuro con contorno claro, sin sombras ni halos. Con `on`, la regla deja de aplicar y vuelven los colores del dibujo
+ * (el CSS gana a los atributos fill/stroke del SVG; lo de <defs> —máscaras, recortes— no se toca).
+ */
+.plano > svg :is(path, rect, circle, ellipse, polygon, line):not(defs *) {
+  transition:
+    fill 0.45s ease,
+    stroke 0.45s ease,
+    opacity 0.45s ease;
+}
+.banner:not(:global(.on)) > .plano > svg :is(path, rect, circle, ellipse, polygon, line):not(defs *) {
+  fill: #0a1f38;
+  stroke: #c3ccd8;
+}
+.banner:not(:global(.on)) > .plano > svg :is(path, rect, circle, ellipse, polygon, line):is([fill="none"]):not(defs *) {
+  fill: none;
+}
+/* sombras, halos y degradados de luz: en reposo no se ven */
+.banner:not(:global(.on)) > .plano > svg :is([fill*="sombra"], [fill*="halo"], [fill*="brillo"]):not(defs *) {
+  opacity: 0;
+}
+
 .lupa {
   display: none;
 }

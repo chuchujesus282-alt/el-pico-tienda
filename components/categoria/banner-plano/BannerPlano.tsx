@@ -65,6 +65,12 @@ type Props = {
    * del dibujo, para que se difuminen con el fondo (dentro de la ilustración quedaban cortadas en recto).
    */
   fondo?: ReactNode;
+  /**
+   * Para escenas dibujadas a todo color (Tornillería, Seguridad, Cerrajería, Hogar y jardín): en reposo el CSS las pasa
+   * a plano técnico (piezas azul oscuro con contorno claro, sin sombras) y con `on` vuelven sus colores, como las
+   * escenas que ya traen su relleno "frío" (`.fill`).
+   */
+  plano?: boolean;
 };
 
 /**
@@ -86,6 +92,7 @@ export default function BannerPlano({
   decoracion = "gotas",
   variables,
   fondo,
+  plano = false,
 }: Props) {
   const raizRef = useRef<HTMLElement>(null);
 
@@ -230,7 +237,7 @@ export default function BannerPlano({
           </h1>
         </div>
 
-        <div className={styles.ilustracion}>{children}</div>
+        <div className={plano ? `${styles.ilustracion} ${styles.plano}` : styles.ilustracion}>{children}</div>
       </section>
     </div>
   );

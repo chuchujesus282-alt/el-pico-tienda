@@ -131,6 +131,7 @@ export default function BannerSeguridad({ nombre }: PropsBannerPropio) {
       ariaLabel={`Categoría ${nombre}`}
       colorInicial="#2fd27a"
       crearMotor={crearMotor}
+      plano
       decoracion="casillas"
       variables={
         {

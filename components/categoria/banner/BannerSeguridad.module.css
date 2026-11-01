@@ -36,7 +36,10 @@
   z-index: -1;
   pointer-events: none;
 }
+/* la luz general sale al activarse (en reposo, plano frío como los demás banners) */
 .luz {
+  opacity: 0;
+  transition: opacity 0.6s;
   background: radial-gradient(30% 95% at 70% 55%, rgba(255, 138, 42, 0.16), rgba(255, 138, 42, 0.06) 45%, transparent 80%);
 }
 .baliza {
@@ -206,4 +209,7 @@
     transition-duration: 0.01s;
     transition-delay: 0s;
   }
+}
+:global(.on) > .luz {
+  opacity: 1;
 }

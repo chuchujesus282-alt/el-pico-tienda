@@ -203,6 +203,7 @@ export default function BannerHogarJardin({ nombre }: PropsBannerPropio) {
       ariaLabel={`Categoría ${nombre}`}
       colorInicial="#5fbf5a"
       crearMotor={crearMotor}
+      plano
       decoracion="pasto"
       variables={
         {

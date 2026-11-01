@@ -65,7 +65,7 @@ function crearMotor(raiz: HTMLElement): Motor {
     const l = Math.min(1, lift / 30);
     sombra.setAttribute("cx", f2(dx + 6));
     sombra.setAttribute("rx", f2(24 - 8 * l));
-    sombra.style.opacity = f2(0.5 - 0.28 * l);
+    sombra.setAttribute("opacity", f2(0.5 - 0.28 * l)); // atributo: en reposo el CSS del plano la oculta
   };
   const girarMandril = () => {
     ml = (ml + 2.2) % 7;
@@ -260,6 +260,7 @@ export default function BannerTornilleria({ nombre }: PropsBannerPropio) {
       ariaLabel={`Categoría ${nombre}`}
       colorInicial="#c4cdd8"
       crearMotor={crearMotor}
+      plano
       decoracion="cabezas"
       variables={
         {

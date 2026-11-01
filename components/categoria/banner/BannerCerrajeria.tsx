@@ -206,6 +206,7 @@ export default function BannerCerrajeria({ nombre }: PropsBannerPropio) {
       ariaLabel={`Categoría ${nombre}`}
       colorInicial="#d4a843"
       crearMotor={crearMotor}
+      plano
       decoracion="pines"
       variables={
         {
