@@ -9,8 +9,6 @@ const G = "/productos/genericos/";
 
 /** Comienzo del nombre en Saint (en MAYÚSCULAS) → foto. Gana la primera que coincide. */
 const REGLAS: [RegExp, string][] = [
-  // "TOR HEX 8.8, DIN 933 6-1,00x20", "TOR HEX G5NF 3/4-16x1 1/4"" (no "TOR AUTO HEX", que es autorroscante)
-  [/^TOR\.?\s+HEX\b/, "tornillo-hexagonal.webp"],
   // "C.BRNCE. CDO 90° DE COMP.", "C.BRNCE.CONEC.MANG ESPG.xNPT…", "C.BRNCE ADAPT.ACETILENO…"
   [/^C\.\s*BRNCE\b/, "conexion-bronce.webp"],
 ];

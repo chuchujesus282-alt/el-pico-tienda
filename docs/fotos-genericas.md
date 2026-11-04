@@ -46,23 +46,9 @@ Producto: [DESCRIPCIÓN DEL PRODUCTO].
 
 Ordenados por cuántos productos cubren. "Archivo" es el nombre con que se guarda.
 
-### Tornillería (los tornillos van por clase: son 881 y muy distintos)
+### Tornillería
 
-| Archivo | Cubre | Descripción para el prompt |
-|---|---|---|
-| tornillo-hexagonal.png | 353 | un tornillo de acero galvanizado con cabeza hexagonal y rosca métrica a lo largo de casi todo el cuerpo, acostado en diagonal, junto a otro igual parado |
-| tornillo-autorroscante-hex.png | 212 | un tornillo autorroscante para lámina de techo, cabeza hexagonal con arandela, punta de broca y rosca gruesa, acero zincado |
-| tornillo-allen.png | 158 | un tornillo Allen de cabeza cilíndrica con hueco hexagonal interior, acero negro pavonado, rosca métrica |
-| tornillo-metal-gota.png | 98 | un tornillo para metal de cabeza redonda tipo gota (abombada) con ranura phillips, acero zincado, rosca fina |
-| tornillo-carruaje.png | 33 | un tornillo carruaje de acero galvanizado: cabeza redonda lisa, cuello cuadrado bajo la cabeza y rosca |
-| tornillo-drywall.png | 15 | dos tornillos para drywall negros fosfatados, cabeza de corneta con ranura phillips, rosca gruesa y punta aguda |
-| tornillo-madera.png | 9 | un tornillo para madera de cabeza plana avellanada phillips, rosca gruesa cónica y punta aguda, acero zincado |
-| tuerca-hexagonal.png | 106 | tres tuercas hexagonales de acero galvanizado de distintos tamaños, una de ellas acostada mostrando la rosca interior |
-| oring.png | 110 | varios anillos O-ring de goma negra de distintos diámetros, sueltos y un poco superpuestos |
-| arandela.png | 51 | arandelas planas y de presión (partidas) de acero inoxidable, varias, ordenadas en grupo |
-| ramplug.png | 47 | tacos ramplug de expansión: uno plástico gris y uno metálico de expansión, con su tornillo al lado |
-| prisionero-allen.png | 45 | tornillos prisioneros Allen sin cabeza (opresores), acero negro, cortos, con el hueco hexagonal visible en un extremo |
-| alcayata.png | 15 | alcayatas de acero galvanizado: una en forma de L y una con argolla cerrada, con rosca para madera |
+Ya hecha: el dueño generó una foto por tipo de pieza (103 fotos). Viven en `public/productos/tornilleria/` y se asignan por nombre en `lib/fotosTornilleria.ts`, no por esta tabla.
 
 ### Construcción
 
