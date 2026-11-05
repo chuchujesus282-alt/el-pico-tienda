@@ -360,6 +360,15 @@ describe("agrupar", () => {
     for (const [nombre, foto] of casos) expect(f(nombre), nombre).toBe(foto);
   });
 
+  it("Coinpica: el caucho tipo C en galón y tobo", () => {
+    const f = (nombre: string) => fotoPorNombre(nombre, "COINPICA")?.replace("/productos/coinpica/", "");
+    expect(f("COINPICA TIPO C BLANCO GALON")).toBe("caucho-tipo-c-gal.webp");
+    expect(f("COINPICA TIPO C COLORES GALON")).toBe("caucho-tipo-c-gal.webp");
+    expect(f("COINPICA TIPO C BLANCO TOBO (4 GAL)")).toBe("caucho-tipo-c-tobo.webp");
+    expect(f("COINPICA TIPO C COLORES TOBO (4 GAL)")).toBe("caucho-tipo-c-tobo.webp");
+    expect(f("COINPICA TIPO C BLANCO 1/4")).toBeUndefined();
+  });
+
   it("Adesi-Top: cada producto con su envase y tamaño (nombres reales de Saint); sin foto, nada", () => {
     const f = (nombre: string) => fotoPorNombre(nombre, "ADESI-TOP")?.replace("/productos/adesitop/", "");
     const casos: [string, string | undefined][] = [

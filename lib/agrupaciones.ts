@@ -54,6 +54,7 @@ export function fotoPorNombre(nombre: string, marca: string | null): string | un
   if (/^IPA$/i.test(marca ?? "")) return fotoIpa(n);
   if (/MENEQUIM/i.test(marca ?? "") || /MENEQUIM/.test(n)) return fotoMenequim(n);
   if (/CERDEX/i.test(marca ?? "") || /CERDEX/.test(n)) return fotoCerdex(n);
+  if (/COINPICA/i.test(marca ?? "") || /COINPICA/.test(n)) return fotoCoinpica(n);
   if (!/MONTANA/i.test(marca ?? "") && !/MONTANA/.test(n)) return undefined;
   const linea = lineaMontana(n);
   if (!linea) return undefined;
@@ -278,6 +279,13 @@ const BROCHA_RUBI: Record<string, string> = {
   "1": "brocha-rubi-1",
   "1/2": "brocha-rubi-1",
 };
+/** Coinpica: el caucho (tipo C, blanco o colores) en galón y tobo/paila, con la misma lata a dos escalas como Manpica. */
+const CP = "/productos/coinpica/";
+const COINPICA_LINEAS: LineaFoto[] = [{ regla: /CAUCHO|TIPO ?C\b/, linea: "caucho-tipo-c", tamanos: ["gal", "tobo"] }];
+function fotoCoinpica(n: string): string | undefined {
+  return fotoDeTabla(n, CP, COINPICA_LINEAS, tamanoEnvase(n));
+}
+
 /** Accesorios de rodillo Cerdex: una foto por tipo, sin importar la medida. Cepillos y mango metálico, sin foto. */
 const CERDEX_ACCESORIOS: [RegExp, string][] = [
   [/EXTENSION P\/RODILLO/, "extension-rodillo"],
