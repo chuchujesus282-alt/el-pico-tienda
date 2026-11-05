@@ -470,6 +470,16 @@ describe("agrupar", () => {
     expect(fotoPorNombre("Q7 PEGA PVC 30ML TRANSP ALTA PRESION", "Q7")).toBeUndefined();
   });
 
+  it("Quimicolor fondo y Quimidal laca acrílica, 1/4 y galón", () => {
+    const f = (nombre: string, marca: string) => fotoPorNombre(nombre, marca)?.replace("/productos/", "");
+    expect(f("QUIMICOLOR FONDO ALTO RELLENO 1/4 GAL", "QUIMICOLOR")).toBe("quimicolor/fondo-cuarto.webp");
+    expect(f("QUIMICOLOR FONDO EPOXICO ROJO/GRIS GALON", "QUIMICOLOR")).toBe("quimicolor/fondo-gal.webp");
+    expect(f("QUIMICOLOR ESMALTE CHASSIS BLACK 1/4GAL", "QUIMICOLOR")).toBeUndefined();
+    expect(f("QUIMIDAL LACA ACRILICA NEGRO 1/4", "QUIMIDAL")).toBe("quimidal/laca-acrilica-cuarto.webp");
+    expect(f("QUIMIDAL LACA ACRILICA BLANCO GALON", "QUIMIDAL")).toBe("quimidal/laca-acrilica-gal.webp");
+    expect(f("QUIMIDAL SELLADOR POLIURETANO GALON", "QUIMIDAL")).toBeUndefined();
+  });
+
   it("Adesi-Top: cada producto con su envase y tamaño (nombres reales de Saint); sin foto, nada", () => {
     const f = (nombre: string) => fotoPorNombre(nombre, "ADESI-TOP")?.replace("/productos/adesitop/", "");
     const casos: [string, string | undefined][] = [

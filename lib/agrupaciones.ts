@@ -75,6 +75,14 @@ export function fotoPorNombre(nombre: string, marca: string | null): string | un
   }
   // Q7: toda pintura en spray (cualquier color, alta temperatura, cromo/dorado) con la lata blanca. La pega PVC, no.
   if ((/^Q7$/i.test(marca ?? "") || /\bQ7\b/.test(n)) && /PINTURA/.test(n)) return "/productos/q7/spray.webp";
+  // Quimicolor: todo "fondo" con la lata de fondo anticorrosivo; Quimidal: toda laca acrílica con la lata Auto-Cryl.
+  // 1/4 a 600 px y galón a 760, como las demás latas.
+  const quimi = /QUIMICOLOR/.test(n) && /\bFONDO\b/.test(n) ? "quimicolor/fondo"
+    : /QUIMIDAL/.test(n) && /LACA ACRILICA/.test(n) ? "quimidal/laca-acrilica" : null;
+  if (quimi) {
+    const tam = tamanoEnvase(n);
+    return tam === "cuarto" || tam === "gal" ? `/productos/${quimi}-${tam}.webp` : undefined;
+  }
   // Permatex: todos con la misma foto de la marca (pedido de persona B), aunque sea otro producto de la línea.
   if (/PERMATEX/i.test(marca ?? "") || /PERMATEX/.test(n)) return "/productos/permatex/anti-seize.webp";
   // Poliescol resina Poliacryl T-2: la botella en 1/8 (más pequeña) y 1/4, el tobo en galón.
