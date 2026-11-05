@@ -303,9 +303,13 @@ describe("agrupar", () => {
       ["IPA // PINTURA ALUMINIO CUÑETE", "ipa/pintura-aluminio-tobo.webp"],
       ["IPA CAPACOLOR VERDE CUNETE", "ipa/capacolor-tobo.webp"],
       ["IPA LIGA PISO MASTIC EN CUÑETE", "ipa/liga-piso-mastic-tobo.webp"],
-      ["ROLLO MANTO ALUMINIO AUTOADHESIVO", undefined],
+      ["ROLLO MANTO ALUMINIO AUTOADHESIVO", "ipa/alulamina.webp"],
       ["IPA PRIMER CUÑETE", undefined],
-      ["IPA ROLLO MANTO ASFALTICO 3.15MM", undefined],
+      ["PRIMER GALON // LA UNIDAD", "ipa/primer-gal.webp"],
+      ["IPA GOTA FIX 1/4", "ipa/gota-fix-cuarto.webp"],
+      ["IPA GOTA FIX GAL", undefined],
+      ["IPA ROLLO MANTO ASFALTICO 3.15MM", "ipa/manto-ecoline.webp"],
+      ["IPA ROLLO MANTO ASFALTICO 2,7MM", "ipa/manto-ecoline.webp"],
     ];
     for (const [nombre, foto] of casos) expect(f(nombre), nombre).toBe(foto);
   });

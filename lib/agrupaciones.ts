@@ -233,6 +233,11 @@ const IPA_LINEAS: LineaFoto[] = [
   { regla: /CEMENTO PLASTICO/, linea: "cemento-plastico", tamanos: ["gal", "tobo"] },
   { regla: /CAPA ?COLOR/, linea: "capacolor", tamanos: ["tobo"] },
   { regla: /LIGA PISO MASTIC/, linea: "liga-piso-mastic", tamanos: ["tobo"] },
+  { regla: /GOTA FIX/, linea: "gota-fix", tamanos: ["cuarto"] },
+  { regla: /PRIMER/, linea: "primer", tamanos: ["gal"] },
+  // Mantos IPA (2,7 y 3,15 mm): todos con el rollo Ecoline 3000, pedido de persona B. El de aluminio, Alulamina.
+  { regla: /MANTO ALUMINIO/, linea: "alulamina", tamanos: null },
+  { regla: /ROLLO MANTO ASFALTICO/, linea: "manto-ecoline", tamanos: null },
 ];
 function fotoIpa(n: string): string | undefined {
   return fotoDeTabla(n, IP, IPA_LINEAS, tamanoEnvase(n));
