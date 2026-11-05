@@ -59,6 +59,7 @@ export function fotoPorNombre(nombre: string, marca: string | null): string | un
   if (/^CEBRA$/i.test(marca ?? "") || /\bCEBRA\b/.test(n)) return fotoCebra(n);
   if (/^EUROFLEX\b/.test(n)) return fotoEuroflex(n); // en Saint, marca MICROFLEX
   if (/^FUTURA$/i.test(marca ?? "") || /^FUTURA\b/.test(n)) return fotoFutura(n);
+  if (/^SIMBI$/i.test(marca ?? "") || /SIMBI|GRAF+IT+I/.test(n)) return fotoSimbi(n);
   if (!/MONTANA/i.test(marca ?? "") && !/MONTANA/.test(n)) return undefined;
   const linea = lineaMontana(n);
   if (!linea) return undefined;
@@ -326,6 +327,13 @@ const FUTURA_LINEAS: LineaFoto[] = [
 ];
 function fotoFutura(n: string): string | undefined {
   return fotoDeTabla(n, FT, FUTURA_LINEAS, tamanoEnvase(n));
+}
+
+/** Simbi/Graffiti: Manto elástico de silicón (lata Protexio) en 1/4 pequeña y galón mediana. Lo demás, sin foto. */
+const SB = "/productos/simbi/";
+const SIMBI_LINEAS: LineaFoto[] = [{ regla: /MANTO ELASTICO/, linea: "manto-elastico", tamanos: ["cuarto", "gal"] }];
+function fotoSimbi(n: string): string | undefined {
+  return fotoDeTabla(n, SB, SIMBI_LINEAS, tamanoEnvase(n));
 }
 
 /** Accesorios de rodillo Cerdex: una foto por tipo, sin importar la medida. Cepillos y mango metálico, sin foto. */

@@ -403,6 +403,13 @@ describe("agrupar", () => {
     expect(f("FUTURA ESMALTE SINTETICO 1/4 ALUMINIO")).toBeUndefined();
   });
 
+  it("Simbi/Graffiti: manto elástico de silicón en 1/4 y galón; lo demás sin foto", () => {
+    const f = (nombre: string) => fotoPorNombre(nombre, "SIMBI")?.replace("/productos/simbi/", "");
+    expect(f("GRAFFITI MANTO ELASTICO DE SILICON GALON")).toBe("manto-elastico-gal.webp");
+    expect(f("GRAFFITI MANTO ELASTICO D SILICON 1/4GAL")).toBe("manto-elastico-cuarto.webp");
+    expect(f("SIMBI PROTECTOR DE FACHADA EN GALON")).toBeUndefined();
+  });
+
   it("Adesi-Top: cada producto con su envase y tamaño (nombres reales de Saint); sin foto, nada", () => {
     const f = (nombre: string) => fotoPorNombre(nombre, "ADESI-TOP")?.replace("/productos/adesitop/", "");
     const casos: [string, string | undefined][] = [
