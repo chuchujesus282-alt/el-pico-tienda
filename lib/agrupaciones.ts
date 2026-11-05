@@ -278,9 +278,16 @@ const BROCHA_RUBI: Record<string, string> = {
   "1": "brocha-rubi-1",
   "1/2": "brocha-rubi-1",
 };
+/** Accesorios de rodillo Cerdex: una foto por tipo, sin importar la medida. Cepillos y mango metálico, sin foto. */
+const CERDEX_ACCESORIOS: [RegExp, string][] = [
+  [/EXTENSION P\/RODILLO/, "extension-rodillo"],
+  [/SET-?KIT RODILLO/, "kit-rodillo-bandeja"],
+  [/FUNDA.*TEXTURIZAR/, "funda-texturizar"],
+  [/FUNDA.*THERMO ?FUSION/, "funda-superficies-lisas"], // las de thermofusión son las de superficies lisas
+];
 function fotoCerdex(n: string): string | undefined {
   const medida = n.match(/BROCHA RUBI\s+(\d-\d\/\d|\d\/\d|\d)"/)?.[1];
-  const archivo = medida && BROCHA_RUBI[medida];
+  const archivo = (medida && BROCHA_RUBI[medida]) || CERDEX_ACCESORIOS.find(([regla]) => regla.test(n))?.[1];
   return archivo ? `${CX}${archivo}.webp` : undefined;
 }
 

@@ -336,7 +336,7 @@ describe("agrupar", () => {
     for (const [nombre, foto] of casos) expect(f(nombre), nombre).toBe(foto);
   });
 
-  it("Cerdex: cada brocha Rubí con la foto de su medida; lo demás sin foto", () => {
+  it("Cerdex: cada brocha Rubí con la foto de su medida; accesorios de rodillo por tipo", () => {
     const f = (nombre: string) => fotoPorNombre(nombre, "CERDEX")?.replace("/productos/cerdex/", "");
     const casos: [string, string | undefined][] = [
       ['CERDEX BROCHA RUBI 6" PROFESIONAL', "brocha-rubi-6.webp"],
@@ -348,8 +348,14 @@ describe("agrupar", () => {
       ['CERDEX BROCHA RUBI 1-1/2" PROFESIONAL', "brocha-rubi-1-1-2.webp"],
       ['CERDEX BROCHA RUBI 1" PROFESIONAL', "brocha-rubi-1.webp"],
       ['CERDEX BROCHA RUBI 1/2" PROFESIONAL', "brocha-rubi-1.webp"],
-      ["CERDEX EXTENSION P/RODILLO 1 A 2MTS", undefined],
-      ["CERDEX SET-KIT RODILLO/BANDEJA/FUNDA", undefined],
+      ["CERDEX EXTENSION P/RODILLO 1 A 2MTS", "extension-rodillo.webp"],
+      ["CERDEX EXTENSION P/RODILLO 3 A 6MTS", "extension-rodillo.webp"],
+      ["CERDEX SET-KIT RODILLO/BANDEJA/FUNDA", "kit-rodillo-bandeja.webp"],
+      ["CERDEX/CEBRA FUNDA DE 4° P/ TEXTURIZAR", "funda-texturizar.webp"],
+      ["CERDEX FUNDA DE THERMOFUSION 4 X 6 MM", "funda-superficies-lisas.webp"],
+      ['FUNDA THERMOFUSION 9" ECONOMICA', "funda-superficies-lisas.webp"],
+      ["CEPILLO ALAMBRE RECTANGULAR 6X19", undefined],
+      ['MANGO METALICO ECON. P/RODILLO 9"', undefined],
     ];
     for (const [nombre, foto] of casos) expect(f(nombre), nombre).toBe(foto);
   });
