@@ -125,6 +125,7 @@ const REGLAS: [RegExp, string][] = [
   [/^BISAGRA PARA CAVA\b/, "bisagra-para-cava"],
   [/^BISAGRA PISTON\b/, "bisagra-piston-de-hierro"],
   [/^BISAGRA VAI-VEN (DORADA|RESORTE)/, "bisagra-vai-ven"],
+  [/^BISAGRA VIDRIO TIPO U\b/, "bisagra-vidrio-tipo-u"],
   [/\bCIERRA PUERTA\b/, "cierrapuertas"],
 
   // ---- Manillas y pomos

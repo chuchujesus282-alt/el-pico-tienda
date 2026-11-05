@@ -48,7 +48,7 @@ describe("fotoCerrajeria", () => {
 
   it("la bisagra vai-ven y la de vidrio no se quedan con la foto de la cromada", () => {
     expect(foto("BISAGRA VAI-VEN DORADA/NEGRA/CROMADA")).toBe("bisagra-vai-ven.webp");
-    expect(foto("BISAGRA VIDRIO TIPO U CROMADA /DORADA")).toBeUndefined();
+    expect(foto("BISAGRA VIDRIO TIPO U CROMADA /DORADA")).toBe("bisagra-vidrio-tipo-u.webp");
   });
 
   it("los tiradores de otra forma no llevan la foto del tirador de asa", () => {

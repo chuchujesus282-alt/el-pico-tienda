@@ -97,7 +97,7 @@ Ya hecha: el dueño generó una foto por tipo de pieza (103 fotos). Viven en `pu
 
 ### Electricidad, grifería, vehículos
 
-Cerrajería ya está hecha: el dueño generó una foto por tipo de pieza (122 fotos). Viven en `public/productos/cerrajeria/` y se asignan por nombre en `lib/fotosCerrajeria.ts`, no por esta tabla.
+Cerrajería ya está hecha: el dueño generó una foto por tipo de pieza (123 fotos). Viven en `public/productos/cerrajeria/` y se asignan por nombre en `lib/fotosCerrajeria.ts`, no por esta tabla.
 
 | Archivo | Cubre | Descripción para el prompt |
 |---|---|---|
