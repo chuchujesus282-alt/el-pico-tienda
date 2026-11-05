@@ -83,6 +83,7 @@ export function fotoPorNombre(nombre: string, marca: string | null): string | un
     const tam = tamanoEnvase(n);
     return tam === "cuarto" || tam === "gal" ? `/productos/${quimi}-${tam}.webp` : undefined;
   }
+  if (/QUIMIDAL/.test(n) && /MASILLA ROJA/.test(n)) return "/productos/quimidal/masilla-roja.webp";
   // Permatex: todos con la misma foto de la marca (pedido de persona B), aunque sea otro producto de la línea.
   if (/PERMATEX/i.test(marca ?? "") || /PERMATEX/.test(n)) return "/productos/permatex/anti-seize.webp";
   // Poliescol resina Poliacryl T-2: la botella en 1/8 (más pequeña) y 1/4, el tobo en galón.

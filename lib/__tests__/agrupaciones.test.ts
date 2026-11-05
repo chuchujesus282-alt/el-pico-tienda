@@ -477,6 +477,7 @@ describe("agrupar", () => {
     expect(f("QUIMICOLOR ESMALTE CHASSIS BLACK 1/4GAL", "QUIMICOLOR")).toBeUndefined();
     expect(f("QUIMIDAL LACA ACRILICA NEGRO 1/4", "QUIMIDAL")).toBe("quimidal/laca-acrilica-cuarto.webp");
     expect(f("QUIMIDAL LACA ACRILICA BLANCO GALON", "QUIMIDAL")).toBe("quimidal/laca-acrilica-gal.webp");
+    expect(f("QUIMIDAL MASILLA ROJA P/RETOQUES 1/4 GAL", "QUIMIDAL")).toBe("quimidal/masilla-roja.webp");
     expect(f("QUIMIDAL SELLADOR POLIURETANO GALON", "QUIMIDAL")).toBeUndefined();
   });
 
