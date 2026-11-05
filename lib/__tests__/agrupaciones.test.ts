@@ -369,6 +369,14 @@ describe("agrupar", () => {
     expect(f("COINPICA TIPO C BLANCO 1/4")).toBeUndefined();
   });
 
+  it("Coloreal: Manto Fácil en galón y tobo; lo demás sin foto", () => {
+    const f = (nombre: string) => fotoPorNombre(nombre, "COLOREAL")?.replace("/productos/coloreal/", "");
+    expect(f("COLOREAL MANTO FACIL FIBRADO GALON")).toBe("manto-facil-gal.webp");
+    expect(f("COLOREAL MANTO FACIL FIBRADO TOBO")).toBe("manto-facil-tobo.webp");
+    expect(f("COLOREAL TAPA GOTERA CEMENTO PLAST GALON")).toBeUndefined();
+    expect(f("COLOREAL PINTA-CERA LITRO (COLORES)")).toBeUndefined();
+  });
+
   it("Adesi-Top: cada producto con su envase y tamaño (nombres reales de Saint); sin foto, nada", () => {
     const f = (nombre: string) => fotoPorNombre(nombre, "ADESI-TOP")?.replace("/productos/adesitop/", "");
     const casos: [string, string | undefined][] = [

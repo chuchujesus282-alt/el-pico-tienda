@@ -55,6 +55,7 @@ export function fotoPorNombre(nombre: string, marca: string | null): string | un
   if (/MENEQUIM/i.test(marca ?? "") || /MENEQUIM/.test(n)) return fotoMenequim(n);
   if (/CERDEX/i.test(marca ?? "") || /CERDEX/.test(n)) return fotoCerdex(n);
   if (/COINPICA/i.test(marca ?? "") || /COINPICA/.test(n)) return fotoCoinpica(n);
+  if (/COLOREAL/i.test(marca ?? "") || /COLOREAL/.test(n)) return fotoColoreal(n);
   if (!/MONTANA/i.test(marca ?? "") && !/MONTANA/.test(n)) return undefined;
   const linea = lineaMontana(n);
   if (!linea) return undefined;
@@ -284,6 +285,13 @@ const CP = "/productos/coinpica/";
 const COINPICA_LINEAS: LineaFoto[] = [{ regla: /CAUCHO|TIPO ?C\b/, linea: "caucho-tipo-c", tamanos: ["gal", "tobo"] }];
 function fotoCoinpica(n: string): string | undefined {
   return fotoDeTabla(n, CP, COINPICA_LINEAS, tamanoEnvase(n));
+}
+
+/** Coloreal: Manto Fácil Fibrado (todos los colores) en galón y tobo. Tapa gotera y pinta-cera, sin foto por ahora. */
+const CR = "/productos/coloreal/";
+const COLOREAL_LINEAS: LineaFoto[] = [{ regla: /MANTO F[AÁ]CIL/, linea: "manto-facil", tamanos: ["gal", "tobo"] }];
+function fotoColoreal(n: string): string | undefined {
+  return fotoDeTabla(n, CR, COLOREAL_LINEAS, tamanoEnvase(n));
 }
 
 /** Accesorios de rodillo Cerdex: una foto por tipo, sin importar la medida. Cepillos y mango metálico, sin foto. */
