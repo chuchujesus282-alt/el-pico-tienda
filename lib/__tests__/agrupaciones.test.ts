@@ -426,6 +426,14 @@ describe("agrupar", () => {
     expect(fotoPorNombre("MAXIGAMA MAXIVINILICA BLANCO TOBO 4G", "MAXIGAMA")).toBe("/productos/maxigama/maxivinilica-tobo.webp");
   });
 
+  it("Tinta Multilac: la misma foto, más grande según el contenido", () => {
+    const f = (nombre: string) => fotoPorNombre(nombre, "MULTILAC")?.replace("/productos/multilac/", "");
+    expect(f("MULTILAC TINTA 250CC TODOS LOS COLORES")).toBe("tinta-250.webp");
+    expect(f("MULTILAC TINTA 450CC TODOS LOS COLORES")).toBe("tinta-450.webp");
+    expect(f("MULTILAC TINTA 950CC TODOS LOS COLORES")).toBe("tinta-950.webp");
+    expect(f("MULTILAC TINTA EN GALON")).toBe("tinta-gal.webp");
+  });
+
   it("Adesi-Top: cada producto con su envase y tamaño (nombres reales de Saint); sin foto, nada", () => {
     const f = (nombre: string) => fotoPorNombre(nombre, "ADESI-TOP")?.replace("/productos/adesitop/", "");
     const casos: [string, string | undefined][] = [

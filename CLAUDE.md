@@ -162,6 +162,7 @@ Resumen para persona B y cualquier sesión nueva. Detalle: `lib/auth.ts`, `lib/c
 
 ## Registro de cambios
 Lo más reciente arriba. Formato: fecha · rama · quién · qué cambió y qué debe saber el compañero.
+- 2026-11-04 · `main` · persona B · **Fotos tinta Multilac** (en `fotoPorNombre`, con prueba): la misma foto (dos botellas) para 250 cc, 450 cc, 950 cc y galón, cada una más grande que la anterior, en `public/productos/multilac/`.
 - 2026-11-04 · `main` · persona B · **Fotos Microflex** (masilla liviana galón y 1/4) en `public/productos/microflex/`, con `fotoMasilla` como Euroflex y Masiflex. El talco industrial (misma marca), sin foto.
 - 2026-11-04 · `main` · persona B · **Fotos thinner standard Menequim** (en `fotoMenequim`, con prueba): botella (litro), bidón transparente (galón) y bidón negro (cuñete), de menor a mayor, en `public/productos/menequim/`. El thinner acrílico profesional, sin foto.
 - 2026-11-04 · `main` · persona B · **Fotos Maxi Vinílica** (MaxiGama; en Saint con marca MAXIGAMA o ROMEVAL, se reconoce por "MAXIVINILICA" en `fotoPorNombre`, con prueba): galón y tobo en `public/productos/maxigama/`. Originales pequeños (~300 px): algo suaves.
