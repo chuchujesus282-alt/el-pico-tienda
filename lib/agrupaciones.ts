@@ -52,6 +52,7 @@ export function fotoPorNombre(nombre: string, marca: string | null): string | un
   if (/ADESI/i.test(marca ?? "") || /ADESI/.test(n)) return fotoAdesiTop(n);
   if (/^CINDU$/i.test(marca ?? "") || /CINDU/.test(n) || /^EKO[ -]/.test(n)) return fotoCindu(n);
   if (/^IPA$/i.test(marca ?? "")) return fotoIpa(n);
+  if (/MENEQUIM/i.test(marca ?? "") || /MENEQUIM/.test(n)) return fotoMenequim(n);
   if (!/MONTANA/i.test(marca ?? "") && !/MONTANA/.test(n)) return undefined;
   const linea = lineaMontana(n);
   if (!linea) return undefined;
@@ -242,6 +243,22 @@ const IPA_LINEAS: LineaFoto[] = [
 ];
 function fotoIpa(n: string): string | undefined {
   return fotoDeTabla(n, IP, IPA_LINEAS, tamanoEnvase(n));
+}
+
+/**
+ * Barnices Menequim por LÍNEA, no por color (pedido de persona B): Natural mate, Natural (brillante), Marino, y
+ * Secamiento rápido con sus tonos (caoba, nogal…). Misma escala que Manpica: 1/4 la lata pequeña, galón la mediana.
+ * Los demás Menequim (selladores, thinner, pega…) no calzan.
+ */
+const MQ = "/productos/menequim/";
+const MENEQUIM_LINEAS: LineaFoto[] = [
+  { regla: /BARNIZ.*MARINO/, linea: "barniz-marino", tamanos: ["cuarto", "gal"] },
+  { regla: /BARNIZ.*NATURAL.*\bMATE\b/, linea: "barniz-natural-mate", tamanos: ["cuarto", "gal"] },
+  { regla: /BARNIZ.*NATURAL/, linea: "barniz-natural", tamanos: ["cuarto", "gal"] },
+  { regla: /BARNIZ/, linea: "barniz-secado-rapido", tamanos: ["cuarto", "gal"] }, // secamiento rápido y los tonos
+];
+function fotoMenequim(n: string): string | undefined {
+  return fotoDeTabla(n, MQ, MENEQUIM_LINEAS, tamanoEnvase(n));
 }
 
 /**

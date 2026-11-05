@@ -316,6 +316,26 @@ describe("agrupar", () => {
     for (const [nombre, foto] of casos) expect(f(nombre), nombre).toBe(foto);
   });
 
+  it("Menequim: barnices por línea (no por color), 1/4 y galón; lo demás sin foto", () => {
+    const f = (nombre: string) => fotoPorNombre(nombre, "MENEQUIM")?.replace("/productos/menequim/", "");
+    const casos: [string, string | undefined][] = [
+      ["BARNIZ CAOBA OSCURO O CLARO GALON", "barniz-secado-rapido-gal.webp"],
+      ["BARNIZ CAOBA OSCURO 1/4 GAL.", "barniz-secado-rapido-cuarto.webp"],
+      ["BARNIZ CAOBA CLARO 1/4 GAL.", "barniz-secado-rapido-cuarto.webp"],
+      ["BARNIZ NOGAL CLARO GALON", "barniz-secado-rapido-gal.webp"],
+      ["BARNIZ NOGAL SAMAN 1/4GALON", "barniz-secado-rapido-cuarto.webp"],
+      ["BARNIZ SECAMIENTO RAPIDO GALON", "barniz-secado-rapido-gal.webp"],
+      ["BARNIZ MARINO GALON", "barniz-marino-gal.webp"],
+      ["BARNIZ MARINO 1/4 GAL.", "barniz-marino-cuarto.webp"],
+      ["BARNIZ NATURAL BRILLANTE GALON", "barniz-natural-gal.webp"],
+      ["BARNIZ NATURAL BRILLANTE 1/4 GAL.", "barniz-natural-cuarto.webp"],
+      ["BARNIZ NATURAL MATE GALON", "barniz-natural-mate-gal.webp"],
+      ["SELLADOR NITRO CONCENTRADO GALON", undefined],
+      ["MENEQUIM GALON DE THINNER STANDARD", undefined],
+    ];
+    for (const [nombre, foto] of casos) expect(f(nombre), nombre).toBe(foto);
+  });
+
   it("Adesi-Top: cada producto con su envase y tamaño (nombres reales de Saint); sin foto, nada", () => {
     const f = (nombre: string) => fotoPorNombre(nombre, "ADESI-TOP")?.replace("/productos/adesitop/", "");
     const casos: [string, string | undefined][] = [
