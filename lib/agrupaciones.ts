@@ -59,6 +59,7 @@ export function fotoPorNombre(nombre: string, marca: string | null): string | un
   if (/^CEBRA$/i.test(marca ?? "") || /\bCEBRA\b/.test(n)) return fotoCebra(n);
   if (/^EUROFLEX\b/.test(n)) return fotoMasilla(n, "/productos/euroflex/"); // en Saint, marca MICROFLEX
   if (/^MASIFLEX\b/.test(n)) return fotoMasilla(n, "/productos/masiflex/");
+  if (/^MICROFLEX\b/.test(n)) return fotoMasilla(n, "/productos/microflex/");
   // Maxi Vinílica: en Saint con marca MAXIGAMA o ROMEVAL; se reconoce por el nombre. Galón y tobo.
   if (/MAXI ?VINILICA/.test(n)) {
     const tam = tamanoEnvase(n);

@@ -390,12 +390,13 @@ describe("agrupar", () => {
     expect(f("CEBRA CEPILLO MANO MULTIUSOS 10CM MADERA")).toBeUndefined();
   });
 
-  it("Euroflex (marca MICROFLEX): galón, 1/4 y 1/8; los Microflex no", () => {
+  it("Euroflex y Microflex (marca MICROFLEX): cada uno con su lata", () => {
     const f = (nombre: string) => fotoPorNombre(nombre, "MICROFLEX")?.replace("/productos/euroflex/", "");
     expect(f("EUROFLEX GALON")).toBe("masilla-gal.webp");
     expect(f("EUROFLEX 1/4 GALON")).toBe("masilla-cuarto.webp");
     expect(f("EUROFLEX 1/8 GALON")).toBe("masilla-octavo.webp");
-    expect(f("MICROFLEX GALON")).toBeUndefined();
+    expect(fotoPorNombre("MICROFLEX GALON", "MICROFLEX")).toBe("/productos/microflex/masilla-gal.webp");
+    expect(fotoPorNombre("MICROFLEX 1/4 GALON", "MICROFLEX")).toBe("/productos/microflex/masilla-cuarto.webp");
     expect(f("TALCO INDUSTRIAL X KILO")).toBeUndefined();
   });
 
