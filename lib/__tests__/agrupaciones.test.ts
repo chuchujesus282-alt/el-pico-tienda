@@ -336,6 +336,24 @@ describe("agrupar", () => {
     for (const [nombre, foto] of casos) expect(f(nombre), nombre).toBe(foto);
   });
 
+  it("Cerdex: cada brocha Rubí con la foto de su medida; lo demás sin foto", () => {
+    const f = (nombre: string) => fotoPorNombre(nombre, "CERDEX")?.replace("/productos/cerdex/", "");
+    const casos: [string, string | undefined][] = [
+      ['CERDEX BROCHA RUBI 6" PROFESIONAL', "brocha-rubi-6.webp"],
+      ['CERDEX BROCHA RUBI 5" PROFESIONAL', "brocha-rubi-5.webp"],
+      ['CERDEX BROCHA RUBI 4" PROFESIONAL', "brocha-rubi-4.webp"],
+      ['CERDEX BROCHA RUBI 3" PROFESIONAL', "brocha-rubi-3.webp"],
+      ['CERDEX BROCHA RUBI 2-1/2" PROFESIONAL', "brocha-rubi-2.webp"],
+      ['CERDEX BROCHA RUBI 2" PROFESIONAL', "brocha-rubi-2.webp"],
+      ['CERDEX BROCHA RUBI 1-1/2" PROFESIONAL', "brocha-rubi-1-1-2.webp"],
+      ['CERDEX BROCHA RUBI 1" PROFESIONAL', "brocha-rubi-1.webp"],
+      ['CERDEX BROCHA RUBI 1/2" PROFESIONAL', "brocha-rubi-1.webp"],
+      ["CERDEX EXTENSION P/RODILLO 1 A 2MTS", undefined],
+      ["CERDEX SET-KIT RODILLO/BANDEJA/FUNDA", undefined],
+    ];
+    for (const [nombre, foto] of casos) expect(f(nombre), nombre).toBe(foto);
+  });
+
   it("Adesi-Top: cada producto con su envase y tamaño (nombres reales de Saint); sin foto, nada", () => {
     const f = (nombre: string) => fotoPorNombre(nombre, "ADESI-TOP")?.replace("/productos/adesitop/", "");
     const casos: [string, string | undefined][] = [

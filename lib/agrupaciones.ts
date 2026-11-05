@@ -53,6 +53,7 @@ export function fotoPorNombre(nombre: string, marca: string | null): string | un
   if (/^CINDU$/i.test(marca ?? "") || /CINDU/.test(n) || /^EKO[ -]/.test(n)) return fotoCindu(n);
   if (/^IPA$/i.test(marca ?? "")) return fotoIpa(n);
   if (/MENEQUIM/i.test(marca ?? "") || /MENEQUIM/.test(n)) return fotoMenequim(n);
+  if (/CERDEX/i.test(marca ?? "") || /CERDEX/.test(n)) return fotoCerdex(n);
   if (!/MONTANA/i.test(marca ?? "") && !/MONTANA/.test(n)) return undefined;
   const linea = lineaMontana(n);
   if (!linea) return undefined;
@@ -259,6 +260,28 @@ const MENEQUIM_LINEAS: LineaFoto[] = [
 ];
 function fotoMenequim(n: string): string | undefined {
   return fotoDeTabla(n, MQ, MENEQUIM_LINEAS, tamanoEnvase(n));
+}
+
+/**
+ * Brochas Cerdex Rubí: una foto por medida, todas a la misma altura (así la de 6" se ve más ancha que la de 1"). Sin
+ * foto propia, la medida más cercana (pedido de persona B): 2-1/2" con la de 2", 1/2" con la de 1".
+ */
+const CX = "/productos/cerdex/";
+const BROCHA_RUBI: Record<string, string> = {
+  "6": "brocha-rubi-6",
+  "5": "brocha-rubi-5",
+  "4": "brocha-rubi-4",
+  "3": "brocha-rubi-3",
+  "2-1/2": "brocha-rubi-2",
+  "2": "brocha-rubi-2",
+  "1-1/2": "brocha-rubi-1-1-2",
+  "1": "brocha-rubi-1",
+  "1/2": "brocha-rubi-1",
+};
+function fotoCerdex(n: string): string | undefined {
+  const medida = n.match(/BROCHA RUBI\s+(\d-\d\/\d|\d\/\d|\d)"/)?.[1];
+  const archivo = medida && BROCHA_RUBI[medida];
+  return archivo ? `${CX}${archivo}.webp` : undefined;
 }
 
 /**
