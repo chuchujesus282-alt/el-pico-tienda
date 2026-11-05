@@ -445,6 +445,8 @@ describe("agrupar", () => {
     expect(f("PC3 IMPERMEABILIZANTE SIN FIBRA CUÑETE")).toBe("impermeabilizante-sin-fibra-tobo.webp");
     expect(f("PC3 IMPERMEABILIZANTE CON FIBRA GALON")).toBe("impermeabilizante-con-fibra-gal.webp");
     expect(f("PC3 IMPERMEABILIZANTE CON FIBRA CUÑETE")).toBe("impermeabilizante-con-fibra-tobo.webp");
+    expect(f("PC3 SELLADOR DE USOS MULTIPLES GALON")).toBe("sellador-gal.webp");
+    expect(f("PC3 SELLADOR DE USOS MULTIPLES CUÑETE")).toBe("sellador-tobo.webp");
     expect(f('PC3 CAUCHO "A" REPELENTE AL AGUA GALON')).toBeUndefined();
   });
 
