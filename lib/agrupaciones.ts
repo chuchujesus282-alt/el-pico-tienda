@@ -62,6 +62,12 @@ export function fotoPorNombre(nombre: string, marca: string | null): string | un
   if (/^MICROFLEX\b/.test(n)) return fotoMasilla(n, "/productos/microflex/");
   // OCI: toda pintura en spray (cualquier color, alta temperatura…) con la foto de las latas de colores.
   if ((/^OCI$/i.test(marca ?? "") || /\bOCI\b/.test(n)) && /SPRAY/.test(n)) return "/productos/oci/spray.webp";
+  // PC3 impermeabilizante: sin fibra con la lata Construflex Standard, con fibra con la +Fibra; galón y cuñete.
+  if (/PC ?3/.test(n) && /IMPERMEABILIZANTE/.test(n)) {
+    const tipo = /CON FIBRA/.test(n) ? "con-fibra" : "sin-fibra";
+    const tam = tamanoEnvase(n);
+    return tam === "gal" || tam === "tobo" ? `/productos/pc3/impermeabilizante-${tipo}-${tam}.webp` : undefined;
+  }
   // Tinta Multilac: la misma foto (las dos botellas) en todas, más grande mientras más trae: 250, 450, 950 cc y galón.
   if (/MULTILAC.*TINTA/.test(n)) {
     const tam = /\b250 ?CC/.test(n) ? "250" : /\b450 ?CC/.test(n) ? "450" : /\b950 ?CC/.test(n) ? "950" : /\bGAL/.test(n) ? "gal" : null;

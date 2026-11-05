@@ -439,6 +439,15 @@ describe("agrupar", () => {
     expect(fotoPorNombre("OCI PINTURA SPRAY ALTA TEMPERATURA", "OCI")).toBe("/productos/oci/spray.webp");
   });
 
+  it("PC3 impermeabilizante: con o sin fibra, galón y cuñete; lo demás PC3 sin foto", () => {
+    const f = (nombre: string) => fotoPorNombre(nombre, "PC3")?.replace("/productos/pc3/", "");
+    expect(f("PC3 IMPERMEABILIZANTE SIN FIBRA GALON")).toBe("impermeabilizante-sin-fibra-gal.webp");
+    expect(f("PC3 IMPERMEABILIZANTE SIN FIBRA CUÑETE")).toBe("impermeabilizante-sin-fibra-tobo.webp");
+    expect(f("PC3 IMPERMEABILIZANTE CON FIBRA GALON")).toBe("impermeabilizante-con-fibra-gal.webp");
+    expect(f("PC3 IMPERMEABILIZANTE CON FIBRA CUÑETE")).toBe("impermeabilizante-con-fibra-tobo.webp");
+    expect(f('PC3 CAUCHO "A" REPELENTE AL AGUA GALON')).toBeUndefined();
+  });
+
   it("Adesi-Top: cada producto con su envase y tamaño (nombres reales de Saint); sin foto, nada", () => {
     const f = (nombre: string) => fotoPorNombre(nombre, "ADESI-TOP")?.replace("/productos/adesitop/", "");
     const casos: [string, string | undefined][] = [
