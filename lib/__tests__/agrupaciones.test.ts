@@ -377,6 +377,15 @@ describe("agrupar", () => {
     expect(f("COLOREAL PINTA-CERA LITRO (COLORES)")).toBeUndefined();
   });
 
+  it("Cebra: esmaltes en 1/4 y galón; lo demás sin foto", () => {
+    const f = (nombre: string) => fotoPorNombre(nombre, "CEBRA")?.replace("/productos/cebra/", "");
+    expect(f("ESMALTE 1/4 BRILLANTE CEBRA")).toBe("esmalte-cuarto.webp");
+    expect(f("ESMALTE 1/4 MATE/SATINADO CEBRA")).toBe("esmalte-cuarto.webp");
+    expect(f("ESMALTE GALON BRILLANTE CEBRA")).toBe("esmalte-gal.webp");
+    expect(f("ESMALTE GALON MATE/SATINADO CEBRA")).toBe("esmalte-gal.webp");
+    expect(f("CEBRA CEPILLO MANO MULTIUSOS 10CM MADERA")).toBeUndefined();
+  });
+
   it("Adesi-Top: cada producto con su envase y tamaño (nombres reales de Saint); sin foto, nada", () => {
     const f = (nombre: string) => fotoPorNombre(nombre, "ADESI-TOP")?.replace("/productos/adesitop/", "");
     const casos: [string, string | undefined][] = [
