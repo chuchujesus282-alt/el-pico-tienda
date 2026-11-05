@@ -271,6 +271,12 @@ const MENEQUIM_LINEAS: LineaFoto[] = [
   { regla: /BARNIZ/, linea: "barniz-secado-rapido", tamanos: ["cuarto", "gal"] }, // secamiento rápido y los tonos
 ];
 function fotoMenequim(n: string): string | undefined {
+  // Thinner standard: botella (litro), bidón transparente (galón) y bidón negro (cuñete), de menor a mayor. El thinner
+  // acrílico profesional es otro producto: sin foto.
+  if (/THINNER STANDARD/.test(n)) {
+    const tam = /\bLITRO\b/.test(n) ? "litro" : tamanoEnvase(n);
+    return tam === "litro" || tam === "gal" || tam === "tobo" ? `${MQ}thinner-${tam}.webp` : undefined;
+  }
   return fotoDeTabla(n, MQ, MENEQUIM_LINEAS, tamanoEnvase(n));
 }
 

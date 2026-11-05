@@ -331,7 +331,10 @@ describe("agrupar", () => {
       ["BARNIZ NATURAL BRILLANTE 1/4 GAL.", "barniz-natural-cuarto.webp"],
       ["BARNIZ NATURAL MATE GALON", "barniz-natural-mate-gal.webp"],
       ["SELLADOR NITRO CONCENTRADO GALON", undefined],
-      ["MENEQUIM GALON DE THINNER STANDARD", undefined],
+      ["MENEQUIM/M. PAINT LITRO THINNER STANDARD", "thinner-litro.webp"],
+      ["MENEQUIM GALON DE THINNER STANDARD", "thinner-gal.webp"],
+      ["MENEQUIM CUÑETE DE THINNER STANDARD", "thinner-tobo.webp"],
+      ["THINNER ACRILICO PROFESIONAL 1/4 GALON", undefined],
     ];
     for (const [nombre, foto] of casos) expect(f(nombre), nombre).toBe(foto);
   });
