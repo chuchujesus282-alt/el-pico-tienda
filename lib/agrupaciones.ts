@@ -57,6 +57,7 @@ export function fotoPorNombre(nombre: string, marca: string | null): string | un
   if (/COINPICA/i.test(marca ?? "") || /COINPICA/.test(n)) return fotoCoinpica(n);
   if (/COLOREAL/i.test(marca ?? "") || /COLOREAL/.test(n)) return fotoColoreal(n);
   if (/^CEBRA$/i.test(marca ?? "") || /\bCEBRA\b/.test(n)) return fotoCebra(n);
+  if (/^EUROFLEX\b/.test(n)) return fotoEuroflex(n); // en Saint, marca MICROFLEX
   if (!/MONTANA/i.test(marca ?? "") && !/MONTANA/.test(n)) return undefined;
   const linea = lineaMontana(n);
   if (!linea) return undefined;
@@ -300,6 +301,16 @@ const CB = "/productos/cebra/";
 const CEBRA_LINEAS: LineaFoto[] = [{ regla: /ESMALTE/, linea: "esmalte", tamanos: ["cuarto", "gal"] }];
 function fotoCebra(n: string): string | undefined {
   return fotoDeTabla(n, CB, CEBRA_LINEAS, tamanoEnvase(n));
+}
+
+/**
+ * Masilla plástica Euroflex (marca MICROFLEX en Saint): la lata alta en galón y la lata baja en 1/4; el 1/8 usa la lata
+ * baja más pequeña. Los "MICROFLEX …" (otra masilla) no calzan.
+ */
+const EF = "/productos/euroflex/";
+function fotoEuroflex(n: string): string | undefined {
+  const tam = /1\/8/.test(n) ? "octavo" : /1\/4/.test(n) ? "cuarto" : /\bGAL/.test(n) ? "gal" : null;
+  return tam ? `${EF}masilla-${tam}.webp` : undefined;
 }
 
 /** Accesorios de rodillo Cerdex: una foto por tipo, sin importar la medida. Cepillos y mango metálico, sin foto. */
