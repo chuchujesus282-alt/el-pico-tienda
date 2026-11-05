@@ -223,14 +223,16 @@ function fotoCindu(n: string): string | undefined {
 
 /**
  * IPA (marca IPA en Saint; los Eko e IPA/CINDU van antes a fotoCindu). Fotos oficiales pasadas por persona B. Solo el
- * envase que hay: los cuñetes de asfalto líquido, cemento plástico y aluminio quedan sin foto (solo hay la del galón).
+ * envase que hay: el cuñete de asfalto líquido queda sin foto (solo hay la del galón).
  */
 const IP = "/productos/ipa/";
 const IPA_LINEAS: LineaFoto[] = [
   { regla: /ASFALTO SOLIDO/, linea: "asfalto-solido", tamanos: null }, // el "por kilo", del saco IPA Sólido
   { regla: /ASFALTO LIQUIDO/, linea: "asfalto-liquido", tamanos: ["gal"] },
-  { regla: /PINTURA (DE )?ALUMINIO/, linea: "pintura-aluminio", tamanos: ["gal"] }, // el manto de aluminio no
-  { regla: /CEMENTO PLASTICO/, linea: "cemento-plastico", tamanos: ["gal"] },
+  { regla: /PINTURA (DE )?ALUMINIO/, linea: "pintura-aluminio", tamanos: ["gal", "tobo"] }, // el manto de aluminio no
+  { regla: /CEMENTO PLASTICO/, linea: "cemento-plastico", tamanos: ["gal", "tobo"] },
+  { regla: /CAPA ?COLOR/, linea: "capacolor", tamanos: ["tobo"] },
+  { regla: /LIGA PISO MASTIC/, linea: "liga-piso-mastic", tamanos: ["tobo"] },
 ];
 function fotoIpa(n: string): string | undefined {
   return fotoDeTabla(n, IP, IPA_LINEAS, tamanoEnvase(n));
