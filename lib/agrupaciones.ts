@@ -1,6 +1,7 @@
 import type { Producto } from "@/types/catalogo";
 import { clasificarGenerico, GRUPOS_GENERICOS, ORDEN_SECCIONES } from "@/lib/agrupacionesGenericas";
 import { fotoGenerica } from "@/lib/fotosGenericas";
+import { fotoCerrajeria } from "@/lib/fotosCerrajeria";
 import { fotoTornilleria } from "@/lib/fotosTornilleria";
 
 // Agrupación de productos de Saint que son el MISMO producto en distintas medidas (llave combinada Acesa 8 mm, 10 mm…;
@@ -688,6 +689,7 @@ export function agrupar(lista: Producto[]): {
       FOTOS_SAINT[p.id] ??
       fotoPorNombre(p.nombre, p.marca) ??
       fotoTornilleria(p.nombre, p.categoriaSlug) ??
+      fotoCerrajeria(p.nombre, p.categoriaSlug) ??
       fotoGenerica(p.nombre, p.marca);
     return foto && !p.imagen ? { ...p, imagen: foto } : p;
   });

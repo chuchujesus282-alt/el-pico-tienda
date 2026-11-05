@@ -95,16 +95,14 @@ Ya hecha: el dueño generó una foto por tipo de pieza (103 fotos). Viven en `pu
 | cepillo-alambre.png | 12 | un cepillo circular de alambre de acero para esmeril y un cepillo de copa de alambre |
 | extractor.png | 11 | un extractor de poleas de acero de tres patas con tornillo central |
 
-### Electricidad, grifería, cerrajería, vehículos
+### Electricidad, grifería, vehículos
+
+Cerrajería ya está hecha: el dueño generó una foto por tipo de pieza (122 fotos). Viven en `public/productos/cerrajeria/` y se asignan por nombre en `lib/fotosCerrajeria.ts`, no por esta tabla.
 
 | Archivo | Cubre | Descripción para el prompt |
 |---|---|---|
 | terminal-electrico.png | 68 | terminales eléctricos de cobre estañado: de ojo (anillo) y de pala, con aislamiento de plástico de colores |
 | bombillo.png | 38 | un bombillo LED blanco tipo A60 con rosca E27, apagado |
-| bisagra.png | 47 | una bisagra de acero cromado para puerta, abierta en ángulo, con los agujeros de los tornillos visibles |
-| manilla.png | 18 | una manilla de puerta de aluminio plateado con su placa rectangular |
-| tirador.png | 30 | dos tiradores de mueble de acero inoxidable: uno de barra y uno de botón |
-| rueda.png | 32 | una rueda giratoria de nylon con base metálica y una rueda fija de goma, para muebles |
 | rejilla-desague.png | 15 | una rejilla de desagüe redonda de bronce con agujeros, vista desde arriba en ángulo |
 | grapa-automotriz.png | 34 | grapas automotrices plásticas negras (clips de tapicería y de guardafango), varias formas |
 | manguera-goma.png | ~30 | un rollo de manguera de goma negra, con un extremo suelto mostrando el corte |
