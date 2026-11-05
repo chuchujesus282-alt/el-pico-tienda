@@ -417,6 +417,11 @@ describe("agrupar", () => {
     expect(f("MASIFLEX MASILLA PLASTICA 1/8 GALON")).toBe("masilla-octavo.webp");
   });
 
+  it("Maxi Vinílica (marca MAXIGAMA o ROMEVAL): galón y tobo", () => {
+    expect(fotoPorNombre("MAXIVINILICA BLANCO CLASE A GALON", "ROMEVAL")).toBe("/productos/maxigama/maxivinilica-gal.webp");
+    expect(fotoPorNombre("MAXIGAMA MAXIVINILICA BLANCO TOBO 4G", "MAXIGAMA")).toBe("/productos/maxigama/maxivinilica-tobo.webp");
+  });
+
   it("Adesi-Top: cada producto con su envase y tamaño (nombres reales de Saint); sin foto, nada", () => {
     const f = (nombre: string) => fotoPorNombre(nombre, "ADESI-TOP")?.replace("/productos/adesitop/", "");
     const casos: [string, string | undefined][] = [

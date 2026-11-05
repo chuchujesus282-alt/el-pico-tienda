@@ -162,6 +162,7 @@ Resumen para persona B y cualquier sesión nueva. Detalle: `lib/auth.ts`, `lib/c
 
 ## Registro de cambios
 Lo más reciente arriba. Formato: fecha · rama · quién · qué cambió y qué debe saber el compañero.
+- 2026-11-04 · `main` · persona B · **Fotos Maxi Vinílica** (MaxiGama; en Saint con marca MAXIGAMA o ROMEVAL, se reconoce por "MAXIVINILICA" en `fotoPorNombre`, con prueba): galón y tobo en `public/productos/maxigama/`. Originales pequeños (~300 px): algo suaves.
 - 2026-11-04 · `main` · persona B · **Fotos Masiflex** (masilla plástica galón, 1/4 y 1/8) en `public/productos/masiflex/`, con la misma lógica que Euroflex: `fotoEuroflex` pasó a `fotoMasilla(nombre, carpeta)` en `lib/agrupaciones.ts`, con prueba.
 - 2026-11-04 · `main` · persona B · **Foto Graffiti manto elástico de silicón** (`fotoSimbi` en `lib/agrupaciones.ts`, marca SIMBI, con prueba): lata Protexio en 1/4 (600 px) y galón (760 px), en `public/productos/simbi/`. Los demás Simbi/Graffiti, sin foto.
 - 2026-11-04 · `main` · persona B · **Fotos Futura** (`fotoFutura` en `lib/agrupaciones.ts`, con prueba): esmalte a base de agua (lata Premium) y esmalte sintético (lata Futurit), galón a 760 px, en `public/productos/futura/`.
