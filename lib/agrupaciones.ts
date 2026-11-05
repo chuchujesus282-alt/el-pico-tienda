@@ -223,7 +223,7 @@ function fotoCindu(n: string): string | undefined {
 
 /**
  * IPA (marca IPA en Saint; los Eko e IPA/CINDU van antes a fotoCindu). Fotos oficiales pasadas por persona B. Solo el
- * envase que hay: el Gota Fix galón queda sin foto (solo hay la del 1/4).
+ * envase que hay (salvo Gota Fix, que usa la del 1/4 en todos). Protecapa, sin foto.
  */
 const IP = "/productos/ipa/";
 const IPA_LINEAS: LineaFoto[] = [
@@ -233,7 +233,8 @@ const IPA_LINEAS: LineaFoto[] = [
   { regla: /CEMENTO PLASTICO/, linea: "cemento-plastico", tamanos: ["gal", "tobo"] },
   { regla: /CAPA ?COLOR/, linea: "capacolor", tamanos: ["tobo"] },
   { regla: /LIGA PISO MASTIC/, linea: "liga-piso-mastic", tamanos: ["tobo"] },
-  { regla: /GOTA FIX/, linea: "gota-fix", tamanos: ["cuarto"] },
+  { regla: /GOTA FIX/, linea: "gota-fix-cuarto", tamanos: null }, // el galón también, con la del 1/4 (pedido de persona B)
+  { regla: /TRANSICAPA/, linea: "transicapa", tamanos: ["tobo"] },
   { regla: /PRIMER/, linea: "primer", tamanos: ["gal", "tobo"] },
   // Mantos IPA (2,7 y 3,15 mm): todos con el rollo Ecoline 3000, pedido de persona B. El de aluminio, Alulamina.
   { regla: /MANTO ALUMINIO/, linea: "alulamina", tamanos: null },

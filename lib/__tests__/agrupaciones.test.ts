@@ -307,7 +307,9 @@ describe("agrupar", () => {
       ["IPA PRIMER CUÑETE", "ipa/primer-tobo.webp"],
       ["PRIMER GALON // LA UNIDAD", "ipa/primer-gal.webp"],
       ["IPA GOTA FIX 1/4", "ipa/gota-fix-cuarto.webp"],
-      ["IPA GOTA FIX GAL", undefined],
+      ["IPA GOTA FIX GAL", "ipa/gota-fix-cuarto.webp"],
+      ["IPA TRANSICAPA EN CUÑETE", "ipa/transicapa-tobo.webp"],
+      ["IPA PROTECAPA CUNETE", undefined],
       ["IPA ROLLO MANTO ASFALTICO 3.15MM", "ipa/manto-ecoline.webp"],
       ["IPA ROLLO MANTO ASFALTICO 2,7MM", "ipa/manto-ecoline.webp"],
     ];
