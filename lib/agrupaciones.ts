@@ -58,6 +58,7 @@ export function fotoPorNombre(nombre: string, marca: string | null): string | un
   if (/COLOREAL/i.test(marca ?? "") || /COLOREAL/.test(n)) return fotoColoreal(n);
   if (/^CEBRA$/i.test(marca ?? "") || /\bCEBRA\b/.test(n)) return fotoCebra(n);
   if (/^EUROFLEX\b/.test(n)) return fotoEuroflex(n); // en Saint, marca MICROFLEX
+  if (/^FUTURA$/i.test(marca ?? "") || /^FUTURA\b/.test(n)) return fotoFutura(n);
   if (!/MONTANA/i.test(marca ?? "") && !/MONTANA/.test(n)) return undefined;
   const linea = lineaMontana(n);
   if (!linea) return undefined;
@@ -315,6 +316,16 @@ const EF = "/productos/euroflex/";
 function fotoEuroflex(n: string): string | undefined {
   const tam = /1\/8/.test(n) ? "octavo" : /1\/4/.test(n) ? "cuarto" : /\bGAL/.test(n) ? "gal" : null;
   return tam ? `${EF}masilla-${tam}.webp` : undefined;
+}
+
+/** Futura: esmalte a base de agua (Premium, azul) y esmalte sintético (Futurit, verde/rojo), en galón. */
+const FT = "/productos/futura/";
+const FUTURA_LINEAS: LineaFoto[] = [
+  { regla: /ESMALTE.*(BASE DE AGUA|BASE AGUA)/, linea: "esmalte-base-agua", tamanos: ["gal"] },
+  { regla: /ESMALTE.*SINTETICO/, linea: "esmalte-sintetico", tamanos: ["gal"] },
+];
+function fotoFutura(n: string): string | undefined {
+  return fotoDeTabla(n, FT, FUTURA_LINEAS, tamanoEnvase(n));
 }
 
 /** Accesorios de rodillo Cerdex: una foto por tipo, sin importar la medida. Cepillos y mango metálico, sin foto. */

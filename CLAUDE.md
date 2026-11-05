@@ -162,6 +162,7 @@ Resumen para persona B y cualquier sesión nueva. Detalle: `lib/auth.ts`, `lib/c
 
 ## Registro de cambios
 Lo más reciente arriba. Formato: fecha · rama · quién · qué cambió y qué debe saber el compañero.
+- 2026-11-04 · `main` · persona B · **Fotos Futura** (`fotoFutura` en `lib/agrupaciones.ts`, con prueba): esmalte a base de agua (lata Premium) y esmalte sintético (lata Futurit), galón a 760 px, en `public/productos/futura/`.
 - 2026-11-04 · `main` · persona B · **Fotos Euroflex** (`fotoEuroflex` en `lib/agrupaciones.ts`, con prueba; en Saint la marca es MICROFLEX y se reconoce por el nombre "EUROFLEX …"): lata alta en galón, lata baja en 1/4 y la misma más chica en 1/8, en `public/productos/euroflex/`. Microflex galón/1/4 y talco, sin foto.
 - 2026-11-04 · `main` · persona B · **Fotos esmalte Cebra** (`fotoCebra` en `lib/agrupaciones.ts`, con prueba): todo esmalte Cebra (brillante y mate/satinado) con su lata en 1/4 (600 px) y galón (760 px), en `public/productos/cebra/`. Cepillo y extensión Cebra, sin foto.
 - 2026-11-04 · `main` · persona B · **Fotos Coloreal** (`fotoColoreal` en `lib/agrupaciones.ts`, con prueba): Manto Fácil Fibrado (todos los colores) con la lata lisa en galón (760 px) y el tobo con asa en tobo (1000 px), en `public/productos/coloreal/`. Después: Tapa Gotera galón (760 px) y 1/4 (la misma, 600 px), y Pinta-Cera (las 4 botellas).

@@ -396,6 +396,13 @@ describe("agrupar", () => {
     expect(f("TALCO INDUSTRIAL X KILO")).toBeUndefined();
   });
 
+  it("Futura: esmalte a base de agua y sintético en galón", () => {
+    const f = (nombre: string) => fotoPorNombre(nombre, "FUTURA")?.replace("/productos/futura/", "");
+    expect(f("FUTURA ESMALTE A BASE DE AGUA BLANCO GAL")).toBe("esmalte-base-agua-gal.webp");
+    expect(f("FUTURA ESMALTE SINTETICO GALON ALUMINIO")).toBe("esmalte-sintetico-gal.webp");
+    expect(f("FUTURA ESMALTE SINTETICO 1/4 ALUMINIO")).toBeUndefined();
+  });
+
   it("Adesi-Top: cada producto con su envase y tamaño (nombres reales de Saint); sin foto, nada", () => {
     const f = (nombre: string) => fotoPorNombre(nombre, "ADESI-TOP")?.replace("/productos/adesitop/", "");
     const casos: [string, string | undefined][] = [
