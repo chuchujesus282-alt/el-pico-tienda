@@ -410,6 +410,13 @@ describe("agrupar", () => {
     expect(f("SIMBI PROTECTOR DE FACHADA EN GALON")).toBeUndefined();
   });
 
+  it("Masiflex: galón, 1/4 y 1/8", () => {
+    const f = (nombre: string) => fotoPorNombre(nombre, "MASIFLEX")?.replace("/productos/masiflex/", "");
+    expect(f("MASIFLEX MASILLA PLASTICA GALON")).toBe("masilla-gal.webp");
+    expect(f("MASIFLEX MASILLA PLASTICA 1/4 GALON")).toBe("masilla-cuarto.webp");
+    expect(f("MASIFLEX MASILLA PLASTICA 1/8 GALON")).toBe("masilla-octavo.webp");
+  });
+
   it("Adesi-Top: cada producto con su envase y tamaño (nombres reales de Saint); sin foto, nada", () => {
     const f = (nombre: string) => fotoPorNombre(nombre, "ADESI-TOP")?.replace("/productos/adesitop/", "");
     const casos: [string, string | undefined][] = [

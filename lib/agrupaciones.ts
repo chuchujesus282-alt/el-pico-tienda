@@ -57,7 +57,8 @@ export function fotoPorNombre(nombre: string, marca: string | null): string | un
   if (/COINPICA/i.test(marca ?? "") || /COINPICA/.test(n)) return fotoCoinpica(n);
   if (/COLOREAL/i.test(marca ?? "") || /COLOREAL/.test(n)) return fotoColoreal(n);
   if (/^CEBRA$/i.test(marca ?? "") || /\bCEBRA\b/.test(n)) return fotoCebra(n);
-  if (/^EUROFLEX\b/.test(n)) return fotoEuroflex(n); // en Saint, marca MICROFLEX
+  if (/^EUROFLEX\b/.test(n)) return fotoMasilla(n, "/productos/euroflex/"); // en Saint, marca MICROFLEX
+  if (/^MASIFLEX\b/.test(n)) return fotoMasilla(n, "/productos/masiflex/");
   if (/^FUTURA$/i.test(marca ?? "") || /^FUTURA\b/.test(n)) return fotoFutura(n);
   if (/^SIMBI$/i.test(marca ?? "") || /SIMBI|GRAF+IT+I/.test(n)) return fotoSimbi(n);
   if (!/MONTANA/i.test(marca ?? "") && !/MONTANA/.test(n)) return undefined;
@@ -310,13 +311,12 @@ function fotoCebra(n: string): string | undefined {
 }
 
 /**
- * Masilla plástica Euroflex (marca MICROFLEX en Saint): la lata alta en galón y la lata baja en 1/4; el 1/8 usa la lata
- * baja más pequeña. Los "MICROFLEX …" (otra masilla) no calzan.
+ * Masillas plásticas Euroflex (marca MICROFLEX en Saint) y Masiflex: la lata alta en galón y la lata baja en 1/4; el
+ * 1/8 usa la lata baja más pequeña. Los "MICROFLEX …" (otra masilla) no calzan.
  */
-const EF = "/productos/euroflex/";
-function fotoEuroflex(n: string): string | undefined {
+function fotoMasilla(n: string, carpeta: string): string | undefined {
   const tam = /1\/8/.test(n) ? "octavo" : /1\/4/.test(n) ? "cuarto" : /\bGAL/.test(n) ? "gal" : null;
-  return tam ? `${EF}masilla-${tam}.webp` : undefined;
+  return tam ? `${carpeta}masilla-${tam}.webp` : undefined;
 }
 
 /** Futura: esmalte a base de agua (Premium, azul) y esmalte sintético (Futurit, verde/rojo), en galón. */
