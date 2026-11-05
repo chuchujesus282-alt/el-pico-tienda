@@ -369,12 +369,13 @@ describe("agrupar", () => {
     expect(f("COINPICA TIPO C BLANCO 1/4")).toBeUndefined();
   });
 
-  it("Coloreal: Manto Fácil en galón y tobo; lo demás sin foto", () => {
+  it("Coloreal: Manto Fácil, Tapa Gotera y Pinta-Cera", () => {
     const f = (nombre: string) => fotoPorNombre(nombre, "COLOREAL")?.replace("/productos/coloreal/", "");
     expect(f("COLOREAL MANTO FACIL FIBRADO GALON")).toBe("manto-facil-gal.webp");
     expect(f("COLOREAL MANTO FACIL FIBRADO TOBO")).toBe("manto-facil-tobo.webp");
-    expect(f("COLOREAL TAPA GOTERA CEMENTO PLAST GALON")).toBeUndefined();
-    expect(f("COLOREAL PINTA-CERA LITRO (COLORES)")).toBeUndefined();
+    expect(f("COLOREAL TAPA GOTERA CEMENTO PLAST GALON")).toBe("tapa-gotera-gal.webp");
+    expect(f("COLOREAL TAPA GOTERA CEMENTO PLAST 1/4")).toBe("tapa-gotera-cuarto.webp");
+    expect(f("COLOREAL PINTA-CERA LITRO (COLORES)")).toBe("pinta-cera.webp");
   });
 
   it("Cebra: esmaltes en 1/4 y galón; lo demás sin foto", () => {

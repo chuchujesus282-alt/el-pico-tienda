@@ -289,9 +289,13 @@ function fotoCoinpica(n: string): string | undefined {
   return fotoDeTabla(n, CP, COINPICA_LINEAS, tamanoEnvase(n));
 }
 
-/** Coloreal: Manto Fácil Fibrado (todos los colores) en galón y tobo. Tapa gotera y pinta-cera, sin foto por ahora. */
+/** Coloreal: Manto Fácil Fibrado en galón y tobo, Tapa Gotera en galón y 1/4 (la misma, más pequeña) y Pinta-Cera. */
 const CR = "/productos/coloreal/";
-const COLOREAL_LINEAS: LineaFoto[] = [{ regla: /MANTO F[AÁ]CIL/, linea: "manto-facil", tamanos: ["gal", "tobo"] }];
+const COLOREAL_LINEAS: LineaFoto[] = [
+  { regla: /MANTO F[AÁ]CIL/, linea: "manto-facil", tamanos: ["gal", "tobo"] },
+  { regla: /TAPA ?GOTERA/, linea: "tapa-gotera", tamanos: ["cuarto", "gal"] },
+  { regla: /PINTA-? ?CERA/, linea: "pinta-cera", tamanos: null },
+];
 function fotoColoreal(n: string): string | undefined {
   return fotoDeTabla(n, CR, COLOREAL_LINEAS, tamanoEnvase(n));
 }
