@@ -291,6 +291,7 @@ function fotoIpa(n: string): string | undefined {
  */
 const MQ = "/productos/menequim/";
 const MENEQUIM_LINEAS: LineaFoto[] = [
+  { regla: /POLIURETANO.*PARQUET/, linea: "poliuretano-parquet", tamanos: ["cuarto", "gal"] }, // brillante y satinado
   { regla: /BARNIZ.*MARINO/, linea: "barniz-marino", tamanos: ["cuarto", "gal"] },
   { regla: /BARNIZ.*NATURAL.*\bMATE\b/, linea: "barniz-natural-mate", tamanos: ["cuarto", "gal"] },
   { regla: /BARNIZ.*NATURAL/, linea: "barniz-natural", tamanos: ["cuarto", "gal"] },

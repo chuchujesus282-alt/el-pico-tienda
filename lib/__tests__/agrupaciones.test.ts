@@ -330,6 +330,8 @@ describe("agrupar", () => {
       ["BARNIZ NATURAL BRILLANTE GALON", "barniz-natural-gal.webp"],
       ["BARNIZ NATURAL BRILLANTE 1/4 GAL.", "barniz-natural-cuarto.webp"],
       ["BARNIZ NATURAL MATE GALON", "barniz-natural-mate-gal.webp"],
+      ["POLIURETANO P/PARQUET BRILL. GALON", "poliuretano-parquet-gal.webp"],
+      ["POLIURETANO P/PARQUET SAT 1/4 GAL", "poliuretano-parquet-cuarto.webp"],
       ["SELLADOR NITRO CONCENTRADO GALON", undefined],
       ["MENEQUIM/M. PAINT LITRO THINNER STANDARD", "thinner-litro.webp"],
       ["MENEQUIM GALON DE THINNER STANDARD", "thinner-gal.webp"],
