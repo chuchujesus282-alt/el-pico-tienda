@@ -464,6 +464,12 @@ describe("agrupar", () => {
     expect(f("POLIESCOL RESINA POLIACRYL T-2 DE GALON")).toBe("poliacryl-gal.webp");
   });
 
+  it("Q7: toda pintura en spray con la misma foto; la pega no", () => {
+    expect(fotoPorNombre("Q7/FASTER PINTURA EN SPRAY 400ML", "Q7")).toBe("/productos/q7/spray.webp");
+    expect(fotoPorNombre("Q7/FASTER PINTURA EN SPRAY CROMO/DORADO", "Q7")).toBe("/productos/q7/spray.webp");
+    expect(fotoPorNombre("Q7 PEGA PVC 30ML TRANSP ALTA PRESION", "Q7")).toBeUndefined();
+  });
+
   it("Adesi-Top: cada producto con su envase y tamaño (nombres reales de Saint); sin foto, nada", () => {
     const f = (nombre: string) => fotoPorNombre(nombre, "ADESI-TOP")?.replace("/productos/adesitop/", "");
     const casos: [string, string | undefined][] = [

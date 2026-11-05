@@ -162,6 +162,7 @@ Resumen para persona B y cualquier sesión nueva. Detalle: `lib/auth.ts`, `lib/c
 
 ## Registro de cambios
 Lo más reciente arriba. Formato: fecha · rama · quién · qué cambió y qué debe saber el compañero.
+- 2026-11-04 · `main` · persona B · **Foto spray Q7** (en `fotoPorNombre`, con prueba): toda pintura Q7 (400 ml, alta temp., cromo/dorado) lleva `public/productos/q7/spray.webp` (se le quitaron la calcomanía amarilla de la tapa y la marca de agua "ferreterito"). La pega PVC Q7, sin foto.
 - 2026-11-04 · `main` · persona B · **Foto poliuretano p/parquet Menequim** (regla en `MENEQUIM_LINEAS`, con prueba): brillante y satinado, 1/4 (600 px) y galón (760 px).
 - 2026-11-04 · `main` · persona B · **Fotos Poliescol Poliacryl T-2** (en `fotoPorNombre`, con prueba): botella en 1/8 (520 px) y 1/4 (640 px), tobo en galón (780 px), en `public/productos/poliescol/`.
 - 2026-11-04 · `main` · persona B · **Foto Permatex** (en `fotoPorNombre`, con prueba): TODOS los Permatex (selladores de rosca y juntas, silicón…) llevan la foto del Anti-Seize, pedido de persona B. Si llegan fotos propias, reemplazar por reglas por producto.

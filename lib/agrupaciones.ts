@@ -73,6 +73,8 @@ export function fotoPorNombre(nombre: string, marca: string | null): string | un
     const tam = tamanoEnvase(n);
     return tam === "gal" || tam === "tobo" ? `/productos/pc3/sellador-${tam}.webp` : undefined;
   }
+  // Q7: toda pintura en spray (cualquier color, alta temperatura, cromo/dorado) con la lata blanca. La pega PVC, no.
+  if ((/^Q7$/i.test(marca ?? "") || /\bQ7\b/.test(n)) && /PINTURA/.test(n)) return "/productos/q7/spray.webp";
   // Permatex: todos con la misma foto de la marca (pedido de persona B), aunque sea otro producto de la línea.
   if (/PERMATEX/i.test(marca ?? "") || /PERMATEX/.test(n)) return "/productos/permatex/anti-seize.webp";
   // Poliescol resina Poliacryl T-2: la botella en 1/8 (más pequeña) y 1/4, el tobo en galón.
