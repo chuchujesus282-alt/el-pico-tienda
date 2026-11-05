@@ -247,18 +247,22 @@ describe("agrupar", () => {
     expect(FOTOS_SAINT.MANP0005).toBe("/productos/manpica/mastic500-cunete.webp");
   });
 
-  it("Cindu: cada línea con su envase; Impercindu, láminas y mantos sin foto", () => {
+  it("Cindu: cada línea con su envase; láminas, mantos e Impercindu de Saint", () => {
     const f = (nombre: string) => fotoPorNombre(nombre, "CINDU")?.replace("/productos/cindu/", "");
     const casos: [string, string | undefined][] = [
-      // Los reales de Saint: ninguno tiene foto en este lote.
-      ["IMPERCINDU PINTURA IMPERMEAB. TOBO", undefined],
-      ["IMPERCINDU PINTURA IMPERMEAB. GALON", undefined],
-      ["LAMINA CINDU CINDUTEJA ROJO 6.00MTS", undefined],
-      ["LAMINA CINDULIT/LAMILIT 4,00MTS NAT/VER", "lamina-cindulit-natural.webp"],
-      ["LAMINA CINDULIT/LAMILIT 4mts ROJO/BLANCO", undefined],
-      ["LAMINA ACEROTEC/SUPERLIT 6.00MTS NAT/VER", "lamina-acerotec-natural.webp"],
+      // Los reales de Saint.
+      ["IMPERCINDU PINTURA IMPERMEAB. TOBO", "impercindu-tobo.webp"],
+      ["IMPERCINDU PINTURA IMPERMEAB. GALON", "impercindu-gal.webp"],
+      ["LAMINA CINDU CINDUTEJA ROJO 6.00MTS", "lamina-cinduteja.webp"],
+      ["LAMINA CINDULIT/LAMILIT 4,00MTS NAT/VER", "lamina-cindulit-verde.webp"],
+      ["LAMINA CINDULIT/LAMILIT 4mts ROJO/BLANCO", "lamina-cindulit-rojo.webp"],
+      ["LAMINA ACEROTEC/SUPERLIT 6.00MTS NAT/VER", "lamina-acerotec-gris.webp"],
       ["CINDU CABALLETE P/ACEROTEC LIVIANO", undefined],
-      ["CINDU EKOADHESIVO LIQUIDO 1/4 GAL", undefined],
+      ["CUMBRERA FALDON CINDUTEJA Y POLIPROPILEN", undefined],
+      ["CINDU MANTO ASFALTICO EKOALUCAPA ROLLO", "ekoalucapa-natural.webp"],
+      ["IPA/CINDU ASFALTO SOLIDO PAQUETE 45KG", "cinducoat230-45kg.webp"],
+      ["CINDU ASFALTO SOLIDO PAQUETE 3KG", undefined],
+      ["CINDU EKOADHESIVO LIQUIDO 1/4 GAL", "ekoadhesivo-cuarto.webp"],
       ["CINDU ROLLO MANTO ASFALTICO 3.15MM", undefined],
       // Listos para cuando estén en Saint.
       ['CINDUCOLOR PINTURA CLASE "A" GALON', "cinducolor-clase-a-gal.webp"],
@@ -276,6 +280,21 @@ describe("agrupar", () => {
       ["CINDUTRAFICO AMARILLO GALON", "trafico-amarillo-gal.webp"],
       ["CINDUTRAFICO BLANCO CUÑETE", "trafico-blanco-tobo.webp"],
       ["CINDUTRAFICO BLANCO GALON", undefined], // no hay foto del galón blanco
+    ];
+    for (const [nombre, foto] of casos) expect(f(nombre), nombre).toBe(foto);
+  });
+
+  it("Eko de Cindu con marca IPA en Saint: foto por el nombre; los IPA genéricos, no", () => {
+    const f = (nombre: string) => fotoPorNombre(nombre, "IPA")?.replace("/productos/cindu/", "");
+    const casos: [string, string | undefined][] = [
+      ["EKO ASFALTO LIQUIDO TOBO/PAILA DE 4GAL", "ekoliquido-tobo.webp"],
+      ["EKO PRIMER TOBO/PAILA DE 4GAL", "ekoprimer-tobo.webp"],
+      ["EKO CEMENTO PLASTICO TOBO/PAILA 4GAL", "ekocemento-tobo.webp"],
+      ["EKO-CINDU TEJA ASFALTICA PAQ. 3MTS2", "ekotejas.webp"],
+      ["IPA/CINDU ASFALTO SOLIDO PAQUETE 45KG", "cinducoat230-45kg.webp"],
+      ["IPA CEMENTO PLASTICO CUÑETE DE 5GAL", undefined],
+      ["IPA PRIMER CUÑETE", undefined],
+      ["ASFALTO SOLIDO POR KILO", undefined],
     ];
     for (const [nombre, foto] of casos) expect(f(nombre), nombre).toBe(foto);
   });

@@ -50,7 +50,7 @@ export function fotoPorNombre(nombre: string, marca: string | null): string | un
   if (/COLLET/i.test(marca ?? "") || /COLLET/.test(n)) return fotoCollet(n);
   if (/MANPICA/i.test(marca ?? "") || /MANPICA/.test(n)) return fotoManpica(n);
   if (/ADESI/i.test(marca ?? "") || /ADESI/.test(n)) return fotoAdesiTop(n);
-  if (/^CINDU$/i.test(marca ?? "") || /CINDU/.test(n)) return fotoCindu(n);
+  if (/^CINDU$/i.test(marca ?? "") || /CINDU/.test(n) || /^EKO[ -]/.test(n)) return fotoCindu(n);
   if (!/MONTANA/i.test(marca ?? "") && !/MONTANA/.test(n)) return undefined;
   const linea = lineaMontana(n);
   if (!linea) return undefined;
@@ -176,9 +176,21 @@ function fotoAdesiTop(n: string): string | undefined {
  */
 const CI = "/productos/cindu/";
 const CINDU_LINEAS: LineaFoto[] = [
-  // Láminas NAT/VER (natural o verde): la foto de la natural. Las ROJO/BLANCO y la Cinduteja, sin foto por ahora.
-  { regla: /(CINDULIT|LAMILIT).*\bNAT\b/, linea: "lamina-cindulit-natural", tamanos: null },
-  { regla: /(ACEROTEC|SUPERLIT).*\bNAT\b/, linea: "lamina-acerotec-natural", tamanos: null },
+  // Láminas y techos (una sola foto). Cindulit NAT/VER lleva la verde (no hay foto natural); ROJO/BLANCO, la roja.
+  { regla: /(CINDULIT|LAMILIT).*\bNAT\b/, linea: "lamina-cindulit-verde", tamanos: null },
+  { regla: /(CINDULIT|LAMILIT).*\bROJO\b/, linea: "lamina-cindulit-rojo", tamanos: null },
+  { regla: /(ACEROTEC|SUPERLIT).*\bNAT\b/, linea: "lamina-acerotec-gris", tamanos: null },
+  { regla: /^LAMINA\b.*CINDUTEJA/, linea: "lamina-cinduteja", tamanos: null }, // la cumbrera no
+  { regla: /TEJA ASFALTICA/, linea: "ekotejas", tamanos: null },
+  { regla: /EKOALUCAPA/, linea: "ekoalucapa-natural", tamanos: null },
+  { regla: /ASFALTO SOLIDO.*45 ?KG/, linea: "cinducoat230-45kg", tamanos: null }, // el de 3 kg y el "por kilo", no
+  // Impermeabilizantes en envase (los Eko de Saint vienen con marca IPA: ver fotoPorNombre).
+  { regla: /IMPERCINDU/, linea: "impercindu", tamanos: ["gal", "tobo"] },
+  { regla: /EKO ?ADHESIVO/, linea: "ekoadhesivo", tamanos: ["cuarto", "gal", "tobo"] },
+  { regla: /EKO ?CEMENTO/, linea: "ekocemento", tamanos: ["cuarto", "gal", "tobo"] },
+  { regla: /EKO ?PLASTICO/, linea: "ekoplastico", tamanos: ["gal", "tobo"] },
+  { regla: /EKO ?PRIMER/, linea: "ekoprimer", tamanos: ["gal", "tobo"] },
+  { regla: /EKO ?(ASFALTO )?LIQUIDO/, linea: "ekoliquido", tamanos: ["gal", "tobo"] },
   { regla: /TR[AÁ]FICO.*AMARILL|AMARILL.*TR[AÁ]FICO/, linea: "trafico-amarillo", tamanos: ["gal"] },
   { regla: /TR[AÁ]FICO.*BLANCO|BLANCO.*TR[AÁ]FICO/, linea: "trafico-blanco", tamanos: ["tobo"] },
   { regla: /EKO ?COLOR/, linea: "ekocolor", tamanos: ["tobo"] },
