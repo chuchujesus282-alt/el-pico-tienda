@@ -223,18 +223,18 @@ function fotoCindu(n: string): string | undefined {
 
 /**
  * IPA (marca IPA en Saint; los Eko e IPA/CINDU van antes a fotoCindu). Fotos oficiales pasadas por persona B. Solo el
- * envase que hay: el cuñete de asfalto líquido queda sin foto (solo hay la del galón).
+ * envase que hay: el Gota Fix galón queda sin foto (solo hay la del 1/4).
  */
 const IP = "/productos/ipa/";
 const IPA_LINEAS: LineaFoto[] = [
   { regla: /ASFALTO SOLIDO/, linea: "asfalto-solido", tamanos: null }, // el "por kilo", del saco IPA Sólido
-  { regla: /ASFALTO LIQUIDO/, linea: "asfalto-liquido", tamanos: ["gal"] },
+  { regla: /ASFALTO LIQUIDO/, linea: "asfalto-liquido", tamanos: ["gal", "tobo"] },
   { regla: /PINTURA (DE )?ALUMINIO/, linea: "pintura-aluminio", tamanos: ["gal", "tobo"] }, // el manto de aluminio no
   { regla: /CEMENTO PLASTICO/, linea: "cemento-plastico", tamanos: ["gal", "tobo"] },
   { regla: /CAPA ?COLOR/, linea: "capacolor", tamanos: ["tobo"] },
   { regla: /LIGA PISO MASTIC/, linea: "liga-piso-mastic", tamanos: ["tobo"] },
   { regla: /GOTA FIX/, linea: "gota-fix", tamanos: ["cuarto"] },
-  { regla: /PRIMER/, linea: "primer", tamanos: ["gal"] },
+  { regla: /PRIMER/, linea: "primer", tamanos: ["gal", "tobo"] },
   // Mantos IPA (2,7 y 3,15 mm): todos con el rollo Ecoline 3000, pedido de persona B. El de aluminio, Alulamina.
   { regla: /MANTO ALUMINIO/, linea: "alulamina", tamanos: null },
   { regla: /ROLLO MANTO ASFALTICO/, linea: "manto-ecoline", tamanos: null },
