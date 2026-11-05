@@ -75,6 +75,11 @@ export function fotoPorNombre(nombre: string, marca: string | null): string | un
   }
   // Permatex: todos con la misma foto de la marca (pedido de persona B), aunque sea otro producto de la línea.
   if (/PERMATEX/i.test(marca ?? "") || /PERMATEX/.test(n)) return "/productos/permatex/anti-seize.webp";
+  // Poliescol resina Poliacryl T-2: la botella en 1/8 (más pequeña) y 1/4, el tobo en galón.
+  if (/POLIACRYL|POLIESCOL/.test(n)) {
+    const tam = /1\/8/.test(n) ? "octavo" : /1\/4/.test(n) ? "cuarto" : /\bGAL/.test(n) ? "gal" : null;
+    return tam ? `/productos/poliescol/poliacryl-${tam}.webp` : undefined;
+  }
   // Tinta Multilac: la misma foto (las dos botellas) en todas, más grande mientras más trae: 250, 450, 950 cc y galón.
   if (/MULTILAC.*TINTA/.test(n)) {
     const tam = /\b250 ?CC/.test(n) ? "250" : /\b450 ?CC/.test(n) ? "450" : /\b950 ?CC/.test(n) ? "950" : /\bGAL/.test(n) ? "gal" : null;

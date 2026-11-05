@@ -455,6 +455,13 @@ describe("agrupar", () => {
     expect(fotoPorNombre("PERMATEX SILICON ADHESIVO TRANSPARENTE", "PERMATEX")).toBe("/productos/permatex/anti-seize.webp");
   });
 
+  it("Poliescol Poliacryl T-2: botella en 1/8 y 1/4, tobo en galón", () => {
+    const f = (nombre: string) => fotoPorNombre(nombre, "POLIESCOL")?.replace("/productos/poliescol/", "");
+    expect(f("POLIESCOL RESINA POLIACRYL T-2 DE 1/8GAL")).toBe("poliacryl-octavo.webp");
+    expect(f("POLIESCOL RESINA POLIACRYL T-2 DE 1/4GAL")).toBe("poliacryl-cuarto.webp");
+    expect(f("POLIESCOL RESINA POLIACRYL T-2 DE GALON")).toBe("poliacryl-gal.webp");
+  });
+
   it("Adesi-Top: cada producto con su envase y tamaño (nombres reales de Saint); sin foto, nada", () => {
     const f = (nombre: string) => fotoPorNombre(nombre, "ADESI-TOP")?.replace("/productos/adesitop/", "");
     const casos: [string, string | undefined][] = [
