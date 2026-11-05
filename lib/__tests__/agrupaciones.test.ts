@@ -450,6 +450,11 @@ describe("agrupar", () => {
     expect(f('PC3 CAUCHO "A" REPELENTE AL AGUA GALON')).toBeUndefined();
   });
 
+  it("Permatex: todos con la foto de la marca", () => {
+    expect(fotoPorNombre("PERMATEX SELLADOR DE JUNTAS NEGRO 479ML", "PERMATEX")).toBe("/productos/permatex/anti-seize.webp");
+    expect(fotoPorNombre("PERMATEX SILICON ADHESIVO TRANSPARENTE", "PERMATEX")).toBe("/productos/permatex/anti-seize.webp");
+  });
+
   it("Adesi-Top: cada producto con su envase y tamaño (nombres reales de Saint); sin foto, nada", () => {
     const f = (nombre: string) => fotoPorNombre(nombre, "ADESI-TOP")?.replace("/productos/adesitop/", "");
     const casos: [string, string | undefined][] = [

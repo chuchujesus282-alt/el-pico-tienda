@@ -73,6 +73,8 @@ export function fotoPorNombre(nombre: string, marca: string | null): string | un
     const tam = tamanoEnvase(n);
     return tam === "gal" || tam === "tobo" ? `/productos/pc3/sellador-${tam}.webp` : undefined;
   }
+  // Permatex: todos con la misma foto de la marca (pedido de persona B), aunque sea otro producto de la línea.
+  if (/PERMATEX/i.test(marca ?? "") || /PERMATEX/.test(n)) return "/productos/permatex/anti-seize.webp";
   // Tinta Multilac: la misma foto (las dos botellas) en todas, más grande mientras más trae: 250, 450, 950 cc y galón.
   if (/MULTILAC.*TINTA/.test(n)) {
     const tam = /\b250 ?CC/.test(n) ? "250" : /\b450 ?CC/.test(n) ? "450" : /\b950 ?CC/.test(n) ? "950" : /\bGAL/.test(n) ? "gal" : null;

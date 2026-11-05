@@ -162,6 +162,7 @@ Resumen para persona B y cualquier sesión nueva. Detalle: `lib/auth.ts`, `lib/c
 
 ## Registro de cambios
 Lo más reciente arriba. Formato: fecha · rama · quién · qué cambió y qué debe saber el compañero.
+- 2026-11-04 · `main` · persona B · **Foto Permatex** (en `fotoPorNombre`, con prueba): TODOS los Permatex (selladores de rosca y juntas, silicón…) llevan la foto del Anti-Seize, pedido de persona B. Si llegan fotos propias, reemplazar por reglas por producto.
 - 2026-11-04 · `main` · persona B · **Fotos impermeabilizante PC3** (en `fotoPorNombre`, con prueba): sin fibra → lata Construflex Standard, con fibra → Construflex +Fibra; galón (760 px) y cuñete (1000 px), en `public/productos/pc3/`. Después, sellador de usos múltiples (bidón en galón, tobo en cuñete). Caucho PC3, sin foto.
 - 2026-11-04 · `main` · persona B · **Foto spray OCI** (en `fotoPorNombre`, con prueba): toda pintura en spray OCI (cualquier color, alta temperatura…) lleva `public/productos/oci/spray.webp`.
 - 2026-11-04 · `main` · persona B · **Fotos tinta Multilac** (en `fotoPorNombre`, con prueba): la misma foto (dos botellas) para 250 cc, 450 cc, 950 cc y galón, cada una más grande que la anterior, en `public/productos/multilac/`.
