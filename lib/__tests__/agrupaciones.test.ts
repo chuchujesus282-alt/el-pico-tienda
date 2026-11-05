@@ -254,6 +254,10 @@ describe("agrupar", () => {
       ["IMPERCINDU PINTURA IMPERMEAB. TOBO", undefined],
       ["IMPERCINDU PINTURA IMPERMEAB. GALON", undefined],
       ["LAMINA CINDU CINDUTEJA ROJO 6.00MTS", undefined],
+      ["LAMINA CINDULIT/LAMILIT 4,00MTS NAT/VER", "lamina-cindulit-natural.webp"],
+      ["LAMINA CINDULIT/LAMILIT 4mts ROJO/BLANCO", undefined],
+      ["LAMINA ACEROTEC/SUPERLIT 6.00MTS NAT/VER", "lamina-acerotec-natural.webp"],
+      ["CINDU CABALLETE P/ACEROTEC LIVIANO", undefined],
       ["CINDU EKOADHESIVO LIQUIDO 1/4 GAL", undefined],
       ["CINDU ROLLO MANTO ASFALTICO 3.15MM", undefined],
       // Listos para cuando estén en Saint.

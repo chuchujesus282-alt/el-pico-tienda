@@ -176,6 +176,9 @@ function fotoAdesiTop(n: string): string | undefined {
  */
 const CI = "/productos/cindu/";
 const CINDU_LINEAS: LineaFoto[] = [
+  // Láminas NAT/VER (natural o verde): la foto de la natural. Las ROJO/BLANCO y la Cinduteja, sin foto por ahora.
+  { regla: /(CINDULIT|LAMILIT).*\bNAT\b/, linea: "lamina-cindulit-natural", tamanos: null },
+  { regla: /(ACEROTEC|SUPERLIT).*\bNAT\b/, linea: "lamina-acerotec-natural", tamanos: null },
   { regla: /TR[AÁ]FICO.*AMARILL|AMARILL.*TR[AÁ]FICO/, linea: "trafico-amarillo", tamanos: ["gal"] },
   { regla: /TR[AÁ]FICO.*BLANCO|BLANCO.*TR[AÁ]FICO/, linea: "trafico-blanco", tamanos: ["tobo"] },
   { regla: /EKO ?COLOR/, linea: "ekocolor", tamanos: ["tobo"] },
