@@ -261,9 +261,11 @@ describe("agrupar", () => {
       ["CUMBRERA FALDON CINDUTEJA Y POLIPROPILEN", undefined],
       ["CINDU MANTO ASFALTICO EKOALUCAPA ROLLO", "ekoalucapa-natural.webp"],
       ["IPA/CINDU ASFALTO SOLIDO PAQUETE 45KG", "cinducoat230-45kg.webp"],
-      ["CINDU ASFALTO SOLIDO PAQUETE 3KG", undefined],
+      ["CINDU ASFALTO SOLIDO PAQUETE 3KG", "cinducoat230-45kg.webp"],
       ["CINDU EKOADHESIVO LIQUIDO 1/4 GAL", "ekoadhesivo-cuarto.webp"],
-      ["CINDU ROLLO MANTO ASFALTICO 3.15MM", undefined],
+      ["CINDU ROLLO MANTO ASFALTICO 3.15MM", "manto-unicapa-c450.webp"],
+      ["CINDU ROLLO MANTO ASFALTICO 2.7MM", "manto-unicapa-c450.webp"],
+      ["CINDU CINTA BUTILO IMPERMEABLE 5MTS 10CM", "cinta-butilo.webp"],
       // Listos para cuando estén en Saint.
       ['CINDUCOLOR PINTURA CLASE "A" GALON', "cinducolor-clase-a-gal.webp"],
       ["CINDUCOLOR PINTURA EMULSIONADA CUÑETE", "cinducolor-tobo.webp"],
@@ -294,6 +296,7 @@ describe("agrupar", () => {
       ["IPA/CINDU ASFALTO SOLIDO PAQUETE 45KG", "cinducoat230-45kg.webp"],
       ["IPA CEMENTO PLASTICO CUÑETE DE 5GAL", undefined],
       ["IPA PRIMER CUÑETE", undefined],
+      ["IPA ROLLO MANTO ASFALTICO 3.15MM", undefined],
       ["ASFALTO SOLIDO POR KILO", undefined],
     ];
     for (const [nombre, foto] of casos) expect(f(nombre), nombre).toBe(foto);

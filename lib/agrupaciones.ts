@@ -183,7 +183,10 @@ const CINDU_LINEAS: LineaFoto[] = [
   { regla: /^LAMINA\b.*CINDUTEJA/, linea: "lamina-cinduteja", tamanos: null }, // la cumbrera no
   { regla: /TEJA ASFALTICA/, linea: "ekotejas", tamanos: null },
   { regla: /EKOALUCAPA/, linea: "ekoalucapa-natural", tamanos: null },
-  { regla: /ASFALTO SOLIDO.*45 ?KG/, linea: "cinducoat230-45kg", tamanos: null }, // el de 3 kg y el "por kilo", no
+  // Asfalto sólido Cindu (45 kg y 3 kg): el saco Cinducoat 230, pedido de persona B. El "por kilo" de IPA no llega aquí.
+  { regla: /ASFALTO SOLIDO/, linea: "cinducoat230-45kg", tamanos: null },
+  { regla: /ROLLO MANTO ASFALTICO/, linea: "manto-unicapa-c450", tamanos: null }, // 2,7 y 3,15 mm, la misma foto
+  { regla: /CINTA BUTILO/, linea: "cinta-butilo", tamanos: null },
   // Impermeabilizantes en envase (los Eko de Saint vienen con marca IPA: ver fotoPorNombre).
   { regla: /IMPERCINDU/, linea: "impercindu", tamanos: ["gal", "tobo"] },
   { regla: /EKO ?ADHESIVO/, linea: "ekoadhesivo", tamanos: ["cuarto", "gal", "tobo"] },
