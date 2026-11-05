@@ -286,18 +286,24 @@ describe("agrupar", () => {
     for (const [nombre, foto] of casos) expect(f(nombre), nombre).toBe(foto);
   });
 
-  it("Eko de Cindu con marca IPA en Saint: foto por el nombre; los IPA genéricos, no", () => {
-    const f = (nombre: string) => fotoPorNombre(nombre, "IPA")?.replace("/productos/cindu/", "");
+  it("Marca IPA: los Eko e IPA/CINDU con foto Cindu; los IPA, la suya solo en el envase que hay", () => {
+    const f = (nombre: string) => fotoPorNombre(nombre, "IPA")?.replace(/^\/productos\/(cindu|ipa)\//, "$1/");
     const casos: [string, string | undefined][] = [
-      ["EKO ASFALTO LIQUIDO TOBO/PAILA DE 4GAL", "ekoliquido-tobo.webp"],
-      ["EKO PRIMER TOBO/PAILA DE 4GAL", "ekoprimer-tobo.webp"],
-      ["EKO CEMENTO PLASTICO TOBO/PAILA 4GAL", "ekocemento-tobo.webp"],
-      ["EKO-CINDU TEJA ASFALTICA PAQ. 3MTS2", "ekotejas.webp"],
-      ["IPA/CINDU ASFALTO SOLIDO PAQUETE 45KG", "cinducoat230-45kg.webp"],
+      ["EKO ASFALTO LIQUIDO TOBO/PAILA DE 4GAL", "cindu/ekoliquido-tobo.webp"],
+      ["EKO PRIMER TOBO/PAILA DE 4GAL", "cindu/ekoprimer-tobo.webp"],
+      ["EKO CEMENTO PLASTICO TOBO/PAILA 4GAL", "cindu/ekocemento-tobo.webp"],
+      ["EKO-CINDU TEJA ASFALTICA PAQ. 3MTS2", "cindu/ekotejas.webp"],
+      ["IPA/CINDU ASFALTO SOLIDO PAQUETE 45KG", "cindu/cinducoat230-45kg.webp"],
+      ["ASFALTO SOLIDO POR KILO", "ipa/asfalto-solido.webp"],
+      ["ASFALTO LIQUIDO GALON // LA UNIDAD", "ipa/asfalto-liquido-gal.webp"],
+      ["IPA PINTURA DE ALUMINIO GALON", "ipa/pintura-aluminio-gal.webp"],
+      ["CEMENTO PLASTICO GALON // LA UNIDAD", "ipa/cemento-plastico-gal.webp"],
       ["IPA CEMENTO PLASTICO CUÑETE DE 5GAL", undefined],
+      ["IPA ASFALTO LIQUIDO CUÑETE DE 5GAL", undefined],
+      ["IPA // PINTURA ALUMINIO CUÑETE", undefined],
+      ["ROLLO MANTO ALUMINIO AUTOADHESIVO", undefined],
       ["IPA PRIMER CUÑETE", undefined],
       ["IPA ROLLO MANTO ASFALTICO 3.15MM", undefined],
-      ["ASFALTO SOLIDO POR KILO", undefined],
     ];
     for (const [nombre, foto] of casos) expect(f(nombre), nombre).toBe(foto);
   });

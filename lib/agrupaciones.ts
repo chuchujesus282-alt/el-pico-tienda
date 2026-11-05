@@ -51,6 +51,7 @@ export function fotoPorNombre(nombre: string, marca: string | null): string | un
   if (/MANPICA/i.test(marca ?? "") || /MANPICA/.test(n)) return fotoManpica(n);
   if (/ADESI/i.test(marca ?? "") || /ADESI/.test(n)) return fotoAdesiTop(n);
   if (/^CINDU$/i.test(marca ?? "") || /CINDU/.test(n) || /^EKO[ -]/.test(n)) return fotoCindu(n);
+  if (/^IPA$/i.test(marca ?? "")) return fotoIpa(n);
   if (!/MONTANA/i.test(marca ?? "") && !/MONTANA/.test(n)) return undefined;
   const linea = lineaMontana(n);
   if (!linea) return undefined;
@@ -209,12 +210,30 @@ const CINDU_LINEAS: LineaFoto[] = [
   { regla: /CLASE ?"?A\b|TIPO ?"?A\b|"A"/, linea: "cinducolor-clase-a", tamanos: ["gal", "tobo"] },
   { regla: /CINDU ?COLOR|EMULSIONAD/, linea: "cinducolor", tamanos: ["gal", "tobo"] },
 ];
-function fotoCindu(n: string): string | undefined {
-  const tam = /1\/4|946/.test(n) ? "cuarto"
+/** Tamaño del envase leído del nombre (Cindu e IPA): 1/4 o 946 ml, galón, tobo/cuñete/paila; sin tamaño, null. */
+function tamanoEnvase(n: string): string | null {
+  return /1\/4|946/.test(n) ? "cuarto"
     : /TOBO|PAILA|CU[NÑ]ETE|\bCNTE\b|\b[45] ?GAL/.test(n) ? "tobo"
     : /\bGAL/.test(n) ? "gal"
     : null;
-  return fotoDeTabla(n, CI, CINDU_LINEAS, tam);
+}
+function fotoCindu(n: string): string | undefined {
+  return fotoDeTabla(n, CI, CINDU_LINEAS, tamanoEnvase(n));
+}
+
+/**
+ * IPA (marca IPA en Saint; los Eko e IPA/CINDU van antes a fotoCindu). Fotos oficiales pasadas por persona B. Solo el
+ * envase que hay: los cuñetes de asfalto líquido, cemento plástico y aluminio quedan sin foto (solo hay la del galón).
+ */
+const IP = "/productos/ipa/";
+const IPA_LINEAS: LineaFoto[] = [
+  { regla: /ASFALTO SOLIDO/, linea: "asfalto-solido", tamanos: null }, // el "por kilo", del saco IPA Sólido
+  { regla: /ASFALTO LIQUIDO/, linea: "asfalto-liquido", tamanos: ["gal"] },
+  { regla: /PINTURA (DE )?ALUMINIO/, linea: "pintura-aluminio", tamanos: ["gal"] }, // el manto de aluminio no
+  { regla: /CEMENTO PLASTICO/, linea: "cemento-plastico", tamanos: ["gal"] },
+];
+function fotoIpa(n: string): string | undefined {
+  return fotoDeTabla(n, IP, IPA_LINEAS, tamanoEnvase(n));
 }
 
 /**
