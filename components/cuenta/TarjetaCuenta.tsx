@@ -50,7 +50,7 @@ export default function TarjetaCuenta({ nombre, correo }: { nombre: string; corr
         </div>
       </div>
 
-      <nav aria-label="Lo tuyo" className="overflow-hidden rounded-tarjeta bg-pico-blanco shadow-tarjeta motion-safe:animate-aparecer motion-safe:[animation-delay:80ms]">
+      <nav aria-label="Lo tuyo" className="overflow-hidden rounded-tarjeta bg-pico-blanco shadow-tarjeta motion-safe:animate-aparecer motion-safe:[animation-delay:40ms]">
         <ul className="divide-y divide-gris-borde">
           {atajos.map(({ href, Icono, texto, detalle }) => (
             <li key={href}>

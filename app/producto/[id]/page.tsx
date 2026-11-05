@@ -83,7 +83,7 @@ export default async function PaginaProducto({ params, searchParams }: PageProps
             <GaleriaZoom src={producto.imagen} alt={titulo} categoria={producto.categoriaSlug} subcategoria={producto.subcategoria} />
           </div>
 
-          <div className="flex flex-col gap-5 motion-safe:animate-aparecer motion-safe:[animation-delay:120ms]">
+          <div className="flex flex-col gap-5 motion-safe:animate-aparecer motion-safe:[animation-delay:60ms]">
             <div className="flex flex-col gap-3">
               <div className="flex flex-wrap items-center gap-2">
                 {producto.marca && (

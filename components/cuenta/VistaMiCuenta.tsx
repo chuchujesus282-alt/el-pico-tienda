@@ -36,7 +36,7 @@ export default function VistaMiCuenta({ nombre, correo, fiscales, pedidos }: Pro
 
         <section
           aria-labelledby="titulo-factura"
-          className="rounded-tarjeta bg-pico-blanco p-5 shadow-tarjeta motion-safe:animate-aparecer motion-safe:[animation-delay:160ms] md:p-8"
+          className="rounded-tarjeta bg-pico-blanco p-5 shadow-tarjeta motion-safe:animate-aparecer motion-safe:[animation-delay:80ms] md:p-8"
         >
           <h2 id="titulo-factura" className="flex items-center gap-3 text-2xl font-bold text-pico-azul">
             <span className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-pico-azul-claro text-pico-azul" aria-hidden>
@@ -59,7 +59,7 @@ export default function VistaMiCuenta({ nombre, correo, fiscales, pedidos }: Pro
         <section
           id="mis-pedidos"
           aria-labelledby="titulo-pedidos"
-          className="scroll-mt-6 rounded-tarjeta bg-pico-blanco p-5 shadow-tarjeta motion-safe:animate-aparecer motion-safe:[animation-delay:240ms] md:p-8"
+          className="scroll-mt-6 rounded-tarjeta bg-pico-blanco p-5 shadow-tarjeta motion-safe:animate-aparecer motion-safe:[animation-delay:120ms] md:p-8"
         >
           <div className="flex flex-wrap items-center justify-between gap-3">
             <h2 id="titulo-pedidos" className="flex items-center gap-3 text-2xl font-bold text-pico-azul">

@@ -34,13 +34,13 @@ export default function PantallaCuenta({
         <div className="mx-auto my-auto w-full max-w-lg pt-8">
           <div className="text-center">
             <Montanas className="mx-auto h-14 w-auto fill-pico-rojo motion-safe:animate-caer md:h-16" />
-            <h1 className="mt-6 text-3xl font-bold text-balance text-pico-azul motion-safe:animate-aparecer [animation-delay:120ms] md:text-4xl">
+            <h1 className="mt-6 text-3xl font-bold text-balance text-pico-azul motion-safe:animate-aparecer [animation-delay:60ms] md:text-4xl">
               {titulo}
             </h1>
-            <p className="mt-4 text-base text-pretty text-gris-texto motion-safe:animate-aparecer [animation-delay:190ms]">{descripcion}</p>
+            <p className="mt-4 text-base text-pretty text-gris-texto motion-safe:animate-aparecer [animation-delay:95ms]">{descripcion}</p>
           </div>
 
-          {children && <div className="mt-8 motion-safe:animate-aparecer [animation-delay:260ms] md:mt-10">{children}</div>}
+          {children && <div className="mt-8 motion-safe:animate-aparecer [animation-delay:130ms] md:mt-10">{children}</div>}
         </div>
       </Contenedor>
     </div>

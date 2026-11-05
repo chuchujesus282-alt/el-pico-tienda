@@ -36,7 +36,7 @@ export default function CamposFiscales({
   return (
     <>
       {/* Persona o empresa: dos mitades de un mismo control, la elegida en blanco. */}
-      <fieldset className="motion-safe:animate-aparecer [animation-delay:480ms]">
+      <fieldset className="motion-safe:animate-aparecer [animation-delay:240ms]">
         <legend className="sr-only">¿Para quién es la cuenta?</legend>
         <div className="relative grid grid-cols-2 gap-1 rounded-tarjeta bg-gris-fondo p-1">
           {/* La píldora blanca se desliza hacia la opción elegida. */}
@@ -79,10 +79,10 @@ export default function CamposFiscales({
         placeholder={empresa ? "Ej. Construcciones Ávila, C.A." : "Ej. María Pérez"}
         defaultValue={inicial?.nombre}
         error={errores.nombre}
-        className="motion-safe:animate-aparecer [animation-delay:540ms]"
+        className="motion-safe:animate-aparecer [animation-delay:270ms]"
       />
 
-      <div className="grid gap-5 sm:grid-cols-2 sm:gap-4 motion-safe:animate-aparecer [animation-delay:600ms]">
+      <div className="grid gap-5 sm:grid-cols-2 sm:gap-4 motion-safe:animate-aparecer [animation-delay:300ms]">
         <div className="flex flex-col gap-1.5">
           <label htmlFor="numeroDocumento" className="text-sm font-semibold text-pico-azul">
             {empresa ? "RIF" : "Cédula o RIF"}

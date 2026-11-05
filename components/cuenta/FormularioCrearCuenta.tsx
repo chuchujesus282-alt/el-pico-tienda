@@ -100,7 +100,7 @@ export default function FormularioCrearCuenta() {
     // Campos grandes, como en iniciar sesión (los de crear cuenta normal en otras pantallas no cambian).
     <div className="flex flex-col gap-7 [&_input:not([type=checkbox])]:h-14 [&_input:not([type=checkbox])]:pl-4 [&_input:not([type=checkbox])]:text-base [&_label]:text-[15px]">
       <BotonesSociales disabled={enviando} cascada={250} volverA="/mis-direcciones" />
-      <div className="motion-safe:animate-aparecer [animation-delay:420ms]">
+      <div className="motion-safe:animate-aparecer [animation-delay:210ms]">
         <Separador texto="o con tu correo" />
       </div>
 
@@ -123,10 +123,10 @@ export default function FormularioCrearCuenta() {
           inputMode="email"
           placeholder="nombre@correo.com"
           error={errores.correo}
-          className="motion-safe:animate-aparecer [animation-delay:660ms]"
+          className="motion-safe:animate-aparecer [animation-delay:330ms]"
         />
 
-        <div className="grid gap-5 sm:grid-cols-2 sm:gap-4 motion-safe:animate-aparecer [animation-delay:720ms]">
+        <div className="grid gap-5 sm:grid-cols-2 sm:gap-4 motion-safe:animate-aparecer [animation-delay:360ms]">
           <CampoContrasena
             id="contrasena"
             etiqueta="Contraseña"
@@ -149,7 +149,7 @@ export default function FormularioCrearCuenta() {
           )}
         </div>
 
-        <div className="motion-safe:animate-aparecer [animation-delay:780ms]">
+        <div className="motion-safe:animate-aparecer [animation-delay:390ms]">
           <label className="flex cursor-pointer items-start gap-3">
             <input
               id="aceptaPoliticas"
@@ -181,7 +181,7 @@ export default function FormularioCrearCuenta() {
           </div>
         )}
 
-        <div className="mt-1 flex flex-col gap-3 motion-safe:animate-aparecer [animation-delay:840ms]">
+        <div className="mt-1 flex flex-col gap-3 motion-safe:animate-aparecer [animation-delay:420ms]">
           <Boton type="submit" anchoCompleto disabled={enviando} className="h-14! text-lg!">
             {enviando ? (
               <>

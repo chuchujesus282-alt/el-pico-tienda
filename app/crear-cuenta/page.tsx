@@ -27,8 +27,8 @@ export default function PaginaCrearCuenta() {
         <div className="mx-auto my-auto w-full max-w-xl pt-8">
           <div className="text-center">
             <Montanas className="mx-auto h-14 w-auto fill-pico-rojo motion-safe:animate-caer md:h-16" />
-            <h1 className="mt-6 text-4xl font-bold text-pico-azul motion-safe:animate-aparecer [animation-delay:120ms] md:text-5xl">Crea tu cuenta</h1>
-            <p className="mt-4 text-base text-gris-texto motion-safe:animate-aparecer [animation-delay:190ms]">
+            <h1 className="mt-6 text-4xl font-bold text-pico-azul motion-safe:animate-aparecer [animation-delay:60ms] md:text-5xl">Crea tu cuenta</h1>
+            <p className="mt-4 text-base text-gris-texto motion-safe:animate-aparecer [animation-delay:95ms]">
               ¿Ya tienes cuenta?{" "}
               <Link href="/iniciar-sesion" className="font-semibold text-pico-rojo underline underline-offset-4 hover:text-pico-rojo-oscuro">
                 Inicia sesión

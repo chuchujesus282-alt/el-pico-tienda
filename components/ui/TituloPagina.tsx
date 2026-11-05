@@ -49,13 +49,13 @@ export default function TituloPagina({ titulo, descripcion, contador, acciones, 
           )}
         </h1>
         {descripcion && (
-          <p className="mt-2 max-w-[60ch] text-[15px] leading-relaxed text-gris-texto motion-safe:animate-aparecer motion-safe:[animation-delay:80ms] md:text-base">
+          <p className="mt-2 max-w-[60ch] text-[15px] leading-relaxed text-gris-texto motion-safe:animate-aparecer motion-safe:[animation-delay:40ms] md:text-base">
             {descripcion}
           </p>
         )}
-        {children && <div className="mt-4 motion-safe:animate-aparecer motion-safe:[animation-delay:140ms]">{children}</div>}
+        {children && <div className="mt-4 motion-safe:animate-aparecer motion-safe:[animation-delay:70ms]">{children}</div>}
       </div>
-      {acciones && <div className="flex shrink-0 flex-wrap gap-2 motion-safe:animate-aparecer motion-safe:[animation-delay:120ms]">{acciones}</div>}
+      {acciones && <div className="flex shrink-0 flex-wrap gap-2 motion-safe:animate-aparecer motion-safe:[animation-delay:60ms]">{acciones}</div>}
     </header>
   );
 }

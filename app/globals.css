@@ -60,7 +60,8 @@
   --shadow-placa: inset 0 1px 2px rgb(12 45 78 / 0.12), inset 0 -1px 0 rgb(255 255 255 / 0.6);
   --shadow-header: inset 0 1px 0 rgb(255 255 255 / 0.7), 0 4px 14px -8px rgb(12 45 78 / 0.25);
 
-  --animate-aparecer: aparecer 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+  /* Corto a propósito: con 0.6 s la página tardaba en "estar" aunque ya hubiera llegado. */
+  --animate-aparecer: aparecer 0.3s cubic-bezier(0.16, 1, 0.3, 1) both;
   --animate-trazo: trazo 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.1s both;
   --animate-latido: latido 0.4s ease-out;
   --animate-flotar: flotar 6s ease-in-out infinite;
@@ -678,8 +679,21 @@ p {
 @media (prefers-reduced-motion: no-preference) {
   .transicion-pagina {
     /* backwards (no both): al terminar deja de aplicarse y no queda una capa que tape modales bajo el header. */
-    animation: fundido 0.35s var(--curva-suave) backwards;
+    animation: fundido 0.15s var(--curva-suave) backwards;
   }
+}
+
+/* Barra de carga al tocar un enlace (components/layout/BarraNavegacion.tsx): avanza rápido al principio y frena
+   cerca del final hasta que llega la página. */
+@keyframes avance-navegacion {
+  0% { transform: scaleX(0); }
+  15% { transform: scaleX(0.45); }
+  50% { transform: scaleX(0.75); }
+  100% { transform: scaleX(0.95); }
+}
+.barra-navegacion {
+  transform-origin: left;
+  animation: avance-navegacion 6s cubic-bezier(0.1, 0.7, 0.2, 1) forwards;
 }
 
 /* Tira de calculadoras del inicio (components/inicio/BannerCalculadorasInicio.tsx). */

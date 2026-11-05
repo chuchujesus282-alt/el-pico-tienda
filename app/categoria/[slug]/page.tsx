@@ -127,7 +127,7 @@ export default async function PaginaCategoria({ params, searchParams }: PageProp
             empiezan a la MISMA altura (pedido de persona B: antes la caja arrancaba más arriba que las tarjetas). */}
         <div className="lg:grid lg:grid-cols-[15rem_minmax(0,1fr)] lg:gap-x-8">
           <aside aria-label="Filtros" className="hidden lg:col-start-1 lg:row-start-2 lg:block">
-            <div className="sticky top-6 rounded-banner border border-gris-borde bg-pico-blanco p-5 shadow-tarjeta motion-safe:animate-aparecer [animation-delay:120ms]">
+            <div className="sticky top-6 rounded-banner border border-gris-borde bg-pico-blanco p-5 shadow-tarjeta motion-safe:animate-aparecer [animation-delay:60ms]">
               {filtros}
             </div>
           </aside>

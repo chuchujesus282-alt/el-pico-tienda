@@ -1,4 +1,6 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
+import BarraNavegacion from "@/components/layout/BarraNavegacion";
 import ProveedorCarrito from "@/components/carrito/ProveedorCarrito";
 import SincronizarCuenta from "@/components/cuenta/SincronizarCuenta";
 import BarraInferior from "@/components/layout/BarraInferior";
@@ -23,6 +25,10 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="es-VE" className={chakra.variable}>
       <body className="flex min-h-dvh flex-col">
+        {/* Barra de carga al tocar un enlace (Suspense: lee la dirección sin volver dinámicas las páginas fijas). */}
+        <Suspense fallback={null}>
+          <BarraNavegacion />
+        </Suspense>
         <ProveedorCarrito>
           {/* Con la sesión abierta, el carrito y los favoritos se guardan también en la cuenta. */}
           <SincronizarCuenta />

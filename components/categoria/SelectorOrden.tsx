@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { ChevronDown } from "lucide-react";
+import { avisarNavegacion } from "@/components/layout/BarraNavegacion";
 import type { OrdenProductos } from "@/types/catalogo";
 
 type Props = {
@@ -22,7 +23,9 @@ export default function SelectorOrden({ actual, opciones }: Props) {
           value={actual}
           onChange={(e) => {
             const opcion = opciones.find((o) => o.valor === e.target.value);
-            if (opcion) router.push(opcion.href, { scroll: false });
+            if (!opcion) return;
+            avisarNavegacion();
+            router.push(opcion.href, { scroll: false });
           }}
           aria-label="Ordenar por"
           className="h-10 cursor-pointer appearance-none rounded-boton border-2 border-gris-borde bg-pico-blanco pr-9 pl-3 font-semibold text-logo-marino transition-colors hover:border-logo-marino/40 focus-visible:border-logo-marino focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-logo-marino"

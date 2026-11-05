@@ -119,7 +119,7 @@ function Formulario({ existente, salida }: { existente?: Direccion; salida: stri
       <div className="flex flex-col border-t border-gris-borde">
         <div className="grid gap-6 p-5 md:grid-cols-2 md:gap-x-8 md:p-7">
           {/* Estado del punto: confirma que ya quedó marcado y late cada vez que se ajusta. */}
-          <div className="flex items-center gap-3 rounded-tarjeta bg-pico-azul-claro px-4 py-3 motion-safe:animate-aparecer [animation-delay:120ms] md:col-span-2">
+          <div className="flex items-center gap-3 rounded-tarjeta bg-pico-azul-claro px-4 py-3 motion-safe:animate-aparecer [animation-delay:60ms] md:col-span-2">
             <span key={ajustes} className="shrink-0 motion-safe:animate-latido">
               <PinMapa className="h-8" />
             </span>
@@ -129,7 +129,7 @@ function Formulario({ existente, salida }: { existente?: Direccion; salida: stri
             </span>
           </div>
 
-          <fieldset className="flex flex-col gap-3 motion-safe:animate-aparecer [animation-delay:200ms]">
+          <fieldset className="flex flex-col gap-3 motion-safe:animate-aparecer [animation-delay:100ms]">
             <legend className="mb-3 text-[15px] font-semibold text-pico-azul">¿Qué lugar es?</legend>
             <div className="grid grid-cols-4 gap-2">
               {SUGERENCIAS.map(({ nombre: s, Icono }) => {
@@ -178,7 +178,7 @@ function Formulario({ existente, salida }: { existente?: Direccion; salida: stri
             )}
           </fieldset>
 
-          <div className="flex flex-col gap-2 motion-safe:animate-aparecer [animation-delay:280ms]">
+          <div className="flex flex-col gap-2 motion-safe:animate-aparecer [animation-delay:140ms]">
             <div className="flex items-baseline justify-between gap-3">
               <label htmlFor="direccion-descripcion" className="text-[15px] font-semibold text-pico-azul">
                 ¿Cómo llega el repartidor?
@@ -222,7 +222,7 @@ function Formulario({ existente, salida }: { existente?: Direccion; salida: stri
         </div>
 
         {/* Botones del mismo tamaño, cerrando la tarjeta (a lo ancho en el teléfono, a la derecha desde tableta). */}
-        <div className="grid grid-cols-2 gap-3 border-t border-gris-borde bg-gris-fondo/40 px-5 py-4 motion-safe:animate-aparecer [animation-delay:360ms] md:flex md:justify-end md:px-7 md:[&>*]:w-52">
+        <div className="grid grid-cols-2 gap-3 border-t border-gris-borde bg-gris-fondo/40 px-5 py-4 motion-safe:animate-aparecer [animation-delay:180ms] md:flex md:justify-end md:px-7 md:[&>*]:w-52">
           <Boton href={salida} variante="secundario" className="h-12!">
             Cancelar
           </Boton>
