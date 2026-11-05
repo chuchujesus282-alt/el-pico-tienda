@@ -434,6 +434,11 @@ describe("agrupar", () => {
     expect(f("MULTILAC TINTA EN GALON")).toBe("tinta-gal.webp");
   });
 
+  it("OCI: toda pintura en spray con la misma foto", () => {
+    expect(fotoPorNombre("OCI/NIKATO PINTURA SPRAY CUALQUIER COLOR", "OCI")).toBe("/productos/oci/spray.webp");
+    expect(fotoPorNombre("OCI PINTURA SPRAY ALTA TEMPERATURA", "OCI")).toBe("/productos/oci/spray.webp");
+  });
+
   it("Adesi-Top: cada producto con su envase y tamaño (nombres reales de Saint); sin foto, nada", () => {
     const f = (nombre: string) => fotoPorNombre(nombre, "ADESI-TOP")?.replace("/productos/adesitop/", "");
     const casos: [string, string | undefined][] = [

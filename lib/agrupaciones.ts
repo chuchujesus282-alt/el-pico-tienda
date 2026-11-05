@@ -60,6 +60,8 @@ export function fotoPorNombre(nombre: string, marca: string | null): string | un
   if (/^EUROFLEX\b/.test(n)) return fotoMasilla(n, "/productos/euroflex/"); // en Saint, marca MICROFLEX
   if (/^MASIFLEX\b/.test(n)) return fotoMasilla(n, "/productos/masiflex/");
   if (/^MICROFLEX\b/.test(n)) return fotoMasilla(n, "/productos/microflex/");
+  // OCI: toda pintura en spray (cualquier color, alta temperatura…) con la foto de las latas de colores.
+  if ((/^OCI$/i.test(marca ?? "") || /\bOCI\b/.test(n)) && /SPRAY/.test(n)) return "/productos/oci/spray.webp";
   // Tinta Multilac: la misma foto (las dos botellas) en todas, más grande mientras más trae: 250, 450, 950 cc y galón.
   if (/MULTILAC.*TINTA/.test(n)) {
     const tam = /\b250 ?CC/.test(n) ? "250" : /\b450 ?CC/.test(n) ? "450" : /\b950 ?CC/.test(n) ? "950" : /\bGAL/.test(n) ? "gal" : null;
