@@ -133,15 +133,12 @@ export default function FiltrosCategoria({ slug, estado, nombreCategoria, navega
 
   let opcionesSub: Opcion[] = [];
   if (navegacion) {
-    // En el último nivel (la actual marcada entre sus hermanas) el "Todo en …" es el de su nivel de arriba: así nunca
-    // desaparece al elegir una subcategoría y se vuelve a todo el grupo con un toque (pedido de persona B).
-    const padre = navegacion.sonHermanas ? navegacion.ruta.at(-2) : actual;
     opcionesSub = [
-      {
-        etiqueta: `Todo en ${padre?.nombre ?? nombreCategoria}`,
-        href: aNivel(padre?.codigo),
-        activa: !navegacion.sonHermanas,
-      },
+      // Arriba de las hijas, el nivel actual completo (como "Todas" en el primer nivel). En el último nivel no hace falta:
+      // la actual va marcada entre sus hermanas.
+      ...(navegacion.sonHermanas
+        ? []
+        : [{ etiqueta: actual ? `Todo en ${actual.nombre}` : "Todas", href: aNivel(actual?.codigo), activa: true }]),
       ...navegacion.opciones.map((o) => ({
         etiqueta: o.nombre,
         href: aNivel(o.codigo),
@@ -151,7 +148,7 @@ export default function FiltrosCategoria({ slug, estado, nombreCategoria, navega
     ];
   } else if (subcategorias.length > 0) {
     opcionesSub = [
-      { etiqueta: `Todo en ${nombreCategoria}`, href: hrefCategoria(slug, estado, { subcategoria: undefined }), activa: !estado.subcategoria },
+      { etiqueta: "Todas", href: hrefCategoria(slug, estado, { subcategoria: undefined }), activa: !estado.subcategoria },
       ...subcategorias.map((s) => ({
         etiqueta: s,
         href: hrefCategoria(slug, estado, { subcategoria: s }),
