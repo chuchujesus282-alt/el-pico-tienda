@@ -280,6 +280,10 @@ html {
 .lista-filtros::-webkit-scrollbar {
   width: 6px;
 }
+.lista-filtros::-webkit-scrollbar-track {
+  border-radius: 9999px;
+  background: var(--color-gris-fondo);
+}
 .lista-filtros::-webkit-scrollbar-thumb {
   border-radius: 9999px;
   background: color-mix(in srgb, var(--color-logo-marino) 45%, transparent);
