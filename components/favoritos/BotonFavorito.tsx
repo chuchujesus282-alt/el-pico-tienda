@@ -68,7 +68,8 @@ export default function BotonFavorito({ productoId, titulo, variante = "tarjeta"
           {corazon}
           {activo && toques > 0 && <Estallido key={`estallido-${toques}`} />}
         </span>
-        {activo ? "Guardado" : "Guardar"}
+        {/* En el teléfono, solo el corazón (el aria-label ya dice qué hace). */}
+        <span className="max-sm:sr-only">{activo ? "Guardado" : "Guardar"}</span>
       </button>
     );
   }

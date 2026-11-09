@@ -66,7 +66,9 @@ export default async function Footer() {
   }
 
   return (
-    <footer className="relative isolate mt-16 overflow-hidden bg-gradient-to-br from-pico-azul via-pico-azul to-pico-azul-oscuro text-pico-blanco md:mt-24">
+    // En el teléfono más corto: sin la columna de categorías (ya están en la pestaña "Categorías" de la barra de abajo)
+    // y con menos aire (pedido de persona B, menos ruido).
+    <footer className="relative isolate mt-10 overflow-hidden bg-gradient-to-br from-pico-azul via-pico-azul to-pico-azul-oscuro text-pico-blanco md:mt-24">
       {/* Montañas del logo, grandes y tenues, meciéndose despacio de fondo. */}
       <Montanas className="pointer-events-none absolute -right-20 -bottom-16 -z-10 w-[30rem] fill-pico-blanco/[0.04] motion-safe:animate-deriva md:w-[46rem]" />
       <Montanas className="pointer-events-none absolute top-24 -left-24 -z-10 hidden w-80 -scale-x-100 fill-pico-blanco/[0.025] lg:block" />
@@ -76,8 +78,8 @@ export default async function Footer() {
         <span className="absolute inset-y-0 left-0 w-1/4 bg-gradient-to-r from-transparent via-pico-blanco/60 to-transparent motion-safe:animate-destello" />
       </div>
 
-      <Contenedor className="grid grid-cols-2 gap-x-6 gap-y-10 py-12 lg:grid-cols-[1.3fr_2fr_1fr_1fr] lg:gap-12 lg:py-16">
-        <Revelar className="col-span-2 space-y-6 md:col-span-1">
+      <Contenedor className="grid grid-cols-2 gap-x-6 gap-y-8 py-8 md:gap-y-10 md:py-12 lg:grid-cols-[1.3fr_2fr_1fr_1fr] lg:gap-12 lg:py-16">
+        <Revelar className="col-span-2 space-y-5 md:col-span-1 md:space-y-6">
           <div className="flex items-center gap-4">
             <Logo tamano="grande" />
             <p className="leading-none">
@@ -111,7 +113,7 @@ export default async function Footer() {
         </Revelar>
 
         {categorias.length > 0 && (
-          <Revelar retraso={100} className="col-span-2 md:col-span-1">
+          <Revelar retraso={100} className="col-span-2 max-md:hidden md:col-span-1">
             <nav aria-label="Categorías">
               <TituloColumna>Categorías</TituloColumna>
               <ul className="grid grid-cols-2 gap-x-4 gap-y-3">
@@ -154,7 +156,7 @@ export default async function Footer() {
 
       <div className="border-t border-pico-blanco/10 bg-pico-azul-oscuro/40">
         {/* Centrado: el botón para subir ahora es la flecha flotante (BotonSubir). */}
-        <Contenedor className="py-5 text-center text-xs text-pico-blanco/60">
+        <Contenedor className="py-4 text-center text-[11px] text-pico-blanco/60 md:py-5 md:text-xs">
           <span>© {new Date().getFullYear()} Centro Ferretero El Pico · RIF {TIENDA.rif} · Todos los derechos reservados.</span>
         </Contenedor>
       </div>

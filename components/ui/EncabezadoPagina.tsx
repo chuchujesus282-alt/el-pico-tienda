@@ -70,7 +70,9 @@ export default function EncabezadoPagina({
 }: Props) {
   return (
     // Tarjeta redondeada sobre el fondo gris, con aire arriba: así no se pega a la barra azul de categorías.
-    <Contenedor className="pt-4 md:pt-6">
+    // En el teléfono todo más compacto (menos aire, título y lupa más chicos): el encabezado solo dice dónde estás y
+    // no se come media pantalla (pedido de persona B, menos ruido). Desde 768px, igual que siempre.
+    <Contenedor className="pt-3 md:pt-6">
     <header className={`grupo-icono group/encabezado relative isolate overflow-hidden rounded-banner ${tono === "plano" ? "tira-plano" : "bg-gradient-to-br from-pico-azul via-pico-azul to-pico-azul-oscuro"} text-pico-blanco shadow-tarjeta-hover print:rounded-none print:bg-none print:text-texto print:shadow-none`}>
       {fondo && (
         <div className="pointer-events-none absolute inset-0 -z-10 print:hidden" aria-hidden>
@@ -95,16 +97,16 @@ export default function EncabezadoPagina({
         <Link
           href="/buscar"
           aria-label="Buscar productos"
-          className={`absolute right-3 z-10 flex size-11 items-center justify-center rounded-chip bg-pico-blanco/10 text-pico-blanco ring-1 ring-pico-blanco/15 transition-colors hover:bg-pico-blanco/20 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-pico-blanco md:hidden print:hidden ${
+          className={`area-tactil absolute right-3 z-10 flex size-9 items-center justify-center rounded-chip bg-pico-blanco/10 text-pico-blanco ring-1 ring-pico-blanco/15 transition-colors hover:bg-pico-blanco/20 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-pico-blanco md:hidden print:hidden ${
             titulo ? "top-3" : "inset-y-0 my-auto"
           }`}
         >
-          <Search className="size-5" aria-hidden />
+          <Search className="size-[18px]" aria-hidden />
         </Link>
       )}
 
       <div
-        className={`${!titulo ? "px-5 py-3 md:px-10 lg:px-12" : compacto ? "px-5 py-4 md:px-10 md:py-5 lg:px-12" : "px-5 py-6 md:px-10 md:py-9 lg:px-12"} ${lupa && !escena ? "max-md:pr-16" : ""} ${
+        className={`${!titulo ? "px-4 py-2.5 md:px-10 md:py-3 lg:px-12" : compacto ? "px-4 py-3.5 md:px-10 md:py-5 lg:px-12" : "px-4 py-4 md:px-10 md:py-9 lg:px-12"} ${lupa && !escena ? "max-md:pr-14" : ""} ${
           escena
             ? // Encima de la escena (z-10) sin taparla: solo la ruta y el título reciben el mouse.
               "pointer-events-none relative z-10 flex min-h-[12rem] flex-col justify-center pr-[46%]! *:pointer-events-auto md:min-h-[15rem] md:pr-[51%]! xl:min-h-[17rem]"
@@ -115,7 +117,7 @@ export default function EncabezadoPagina({
       >
         <div className={ilustracion ? "min-w-0" : "contents"}>
         {ruta && (
-          <nav aria-label="Ruta de navegación" className="text-[13px] text-pico-blanco/70 print:hidden">
+          <nav aria-label="Ruta de navegación" className="text-xs text-pico-blanco/70 md:text-[13px] print:hidden">
             <ol className="flex flex-wrap items-center gap-1">
               <li>
                 <Link
@@ -146,7 +148,7 @@ export default function EncabezadoPagina({
         )}
 
         {titulo && (
-          <div className={`motion-safe:animate-aparecer ${ruta ? (compacto ? "mt-3" : "mt-4 md:mt-5") : ""}`}>
+          <div className={`motion-safe:animate-aparecer ${ruta ? (compacto ? "mt-2.5 md:mt-3" : "mt-3 md:mt-5") : ""}`}>
             {tituloPartes ? (
               // La palabra crece junto con su sello al pasar el mouse por el encabezado, desde la izquierda y con rebote.
               <h1 className="font-bold">
@@ -168,7 +170,7 @@ export default function EncabezadoPagina({
                 <span className="block h-1 w-10 -skew-x-12 rounded-sm bg-pico-rojo lg:w-14 print:hidden" aria-hidden />
                 {etiqueta && <span className="mt-3 block text-xs font-semibold tracking-[0.25em] text-pico-blanco/70 uppercase">{etiqueta}</span>}
                 <h1
-                  className={`max-w-4xl leading-tight font-bold text-balance ${compacto ? "text-2xl md:text-4xl" : "text-3xl md:text-5xl"} ${etiqueta ? "mt-1" : compacto ? "mt-2" : "mt-3"}`}
+                  className={`max-w-4xl leading-tight font-bold text-balance ${compacto ? "text-[1.375rem] md:text-4xl" : "text-[1.625rem] md:text-5xl"} ${etiqueta ? "mt-1" : compacto ? "mt-2" : "mt-2.5 md:mt-3"}`}
                 >{titulo}</h1>
               </>
             )}

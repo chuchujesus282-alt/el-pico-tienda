@@ -51,9 +51,10 @@ export default function CodigoCompartir({ codigo, titulo }: Props) {
         {aviso === "codigo" ? <Check className="size-3.5" aria-hidden /> : <Copy className="size-3.5" aria-hidden />}
         {aviso === "codigo" ? "¡Copiado!" : `Cód. ${codigo}`}
       </button>
-      <button type="button" onClick={compartir} className={claseBoton}>
+      {/* En el teléfono, solo el ícono: así los chips caben en una línea (menos ruido). */}
+      <button type="button" onClick={compartir} className={claseBoton} aria-label="Compartir producto">
         {aviso === "enlace" ? <Check className="size-3.5" aria-hidden /> : <Share2 className="size-3.5" aria-hidden />}
-        {aviso === "enlace" ? "Enlace copiado" : "Compartir"}
+        <span className="max-sm:sr-only">{aviso === "enlace" ? "Enlace copiado" : "Compartir"}</span>
       </button>
     </div>
   );
