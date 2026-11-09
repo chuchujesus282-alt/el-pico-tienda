@@ -257,6 +257,22 @@ html {
   scrollbar-width: thin;
   scrollbar-color: color-mix(in srgb, var(--color-pico-azul) 35%, transparent) transparent;
   -webkit-tap-highlight-color: transparent;
+  /* Espacio de la barra siempre reservado: al abrir el carrito (o cualquier panel que bloquea el fondo) la barra se
+     esconde y, sin esto, toda la página se ensanchaba de golpe (pedido de persona B). */
+  scrollbar-gutter: stable;
+}
+
+/* Listas de filtros de la categoría (components/categoria/FiltrosCategoria.tsx): barra de desplazamiento visible. */
+.lista-filtros {
+  scrollbar-width: thin;
+  scrollbar-color: color-mix(in srgb, var(--color-logo-marino) 45%, transparent) var(--color-gris-fondo);
+}
+.lista-filtros::-webkit-scrollbar {
+  width: 6px;
+}
+.lista-filtros::-webkit-scrollbar-thumb {
+  border-radius: 9999px;
+  background: color-mix(in srgb, var(--color-logo-marino) 45%, transparent);
 }
 
 /* Los saltos a un ancla (#…) no quedan tapados por el header fijo: el margen va en el destino (:target), NO como

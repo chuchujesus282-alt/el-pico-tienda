@@ -23,7 +23,8 @@ export default function FormularioInicioSesion() {
     if (resultado.ok) {
       // La cookie ya viene puesta: se avisa al header (useSession) para que muestre la cuenta sin recargar.
       authCliente.$store.notify("$sessionSignal");
-      router.push("/");
+      router.replace("/"); // replace: el "atrás" no vuelve al formulario de entrar
+
     } else setMensaje(resultado.mensaje);
   };
 
@@ -44,9 +45,10 @@ export default function FormularioInicioSesion() {
   };
 
   return (
-    // Versión grande de los campos (solo aquí; crear cuenta usa el tamaño normal).
-    <div className="flex flex-col gap-7 [&_input]:h-14 [&_input]:pl-4 [&_input]:text-base [&_label]:text-[15px]">
-      <form onSubmit={enviar} noValidate className="flex flex-col gap-5">
+    // Versión grande de los campos (solo aquí; crear cuenta usa el tamaño normal). En pantallas bajas (teléfono con las
+    // barras del navegador) todo un poco más compacto, para que la página quepa sin desplazarse.
+    <div className="flex flex-col gap-5 [&_input]:h-12 [&_input]:pl-4 [&_input]:text-base [&_label]:text-[15px] [@media(min-height:760px)]:gap-7 [@media(min-height:760px)]:[&_input]:h-14">
+      <form onSubmit={enviar} noValidate className="flex flex-col gap-4 [@media(min-height:760px)]:gap-5">
         <Campo
           id="correo"
           etiqueta="Correo electrónico"
@@ -71,13 +73,14 @@ export default function FormularioInicioSesion() {
 
         {mensaje && <Aviso tipo="info">{mensaje}</Aviso>}
 
-        <Boton type="submit" anchoCompleto disabled={enviando} className="mt-2 h-14! text-lg!">
+        <Boton type="submit" anchoCompleto disabled={enviando} className="mt-1 h-12! text-lg! [@media(min-height:760px)]:mt-2 [@media(min-height:760px)]:h-14!">
           {enviando ? "Entrando…" : "Iniciar sesión"}
         </Boton>
       </form>
 
       <Separador texto="o continúa con" />
-      <BotonesSociales disabled={enviando} />
+      {/* Al volver de Google, al inicio como con la contraseña (sin esto volvía aquí y se veía este formulario). */}
+      <BotonesSociales disabled={enviando} volverA="/" />
     </div>
   );
 }

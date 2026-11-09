@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { ChevronLeft } from "lucide-react";
 import FormularioInicioSesion from "@/components/cuenta/FormularioInicioSesion";
+import SalirSiHaySesion from "@/components/cuenta/SalirSiHaySesion";
 import IconoCorazon from "@/components/icons/pico/IconoCorazon";
 import IconoMensaje from "@/components/icons/pico/IconoMensaje";
 import IconoTienda from "@/components/icons/pico/IconoTienda";
@@ -25,6 +26,8 @@ const beneficios = [
 export default function PaginaIniciarSesion() {
   return (
     <div className="grid min-h-dvh bg-pico-blanco lg:grid-cols-[minmax(0,1fr)_minmax(0,1.15fr)]">
+      {/* Con la sesión ya abierta, esta página no se muestra: va a Mi cuenta. */}
+      <SalirSiHaySesion />
       {/* Panel de marca (solo desde 1024px). */}
       <aside className="relative hidden overflow-hidden bg-gradient-to-br from-pico-azul via-pico-azul to-pico-azul-oscuro p-10 text-pico-blanco lg:flex lg:flex-col xl:p-14">
         <Link href="/" className="inline-flex items-center gap-3 self-start rounded-boton focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-pico-blanco">
@@ -71,18 +74,19 @@ export default function PaginaIniciarSesion() {
           Volver a la tienda
         </Link>
 
-        {/* my-auto: el formulario queda centrado en la pantalla, con aire arriba en pantallas bajas. */}
-        <div className="mx-auto my-auto w-full max-w-lg pt-8 text-center motion-safe:animate-aparecer">
-          <Montanas className="mx-auto h-16 w-auto fill-pico-rojo motion-safe:animate-caer md:h-20 lg:hidden" />
-          <h1 className="mt-7 text-4xl font-bold tracking-tight text-pico-azul md:text-5xl lg:mt-0">Bienvenido</h1>
-          <p className="mt-4 text-base text-gris-texto">
+        {/* my-auto: el formulario queda centrado en la pantalla. Espacios más cortos en el teléfono: así cabe entero en
+            una pantalla de teléfono pequeño y la página no se desplaza (pedido de persona B). */}
+        <div className="mx-auto my-auto w-full max-w-lg pt-4 text-center motion-safe:animate-aparecer md:pt-8">
+          <Montanas className="mx-auto h-12 w-auto fill-pico-rojo motion-safe:animate-caer md:h-20 lg:hidden [@media(max-height:680px)]:hidden" />
+          <h1 className="mt-4 text-4xl font-bold tracking-tight text-pico-azul md:mt-7 md:text-5xl lg:mt-0 [@media(max-height:680px)]:mt-0">Bienvenido</h1>
+          <p className="mt-2 text-base text-gris-texto md:mt-4">
             ¿No tienes cuenta?{" "}
             <Link href="/crear-cuenta" className="font-semibold text-pico-rojo underline underline-offset-4 hover:text-pico-rojo-oscuro">
               Crear cuenta
             </Link>
           </p>
 
-          <div className="mt-10 text-left">
+          <div className="mt-6 text-left md:mt-10">
             <FormularioInicioSesion />
           </div>
         </div>

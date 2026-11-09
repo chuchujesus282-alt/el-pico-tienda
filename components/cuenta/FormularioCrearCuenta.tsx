@@ -92,7 +92,7 @@ export default function FormularioCrearCuenta() {
         setClaves({ contrasena: "", confirmacion: "" });
         return setMensaje(resultado.aviso);
       }
-      router.push(rutaBienvenida(cuenta.fiscales.nombre));
+      router.replace(rutaBienvenida(cuenta.fiscales.nombre)); // replace: el "atrás" no vuelve al formulario
     });
   };
 

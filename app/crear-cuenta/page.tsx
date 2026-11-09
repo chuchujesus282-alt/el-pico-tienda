@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { ChevronLeft } from "lucide-react";
 import FormularioCrearCuenta from "@/components/cuenta/FormularioCrearCuenta";
+import SalirSiHaySesion from "@/components/cuenta/SalirSiHaySesion";
 import { Montanas } from "@/components/layout/Logo";
 import Contenedor from "@/components/ui/Contenedor";
 
@@ -14,6 +15,8 @@ export const metadata: Metadata = { title: "Crear cuenta", robots: { index: fals
 export default function PaginaCrearCuenta() {
   return (
     <div className="flex min-h-dvh flex-col bg-pico-blanco">
+      {/* Con la sesión ya abierta, esta página no se muestra: va a Mi cuenta. */}
+      <SalirSiHaySesion />
       <Contenedor className="flex w-full flex-1 flex-col pt-5 pb-[calc(2.5rem+env(safe-area-inset-bottom))] md:pb-16">
         <Link
           href="/iniciar-sesion"

@@ -62,7 +62,9 @@ function GrupoFiltro({ titulo, opciones, cabecera }: { titulo: string; opciones:
     <fieldset>
       <legend className="mb-2 font-titulo text-xs font-bold tracking-[0.18em] text-logo-marino uppercase">{titulo}</legend>
       {cabecera}
-      <ul className="space-y-1">
+      {/* Lista larga: se desplaza por dentro (rueda del mouse o deslizando el dedo) con su propia barra, así no hay
+          que bajar hasta el fondo de la página para elegir otra (pedido de persona B). */}
+      <ul className="lista-filtros max-h-[min(24rem,50dvh)] space-y-1 overflow-y-auto overscroll-contain pr-1">
         {opciones.map((opcion) => (
           <Fila key={opcion.href} opcion={opcion} />
         ))}
@@ -131,12 +133,15 @@ export default function FiltrosCategoria({ slug, estado, nombreCategoria, navega
 
   let opcionesSub: Opcion[] = [];
   if (navegacion) {
+    // En el último nivel (la actual marcada entre sus hermanas) el "Todo en …" es el de su nivel de arriba: así nunca
+    // desaparece al elegir una subcategoría y se vuelve a todo el grupo con un toque (pedido de persona B).
+    const padre = navegacion.sonHermanas ? navegacion.ruta.at(-2) : actual;
     opcionesSub = [
-      // Arriba de las hijas, el nivel actual completo (como "Todas" en el primer nivel). En el último nivel no hace falta:
-      // la actual va marcada entre sus hermanas.
-      ...(navegacion.sonHermanas
-        ? []
-        : [{ etiqueta: actual ? `Todo en ${actual.nombre}` : "Todas", href: aNivel(actual?.codigo), activa: true }]),
+      {
+        etiqueta: `Todo en ${padre?.nombre ?? nombreCategoria}`,
+        href: aNivel(padre?.codigo),
+        activa: !navegacion.sonHermanas,
+      },
       ...navegacion.opciones.map((o) => ({
         etiqueta: o.nombre,
         href: aNivel(o.codigo),
@@ -146,7 +151,7 @@ export default function FiltrosCategoria({ slug, estado, nombreCategoria, navega
     ];
   } else if (subcategorias.length > 0) {
     opcionesSub = [
-      { etiqueta: "Todas", href: hrefCategoria(slug, estado, { subcategoria: undefined }), activa: !estado.subcategoria },
+      { etiqueta: `Todo en ${nombreCategoria}`, href: hrefCategoria(slug, estado, { subcategoria: undefined }), activa: !estado.subcategoria },
       ...subcategorias.map((s) => ({
         etiqueta: s,
         href: hrefCategoria(slug, estado, { subcategoria: s }),
