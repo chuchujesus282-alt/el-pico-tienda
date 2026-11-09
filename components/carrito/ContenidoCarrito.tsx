@@ -136,14 +136,51 @@ export default function ContenidoCarrito({ modo, alCerrar, claveCascada }: Props
         ))}
       </ul>
 
-      {/* En la página, el total queda pegado abajo (sobre la barra inferior del teléfono) mientras bajas por la lista. */}
-      <div
-        className={
-          enPagina
-            ? "sticky bottom-(--alto-barra-inferior) z-10 mt-4 space-y-3 rounded-tarjeta border border-gris-borde bg-pico-blanco p-4 shadow-tarjeta-hover md:bottom-4"
-            : "space-y-3 border-t border-gris-borde bg-pico-blanco px-5 pt-4 pb-5"
-        }
-      >
+      {enPagina ? (
+        <>
+          {/* Debajo de la lista, discreto: el aviso, seguir comprando y vaciar (antes iban en la barra fija y la hacían
+              enorme en el teléfono). */}
+          <div className="mt-4 space-y-3 px-1">
+            <p className="text-xs leading-relaxed text-gris-texto">
+              No cobramos en la web: te confirmamos disponibilidad y forma de pago por WhatsApp.
+            </p>
+            <div className="flex items-center justify-between gap-3">
+              <Link
+                href="/"
+                className={`group inline-flex items-center gap-1.5 rounded-boton py-1 text-sm font-semibold text-pico-azul hover:underline ${claseFoco}`}
+              >
+                <ArrowLeft className="size-4 transition-transform duration-300 motion-safe:group-hover:-translate-x-1" aria-hidden />
+                Seguir comprando
+              </Link>
+              <button
+                type="button"
+                onClick={vaciar}
+                className={`group inline-flex cursor-pointer items-center gap-1.5 rounded-boton px-2 py-1 text-sm font-semibold text-gris-texto transition-colors hover:text-pico-rojo ${claseFoco}`}
+              >
+                <Trash2 className="size-4 motion-safe:group-hover:animate-sacudir" aria-hidden />
+                Vaciar carrito
+              </button>
+            </div>
+          </div>
+
+          {/* Pegada abajo (sobre la barra inferior del teléfono) mientras bajas: una sola franja delgada con el total y
+              el botón, como en las apps de tiendas (pedido de persona B: antes era gigante). */}
+          <div className="sticky bottom-[calc(var(--alto-barra-inferior)+0.5rem)] z-10 mt-4 flex items-center gap-3 rounded-tarjeta border border-gris-borde bg-pico-blanco/95 py-2.5 pr-2.5 pl-4 shadow-tarjeta-hover backdrop-blur-md md:bottom-4">
+            <div className="min-w-0 leading-tight">
+              <span className="block text-[11px] font-semibold tracking-wide text-gris-texto uppercase">Total</span>
+              <span key={total} className="block motion-safe:animate-latido">
+                <Precio valor={total} className="font-titulo text-xl" />
+              </span>
+            </div>
+            {/* El pedido se cierra en /finalizar-pedido (retiro + pago) y de ahí sale a WhatsApp. */}
+            <Boton href="/finalizar-pedido" className="ml-auto h-11 shrink-0 px-5 text-[15px]">
+              Finalizar compra
+              <ArrowRight className="size-4 transition-transform duration-300 motion-safe:group-hover/boton:translate-x-1" aria-hidden />
+            </Boton>
+          </div>
+        </>
+      ) : (
+      <div className="space-y-3 border-t border-gris-borde bg-pico-blanco px-5 pt-4 pb-5">
         <div className="flex items-end justify-between">
           <span className="text-sm font-semibold text-pico-azul">Total referencial</span>
           <span key={total} className="motion-safe:animate-latido">
@@ -160,17 +197,10 @@ export default function ContenidoCarrito({ modo, alCerrar, claveCascada }: Props
           <ArrowRight className="size-4 transition-transform duration-300 motion-safe:group-hover/boton:translate-x-1" aria-hidden />
         </Boton>
         <div className="flex items-center gap-3">
-          {enPagina ? (
-            <Link href="/" className={claseSeguir}>
-              <ArrowLeft className="size-4 transition-transform duration-300 motion-safe:group-hover:-translate-x-1" aria-hidden />
-              Seguir comprando
-            </Link>
-          ) : (
-            <button type="button" onClick={alCerrar} className={claseSeguir}>
-              <ArrowLeft className="size-4 transition-transform duration-300 motion-safe:group-hover:-translate-x-1" aria-hidden />
-              Seguir comprando
-            </button>
-          )}
+          <button type="button" onClick={alCerrar} className={claseSeguir}>
+            <ArrowLeft className="size-4 transition-transform duration-300 motion-safe:group-hover:-translate-x-1" aria-hidden />
+            Seguir comprando
+          </button>
           <button
             type="button"
             onClick={vaciar}
@@ -181,6 +211,7 @@ export default function ContenidoCarrito({ modo, alCerrar, claveCascada }: Props
           </button>
         </div>
       </div>
+      )}
     </>
   );
 }

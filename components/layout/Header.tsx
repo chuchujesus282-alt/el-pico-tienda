@@ -16,19 +16,22 @@ import TasaBCV from "./TasaBCV";
  */
 export default function Header() {
   return (
-    // Desde 768px queda fijo arriba; al bajar la página (html[data-desplazado]) se vuelve translúcido con
-    // desenfoque y una sombra más marcada, y el logo se achica un poco (solo transform: el alto no cambia).
-    <header className="relative z-40 border-b border-pico-azul/10 bg-pico-azul-claro shadow-header transition-[background-color,box-shadow] duration-300 md:sticky md:top-0 [html[data-desplazado]_&]:bg-pico-azul-claro/85 [html[data-desplazado]_&]:shadow-tarjeta-hover [html[data-desplazado]_&]:backdrop-blur-md">
+    <>
+    {/* Desde 768px queda fijo arriba; al bajar la página (html[data-desplazado]) se vuelve translúcido con
+        desenfoque y una sombra más marcada, y el logo se achica un poco (solo transform: el alto no cambia).
+        En el teléfono se va con la página: lo único que queda fijo arriba es la barra del buscador (abajo). */}
+    <header className="relative z-40 bg-pico-azul-claro transition-[background-color,box-shadow] duration-300 md:sticky md:top-0 md:border-b md:border-pico-azul/10 md:shadow-header md:[html[data-desplazado]_&]:bg-pico-azul-claro/85 md:[html[data-desplazado]_&]:shadow-tarjeta-hover md:[html[data-desplazado]_&]:backdrop-blur-md">
       <MarcaDesplazamiento />
       {/* En el teléfono es una cuadrícula: la primera fila (logo, tasa, dirección, calculadoras) nunca se parte, aunque
           la píldora de la tasa crezca o el iPhone tenga el texto/zoom más grande; el buscador va solo en la segunda. */}
-      <Contenedor className="grid grid-cols-[auto_minmax(0,1fr)_auto_auto] items-center gap-x-2 gap-y-3 py-3 min-[400px]:gap-x-3 md:flex md:gap-x-6 md:py-4 lg:gap-x-8">
+      <Contenedor className="grid grid-cols-[auto_minmax(0,1fr)_auto_auto] items-center gap-x-2 pt-3 pb-1 min-[400px]:gap-x-3 md:flex md:gap-x-6 md:py-4 lg:gap-x-8">
         <span className="origin-left transition-transform duration-300 ease-(--curva-suave) md:[html[data-desplazado]_&]:scale-[0.88]">
           <Logo placa={false} />
         </span>
 
-        {/* Búsqueda inteligente con sugerencias en vivo (lib/recomendaciones/); Enter lleva a /buscar. */}
-        <BuscadorConSugerencias className="order-last col-span-full w-full md:order-none md:max-w-[45rem] md:min-w-0 md:flex-1" />
+        {/* Búsqueda inteligente con sugerencias en vivo (lib/recomendaciones/); Enter lleva a /buscar. En el teléfono
+            va aparte, en la barra fija de abajo. */}
+        <BuscadorConSugerencias className="hidden md:block md:max-w-[45rem] md:min-w-0 md:flex-1" />
 
         {/* Tasa BCV: píldora que crece con la cifra. En móvil va compacta, en la fila del logo. */}
         <TasaBCV className="ml-auto md:ml-0" />
@@ -46,5 +49,13 @@ export default function Header() {
         </div>
       </Contenedor>
     </header>
+    {/* Teléfono: solo el buscador, compacto, queda pegado arriba al bajar (como en las apps de tiendas). La tasa, la
+        dirección y la calculadora se quedan en el header de arriba y se van con la página. */}
+    <div className="sticky top-0 z-40 bg-pico-azul-claro/90 py-2 backdrop-blur-md transition-shadow duration-300 md:hidden [html[data-desplazado]_&]:shadow-header">
+      <Contenedor>
+        <BuscadorConSugerencias compacto />
+      </Contenedor>
+    </div>
+    </>
   );
 }

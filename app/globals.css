@@ -262,6 +262,16 @@ html {
   scrollbar-gutter: stable;
 }
 
+/* iPhone/iPad: con letra de menos de 16px, Safari acerca la pantalla al tocar una caja de texto (el "zoom raro" del
+   buscador). Solo en iOS (-webkit-touch-callout) y fuera de @layer: gana a las clases text-sm de los formularios. */
+@supports (-webkit-touch-callout: none) {
+  input:not([type="checkbox"]):not([type="radio"]),
+  select,
+  textarea {
+    font-size: max(16px, 1em);
+  }
+}
+
 /* Listas de filtros de la categoría (components/categoria/FiltrosCategoria.tsx): barra de desplazamiento visible. */
 .lista-filtros {
   scrollbar-width: thin;

@@ -18,9 +18,11 @@ const REINTENTO_MS = 1500;
  * las calcula el servidor (GET /api/sugerencias?q=…, con el índice de lib/indiceServidor.ts): el navegador ya no
  * descarga el catálogo. Enter sin elegir sugerencia → página /buscar?q=… con todos los resultados.
  */
-export default function BuscadorConSugerencias({ className = "" }: { className?: string }) {
+export default function BuscadorConSugerencias({ className = "", compacto = false }: { className?: string; compacto?: boolean }) {
   const router = useRouter();
   const idLista = useId();
+  // Hay dos buscadores en la página (el del header en PC y la barra fija del teléfono): cada uno con su propio id.
+  const idCampo = `buscador${useId().replace(/:/g, "")}`;
   const [texto, setTexto] = useState("");
   // null: todavía no hay respuesta (o el índice del servidor no estaba listo): no se muestra la lista.
   const [resultado, setResultado] = useState<{ productos: ProductoSugerido[]; correccion: string | null } | null>(null);
@@ -112,20 +114,27 @@ export default function BuscadorConSugerencias({ className = "" }: { className?:
         setAbierto(false);
       }}
     >
-      <label htmlFor="buscador" className="sr-only">
+      <label htmlFor={idCampo} className="sr-only">
         Buscar productos
       </label>
-      <div className="group flex h-12 items-center rounded-chip border-2 border-pico-azul bg-pico-blanco pr-1 pl-5 transition-shadow duration-200 focus-within:shadow-tarjeta-hover focus-within:ring-4 focus-within:ring-pico-azul/20">
+      {/* Compacto: la barra fija del teléfono (más baja, borde fino, sin botón grande), como en las apps de tiendas. */}
+      <div
+        className={`group flex items-center rounded-chip bg-pico-blanco transition-shadow duration-200 focus-within:ring-4 focus-within:ring-pico-azul/20 ${
+          compacto
+            ? "h-10 border border-pico-azul/20 pr-1 pl-3.5 shadow-tarjeta"
+            : "h-12 border-2 border-pico-azul pr-1 pl-5 focus-within:shadow-tarjeta-hover"
+        }`}
+      >
         <Search
           className="mr-2 size-4 shrink-0 text-gris-texto transition-colors group-focus-within:text-pico-azul"
           aria-hidden
         />
         <input
-          id="buscador"
+          id={idCampo}
           name="q"
           type="search"
           autoComplete="off"
-          placeholder="¿Qué buscas? Ej. cemento, taladro…"
+          placeholder={compacto ? "Busca en El Pico" : "¿Qué buscas? Ej. cemento, taladro…"}
           value={texto}
           onChange={(e) => {
             setTexto(e.target.value);
@@ -138,11 +147,14 @@ export default function BuscadorConSugerencias({ className = "" }: { className?:
           aria-expanded={mostrarLista}
           aria-controls={idLista}
           aria-activedescendant={mostrarLista && activo >= 0 ? `${idLista}-${activo}` : undefined}
-          className="h-full min-w-0 flex-1 bg-transparent text-sm text-texto outline-none placeholder:text-gris-texto sm:text-[15px]"
+          // 16px en el teléfono: con letra más chica, el iPhone hace zoom al tocar el buscador.
+          className="h-full min-w-0 flex-1 bg-transparent text-base text-texto outline-none placeholder:text-gris-texto md:text-[15px]"
         />
         <button
           type="submit"
-          className="group/buscar area-tactil flex h-9 cursor-pointer items-center justify-center gap-2 rounded-chip bg-pico-azul px-3 text-sm font-semibold text-pico-blanco transition duration-200 hover:bg-pico-rojo focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-pico-azul md:px-5"
+          className={`group/buscar area-tactil flex cursor-pointer items-center justify-center gap-2 rounded-chip bg-pico-azul text-sm font-semibold text-pico-blanco transition duration-200 hover:bg-pico-rojo focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-pico-azul ${
+            compacto ? "size-8" : "h-9 px-3 md:px-5"
+          }`}
         >
           <Search
             className="size-4 transition-transform duration-300 motion-safe:group-hover/buscar:scale-110 motion-safe:group-hover/buscar:-rotate-12"
