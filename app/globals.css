@@ -239,6 +239,11 @@
      la zona del gesto de inicio (iPhone), su relleno inferior usa `--seguro-inferior` (0 en el teléfono). */
   --alto-barra-inferior: 0px;
   --seguro-inferior: env(safe-area-inset-bottom);
+  /* Alto del header fijo de PC (components/layout/Header.tsx, desde 768px): py-4 (16 + 16) + su pieza más alta,
+     el logo (md:size-14, 56) + el borde de abajo (1) = 89px; medido en Chrome a 1024, 1280, 1366 y 1920px. Lo que
+     se pega arriba al bajar la página (ej. la caja de subcategorías) se pone debajo con
+     `top-[calc(var(--alto-header)+…)]`. Si el header cambia de alto, cambia esto. */
+  --alto-header: 89px;
 }
 
 @media (width < 48rem) {
