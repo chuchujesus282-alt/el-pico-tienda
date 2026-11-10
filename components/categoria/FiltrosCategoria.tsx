@@ -63,9 +63,9 @@ function GrupoFiltro({ titulo, opciones, cabecera }: { titulo: string; opciones:
       <legend className="mb-2 font-titulo text-xs font-bold tracking-[0.18em] text-logo-marino uppercase">{titulo}</legend>
       {cabecera}
       {/* Se desplaza por dentro (rueda del mouse o deslizando el dedo), así no hay que bajar hasta el fondo de la página
-          para elegir otra. Unas 6 opciones a la vista; la barra, fina y transparente, solo aparece al pasar el mouse o
-          al deslizar (.lista-filtros en globals.css, pedido de persona B). */}
-      <ul className="lista-filtros max-h-[min(16rem,45dvh)] space-y-1 overflow-y-auto overscroll-contain pr-1">
+          para elegir otra. Unas 6 opciones a la vista, sin barra (.lista-filtros en globals.css): los nombres usan
+          todo el ancho, como antes de que la lista se desplazara. */}
+      <ul className="lista-filtros max-h-[min(16rem,45dvh)] space-y-1 overflow-y-auto overscroll-contain">
         {opciones.map((opcion) => (
           <Fila key={opcion.href} opcion={opcion} />
         ))}
