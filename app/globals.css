@@ -272,21 +272,32 @@ html {
   }
 }
 
-/* Listas de filtros de la categoría (components/categoria/FiltrosCategoria.tsx): barra de desplazamiento visible. */
+/* Listas de filtros de la categoría (components/categoria/FiltrosCategoria.tsx): barra fina y casi transparente, sin
+   riel, que solo aparece al pasar el mouse o al tocar la lista (en el teléfono, la del sistema al deslizar). */
 .lista-filtros {
   scrollbar-width: thin;
-  scrollbar-color: color-mix(in srgb, var(--color-logo-marino) 45%, transparent) var(--color-gris-fondo);
+  scrollbar-color: transparent transparent;
+}
+.lista-filtros:hover,
+.lista-filtros:focus-within {
+  scrollbar-color: color-mix(in srgb, var(--color-logo-marino) 22%, transparent) transparent;
 }
 .lista-filtros::-webkit-scrollbar {
-  width: 6px;
+  width: 5px;
 }
 .lista-filtros::-webkit-scrollbar-track {
-  border-radius: 9999px;
-  background: var(--color-gris-fondo);
+  background: transparent;
 }
 .lista-filtros::-webkit-scrollbar-thumb {
   border-radius: 9999px;
-  background: color-mix(in srgb, var(--color-logo-marino) 45%, transparent);
+  background: transparent;
+}
+.lista-filtros:hover::-webkit-scrollbar-thumb,
+.lista-filtros:focus-within::-webkit-scrollbar-thumb {
+  background: color-mix(in srgb, var(--color-logo-marino) 22%, transparent);
+}
+.lista-filtros::-webkit-scrollbar-thumb:hover {
+  background: color-mix(in srgb, var(--color-logo-marino) 38%, transparent);
 }
 
 /* Los saltos a un ancla (#…) no quedan tapados por el header fijo: el margen va en el destino (:target), NO como

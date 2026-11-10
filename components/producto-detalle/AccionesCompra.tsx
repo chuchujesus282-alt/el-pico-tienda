@@ -66,11 +66,11 @@ export default function AccionesCompra({ producto }: { producto: Producto }) {
     };
   }, []);
 
-  const botonAgregar = (compacto = false) => (
+  const botonAgregar = (compacto = false, clase = "") => (
     <button
       type="button"
       onClick={alAgregar}
-      className={`${baseBoton} ${compacto ? "h-11 px-4 text-sm" : ""} ${
+      className={`${baseBoton} ${compacto ? "h-11 px-4 text-sm" : ""} ${clase} ${
         agregado
           ? "bg-logo-marino text-pico-blanco motion-safe:animate-latido"
           : "bg-logo-rojo text-pico-blanco hover:bg-logo-rojo-oscuro hover:shadow-boton-hover"
@@ -96,17 +96,19 @@ export default function AccionesCompra({ producto }: { producto: Producto }) {
   );
 
   return (
-    <div className="flex flex-col gap-4">
+    // Teléfono: una fila con la cantidad y "Agregar al carrito" (rojo, lo principal) y debajo "Comprar ahora" con borde
+    // (lo segundo), todo del mismo alto y bien claro (pedido de persona B). PC: como siempre.
+    <div className="flex flex-col gap-3 md:gap-4">
       <div className="flex items-center gap-3">
-        <span className="text-sm font-semibold text-logo-marino" id="etiqueta-cantidad">
+        <span className="text-sm font-semibold text-logo-marino max-md:sr-only" id="etiqueta-cantidad">
           Cantidad
         </span>
-        <div className="flex items-center overflow-hidden rounded-boton border border-gris-borde bg-pico-blanco">
+        <div className="flex shrink-0 items-center overflow-hidden rounded-boton border border-gris-borde bg-pico-blanco">
           <button
             type="button"
             onClick={() => cambiar(cantidad - 1)}
             disabled={cantidad <= 1}
-            className="flex size-10 items-center justify-center text-logo-marino transition-colors hover:bg-logo-marino-claro disabled:cursor-not-allowed disabled:opacity-40"
+            className="flex size-10 items-center justify-center text-logo-marino transition-colors hover:bg-logo-marino-claro disabled:cursor-not-allowed disabled:opacity-40 max-md:h-12"
             aria-label="Quitar una unidad"
           >
             <Minus className="size-4" />
@@ -119,25 +121,27 @@ export default function AccionesCompra({ producto }: { producto: Producto }) {
             value={cantidad}
             onChange={(e) => cambiar(Number(e.target.value))}
             aria-labelledby="etiqueta-cantidad"
-            className="h-10 w-12 [appearance:textfield] border-x border-gris-borde text-center font-titulo text-base font-bold text-logo-marino tabular-nums focus-visible:outline-2 focus-visible:outline-logo-marino [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+            className="h-10 w-12 max-md:h-12 max-md:w-10 [appearance:textfield] border-x border-gris-borde text-center font-titulo text-base font-bold text-logo-marino tabular-nums focus-visible:outline-2 focus-visible:outline-logo-marino [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
           />
           <button
             type="button"
             onClick={() => cambiar(cantidad + 1)}
             disabled={cantidad >= CANTIDAD_MAXIMA}
-            className="flex size-10 items-center justify-center text-logo-marino transition-colors hover:bg-logo-marino-claro disabled:cursor-not-allowed disabled:opacity-40"
+            className="flex size-10 items-center justify-center text-logo-marino transition-colors hover:bg-logo-marino-claro disabled:cursor-not-allowed disabled:opacity-40 max-md:h-12"
             aria-label="Agregar una unidad"
           >
             <Plus className="size-4" />
           </button>
         </div>
+        {/* Teléfono: "Agregar al carrito" al lado de la cantidad, ocupando el resto de la fila. */}
+        {botonAgregar(false, "min-w-0 flex-1 px-3 text-[15px] md:hidden")}
       </div>
 
-      <div ref={botones} className="grid gap-3 sm:grid-cols-2 md:grid-cols-1 lg:grid-cols-2">
-        {botonAgregar()}
+      <div ref={botones} className="grid gap-3 lg:grid-cols-2">
+        {botonAgregar(false, "max-md:hidden")}
         <Link
           href={`/finalizar-pedido?producto=${encodeURIComponent(producto.id)}&cantidad=${cantidad}`}
-          className={`${baseBoton} bg-logo-marino text-pico-blanco hover:bg-logo-marino-oscuro hover:shadow-boton-hover`}
+          className={`${baseBoton} bg-logo-marino text-pico-blanco hover:bg-logo-marino-oscuro hover:shadow-boton-hover max-md:border-2 max-md:border-logo-marino max-md:bg-pico-blanco max-md:text-logo-marino max-md:hover:bg-logo-marino-claro max-md:hover:shadow-none`}
         >
           <Brillo />
           <ShoppingBag className="size-5" aria-hidden />

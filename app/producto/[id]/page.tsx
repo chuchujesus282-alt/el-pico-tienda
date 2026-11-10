@@ -2,13 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeft, House } from "lucide-react";
-import IconoCamion from "@/components/icons/pico/IconoCamion";
-import IconoMoto from "@/components/icons/pico/IconoMoto";
-import IconoTienda from "@/components/icons/pico/IconoTienda";
-import PlacaIcono from "@/components/icons/pico/PlacaIcono";
-import type { ComponenteIcono } from "@/types/icono";
 import BotonFavorito from "@/components/favoritos/BotonFavorito";
-import { FORMAS_RETIRO, type FormaRetiro } from "@/components/finalizar-pedido/pedido";
 import { CalificacionesProducto, EstrellasProducto } from "@/components/opiniones/CalificacionesVivas";
 import AccionesCompra from "@/components/producto-detalle/AccionesCompra";
 import BloquePrecio from "@/components/producto-detalle/BloquePrecio";
@@ -46,8 +40,6 @@ export async function generateMetadata({ params }: PageProps<"/producto/[id]">):
   }
 }
 
-const ICONOS_RETIRO: Record<FormaRetiro, ComponenteIcono> = { pickup: IconoTienda, delivery: IconoMoto, flete: IconoCamion };
-
 export default async function PaginaProducto({ params, searchParams }: PageProps<"/producto/[id]">) {
   const { id } = await params;
   const { medida } = await searchParams;
@@ -83,7 +75,7 @@ export default async function PaginaProducto({ params, searchParams }: PageProps
             <GaleriaZoom src={producto.imagen} alt={titulo} categoria={producto.categoriaSlug} subcategoria={producto.subcategoria} />
           </div>
 
-          <div className="flex flex-col gap-5 motion-safe:animate-aparecer motion-safe:[animation-delay:60ms]">
+          <div className="flex flex-col gap-4 motion-safe:animate-aparecer motion-safe:[animation-delay:60ms] md:gap-5">
             <div className="flex flex-col gap-3">
               <div className="flex flex-wrap items-center gap-2">
                 {producto.marca && (
@@ -122,28 +114,9 @@ export default async function PaginaProducto({ params, searchParams }: PageProps
               </>
             )}
 
-            {/* Cómo lo recibes: las mismas tres formas que se eligen al finalizar el pedido. */}
-            <ul className="grid grid-cols-3 gap-2 sm:gap-3" aria-label="Formas de recibir tu pedido">
-              {FORMAS_RETIRO.map(({ valor, etiqueta, detalle }) => {
-                const Icono = ICONOS_RETIRO[valor];
-                return (
-                  <li
-                    key={valor}
-                    className="group grupo-icono flex flex-col items-center gap-2 rounded-tarjeta border border-gris-borde bg-pico-blanco px-2 py-3 text-center shadow-tarjeta transition duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] hover:shadow-tarjeta-hover motion-safe:hover:-translate-y-0.5 sm:px-3"
-                  >
-                    <PlacaIcono>
-                      <Icono />
-                    </PlacaIcono>
-                    <span>
-                      <span className="block text-sm font-bold text-pico-azul">{etiqueta}</span>
-                      <span className="mt-0.5 hidden text-xs leading-snug text-gris-texto sm:block">{detalle}</span>
-                    </span>
-                  </li>
-                );
-              })}
-            </ul>
-
-            <div className="flex flex-wrap items-center gap-x-6 gap-y-2 border-t border-gris-borde pt-4">
+            {/* Sin el panel de Pick-up / Delivery / Flete (pedido de persona B): eso se elige al finalizar el pedido.
+                Los enlaces de abajo solo en PC: en el teléfono ya está la barra de abajo. */}
+            <div className="hidden flex-wrap items-center gap-x-6 gap-y-2 border-t border-gris-borde pt-4 md:flex">
               {categoria && (
                 <Link href={`/categoria/${categoria.slug}`} className={enlaceSecundario}>
                   <ArrowLeft className="size-4 transition-transform motion-safe:group-hover:-translate-x-1" aria-hidden />

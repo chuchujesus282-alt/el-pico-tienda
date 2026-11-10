@@ -46,7 +46,76 @@ type Props = {
    * completo ("Dale color con Pinturas"). Sin ella, el título de siempre.
    */
   tituloPartes?: [string, string];
+  /**
+   * La tarjeta azul (banner). SOLO las categorías de productos la llevan (pedido de persona B); sin ella, el
+   * encabezado es liviano: la ruta en gris, la raya roja, el título azul y la descripción, sin caja.
+   */
+  banner?: boolean;
 };
+
+/** Ruta de navegación ("Inicio › Herramientas › …") en claro (sobre la tarjeta azul) u oscuro (sobre el fondo gris). */
+function Ruta({ ruta, claro }: { ruta: Miga[]; claro: boolean }) {
+  const enlace = `area-tactil rounded-sm transition-colors hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 ${
+    claro ? "hover:text-pico-blanco focus-visible:outline-pico-blanco" : "hover:text-pico-azul focus-visible:outline-pico-azul"
+  }`;
+  return (
+    <nav aria-label="Ruta de navegación" className={`text-xs md:text-[13px] print:hidden ${claro ? "text-pico-blanco/70" : "text-gris-texto"}`}>
+      <ol className="flex flex-wrap items-center gap-1">
+        <li>
+          <Link href="/" className={`inline-flex items-center gap-1 ${enlace}`}>
+            <House className="size-3.5" aria-hidden />
+            Inicio
+          </Link>
+        </li>
+        {ruta.map((miga, i) => (
+          <li key={`${miga.texto}-${i}`} className="flex min-w-0 items-center gap-1" aria-current={i === ruta.length - 1 ? "page" : undefined}>
+            <ChevronRight className="size-3.5 shrink-0" aria-hidden />
+            {miga.href && i < ruta.length - 1 ? (
+              <Link href={miga.href} className={enlace}>
+                {miga.texto}
+              </Link>
+            ) : (
+              <span className={`line-clamp-1 font-medium ${claro ? "text-pico-blanco" : "text-pico-azul"}`}>{miga.texto}</span>
+            )}
+          </li>
+        ))}
+      </ol>
+    </nav>
+  );
+}
+
+/** Encabezado liviano (sin banner): el de todas las páginas que no son categorías de productos. */
+function EncabezadoLiviano({ titulo, descripcion, ruta, children, lupa }: Pick<Props, "titulo" | "descripcion" | "ruta" | "children" | "lupa">) {
+  return (
+    <Contenedor className="pt-5 md:pt-8">
+      <header className="relative">
+        {lupa && (
+          // En el teléfono el header con el buscador solo sale en Inicio y /buscar: la lupa lleva a /buscar.
+          <Link
+            href="/buscar"
+            aria-label="Buscar productos"
+            className="area-tactil absolute top-0 right-0 flex size-9 items-center justify-center rounded-chip bg-pico-blanco text-pico-azul shadow-tarjeta transition-colors hover:text-pico-rojo focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-pico-azul md:hidden print:hidden"
+          >
+            <Search className="size-[18px]" aria-hidden />
+          </Link>
+        )}
+        <div className={lupa ? "max-md:pr-12" : ""}>
+          {ruta && <Ruta ruta={ruta} claro={false} />}
+          {titulo && (
+            <div className={ruta ? "mt-3 md:mt-4" : ""}>
+              <span className="mb-3 block h-1.5 w-12 origin-left -skew-x-[18deg] rounded-[2px] bg-pico-rojo motion-safe:animate-trazo print:hidden" aria-hidden />
+              <h1 className="max-w-4xl text-[1.75rem] leading-tight font-bold tracking-tight text-balance text-pico-azul motion-safe:animate-aparecer md:text-4xl">
+                {titulo}
+              </h1>
+              {descripcion && <p className="mt-2 max-w-[60ch] text-[15px] leading-relaxed text-gris-texto md:text-base">{descripcion}</p>}
+              {children && <div className="mt-4">{children}</div>}
+            </div>
+          )}
+        </div>
+      </header>
+    </Contenedor>
+  );
+}
 
 /**
  * Encabezado de página: tarjeta azul marino redondeada (separada de la barra de categorías), con la ruta de navegación, el acento
@@ -67,7 +136,9 @@ export default function EncabezadoPagina({
   ilustracion,
   escena,
   tituloPartes,
+  banner = false,
 }: Props) {
+  if (!banner) return <EncabezadoLiviano titulo={titulo} descripcion={descripcion} ruta={ruta} lupa={lupa}>{children}</EncabezadoLiviano>;
   return (
     // Tarjeta redondeada sobre el fondo gris, con aire arriba: así no se pega a la barra azul de categorías.
     // En el teléfono todo más compacto (menos aire, título y lupa más chicos): el encabezado solo dice dónde estás y
@@ -116,36 +187,7 @@ export default function EncabezadoPagina({
         }`}
       >
         <div className={ilustracion ? "min-w-0" : "contents"}>
-        {ruta && (
-          <nav aria-label="Ruta de navegación" className="text-xs text-pico-blanco/70 md:text-[13px] print:hidden">
-            <ol className="flex flex-wrap items-center gap-1">
-              <li>
-                <Link
-                  href="/"
-                  className="area-tactil inline-flex items-center gap-1 rounded-sm transition-colors hover:text-pico-blanco hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-pico-blanco"
-                >
-                  <House className="size-3.5" aria-hidden />
-                  Inicio
-                </Link>
-              </li>
-              {ruta.map((miga, i) => (
-                <li key={`${miga.texto}-${i}`} className="flex min-w-0 items-center gap-1" aria-current={i === ruta.length - 1 ? "page" : undefined}>
-                  <ChevronRight className="size-3.5 shrink-0" aria-hidden />
-                  {miga.href && i < ruta.length - 1 ? (
-                    <Link
-                      href={miga.href}
-                      className="area-tactil rounded-sm transition-colors hover:text-pico-blanco hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-pico-blanco"
-                    >
-                      {miga.texto}
-                    </Link>
-                  ) : (
-                    <span className="line-clamp-1 font-medium text-pico-blanco">{miga.texto}</span>
-                  )}
-                </li>
-              ))}
-            </ol>
-          </nav>
-        )}
+        {ruta && <Ruta ruta={ruta} claro />}
 
         {titulo && (
           <div className={`motion-safe:animate-aparecer ${ruta ? (compacto ? "mt-2.5 md:mt-3" : "mt-3 md:mt-5") : ""}`}>

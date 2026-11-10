@@ -34,6 +34,7 @@ function EncabezadoCategoria({ slug, nombre, banner: imagen }: { slug: string; n
     <banner.Propio nombre={nombre} />
   ) : (
     <EncabezadoPagina
+      banner // las categorías de productos son las ÚNICAS páginas con banner (pedido de persona B)
       etiqueta="Categoría"
       titulo={nombre}
       descripcion={banner?.texto}
