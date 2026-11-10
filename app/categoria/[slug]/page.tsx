@@ -127,7 +127,10 @@ export default async function PaginaCategoria({ params, searchParams }: PageProp
         {/* En PC: arriba a la derecha la barra (cantidad, orden, chips); abajo, la caja de subcategorías y las tarjetas
             empiezan a la MISMA altura (pedido de persona B: antes la caja arrancaba más arriba que las tarjetas). */}
         <div className="lg:grid lg:grid-cols-[15rem_minmax(0,1fr)] lg:gap-x-8">
-          <aside aria-label="Filtros" className="hidden lg:col-start-1 lg:row-start-2 lg:block">
+          {/* Al menos el alto de la pantalla bajo el header: con pocos productos (ej. Tablillas, 3) la columna medía lo mismo
+              que la caja, la caja no tenía espacio para pegarse y subía con la página hasta meterse bajo el header; así
+              queda en el mismo lugar que en una subcategoría larga (pedido de persona A). */}
+          <aside aria-label="Filtros" className="hidden lg:col-start-1 lg:row-start-2 lg:block lg:min-h-[calc(100dvh-var(--alto-header))]">
             {/* Pegada debajo del header fijo (no detrás: antes era top-6 y el header le tapaba el comienzo). Nunca más
                 alta que la pantalla libre: en una pantalla baja se desplaza por dentro en vez de cortarse abajo. */}
             <div className="sticky top-[calc(var(--alto-header)+1.5rem)] max-h-[calc(100dvh-var(--alto-header)-3rem)] overflow-y-auto rounded-banner border border-gris-borde bg-pico-blanco p-5 shadow-tarjeta motion-safe:animate-aparecer [animation-delay:60ms]">
