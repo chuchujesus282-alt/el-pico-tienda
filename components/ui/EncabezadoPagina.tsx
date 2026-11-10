@@ -51,6 +51,8 @@ type Props = {
    * encabezado es liviano: la ruta en gris, la raya roja, el título azul y la descripción, sin caja.
    */
   banner?: boolean;
+  /** Encabezado liviano sobre un fondo azul (ej. FondoCalculadora): ruta, título y descripción en blanco. */
+  sobreOscuro?: boolean;
 };
 
 /** Ruta de navegación ("Inicio › Herramientas › …") en claro (sobre la tarjeta azul) u oscuro (sobre el fondo gris). */
@@ -85,7 +87,14 @@ function Ruta({ ruta, claro }: { ruta: Miga[]; claro: boolean }) {
 }
 
 /** Encabezado liviano (sin banner): el de todas las páginas que no son categorías de productos. */
-function EncabezadoLiviano({ titulo, descripcion, ruta, children, lupa }: Pick<Props, "titulo" | "descripcion" | "ruta" | "children" | "lupa">) {
+function EncabezadoLiviano({
+  titulo,
+  descripcion,
+  ruta,
+  children,
+  lupa,
+  sobreOscuro = false,
+}: Pick<Props, "titulo" | "descripcion" | "ruta" | "children" | "lupa" | "sobreOscuro">) {
   return (
     <Contenedor className="pt-5 md:pt-8">
       <header className="relative">
@@ -94,20 +103,32 @@ function EncabezadoLiviano({ titulo, descripcion, ruta, children, lupa }: Pick<P
           <Link
             href="/buscar"
             aria-label="Buscar productos"
-            className="area-tactil absolute top-0 right-0 flex size-9 items-center justify-center rounded-chip bg-pico-blanco text-pico-azul shadow-tarjeta transition-colors hover:text-pico-rojo focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-pico-azul md:hidden print:hidden"
+            className={`area-tactil absolute top-0 right-0 flex size-9 items-center justify-center rounded-chip transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 md:hidden print:hidden ${
+              sobreOscuro
+                ? "bg-pico-blanco/10 text-pico-blanco ring-1 ring-pico-blanco/15 focus-visible:outline-pico-blanco"
+                : "bg-pico-blanco text-pico-azul shadow-tarjeta hover:text-pico-rojo focus-visible:outline-pico-azul"
+            }`}
           >
             <Search className="size-[18px]" aria-hidden />
           </Link>
         )}
         <div className={lupa ? "max-md:pr-12" : ""}>
-          {ruta && <Ruta ruta={ruta} claro={false} />}
+          {ruta && <Ruta ruta={ruta} claro={sobreOscuro} />}
           {titulo && (
             <div className={ruta ? "mt-3 md:mt-4" : ""}>
               <span className="mb-3 block h-1.5 w-12 origin-left -skew-x-[18deg] rounded-[2px] bg-pico-rojo motion-safe:animate-trazo print:hidden" aria-hidden />
-              <h1 className="max-w-4xl text-[1.75rem] leading-tight font-bold tracking-tight text-balance text-pico-azul motion-safe:animate-aparecer md:text-4xl">
+              <h1
+                className={`max-w-4xl text-[1.75rem] leading-tight font-bold tracking-tight text-balance motion-safe:animate-aparecer md:text-4xl ${
+                  sobreOscuro ? "text-pico-blanco" : "text-pico-azul"
+                }`}
+              >
                 {titulo}
               </h1>
-              {descripcion && <p className="mt-2 max-w-[60ch] text-[15px] leading-relaxed text-gris-texto md:text-base">{descripcion}</p>}
+              {descripcion && (
+                <p className={`mt-2 max-w-[60ch] text-[15px] leading-relaxed md:text-base ${sobreOscuro ? "text-pico-blanco/75" : "text-gris-texto"}`}>
+                  {descripcion}
+                </p>
+              )}
               {children && <div className="mt-4">{children}</div>}
             </div>
           )}
@@ -137,8 +158,14 @@ export default function EncabezadoPagina({
   escena,
   tituloPartes,
   banner = false,
+  sobreOscuro = false,
 }: Props) {
-  if (!banner) return <EncabezadoLiviano titulo={titulo} descripcion={descripcion} ruta={ruta} lupa={lupa}>{children}</EncabezadoLiviano>;
+  if (!banner)
+    return (
+      <EncabezadoLiviano titulo={titulo} descripcion={descripcion} ruta={ruta} lupa={lupa} sobreOscuro={sobreOscuro}>
+        {children}
+      </EncabezadoLiviano>
+    );
   return (
     // Tarjeta redondeada sobre el fondo gris, con aire arriba: así no se pega a la barra azul de categorías.
     // En el teléfono todo más compacto (menos aire, título y lupa más chicos): el encabezado solo dice dónde estás y

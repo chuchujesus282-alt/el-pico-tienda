@@ -15,6 +15,8 @@ type Props = {
   /** Algo más bajo la descripción (ej. los pasos de las calculadoras). */
   children?: ReactNode;
   className?: string;
+  /** Sobre un fondo azul (ej. las calculadoras): título y textos en blanco. */
+  claro?: boolean;
 };
 
 /**
@@ -23,21 +25,23 @@ type Props = {
  * entrar (animate-trazo), el título en azul marino, una frase corta y la acción principal a la derecha.
  * Es el h1 de la página. Sirve en componentes de servidor y de cliente (no usa hooks).
  */
-export default function TituloPagina({ titulo, descripcion, contador, acciones, volver, children, className = "" }: Props) {
+export default function TituloPagina({ titulo, descripcion, contador, acciones, volver, children, className = "", claro = false }: Props) {
   return (
     <header className={`flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between sm:gap-6 ${className}`}>
       <div className="min-w-0">
         {volver && (
           <Link
             href={volver.href}
-            className="group area-tactil mb-3 inline-flex items-center gap-1.5 rounded-boton text-sm font-semibold text-pico-azul/80 transition-colors hover:text-pico-azul"
+            className={`group area-tactil mb-3 inline-flex items-center gap-1.5 rounded-boton text-sm font-semibold transition-colors ${
+              claro ? "text-pico-blanco/80 hover:text-pico-blanco" : "text-pico-azul/80 hover:text-pico-azul"
+            }`}
           >
             <ArrowLeft className="size-4 transition-transform duration-300 motion-safe:group-hover:-translate-x-1" aria-hidden />
             {volver.texto}
           </Link>
         )}
         <span className="mb-3 block h-1.5 w-12 origin-left -skew-x-[18deg] rounded-[2px] bg-pico-rojo motion-safe:animate-trazo" aria-hidden />
-        <h1 className="flex flex-wrap items-center gap-3 text-[1.75rem] leading-tight font-bold tracking-tight text-pico-azul motion-safe:animate-aparecer md:text-4xl">
+        <h1 className={`flex flex-wrap items-center gap-3 text-[1.75rem] leading-tight font-bold tracking-tight motion-safe:animate-aparecer md:text-4xl ${claro ? "text-pico-blanco" : "text-pico-azul"}`}>
           {titulo}
           {contador !== undefined && contador > 0 && (
             <span
@@ -49,7 +53,7 @@ export default function TituloPagina({ titulo, descripcion, contador, acciones, 
           )}
         </h1>
         {descripcion && (
-          <p className="mt-2 max-w-[60ch] text-[15px] leading-relaxed text-gris-texto motion-safe:animate-aparecer motion-safe:[animation-delay:40ms] md:text-base">
+          <p className={`mt-2 max-w-[60ch] text-[15px] leading-relaxed ${claro ? "text-pico-blanco/75" : "text-gris-texto"} motion-safe:animate-aparecer motion-safe:[animation-delay:40ms] md:text-base`}>
             {descripcion}
           </p>
         )}

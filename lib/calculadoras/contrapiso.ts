@@ -27,7 +27,7 @@ export function calcularContrapiso(entrada: Entrada): Resultado {
 
 export const contrapiso: Calculadora = {
   slug: "contrapiso",
-  imagen: "/proyectos/contrapiso.webp",
+  imagen: null, // foto pendiente (persona B): el espacio queda con el plano del ícono
   titulo: "Contrapiso y piso de cemento",
   descripcion: "Cemento, arena y piedra para la base del piso o un piso de cemento.",
   icono: IconoRegla,

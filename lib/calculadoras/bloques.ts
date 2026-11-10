@@ -50,7 +50,7 @@ export function calcularBloques(entrada: Entrada): Resultado {
 
 export const bloques: Calculadora = {
   slug: "bloques",
-  imagen: "/proyectos/bloques.webp",
+  imagen: null, // foto pendiente (persona B): el espacio queda con el plano del ícono
   titulo: "Bloques para paredes",
   descripcion: "Bloques de arcilla o de concreto y el mortero para pegarlos.",
   icono: IconoBloques,

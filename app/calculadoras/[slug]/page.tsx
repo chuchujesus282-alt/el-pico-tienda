@@ -4,6 +4,7 @@ import CalculadoraProyecto from "@/components/calculadoras/CalculadoraProyecto";
 import type { ProductosPorCodigo } from "@/components/calculadoras/proyecto";
 import Contenedor from "@/components/ui/Contenedor";
 import EncabezadoPagina from "@/components/ui/EncabezadoPagina";
+import FondoCalculadora from "@/components/calculadoras/FondoCalculadora";
 import { codigosDeProductos } from "@/lib/calculadoras/materiales";
 import { CALCULADORAS, obtenerCalculadora } from "@/lib/calculadoras/registro";
 import { getProducto } from "@/lib/catalogo";
@@ -34,8 +35,10 @@ export default async function PaginaCalculadora({ params }: PageProps<"/calculad
   for (const producto of encontrados) if (producto) productos[producto.id] = producto;
 
   return (
-    <>
+    // Franja azul detrás del título; los pasos blancos quedan montados encima (FondoCalculadora).
+    <FondoCalculadora alto="h-[17rem] md:h-[19rem]">
       <EncabezadoPagina
+        sobreOscuro
         titulo={calculadora.titulo}
         descripcion={calculadora.descripcion}
         ruta={[{ texto: "Calculadoras", href: "/calculadoras" }, { texto: calculadora.titulo }]}
@@ -44,6 +47,6 @@ export default async function PaginaCalculadora({ params }: PageProps<"/calculad
     <Contenedor className="py-6 md:py-10">
       <CalculadoraProyecto slug={slug} productos={productos} />
     </Contenedor>
-    </>
+    </FondoCalculadora>
   );
 }

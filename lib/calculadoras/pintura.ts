@@ -55,7 +55,7 @@ export function calcularPintura(entrada: Entrada): Resultado {
 
 export const pintura: Calculadora = {
   slug: "pintura",
-  imagen: "/proyectos/pintura.webp",
+  imagen: null, // foto pendiente (persona B): el espacio queda con el plano del ícono
   titulo: "Pintura",
   descripcion: "Galones o cuñetes de pintura y el sellador, según el área y las manos.",
   icono: IconoRodillo,

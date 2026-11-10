@@ -43,7 +43,7 @@ const segunElemento = (losa: string, columna: string, viga: string, zapata: stri
 
 export const concreto: Calculadora = {
   slug: "concreto",
-  imagen: "/proyectos/concreto.webp",
+  imagen: null, // foto pendiente (persona B): el espacio queda con el plano del ícono
   titulo: "Concreto para vaciados",
   descripcion: "Cemento, arena y piedra para losas, columnas, vigas y zapatas.",
   icono: IconoMezcladora,
