@@ -168,7 +168,7 @@ function Proyecto({ calculadora, productos }: { calculadora: Calculadora; produc
                   />
                 ))}
               </div>
-              <figure className="rounded-tarjeta bg-pico-azul-claro/60 p-3 print:hidden">
+              <figure className="rounded-tarjeta border border-gris-borde bg-gris-fondo p-3 print:hidden">
                 <Diagrama tipo={calculadora.diagrama} className="w-full" />
                 <figcaption className="mt-2 text-[13px] leading-snug text-gris-texto">
                   <strong className="font-semibold text-pico-azul">Cómo medir: </strong>
@@ -198,8 +198,8 @@ function Proyecto({ calculadora, productos }: { calculadora: Calculadora; produc
             </Paso>
           </div>
 
-          <details className="group rounded-tarjeta bg-pico-blanco shadow-tarjeta print:hidden">
-            <summary className="flex cursor-pointer list-none items-center gap-3 rounded-tarjeta px-4 py-4 text-lg font-bold text-pico-azul transition-colors hover:bg-gris-fondo focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-pico-azul md:px-6 [&::-webkit-details-marker]:hidden">
+          <details className="group rounded-banner border border-gris-borde bg-pico-blanco shadow-tarjeta print:hidden">
+            <summary className="flex cursor-pointer list-none items-center gap-3 rounded-banner px-4 py-4 text-lg font-bold text-pico-azul transition-colors hover:bg-gris-fondo focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-pico-azul md:px-6 [&::-webkit-details-marker]:hidden">
               <CircleHelp className="size-5 shrink-0 text-pico-rojo" aria-hidden />
               ¿Cómo calculamos esto?
               <ChevronDown className="ml-auto size-5 shrink-0 transition-transform duration-300 group-open:rotate-180" aria-hidden />
@@ -232,7 +232,7 @@ function Proyecto({ calculadora, productos }: { calculadora: Calculadora; produc
         {/* Escritorio: resumen fijo a la derecha. */}
         <aside
           aria-label="Resumen de tu proyecto"
-          className="hidden max-h-[calc(100dvh-3rem)] flex-col overflow-hidden rounded-tarjeta bg-pico-blanco shadow-tarjeta motion-safe:animate-aparecer lg:sticky lg:top-6 lg:flex print:static print:flex print:max-h-none"
+          className="hidden max-h-[calc(100dvh-3rem)] flex-col overflow-hidden rounded-banner border border-gris-borde bg-pico-blanco shadow-tarjeta motion-safe:animate-aparecer lg:sticky lg:top-6 lg:flex print:static print:flex print:max-h-none"
           style={{ animationDelay: "240ms" }}
         >
           {resumen}
