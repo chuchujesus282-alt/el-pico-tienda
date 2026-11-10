@@ -19,18 +19,17 @@ const pasos = ["Mide tu obra", "Ve el material", "Pide en un clic"];
 
 export default function PaginaCalculadoras() {
   return (
-    // Franja azul detrás del título y los pasos; las tarjetas quedan montadas sobre su borde (FondoCalculadora).
+    // Franja clara detrás del título y los pasos; las tarjetas quedan montadas sobre su borde (FondoCalculadora).
     <FondoCalculadora alto="h-[26rem] sm:h-[20rem] md:h-[22rem]">
     <Contenedor className="space-y-8 py-6 md:space-y-10 md:py-10">
       <TituloPagina
-        claro
         titulo="Calcula tu proyecto"
         descripcion="Elige tu trabajo, pon las medidas y te decimos cuánto material llevar. Gratis y sin registrarte."
       >
         <ol aria-label="Cómo funciona" className="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-0">
           {pasos.map((titulo, i) => (
             <li key={titulo} className="flex items-center sm:gap-0">
-              {i > 0 && <span className="hidden h-px w-8 bg-pico-blanco/30 sm:mx-2 sm:block lg:w-12" aria-hidden />}
+              {i > 0 && <span className="hidden h-px w-8 bg-pico-azul/20 sm:mx-2 sm:block lg:w-12" aria-hidden />}
               <span className="flex h-10 items-center gap-2.5 rounded-chip bg-pico-blanco pr-4 pl-1.5 text-sm font-semibold text-pico-azul shadow-tarjeta">
                 <span className="flex size-7 items-center justify-center rounded-chip bg-pico-azul text-xs font-bold text-pico-blanco tabular-nums" aria-hidden>
                   {i + 1}

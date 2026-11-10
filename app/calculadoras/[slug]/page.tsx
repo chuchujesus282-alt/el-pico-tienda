@@ -35,10 +35,9 @@ export default async function PaginaCalculadora({ params }: PageProps<"/calculad
   for (const producto of encontrados) if (producto) productos[producto.id] = producto;
 
   return (
-    // Franja azul detrás del título; los pasos blancos quedan montados encima (FondoCalculadora).
+    // Franja clara detrás del título; los pasos blancos quedan montados encima (FondoCalculadora).
     <FondoCalculadora alto="h-[17rem] md:h-[19rem]">
       <EncabezadoPagina
-        sobreOscuro
         titulo={calculadora.titulo}
         descripcion={calculadora.descripcion}
         ruta={[{ texto: "Calculadoras", href: "/calculadoras" }, { texto: calculadora.titulo }]}
