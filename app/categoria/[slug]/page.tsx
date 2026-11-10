@@ -13,6 +13,7 @@ import { hrefCategoria, leerEstado, OPCIONES_ORDEN } from "@/components/categori
 import GrillaProductos from "@/components/producto/GrillaProductos";
 import Contenedor from "@/components/ui/Contenedor";
 import { bannerDeCategoria } from "@/components/categoria/banner/CategoriaBanner";
+import IrAlListado from "@/components/categoria/IrAlListado";
 import EncabezadoPagina from "@/components/ui/EncabezadoPagina";
 import { iconoDeCategoria } from "@/components/icons/pico/porCategoria";
 import { getCategorias, getProductosPorCategoria } from "@/lib/catalogo";
@@ -126,7 +127,10 @@ export default async function PaginaCategoria({ params, searchParams }: PageProp
       <Contenedor className="py-6 md:py-10">
         {/* En PC: arriba a la derecha la barra (cantidad, orden, chips); abajo, la caja de subcategorías y las tarjetas
             empiezan a la MISMA altura (pedido de persona B: antes la caja arrancaba más arriba que las tarjetas). */}
-        <div className="lg:grid lg:grid-cols-[15rem_minmax(0,1fr)] lg:gap-x-8">
+        {/* #listado: al cambiar de subcategoría, orden o filtro, IrAlListado trae la página aquí si estaba más abajo
+            (si no, una subcategoría corta dejaba al cliente en el pie de página). */}
+        <IrAlListado clave={claveVista} />
+        <div id="listado" className="scroll-mt-[calc(var(--alto-header)+1.5rem)] lg:grid lg:grid-cols-[15rem_minmax(0,1fr)] lg:gap-x-8">
           {/* Al menos el alto de la pantalla bajo el header: con pocos productos (ej. Tablillas, 3) la columna medía lo mismo
               que la caja, la caja no tenía espacio para pegarse y subía con la página hasta meterse bajo el header; así
               queda en el mismo lugar que en una subcategoría larga (pedido de persona A). */}
