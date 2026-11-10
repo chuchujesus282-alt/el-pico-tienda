@@ -57,6 +57,8 @@ export function fotoPorNombre(nombre: string, marca: string | null): string | un
   if (/CERDEX/i.test(marca ?? "") || /CERDEX/.test(n)) return fotoCerdex(n);
   if (/COINPICA/i.test(marca ?? "") || /COINPICA/.test(n)) return fotoCoinpica(n);
   if (/COLOREAL/i.test(marca ?? "") || /COLOREAL/.test(n)) return fotoColoreal(n);
+  // Reinco antes que Cebra: hay "REINCO/CEBRA OLEUM…" (es Reinco).
+  if (/^REINCO$/i.test(marca ?? "") || /\bREINCO\b/.test(n)) return fotoReinco(n);
   if (/^CEBRA$/i.test(marca ?? "") || /\bCEBRA\b/.test(n)) return fotoCebra(n);
   if (/^EUROFLEX\b/.test(n)) return fotoMasilla(n, "/productos/euroflex/"); // en Saint, marca MICROFLEX
   if (/^MASIFLEX\b/.test(n)) return fotoMasilla(n, "/productos/masiflex/");
@@ -384,6 +386,31 @@ const SB = "/productos/simbi/";
 const SIMBI_LINEAS: LineaFoto[] = [{ regla: /MANTO ELASTICO/, linea: "manto-elastico", tamanos: ["cuarto", "gal"] }];
 function fotoSimbi(n: string): string | undefined {
   return fotoDeTabla(n, SB, SIMBI_LINEAS, tamanoEnvase(n));
+}
+
+/**
+ * Reinco: una lata por línea (fotos de persona B), 1/4 a 600 px, galón a 760 y tobo a 1000. Los que no tienen foto
+ * propia llevan la más parecida según su descripción (pedido de persona B): el fondo epoxi la de fondo herrería, el
+ * acabado martillado la del Oleum metalizado y el aditivo de dilución la del Solvente F. Primera regla que calce.
+ */
+const RC = "/productos/reinco/";
+const REINCO_LINEAS: LineaFoto[] = [
+  { regla: /CONVERTIDOR/, linea: "convertidor", tamanos: null }, // por mililitros, abajo
+  { regla: /DUROLACK|PARQUET/, linea: "parquet", tamanos: ["cuarto", "gal"] },
+  { regla: /REIP/, linea: "reiplast", tamanos: ["cuarto", "gal"] },
+  { regla: /LACA NITRO/, linea: "laca-nitro", tamanos: ["cuarto", "gal"] },
+  { regla: /SELLADOR NITRO/, linea: "sellador-nitro", tamanos: ["cuarto", "gal"] },
+  { regla: /2 EN 1|FONDOX/, linea: "fondox", tamanos: ["cuarto", "gal"] },
+  { regla: /\bFONDO\b/, linea: "fondo-herreria", tamanos: ["cuarto", "gal"] },
+  { regla: /OLEUM|MARTILLADO/, linea: "oleum", tamanos: ["cuarto", "gal"] },
+  { regla: /BASE AGUA|AQUA/, linea: "esmalte-aqua", tamanos: ["cuarto", "gal", "tobo"] },
+  { regla: /SOLVENTE|ADITIVO/, linea: "solvente-f-cuarto", tamanos: null }, // solo vienen en 1/4 (el aditivo no lo dice en el nombre)
+];
+function fotoReinco(n: string): string | undefined {
+  if (/CONVERTIDOR/.test(n)) return `${RC}${/500 ?ML/.test(n) ? "convertidor-500" : "convertidor-litro"}.webp`;
+  // Saint escribe el galón también como "1 GL".
+  const tam = tamanoEnvase(n) ?? (/\bGL\b/.test(n) ? "gal" : null);
+  return fotoDeTabla(n, RC, REINCO_LINEAS, tam);
 }
 
 /** Accesorios de rodillo Cerdex: una foto por tipo, sin importar la medida. Cepillos y mango metálico, sin foto. */

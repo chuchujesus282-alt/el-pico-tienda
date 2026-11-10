@@ -481,6 +481,27 @@ describe("agrupar", () => {
     expect(f("QUIMIDAL SELLADOR POLIURETANO GALON", "QUIMIDAL")).toBeUndefined();
   });
 
+  it("Reinco: cada línea con su lata y su tamaño; los demás con la más parecida", () => {
+    const f = (nombre: string) => fotoPorNombre(nombre, "REINCO")?.replace("/productos/reinco/", "");
+    const casos: [string, string][] = [
+      ["REINCO DUROLACK MATE / 1/4 GL", "parquet-cuarto.webp"],
+      ["REINCO DUROLACK 4000 / 1 GL BRILLANTE", "parquet-gal.webp"],
+      ["REINCO ESMALTE POLIURETANO REIPLAST 1 GL", "reiplast-gal.webp"],
+      ["REINCO ESMAL POLIUR REIP EXT-MARIN 1/4", "reiplast-cuarto.webp"],
+      ["REINCO LACA NITRO GALON", "laca-nitro-gal.webp"],
+      ["REINCO FONDO HERRERIA GAL NEGRO 2 EN 1", "fondox-gal.webp"],
+      ["REINCO FONDO EPOXI POLIAMIDA GALON", "fondo-herreria-gal.webp"],
+      ["REINCO/CEBRA OLEUM ALUMINIO 1/4 GAL", "oleum-cuarto.webp"],
+      ["REINCO/EVEREST ACABADO MARTILLADO GAL", "oleum-gal.webp"],
+      ["REINCO ESMALTE BRILLANTE 1/4 BASE AGUA", "esmalte-aqua-cuarto.webp"],
+      ["REINCO SOLVENTE F / 1/4 GL", "solvente-f-cuarto.webp"],
+      ["REINCO ADITIVO B-DILUCIO REITHAN/DUROLAC", "solvente-f-cuarto.webp"],
+      ["REINCO CONVERTIDOR DE OXIDO 500ML", "convertidor-500.webp"],
+      ["REINCO CONVERTIDOR DE OXIDO LITRO", "convertidor-litro.webp"],
+    ];
+    for (const [nombre, foto] of casos) expect(f(nombre), nombre).toBe(foto);
+  });
+
   it("Adesi-Top: cada producto con su envase y tamaño (nombres reales de Saint); sin foto, nada", () => {
     const f = (nombre: string) => fotoPorNombre(nombre, "ADESI-TOP")?.replace("/productos/adesitop/", "");
     const casos: [string, string | undefined][] = [
