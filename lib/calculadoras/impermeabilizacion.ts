@@ -77,6 +77,6 @@ export const impermeabilizacion: Calculadora = {
   explicacion: [
     "Calculamos el área del techo (largo × ancho) y sumamos 10 % para subir el material por los bordes y hacer los remates.",
     "Manto asfáltico: cada rollo trae 10 m², pero se monta 10 cm sobre el anterior, así que cubre 9 m². Antes se aplica primer, que rinde unos 12 m² por galón.",
-    "Acrílico: se aplica en dos manos y gasta cerca de 1 litro por metro cuadrado en total. Un cuñete trae 18,9 litros.",
+    "Acrílico: se aplica en dos manos y gasta cerca de 1 litro por metro cuadrado en total. Un cuñete de 4 galones trae unos 15 litros.",
   ],
 };

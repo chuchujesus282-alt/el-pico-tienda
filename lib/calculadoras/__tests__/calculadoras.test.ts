@@ -4,9 +4,19 @@ import { barrasParaTramos } from "../cabillas";
 import { caratoKgPorM2 } from "../ceramica";
 import { MATERIALES, type IdMaterial } from "../materiales";
 import { repartirEnCunetes } from "../pintura";
-import { CALCULADORAS, medidasCompletas, obtenerCalculadora, opcionesIniciales } from "../registro";
+import { ajustarOpciones, CALCULADORAS, medidasCompletas, obtenerCalculadora, opcionDisponible, opcionesIniciales } from "../registro";
 import type { Entrada, Resultado } from "../tipos";
 import { haciaArriba, numero } from "../util";
+
+/** Códigos de Saint que usan las calculadoras, revisados en la tienda publicada el 2026-11-09. */
+const CODIGOS_REVISADOS = [
+  "CONST0082", "CONST0010", "CONST0018", "CONST0001", "CONST0003", "CONST0005", "CONST0121", "CONST0122", "CONST0123",
+  "CONST0124", "CONST0424", "CONST0429", "CONST0423", "MANP0103", "MANP0102", "MANP0112", "IPA0030", "IPA0055", "GN00838",
+  "CERAM002", "CERAM045", "GN09940", "GN07202", "GN11418", "GN11419", "GN11420", "CONST0168", "CONST0169", "GN11101",
+  "TOR1146", "CONST0032", "GN09858", "GN09861", "TOR1220", "GN60272", "RAMA0006", "GN03409", "PRLF0073", "MULTP005",
+  "BLLT0128", "NIKAT087", "BRUF0525", "GN14750", "GN03721", "BRUF0168", "GN00188", "JABAL024", "GN12764", "CELV0006",
+  "LBS0108", "NIKAT081", "ALD0030",
+];
 
 // Cada caso está resuelto a mano, paso a paso, en docs/FORMULAS.md.
 
@@ -88,21 +98,26 @@ describe("cabillas", () => {
   });
 
   it('losa de 4 × 3 m, 3/8" cada 20 cm', () => {
-    // 16 tramos de 4 m (16 barras) + 21 de 3 m (11 barras) = 27; 127 m × 0,559 = 71 kg → 1,77 kg de alambre
-    expect(cantidades(calcular("cabillas", { largo: 4, ancho: 3, separacion: 20 }))).toEqual({ "cabilla-3/8": 27, alambre: 2 });
+    // Barras de 12 m: 16 tramos de 4 m (3 por barra → 6) + 21 de 3 m (4 por barra → 6) = 12; 127 m × 0,559 = 71 kg → 1,77 kg de alambre
+    expect(cantidades(calcular("cabillas", { largo: 4, ancho: 3, separacion: 20 }))).toEqual({ "cabilla-3/8": 12, alambre: 2 });
   });
 
   it('losa de 8 × 5 m, 1/2" cada 15 cm', () => {
-    // 35 tramos de 8 m (53 barras) + 55 de 5 m (55 barras) = 108; 572,78 m × 0,994 = 569 kg → 14,2 kg de alambre
+    // Barras de 12 m: 35 tramos de 8 m (1 por barra → 35) + 55 de 5 m (2 por barra → 28) = 63; 555 m × 0,994 = 552 kg → 13,8 kg de alambre
     expect(cantidades(calcular("cabillas", { largo: 8, ancho: 5, separacion: 15 }, { diametro: "1/2" }))).toEqual({
-      "cabilla-1/2": 108,
-      alambre: 15,
+      "cabilla-1/2": 63,
+      alambre: 14,
     });
   });
 
   it("la malla doble duplica los tramos (y aprovecha los sobrantes)", () => {
-    // 32 tramos de 4 m (32 barras) + 42 de 3 m (21 barras) = 53: una menos que 2 × 27, porque ya no sobra media barra
-    expect(cantidades(calcular("cabillas", { largo: 4, ancho: 3, separacion: 20 }, { capas: "2" }))["cabilla-3/8"]).toBe(53);
+    // Barras de 12 m: 32 tramos de 4 m (→ 11) + 42 de 3 m (→ 11) = 22: menos que 2 × 12, porque se aprovechan los sobrantes
+    expect(cantidades(calcular("cabillas", { largo: 4, ancho: 3, separacion: 20 }, { capas: "2" }))["cabilla-3/8"]).toBe(22);
+  });
+
+  it('la de 5/8" usa barras de 6 m', () => {
+    // 16 tramos de 4 m (1 por barra) + 21 de 3 m (2 por barra → 11) = 27
+    expect(cantidades(calcular("cabillas", { largo: 4, ancho: 3, separacion: 20 }, { diametro: "5/8" }))["cabilla-5/8"]).toBe(27);
   });
 });
 
@@ -135,20 +150,20 @@ describe("pintura", () => {
 
 describe("cerámica y porcelanato", () => {
   it("fórmula del carato", () => {
-    expect(caratoKgPorM2(450, 8, 3)).toBeCloseTo(0.1707, 4); // cerámica 45 × 45, junta de 3 mm
+    expect(caratoKgPorM2(300, 7, 3)).toBeCloseTo(0.224, 4); // cerámica 30 × 30, junta de 3 mm
     expect(caratoKgPorM2(600, 9, 2)).toBeCloseTo(0.096, 4); // porcelanato 60 × 60, junta de 2 mm
   });
 
   it("piso de 4 × 3,5 m en cerámica recta", () => {
-    // 14 × 1,10 ÷ 2,03 = 7,59 → 8 cajas; pego 73,5 kg → 8 sacos; carato 2,63 kg → 2 bolsas
-    expect(cantidades(calcular("ceramica", { largo: 4, ancho: 3.5 }))).toEqual({ ceramica: 8, pego: 8, carato: 2 });
+    // 14 × 1,10 ÷ 1,62 = 9,51 → 10 cajas; pego 73,5 kg → 74 kilos; carato 3,45 kg → 2 bolsas
+    expect(cantidades(calcular("ceramica", { largo: 4, ancho: 3.5 }))).toEqual({ ceramica: 10, pego: 74, carato: 2 });
   });
 
   it("piso de 5 × 4 m en porcelanato diagonal", () => {
-    // 20 × 1,15 ÷ 1,44 = 15,97 → 16 cajas; pego 126 kg → 13 sacos; carato 2,11 kg → 2 bolsas
+    // 20 × 1,15 ÷ 1,44 = 15,97 → 16 cajas; pego 126 kg (se vende por kilo); carato 2,11 kg → 2 bolsas
     expect(cantidades(calcular("ceramica", { largo: 5, ancho: 4 }, { tipo: "porcelanato", colocacion: "diagonal" }))).toEqual({
       porcelanato: 16,
-      pego: 13,
+      pego: 126,
       carato: 2,
     });
   });
@@ -168,16 +183,26 @@ describe("contrapiso", () => {
 
 describe("techo con láminas", () => {
   it("un agua de 6 m de largo y 3,5 m de caída, en zinc", () => {
-    // ⌈6 ÷ 0,70⌉ = 9 hileras × 1 = 9 → 9,45 → 10 láminas; 21 m² × 6 × 1,05 = 132 tornillos → 2 bolsas
-    expect(cantidades(calcular("techo", { largo: 6, caida: 3.5 }))).toEqual({ "lamina-zinc": 10, "tornillo-techo": 2 });
+    // La de 3,60 m cubre la caída: ⌈6 ÷ 0,70⌉ = 9 hileras → 9,45 → 10 láminas; 21 m² × 6 × 1,05 = 132,3 → 133 tornillos
+    expect(cantidades(calcular("techo", { largo: 6, caida: 3.5 }))).toEqual({ "lamina-zinc-360": 10, "tornillo-techo": 133 });
   });
 
-  it("dos aguas de 10 m de largo y 5 m de caída, en acerolit", () => {
-    // ⌈10 ÷ 0,76⌉ = 14 hileras × 2 por hilera × 2 aguas = 56 → 58,8 → 59; 100 m² → 630 tornillos → 7 bolsas
-    expect(cantidades(calcular("techo", { largo: 10, caida: 5 }, { lamina: "acerolit", aguas: "2" }))).toEqual({
-      "lamina-acerolit": 59,
-      "tornillo-techo": 7,
+  it("la caída corta lleva la lámina más corta que la cubre", () => {
+    // 2,2 m de caída: basta la de 2,44 m
+    expect(cantidades(calcular("techo", { largo: 6, caida: 2.2 }))["lamina-zinc-244"]).toBe(10);
+  });
+
+  it("dos aguas de 10 m de largo y 5 m de caída, en Acerotec", () => {
+    // La de 6 m cubre los 5 m: ⌈10 ÷ 0,76⌉ = 14 hileras × 2 aguas = 28 → 29,4 → 30; 100 m² → 630 tornillos
+    expect(cantidades(calcular("techo", { largo: 10, caida: 5 }, { lamina: "acerotec", aguas: "2" }))).toEqual({
+      "lamina-acerotec-600": 30,
+      "tornillo-techo": 630,
     });
+  });
+
+  it("si la caída es más larga que toda lámina, se empalman", () => {
+    // 8 m de caída en zinc: la de 3,60 m, ⌈(8 − 0,2) ÷ (3,6 − 0,2)⌉ = 3 por hilera → 9 hileras × 3 = 27 → 28,35 → 29
+    expect(cantidades(calcular("techo", { largo: 6, caida: 8 }))["lamina-zinc-360"]).toBe(29);
   });
 });
 
@@ -188,21 +213,21 @@ describe("impermeabilización", () => {
   });
 
   it("platabanda de 8 × 6 m con acrílico", () => {
-    // 52,8 m² × 1 L/m² ÷ 18,9 L = 2,79 → 3 cuñetes
+    // 52,8 m² × 1 L/m² ÷ 15,14 L (cuñete de 4 galones) = 3,49 → 4 cuñetes
     expect(cantidades(calcular("impermeabilizacion", { largo: 8, ancho: 6 }, { sistema: "acrilico" }))).toEqual({
-      "impermeabilizante-acrilico": 3,
+      "impermeabilizante-acrilico": 4,
     });
   });
 });
 
 describe("drywall", () => {
   it("pared divisoria de 5 × 2,5 m, parales cada 61 cm", () => {
-    // 25 m² de lámina → 9,24 → 10 láminas; 10 parales; 3,44 → 4 rieles; 300 tornillos; 37,5 m de cinta; 17,5 kg de masilla
+    // 25 m² de lámina → 9,24 → 10 láminas; 10 parales; 3,44 → 4 rieles; 300 tornillos (por unidad); 37,5 m de cinta; 17,5 kg de masilla
     expect(cantidades(calcular("drywall", { largo: 5, alto: 2.5 }))).toEqual({
       "lamina-drywall": 10,
       paral: 10,
       riel: 4,
-      "tornillo-drywall": 3,
+      "tornillo-drywall": 300,
       "cinta-juntas": 1,
       masilla: 4,
     });
@@ -214,7 +239,7 @@ describe("drywall", () => {
       "lamina-drywall": 7,
       paral: 32,
       riel: 5,
-      "tornillo-drywall": 3,
+      "tornillo-drywall": 210,
       "cinta-juntas": 1,
       masilla: 3,
     });
@@ -243,10 +268,13 @@ describe("todas las calculadoras", () => {
   it("con cada combinación de opciones solo devuelven materiales que declaran", () => {
     for (const c of CALCULADORAS) {
       const medidas = Object.fromEntries(c.campos.map((campo) => [campo.id, campo.defecto ?? 4.2]));
-      const combinaciones = c.grupos.reduce<Entrada["opciones"][]>(
-        (acumulado, grupo) => acumulado.flatMap((o) => grupo.opciones.map((opcion) => ({ ...o, [grupo.id]: opcion.valor }))),
-        [{}],
-      );
+      // Solo las combinaciones que se pueden elegir (ej. arcilla de 20 cm no: no se vende).
+      const combinaciones = c.grupos
+        .reduce<Entrada["opciones"][]>(
+          (acumulado, grupo) => acumulado.flatMap((o) => grupo.opciones.map((opcion) => ({ ...o, [grupo.id]: opcion.valor }))),
+          [{}],
+        )
+        .filter((o) => c.grupos.every((g) => opcionDisponible(g.opciones.find((x) => x.valor === o[g.id])!, o)));
       for (const opciones of combinaciones) {
         const r = c.calcular({ medidas, opciones });
         expect(r.materiales.length, `${c.slug} ${JSON.stringify(opciones)}`).toBeGreaterThan(0);
@@ -267,8 +295,15 @@ describe("todas las calculadoras", () => {
     }
   });
 
-  it("todo material y herramienta apunta a un producto que existe en el catálogo de prueba", () => {
-    const codigos = new Set(productosMock.map((p) => p.id));
+  it("al pasar a arcilla con 20 cm elegido, el espesor cambia a uno que sí hay", () => {
+    const c = obtenerCalculadora("bloques")!;
+    expect(ajustarOpciones(c, { tipo: "arcilla", espesor: "20" }).espesor).toBe("15");
+    expect(ajustarOpciones(c, { tipo: "concreto", espesor: "20" }).espesor).toBe("20");
+  });
+
+  it("todo material y herramienta apunta a un producto que existe en la tienda", () => {
+    // Revisados uno por uno en la tienda publicada el 2026-11-09 (página de cada producto).
+    const codigos = new Set([...productosMock.map((p) => p.id), ...CODIGOS_REVISADOS]);
     const usados = new Set<IdMaterial>(CALCULADORAS.flatMap((c) => [...c.materiales, ...c.herramientas]));
     for (const id of usados) {
       const { productoId } = MATERIALES[id];

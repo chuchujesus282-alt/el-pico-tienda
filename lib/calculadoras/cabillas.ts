@@ -12,8 +12,12 @@ import { haciaArriba, medida, numero } from "./util";
  *   y de cada barra salen ⌊barra ÷ pedazo⌋ pedazos.
  * Devuelve las barras y los metros de acero que quedan colocados (con solapes).
  */
-export function barrasParaTramos(tramos: number, largoTramo: number, solapeM: number): { barras: number; metros: number } {
-  const barra = PRESENTACION.barraCabillaM;
+export function barrasParaTramos(
+  tramos: number,
+  largoTramo: number,
+  solapeM: number,
+  barra: number = PRESENTACION.barraCabillaM,
+): { barras: number; metros: number } {
   if (tramos <= 0 || largoTramo <= 0) return { barras: 0, metros: 0 };
   if (largoTramo <= barra + 1e-9) {
     return { barras: Math.ceil(tramos / Math.floor(barra / largoTramo + 1e-9)), metros: tramos * largoTramo };
@@ -29,7 +33,7 @@ export function barrasParaTramos(tramos: number, largoTramo: number, solapeM: nu
  * Malla de cabillas para una losa o placa (acero en las dos direcciones).
  *   cabillas a lo largo = ⌈ancho ÷ separación⌉ + 1, cada una del largo de la losa
  *   cabillas a lo ancho = ⌈largo ÷ separación⌉ + 1, cada una del ancho de la losa
- *   barras = las que salen de cortar esos tramos de barras de 6 m (ver barrasParaTramos)
+ *   barras = las que salen de cortar esos tramos de las barras que vende la tienda (CABILLAS.barraM)
  *   alambre (kg) = peso del acero × 0,025
  * Con malla doble se duplica todo.
  */
@@ -39,13 +43,13 @@ export function calcularCabillas(entrada: Entrada): Resultado {
   const largo = medida(entrada, "largo");
   const ancho = medida(entrada, "ancho");
   const separacion = medida(entrada, "separacion") / 100;
-  const { diametroMm, kgPorM } = CABILLAS[diametro];
+  const { diametroMm, kgPorM, barraM } = CABILLAS[diametro];
   const solape = (SOLAPE_EN_DIAMETROS * diametroMm) / 1000;
 
   const aLoLargo = separacion > 0 ? Math.ceil(ancho / separacion - 1e-9) + 1 : 0;
   const aLoAncho = separacion > 0 ? Math.ceil(largo / separacion - 1e-9) + 1 : 0;
-  const a = barrasParaTramos(aLoLargo * capas, largo, solape);
-  const b = barrasParaTramos(aLoAncho * capas, ancho, solape);
+  const a = barrasParaTramos(aLoLargo * capas, largo, solape, barraM);
+  const b = barrasParaTramos(aLoAncho * capas, ancho, solape, barraM);
   const barras = a.barras + b.barras;
   const pesoKg = (a.metros + b.metros) * kgPorM;
   const alambreKg = pesoKg * ALAMBRE_KG_POR_KG_ACERO;
@@ -55,7 +59,7 @@ export function calcularCabillas(entrada: Entrada): Resultado {
       {
         material: `cabilla-${diametro}` as IdMaterial,
         cantidad: barras,
-        nota: `${aLoLargo * capas} tramos de ${numero(largo)} m + ${aLoAncho * capas} de ${numero(ancho)} m, cortados de barras de ${PRESENTACION.barraCabillaM} m`,
+        nota: `${aLoLargo * capas} tramos de ${numero(largo)} m + ${aLoAncho * capas} de ${numero(ancho)} m, cortados de barras de ${barraM} m`,
       },
       {
         material: "alambre",
@@ -89,9 +93,9 @@ export const cabillas: Calculadora = {
       etiqueta: "Diámetro de la cabilla",
       defecto: "3/8",
       opciones: [
-        { valor: "3/8", etiqueta: '3/8"', detalle: "Losas de vivienda." },
-        { valor: "1/2", etiqueta: '1/2"', detalle: "Losas y placas con más carga." },
-        { valor: "5/8", etiqueta: '5/8"', detalle: "Fundaciones y placas gruesas." },
+        { valor: "3/8", etiqueta: '3/8"', detalle: "Losas de vivienda. Barra de 12 m." },
+        { valor: "1/2", etiqueta: '1/2"', detalle: "Losas y placas con más carga. Barra de 12 m." },
+        { valor: "5/8", etiqueta: '5/8"', detalle: "Fundaciones y placas gruesas. Barra de 6 m." },
       ],
     },
     {
@@ -110,7 +114,7 @@ export const cabillas: Calculadora = {
   explicacion: [
     "Armamos una malla con cabillas en las dos direcciones, separadas la distancia que indiques.",
     "Contamos cuántas cabillas van a lo largo y cuántas a lo ancho, y de qué medida es cada una.",
-    "Las barras vienen de 6 m: calculamos cuántas hay que comprar para cortar todas las piezas. Si la losa mide más de 6 m, las cabillas se empalman montando una sobre otra 40 veces su diámetro.",
+    'Usamos las barras que vendemos (3/8" y 1/2" de 12 m, 5/8" de 6 m) y calculamos cuántas hay que comprar para cortar todas las piezas. Si la losa mide más que la barra, las cabillas se empalman montando una sobre otra 40 veces su diámetro.',
     "Para el alambre de amarre estimamos 25 gramos por cada kilo de acero.",
     "El diámetro y la separación los define el ingeniero o el plano de la obra.",
   ],

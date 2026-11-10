@@ -67,7 +67,7 @@ export const ceramica: Calculadora = {
       etiqueta: "Tipo de revestimiento",
       defecto: "ceramica",
       opciones: [
-        { valor: "ceramica", etiqueta: "Cerámica 45 × 45", detalle: "Caja de 2,03 m²." },
+        { valor: "ceramica", etiqueta: "Cerámica 30 × 30", detalle: "Caja de 1,62 m²." },
         { valor: "porcelanato", etiqueta: "Porcelanato 60 × 60", detalle: "Caja de 1,44 m²." },
       ],
     },
@@ -88,7 +88,7 @@ export const ceramica: Calculadora = {
     "Calculamos el área del piso (largo × ancho).",
     "Sumamos el desperdicio por cortes: 10 % si las piezas van rectas y 15 % si van en diagonal.",
     "Dividimos entre los metros cuadrados que trae cada caja y redondeamos a cajas completas.",
-    "El pego se calcula a 5 kg por m² en cerámica y 6 kg en porcelanato.",
+    "El pego se calcula a 5 kg por m² en cerámica y 6 kg en porcelanato, y se vende por kilo.",
     "El carato depende del tamaño de la pieza y del ancho de la junta: mientras más grande la pieza, menos carato lleva.",
   ],
 };

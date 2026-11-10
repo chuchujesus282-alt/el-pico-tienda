@@ -13,7 +13,8 @@ import type { ProductosPorCodigo } from "./proyecto";
 export function Paso({ numero, titulo, detalle, children }: { numero: number; titulo: string; detalle?: string; children: ReactNode }) {
   return (
     <section
-      className="rounded-banner border border-gris-borde bg-pico-blanco p-4 shadow-tarjeta motion-safe:animate-aparecer md:p-6"
+      // Panel como los de Mi cuenta: blanco, sin borde, esquinas de tarjeta y sombra suave.
+      className="rounded-tarjeta bg-pico-blanco p-4 shadow-tarjeta motion-safe:animate-aparecer md:p-6"
       style={{ animationDelay: `${numero * 80}ms` }}
       aria-labelledby={`paso-${numero}`}
     >

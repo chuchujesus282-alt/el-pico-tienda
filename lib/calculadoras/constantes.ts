@@ -2,21 +2,25 @@
 // está aquí: presentaciones comerciales, dosificaciones, rendimientos y desperdicios.
 // De dónde sale cada valor y un ejemplo resuelto: docs/FORMULAS.md.
 
-/** Presentaciones comerciales (unidad de venta de cada material). */
+/**
+ * Presentaciones comerciales (unidad de venta de cada material), según los productos que vende la tienda
+ * (materiales.ts; revisado en la tienda el 2026-11-09).
+ */
 export const PRESENTACION = {
   sacoCementoKg: 42.5,
+  /** Largo de barra por defecto; cada diámetro trae el suyo en CABILLAS. */
   barraCabillaM: 6,
   rolloAlambreKg: 1,
-  galonesPorCunete: 4, // la "paila" de pintura del catálogo trae 4 galones
+  galonesPorCunete: 4, // el tobo de pintura del catálogo trae 4 galones
   /** Si después de los cuñetes sobran estos galones o más, sale mejor llevar otro cuñete. */
   galonesSueltosQueConvieneCunete: 3,
-  sacoPegoKg: 10,
+  sacoPegoKg: 1, // el pego se vende por kilo
   bolsaCaratoKg: 2,
-  tornillosTechoPorBolsa: 100,
-  tornillosDrywallPorCaja: 100,
+  tornillosTechoPorBolsa: 1, // se venden por unidad
+  tornillosDrywallPorCaja: 1, // se venden por unidad
   rolloMantoM2: 10,
-  cuneteImpermeabilizanteL: 18.9, // cuñete de 5 galones
-  rolloCintaJuntasM: 75,
+  cuneteImpermeabilizanteL: 15.14, // cuñete de 4 galones (si trae 5, sobra un poco: mejor que falte)
+  rolloCintaJuntasM: 76,
   galonMasillaKg: 5,
 } as const;
 
@@ -63,11 +67,14 @@ export const CONCRETO = {
 } as const;
 export type ResistenciaConcreto = keyof typeof CONCRETO;
 
-/** Cabillas: diámetro (mm) y peso (kg por metro). El solape es de 40 veces el diámetro. */
+/**
+ * Cabillas: diámetro (mm), peso (kg por metro) y largo de la barra que vende la tienda (3/8" y 1/2" de 12 m, 5/8" de
+ * 6 m). El solape es de 40 veces el diámetro.
+ */
 export const CABILLAS = {
-  "3/8": { diametroMm: 9.5, kgPorM: 0.559 },
-  "1/2": { diametroMm: 12.7, kgPorM: 0.994 },
-  "5/8": { diametroMm: 15.9, kgPorM: 1.554 },
+  "3/8": { diametroMm: 9.5, kgPorM: 0.559, barraM: 12 },
+  "1/2": { diametroMm: 12.7, kgPorM: 0.994, barraM: 12 },
+  "5/8": { diametroMm: 15.9, kgPorM: 1.554, barraM: 6 },
 } as const;
 export type DiametroCabilla = keyof typeof CABILLAS;
 export const SOLAPE_EN_DIAMETROS = 40;
@@ -83,15 +90,18 @@ export const PINTURA = {
 
 /** Cerámica y porcelanato: m² por caja, pego por m² y datos de la junta para el carato. */
 export const REVESTIMIENTOS = {
-  ceramica: { m2PorCaja: 2.03, ladoMm: 450, espesorMm: 8, juntaMm: 3, pegoKgPorM2: 5 },
+  ceramica: { m2PorCaja: 1.62, ladoMm: 300, espesorMm: 7, juntaMm: 3, pegoKgPorM2: 5 }, // 30 × 30, caja de 1,62 m²
   porcelanato: { m2PorCaja: 1.44, ladoMm: 600, espesorMm: 9, juntaMm: 2, pegoKgPorM2: 6 },
   densidadCarato: 1.6, // kg por litro
 } as const;
 
-/** Láminas de techo: largo, ancho que realmente cubre (ya descontado el solape lateral) y solape a lo largo. */
+/**
+ * Láminas de techo: los largos que vende la tienda (de menor a mayor), el ancho que realmente cubre (ya descontado el
+ * solape lateral; el zinc mide 0,80 m) y el solape a lo largo.
+ */
 export const TECHO = {
-  zinc: { largoM: 3.66, anchoUtilM: 0.7 },
-  acerolit: { largoM: 3.66, anchoUtilM: 0.76 },
+  zinc: { largosM: [2.44, 3.0, 3.6], anchoUtilM: 0.7 },
+  acerotec: { largosM: [3.0, 4.0, 6.0], anchoUtilM: 0.76 },
   solapeLargoM: 0.2,
   tornillosPorM2: 6,
 } as const;

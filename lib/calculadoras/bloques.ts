@@ -13,9 +13,16 @@ import { areaPared, haciaArriba, materialesMortero, numero } from "./util";
  *     donde parte que es junta = 1 − bloques por m² × largo × alto del bloque
  * El mortero se reparte en cemento y arena con la mezcla 1:4 (constantes.ts).
  */
+/** Espesores (cm) que vende la tienda de cada tipo de bloque. */
+const ESPESORES = { arcilla: [10, 12, 15], concreto: [10, 12, 15, 20] } as const;
+
 export function calcularBloques(entrada: Entrada): Resultado {
   const tipo = entrada.opciones.tipo === "concreto" ? "concreto" : "arcilla";
-  const espesorCm = Number(entrada.opciones.espesor) || 15;
+  const pedido = Number(entrada.opciones.espesor) || 15;
+  // Si llega un espesor que no hay de ese tipo, el más cercano que sí hay.
+  const espesorCm = (ESPESORES[tipo] as readonly number[]).includes(pedido)
+    ? pedido
+    : [...ESPESORES[tipo]].sort((a, b) => Math.abs(a - pedido) - Math.abs(b - pedido))[0];
   const { largoM, altoM } = BLOQUES[tipo];
   const area = areaPared(entrada);
 
@@ -57,26 +64,29 @@ export const bloques: Calculadora = {
       defecto: "arcilla",
       opciones: [
         { valor: "arcilla", etiqueta: "Arcilla", detalle: "Rojo, de 20 × 30 cm. El más usado en viviendas." },
-        { valor: "concreto", etiqueta: "Concreto", detalle: "Gris, de 20 × 40 cm. Más resistente." },
+        { valor: "concreto", etiqueta: "Concreto (Aliven)", detalle: "Gris, de 20 × 40 cm. Más resistente." },
       ],
     },
     {
+      // Los espesores que vende la tienda: arcilla de 10, 12 y 15 cm; Aliven de 10, 12, 15 y 20 cm.
       id: "espesor",
       etiqueta: "Espesor del bloque",
       defecto: "15",
       opciones: [
         { valor: "10", etiqueta: "10 cm", detalle: "Divisiones internas." },
+        { valor: "12", etiqueta: "12 cm", detalle: "Paredes internas más firmes." },
         { valor: "15", etiqueta: "15 cm", detalle: "Paredes de fachada." },
-        { valor: "20", etiqueta: "20 cm", detalle: "Muros y cercas." },
+        { valor: "20", etiqueta: "20 cm", detalle: "Muros y cercas.", soloCon: { tipo: ["concreto"] } },
       ],
     },
   ],
   herramientas: ["cuchara", "nivel", "balde", "carretilla", "cinta-metrica", "guantes"],
   materiales: [
     "bloque-arcilla-10",
+    "bloque-arcilla-12",
     "bloque-arcilla-15",
-    "bloque-arcilla-20",
     "bloque-concreto-10",
+    "bloque-concreto-12",
     "bloque-concreto-15",
     "bloque-concreto-20",
     "cemento",

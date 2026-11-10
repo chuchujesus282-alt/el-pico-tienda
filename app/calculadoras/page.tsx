@@ -40,7 +40,7 @@ export default function PaginaCalculadoras() {
         </ol>
       </TituloPagina>
 
-      <ul className="grid gap-3 sm:grid-cols-2 md:gap-4 lg:grid-cols-3 xl:grid-cols-5">
+      <ul className="grid gap-3 sm:grid-cols-2 md:gap-4 lg:grid-cols-3">
         {CALCULADORAS.map((calculadora, i) => (
           <li key={calculadora.slug}>
             <Revelar retraso={(i % 5) * 70} className="h-full">
@@ -50,7 +50,7 @@ export default function PaginaCalculadoras() {
         ))}
       </ul>
 
-      <p className="rounded-tarjeta border border-gris-borde bg-pico-blanco px-4 py-3 text-[13px] leading-relaxed text-gris-texto shadow-tarjeta md:px-5">
+      <p className="rounded-tarjeta bg-pico-blanco px-4 py-3 text-[13px] leading-relaxed text-gris-texto shadow-tarjeta md:px-5">
         <strong className="font-semibold text-pico-azul">Cálculos referenciales.</strong> Las cantidades pueden variar según la obra; consulta con tu
         maestro de obra o con nosotros.
       </p>

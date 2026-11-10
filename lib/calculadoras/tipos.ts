@@ -19,7 +19,16 @@ export type Campo = {
   etiquetaSegun?: { grupo: string; etiquetas: Record<string, string> };
 };
 
-export type OpcionCalculadora = { valor: string; etiqueta: string; detalle?: string };
+export type OpcionCalculadora = {
+  valor: string;
+  etiqueta: string;
+  detalle?: string;
+  /**
+   * Solo se ofrece si en otro grupo se eligió uno de estos valores (ej. el espesor de 20 cm solo con bloque de
+   * concreto, porque de arcilla no se vende). Sin esto, siempre.
+   */
+  soloCon?: Record<string, string[]>;
+};
 
 /** Grupo de opciones tipo tarjeta (paso 2). */
 export type GrupoOpciones = {

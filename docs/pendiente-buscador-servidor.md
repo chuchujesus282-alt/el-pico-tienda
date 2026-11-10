@@ -125,7 +125,10 @@ buscador solo la "llama". Al mover el buscador al servidor:
 (`https://el-pico-tienda.vercel.app/categoria/herramientas`); en la computadora dio 1,0–2,6 s la primera vez (casi
 todo es esperar a Saint) y ~0,02 s las siguientes.
 
-## Calculadoras: códigos propuestos (PENDIENTE de revisar con persona B)
+## Calculadoras: códigos propuestos (RESUELTO el 2026-11-09 por persona B)
+
+Aplicado en `lib/calculadoras/materiales.ts` y `constantes.ts` (ver el Registro de cambios de CLAUDE.md). La tabla
+queda solo como historia.
 
 Desde el 2026-10-28 TODOS los materiales de `lib/calculadoras/materiales.ts` tienen `productoId: null` (salen como
 "Consultar disponibilidad"): apuntaban a productos de ejemplo, que se borraron. Propuesta de códigos REALES de Saint
