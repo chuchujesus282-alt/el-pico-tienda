@@ -75,12 +75,15 @@ function GrupoFiltro({ titulo, opciones, cabecera }: { titulo: string; opciones:
 }
 
 /**
- * Arriba del árbol, cuando se está en un nivel: "← Volver a [nivel de arriba]" y la ruta completa
+ * Arriba del árbol, cuando se está en un nivel: "← Volver" y la ruta completa
  * ("Construcción › Materiales de construcción › Agua y tubería"), donde cada parte se puede tocar.
  */
 function RutaArbol({ slug, estado, nombreCategoria, navegacion }: Required<Pick<Props, "slug" | "estado" | "nombreCategoria" | "navegacion">>) {
-  const { ruta } = navegacion;
-  const arriba = ruta.at(-2);
+  const { ruta, sonHermanas } = navegacion;
+  // "Volver" lleva a la LISTA de arriba de la que se ve. En el último nivel la lista que se ve ya es la del nivel de
+  // arriba (la actual entre sus hermanas: en Mortero se ven las de Obra gris), así que sube dos: a la lista donde está
+  // Obra gris. Antes subía uno y mostraba la misma lista con "Todo en Obra gris" marcado (pedido de persona A).
+  const arriba = ruta.at(sonHermanas ? -3 : -2);
   const aNivel = (sub: number | undefined) => hrefCategoria(slug, estado, { sub, subcategoria: undefined });
   return (
     <div className="mb-3 space-y-2 border-b border-gris-borde pb-3">
@@ -88,10 +91,13 @@ function RutaArbol({ slug, estado, nombreCategoria, navegacion }: Required<Pick<
         href={aNivel(arriba?.codigo)}
         scroll={false}
         data-sigue-abierto=""
+        // Solo "Volver", siempre el mismo largo: con el nombre del nivel la caja cambiaba de alto al pasar de uno a
+        // otro (pedido de persona A). El lector de pantalla sí oye a dónde va.
+        aria-label={`Volver a ${arriba?.nombre ?? nombreCategoria}`}
         className="group inline-flex items-center gap-1.5 text-sm font-semibold text-logo-rojo hover:underline"
       >
         <ArrowLeft className="size-4 shrink-0 transition-transform duration-200 motion-safe:group-hover:-translate-x-0.5" aria-hidden />
-        Volver a {arriba?.nombre ?? "todas"}
+        Volver
       </Link>
       <nav aria-label="Ruta de subcategorías">
         <ol className="flex flex-wrap items-center gap-x-1 gap-y-0.5 text-xs leading-snug text-gris-texto">
