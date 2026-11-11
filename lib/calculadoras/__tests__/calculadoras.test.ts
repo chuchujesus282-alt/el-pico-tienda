@@ -6,7 +6,7 @@ import { MATERIALES, type IdMaterial } from "../materiales";
 import { repartirEnCunetes } from "../pintura";
 import { ajustarOpciones, CALCULADORAS, medidasCompletas, obtenerCalculadora, opcionDisponible, opcionesIniciales } from "../registro";
 import type { Entrada, Resultado } from "../tipos";
-import { haciaArriba, numero } from "../util";
+import { galonesYCuartos, haciaArriba, numero } from "../util";
 
 /** Códigos de Saint que usan las calculadoras, revisados en la tienda publicada el 2026-11-09. */
 const CODIGOS_REVISADOS = [
@@ -16,6 +16,9 @@ const CODIGOS_REVISADOS = [
   "TOR1146", "CONST0032", "GN09858", "GN09861", "TOR1220", "GN60272", "RAMA0006", "GN03409", "PRLF0073", "MULTP005",
   "BLLT0128", "NIKAT087", "BRUF0525", "GN14750", "GN03721", "BRUF0168", "GN00188", "JABAL024", "GN12764", "CELV0006",
   "LBS0108", "NIKAT081", "ALD0030",
+  // 2026-11-11: rejas, barniz y cerca (todos revisados de nuevo ese día, con los de arriba).
+  "MANP0014", "MANP0020", "MANP0113", "MANP0127", "MNQ0135", "MNQ0087", "MNQ0086", "MNQ0017", "MNQ0018", "MNQ0014",
+  "MNQ0015", "GN10425", "GN00421", "CER0025", "GN01375", "GN04670",
 ];
 
 // Cada caso está resuelto a mano, paso a paso, en docs/FORMULAS.md.
@@ -148,6 +151,78 @@ describe("pintura", () => {
   });
 });
 
+describe("galones y cuartos", () => {
+  it("lo que sobra va en cuartos; con 3 cuartos o más, otro galón", () => {
+    expect(galonesYCuartos(0.2)).toEqual({ galones: 0, cuartos: 1 });
+    expect(galonesYCuartos(1.3)).toEqual({ galones: 1, cuartos: 2 });
+    expect(galonesYCuartos(1.8)).toEqual({ galones: 2, cuartos: 0 });
+    expect(galonesYCuartos(2)).toEqual({ galones: 2, cuartos: 0 });
+    expect(galonesYCuartos(2.6)).toEqual({ galones: 3, cuartos: 0 });
+  });
+});
+
+describe("pintar rejas y metal", () => {
+  it("reja nueva de 3 × 2 m, 2 manos", () => {
+    // 6 m² × 0,6 × 2 lados = 7,2 m²; fondo 7,2 ÷ 35 × 1,05 = 0,22 gal → 1 cuarto; esmalte 7,2 × 2 ÷ 40 × 1,05 = 0,38 → 2 cuartos
+    expect(cantidades(calcular("rejas", { ancho: 3, alto: 2, piezas: 1 }))).toEqual({
+      "fondo-herreria-cuarto": 1,
+      "esmalte-cuarto": 2,
+      thinner: 1,
+    });
+  });
+
+  it("portón de lámina de 4 × 2,2 m por las dos caras", () => {
+    // 17,6 m²; fondo 0,53 gal → 3 cuartos → 1 galón; esmalte 0,92 → 4 cuartos = 1 galón
+    expect(cantidades(calcular("rejas", { ancho: 4, alto: 2.2, piezas: 1 }, { tipo: "lamina-2" }))).toEqual({
+      "fondo-herreria-galon": 1,
+      "esmalte-galon": 1,
+      thinner: 1,
+    });
+  });
+
+  it("10 protectores de 1,2 × 1,5 m ya pintados: sin fondo", () => {
+    // 18 m² × 1,2 = 21,6 m²; esmalte 21,6 × 2 ÷ 40 × 1,05 = 1,13 → 5 cuartos = 1 galón + 1 cuarto
+    expect(cantidades(calcular("rejas", { ancho: 1.2, alto: 1.5, piezas: 10 }, { estado: "pintado" }))).toEqual({
+      "esmalte-galon": 1,
+      "esmalte-cuarto": 1,
+      thinner: 1,
+    });
+  });
+});
+
+describe("barnizar madera", () => {
+  it("puerta de 2,1 × 0,9 m por las dos caras, adentro", () => {
+    // 3,78 m²; sellador 3,78 ÷ 30 × 1,05 = 0,13 → 1 cuarto; barniz 3,78 × 2 ÷ 35 × 1,05 = 0,23 → 1 cuarto
+    expect(cantidades(calcular("barniz", { largo: 2.1, ancho: 0.9 }, { caras: "2" }))).toEqual({
+      "sellador-madera-cuarto": 1,
+      "barniz-natural-cuarto": 1,
+    });
+  });
+
+  it("deck de 6 × 4 m afuera, 3 manos: barniz marino", () => {
+    // 24 m²; sellador 0,84 → 4 cuartos = 1 galón; barniz 24 × 3 ÷ 35 × 1,05 = 2,16 → 9 cuartos = 2 galones + 1 cuarto
+    expect(cantidades(calcular("barniz", { largo: 6, ancho: 4 }, { lugar: "afuera", manos: "3" }))).toEqual({
+      "sellador-madera-galon": 1,
+      "barniz-marino-galon": 2,
+      "barniz-marino-cuarto": 1,
+    });
+  });
+});
+
+describe("cerca de alambre de púas", () => {
+  it("terreno de 100 m de perímetro, 4 hilos, rollo de 300 m", () => {
+    // 100 × 4 × 1,05 = 420 m ÷ 300 = 1,4 → 2 rollos; 100 ÷ 2,5 + 1 = 41 postes
+    const r = calcular("cerca", { perimetro: 100 });
+    expect(cantidades(r)).toEqual({ "alambre-pua-300": 2 });
+    expect(r.datos.find((d) => d.etiqueta === "Postes aproximados")?.valor).toBe("41 (uno cada 2,5 m)");
+  });
+
+  it("potrero de 250 m, 5 hilos, rollo de 400 m", () => {
+    // 250 × 5 × 1,05 = 1.312,5 m ÷ 400 = 3,28 → 4 rollos
+    expect(cantidades(calcular("cerca", { perimetro: 250 }, { hilos: "5", rollo: "400" }))).toEqual({ "alambre-pua-400": 4 });
+  });
+});
+
 describe("cerámica y porcelanato", () => {
   it("fórmula del carato", () => {
     expect(caratoKgPorM2(300, 7, 3)).toBeCloseTo(0.224, 4); // cerámica 30 × 30, junta de 3 mm
@@ -247,9 +322,9 @@ describe("drywall", () => {
 });
 
 describe("todas las calculadoras", () => {
-  it("son 10, con slug único", () => {
-    expect(CALCULADORAS).toHaveLength(10);
-    expect(new Set(CALCULADORAS.map((c) => c.slug)).size).toBe(10);
+  it("son 13, con slug único", () => {
+    expect(CALCULADORAS).toHaveLength(13);
+    expect(new Set(CALCULADORAS.map((c) => c.slug)).size).toBe(13);
   });
 
   it("redondean siempre hacia arriba a unidades enteras", () => {

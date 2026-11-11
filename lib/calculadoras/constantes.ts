@@ -88,6 +88,36 @@ export const PINTURA = {
   rendimientoSelladorM2: 35,
 } as const;
 
+/**
+ * Rejas y metal (fondo de herrería y esmalte sintético): m² por galón y mano, y cuánto de la "caja" (alto × ancho) es
+ * metal de verdad. Una reja de barrotes se pinta por todos sus lados, pero tiene huecos: se cuenta como un 60 % del
+ * área por cada cara. El thinner rebaja (≈ 10 %) y limpia las brochas: 1 galón por cada 4 de pintura.
+ */
+export const METAL = {
+  fondoM2PorGalon: 35,
+  esmalteM2PorGalon: 40,
+  factorReja: 0.6,
+  galonesPinturaPorThinner: 4,
+} as const;
+
+/** Madera: m² por galón y mano del sellador listo para usar y del barniz (Menequim). */
+export const MADERA = {
+  selladorM2PorGalon: 30,
+  barnizM2PorGalon: 35,
+} as const;
+
+/**
+ * Galones de pintura en galones enteros y cuartos (1/4 de galón): si lo que sobra del último galón cabe en uno o dos
+ * cuartos, se llevan cuartos; con tres o más, sale mejor un galón entero.
+ */
+export const CUARTOS_ANTES_QUE_GALON = 2;
+
+/** Cerca de alambre de púas: postes cada tantos metros y desperdicio para amarrar y tensar. */
+export const CERCA = {
+  separacionPostesM: 2.5,
+  desperdicio: 0.05,
+} as const;
+
 /** Cerámica y porcelanato: m² por caja, pego por m² y datos de la junta para el carato. */
 export const REVESTIMIENTOS = {
   ceramica: { m2PorCaja: 1.62, ladoMm: 300, espesorMm: 7, juntaMm: 3, pegoKgPorM2: 5 }, // 30 × 30, caja de 1,62 m²

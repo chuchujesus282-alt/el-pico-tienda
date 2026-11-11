@@ -37,6 +37,22 @@ export const MATERIALES = {
   manto: { nombre: "Manto asfáltico de 3,15 mm", presentacion: "Rollo de 10 m²", productoId: "IPA0030" },
   "primer-asfaltico": { nombre: "Primer asfáltico", presentacion: "Galón", productoId: "IPA0055" },
   "impermeabilizante-acrilico": { nombre: "Impermeabilizante acrílico", presentacion: "Cuñete de 4 galones", productoId: "GN00838" },
+  // Rejas y metal (Manpica): fondo de herrería y esmalte, en galón y en 1/4; thinner Menequim para rebajar y limpiar.
+  "fondo-herreria-galon": { nombre: "Fondo de herrería Manpica", presentacion: "Galón (gris o negro)", productoId: "MANP0014" },
+  "fondo-herreria-cuarto": { nombre: "Fondo de herrería Manpica", presentacion: "1/4 de galón", productoId: "MANP0020" },
+  "esmalte-galon": { nombre: "Esmalte Manpica", presentacion: "Galón (blanco o negro)", productoId: "MANP0113" },
+  "esmalte-cuarto": { nombre: "Esmalte Manpica", presentacion: "1/4 de galón", productoId: "MANP0127" },
+  thinner: { nombre: "Thinner standard Menequim", presentacion: "Galón", productoId: "MNQ0135" },
+  // Madera (Menequim): sellador listo para usar y barniz natural (adentro) o marino (afuera), en galón y en 1/4.
+  "sellador-madera-galon": { nombre: "Sellador para madera listo para usar", presentacion: "Galón", productoId: "MNQ0087" },
+  "sellador-madera-cuarto": { nombre: "Sellador para madera listo para usar", presentacion: "1/4 de galón", productoId: "MNQ0086" },
+  "barniz-natural-galon": { nombre: "Barniz natural brillante", presentacion: "Galón", productoId: "MNQ0017" },
+  "barniz-natural-cuarto": { nombre: "Barniz natural brillante", presentacion: "1/4 de galón", productoId: "MNQ0018" },
+  "barniz-marino-galon": { nombre: "Barniz marino", presentacion: "Galón", productoId: "MNQ0014" },
+  "barniz-marino-cuarto": { nombre: "Barniz marino", presentacion: "1/4 de galón", productoId: "MNQ0015" },
+  // Cercas
+  "alambre-pua-300": { nombre: "Alambre de púas calibre 14", presentacion: "Rollo de 300 m", productoId: "GN10425" },
+  "alambre-pua-400": { nombre: "Alambre de púas calibre 16", presentacion: "Rollo de 400 m", productoId: "GN00421" },
   // Pisos y revestimientos
   ceramica: { nombre: "Cerámica 30 × 30 cm", presentacion: "Caja de 1,62 m²", productoId: "CERAM002" },
   porcelanato: { nombre: "Porcelanato 60 × 60 cm", presentacion: "Caja de 1,44 m²", productoId: "CERAM045" },
@@ -75,6 +91,9 @@ export const MATERIALES = {
   espatula: { nombre: "Espátula", presentacion: "Unidad", productoId: "LBS0108" },
   taladro: { nombre: "Taladro percutor", presentacion: "Unidad", productoId: "NIKAT081" },
   escalera: { nombre: "Escalera doméstica", presentacion: "Unidad", productoId: "ALD0030" },
+  "cepillo-alambre": { nombre: "Cepillo de alambre", presentacion: "Unidad", productoId: "CER0025" },
+  lija: { nombre: "Pliego de lija de agua", presentacion: "Pliego", productoId: "GN01375" },
+  alicate: { nombre: 'Alicate mecánico de 6"', presentacion: "Unidad", productoId: "GN04670" },
 } as const satisfies Record<string, Material>;
 
 export type IdMaterial = keyof typeof MATERIALES;

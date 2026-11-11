@@ -1,12 +1,15 @@
+import { barniz } from "./barniz";
 import { bloques } from "./bloques";
 import { cabillas } from "./cabillas";
 import { ceramica } from "./ceramica";
+import { cerca } from "./cerca";
 import { concreto } from "./concreto";
 import { contrapiso } from "./contrapiso";
 import { drywall } from "./drywall";
 import { friso } from "./friso";
 import { impermeabilizacion } from "./impermeabilizacion";
 import { pintura } from "./pintura";
+import { rejas } from "./rejas";
 import { techo } from "./techo";
 import type { Calculadora, Entrada, GrupoOpciones, OpcionCalculadora } from "./tipos";
 
@@ -18,11 +21,14 @@ export const CALCULADORAS: Calculadora[] = [
   friso,
   cabillas,
   pintura,
+  rejas,
+  barniz,
   ceramica,
   contrapiso,
   techo,
   impermeabilizacion,
   drywall,
+  cerca,
 ];
 
 export function obtenerCalculadora(slug: string): Calculadora | undefined {

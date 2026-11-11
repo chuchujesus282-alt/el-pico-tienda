@@ -46,10 +46,11 @@ export const bannersCentrales: Record<string, BannerInicio> = {
     alt: "Materiales de construcción en El Pico",
     href: "/categoria/construccion",
     titulo: "Materiales para construir",
+    tituloPartes: ["Materiales para", "construir"],
     texto: "Cemento, bloques, pegos y más para construir sin paradas.",
     textoBoton: "Ver materiales",
-    variante: "azul",
-    // Provisional a propósito: solo el texto sobre el azul, sin escena ni ícono (la escena se quitó el 2026-10-23).
+    variante: "oscuro",
+    // Escena con fotos reales: placa de concreto, paleta de bloques y grúa (ObraAsomada, persona B 2026-11-11).
   },
   herramientas: {
     id: "herramientas",
@@ -81,10 +82,11 @@ export const bannersCentrales: Record<string, BannerInicio> = {
     alt: "Cerrajería en El Pico",
     href: "/categoria/cerrajeria",
     titulo: "Cerrajería que protege",
+    tituloPartes: ["Cerrajería que", "protege"],
     texto: "Candados, cerraduras, cilindros y bisagras para tu casa o tu negocio.",
     textoBoton: "Ver cerrajería",
-    variante: "azul",
-    // Provisional a propósito: solo el texto sobre el azul, sin escena ni ícono.
+    variante: "oscuro",
+    // Escena con fotos reales del dueño: placa de acero con candados (CerrajeriaAsomada, persona B 2026-11-11).
   },
 };
 

@@ -16,6 +16,9 @@ import IconoRegla from "./IconoRegla";
 import IconoLamina from "./IconoLamina";
 import IconoManto from "./IconoManto";
 import IconoDrywall from "./IconoDrywall";
+import IconoReja from "./IconoReja";
+import IconoBrocha from "./IconoBrocha";
+import IconoCerca from "./IconoCerca";
 import IconoCinta from "./IconoCinta";
 import IconoLista from "./IconoLista";
 import IconoCarritoEnvio from "./IconoCarritoEnvio";
@@ -67,6 +70,9 @@ export const ICONOS_PICO: FichaIcono[] = [
   { nombre: "Lamina", grupo: "Calculadoras", descripcion: "Techo con láminas: lámina ondulada con su tornillo rojo, que gira al fijarse.", Componente: IconoLamina },
   { nombre: "Manto", grupo: "Calculadoras", descripcion: "Impermeabilización: rollo de manto asfáltico desenrollándose y la llama roja del soplete.", Componente: IconoManto },
   { nombre: "Drywall", grupo: "Calculadoras", descripcion: "Drywall: lámina de yeso con sus tornillos rojos y el perfil metálico al lado.", Componente: IconoDrywall },
+  { nombre: "Reja", grupo: "Calculadoras", descripcion: "Pintar rejas y metal: reja de barrotes con puntas de lanza y la franja roja de esmalte que se dibuja.", Componente: IconoReja },
+  { nombre: "Brocha", grupo: "Calculadoras", descripcion: "Barnizar madera: brocha sobre una tabla con vetas; la franja roja de barniz se dibuja.", Componente: IconoBrocha },
+  { nombre: "Cerca", grupo: "Calculadoras", descripcion: "Cerca de alambre de púas: postes y hilos que se tienden, con las púas en rojo.", Componente: IconoCerca },
   { nombre: "Cinta", grupo: "Pasos", descripcion: "Mide tu obra: cinta métrica con la cinta roja que se estira.", Componente: IconoCinta },
   { nombre: "Lista", grupo: "Pasos", descripcion: "Ve el material: lista de materiales en su tablilla, con el check rojo que se dibuja.", Componente: IconoLista },
   { nombre: "CarritoEnvio", grupo: "Pasos", descripcion: "Pide en un clic: carrito con la flecha roja de envío.", Componente: IconoCarritoEnvio },
@@ -115,6 +121,9 @@ export {
   IconoLamina,
   IconoManto,
   IconoDrywall,
+  IconoReja,
+  IconoBrocha,
+  IconoCerca,
   IconoCinta,
   IconoLista,
   IconoCarritoEnvio,

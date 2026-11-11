@@ -299,6 +299,57 @@ Segundo caso: revestimiento (una cara) de 6 × 3,2 m con una puerta de 1,9 m², 
 
 ---
 
+## Galones y cuartos (rejas y barniz)
+
+Fondo, esmalte, sellador y barniz se venden en galón y en 1/4 de galón. Se pasa todo a cuartos (hacia arriba) y se
+arman galones enteros; si sobran 1 o 2 cuartos se llevan cuartos, y si sobran 3, un galón más (sale mejor).
+Ej.: 1,3 gal → 6 cuartos → 1 galón + 2 cuartos; 1,8 gal → 8 cuartos → 2 galones; 2,6 gal → 11 cuartos → 3 galones.
+
+## 11. Pintar rejas y metal
+
+**Supuestos:** fondo de herrería 35 m² por galón (una mano), esmalte 40 m² por galón y mano; una reja de barrotes
+cuenta como el 60 % del marco por cada lado; 1 galón de thinner por cada 4 de pintura (mínimo 1).
+
+```
+superficie = ancho × alto × piezas × (reja: 0,6 × 2 | lámina: 1 o 2 caras)
+fondo      = superficie ÷ 35 × 1,05         (solo metal nuevo u oxidado)
+esmalte    = superficie × manos ÷ 40 × 1,05
+thinner    = (fondo + esmalte) ÷ 4
+```
+
+**Ejemplo:** reja nueva de 3 × 2 m, 2 manos. Superficie = 6 × 1,2 = **7,2 m²**; fondo = 0,22 gal → **1 cuarto**;
+esmalte = 0,38 gal → **2 cuartos**; thinner → **1 galón**. Portón de lámina de 4 × 2,2 m por las dos caras: 17,6 m²,
+fondo 0,53 gal (3 cuartos → **1 galón**), esmalte 0,92 gal → **1 galón**.
+
+## 12. Barnizar madera
+
+**Supuestos:** sellador listo para usar 30 m² por galón (una mano, solo en madera nueva o lijada); barniz 35 m² por
+galón y mano; natural adentro, marino afuera.
+
+```
+superficie = largo × ancho × caras
+sellador   = superficie ÷ 30 × 1,05
+barniz     = superficie × manos ÷ 35 × 1,05
+```
+
+**Ejemplo:** puerta de 2,1 × 0,9 m por las dos caras = 3,78 m²; sellador 0,13 gal → **1 cuarto**; barniz (2 manos)
+0,23 gal → **1 cuarto**. Deck de 6 × 4 m afuera con 3 manos: sellador **1 galón**, barniz marino 2,16 gal →
+**2 galones + 1 cuarto**.
+
+## 13. Cerca de alambre de púas
+
+**Supuestos:** rollos de 300 m (calibre 14) o 400 m (calibre 16); 5 % extra para amarres y tensado; un poste cada 2,5 m.
+
+```
+alambre = perímetro × hilos × 1,05
+rollos  = alambre ÷ largo del rollo
+postes  = ⌈perímetro ÷ 2,5⌉ + 1      (solo se informa)
+```
+
+**Ejemplo:** 100 m de perímetro, 4 hilos: 420 m ÷ 300 = 1,4 → **2 rollos**; **41 postes**.
+
+---
+
 ## Valores que conviene validar con un maestro de obra
 
 1. **Bloques por m²:** con junta de 1,5 cm salen 14,8 (arcilla) y 12 (concreto). Hay quien usa 15–17 y 12,5.
@@ -310,3 +361,6 @@ Segundo caso: revestimiento (una cara) de 6 × 3,2 m con una puerta de 1,9 m², 
 6. **Impermeabilizante acrílico:** se asumió cuñete de 5 galones y 1 L/m² en total.
 7. **Drywall:** 30 tornillos por lámina, 1,5 m de cinta y 0,7 kg de masilla por m².
 8. **Alambre de amarre:** 25 g por kg de acero.
+9. **Rejas:** rendimiento del fondo (35 m²) y del esmalte (40 m²) por galón, y el 60 % del marco por cada lado de una reja.
+10. **Madera:** sellador 30 m² y barniz 35 m² por galón y mano.
+11. **Cerca:** un poste cada 2,5 m y 5 % de alambre extra.

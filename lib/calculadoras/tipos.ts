@@ -59,7 +59,7 @@ export type Resultado = {
   datos: Dato[];
 };
 
-export type TipoDiagrama = "pared" | "superficie" | "volumen" | "techo" | "malla";
+export type TipoDiagrama = "pared" | "superficie" | "volumen" | "techo" | "malla" | "reja" | "cerca";
 
 /**
  * Una calculadora completa. Para agregar otra: crea su archivo en lib/calculadoras/ con este objeto

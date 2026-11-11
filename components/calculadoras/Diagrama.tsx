@@ -107,12 +107,53 @@ function Malla() {
   );
 }
 
+/** Reja o portón de barrotes: se mide el ancho y el alto de todo el marco, como si fuera una lámina. */
+function Reja() {
+  const barrotes = [0, 1, 2, 3, 4, 5, 6, 7, 8];
+  return (
+    <>
+      <rect x="60" y="34" width="200" height="100" rx="2" className={trazo} strokeWidth={3} />
+      <line x1="60" y1="84" x2="260" y2="84" className="stroke-pico-azul" strokeWidth={2} />
+      {barrotes.map((i) => (
+        <g key={i}>
+          <line x1={80 + i * 20} y1={22} x2={80 + i * 20} y2={134} className="stroke-pico-azul" strokeWidth={2} />
+          <polygon points={`${80 + i * 20},14 ${76 + i * 20},22 ${84 + i * 20},22`} className="fill-pico-azul" />
+        </g>
+      ))}
+      <Cota x1={60} y1={152} x2={260} y2={152} etiqueta="Ancho" tx={160} ty={170} />
+      <Cota x1={40} y1={14} x2={40} y2={134} etiqueta="Alto" tx={22} ty={78} />
+    </>
+  );
+}
+
+/** Cerca de alambre: postes, los hilos tendidos y el perímetro (todo el borde del terreno). */
+function Cerca() {
+  const postes = [0, 1, 2, 3, 4, 5];
+  return (
+    <>
+      <line x1="20" y1="130" x2="300" y2="130" className="stroke-pico-azul/40" strokeWidth={2} />
+      {postes.map((i) => (
+        <rect key={i} x={36 + i * 50} y={40} width="8" height="92" rx="1.5" className="fill-pico-azul-claro stroke-pico-azul" strokeWidth={1.5} />
+      ))}
+      {[56, 80, 104].map((y) => (
+        <line key={y} x1="30" y1={y} x2="300" y2={y} className="stroke-pico-azul" strokeWidth={1.2} strokeDasharray="10 3" />
+      ))}
+      <Cota x1={40} y1={150} x2={290} y2={150} etiqueta="Perímetro" tx={165} ty={170} />
+      <text x="300" y="30" textAnchor="end" className={texto}>
+        Hilos
+      </text>
+    </>
+  );
+}
+
 const dibujos: Record<TipoDiagrama, () => React.JSX.Element> = {
   pared: Pared,
   superficie: Superficie,
   volumen: Volumen,
   techo: Techo,
   malla: Malla,
+  reja: Reja,
+  cerca: Cerca,
 };
 
 /** Dibujo simple de "cómo medir", con las cotas en rojo. Decorativo: el texto de al lado dice lo mismo. */
