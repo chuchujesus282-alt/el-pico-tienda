@@ -88,6 +88,51 @@ export const bannersCentrales: Record<string, BannerInicio> = {
     variante: "oscuro",
     // Escena con fotos reales del dueño: placa de acero con candados (CerrajeriaAsomada, persona B 2026-11-11).
   },
+  // Las cuatro de abajo: escenas con fotos de producto del dueño (CentralesConFotos.tsx, persona B 2026-11-12).
+  vehiculos: {
+    id: "vehiculos",
+    imagen: null,
+    alt: "Vehículos en El Pico",
+    href: "/categoria/vehiculos",
+    titulo: "Aceite para tu motor",
+    tituloPartes: ["Aceite para tu", "motor"],
+    texto: "Aceites, lubricantes y accesorios para tu carro.",
+    textoBoton: "Ver vehículos",
+    variante: "oscuro",
+  },
+  electricidad: {
+    id: "electricidad",
+    imagen: null,
+    alt: "Electricidad en El Pico",
+    href: "/categoria/electricidad",
+    titulo: "Energía segura",
+    tituloPartes: ["Energía", "segura"],
+    texto: "Cables, breakers, tomas e iluminación.",
+    textoBoton: "Ver electricidad",
+    variante: "oscuro",
+  },
+  griferia: {
+    id: "griferia",
+    imagen: null,
+    alt: "Grifería en El Pico",
+    href: "/categoria/griferia",
+    titulo: "Agua sin fugas",
+    tituloPartes: ["Agua sin", "fugas"],
+    texto: "Grifos, duchas, llaves, sanitarios, repuestos, desagües y filtros.",
+    textoBoton: "Ver grifería",
+    variante: "claro",
+  },
+  "hogar-y-jardin": {
+    id: "jardin",
+    imagen: null,
+    alt: "Hogar y jardín en El Pico",
+    href: "/categoria/hogar-y-jardin",
+    titulo: "Riega tu jardín",
+    tituloPartes: ["Riega tu", "jardín"],
+    texto: "Mangueras, herramientas de jardín y más para tu casa.",
+    textoBoton: "Ver hogar y jardín",
+    variante: "oscuro",
+  },
 };
 
 /** Mensaje con el que se abre WhatsApp desde "¿No sabes qué necesitas?". */

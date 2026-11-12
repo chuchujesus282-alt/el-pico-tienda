@@ -5,6 +5,7 @@ import type { ReactNode } from "react";
 import Plano from "@/components/icons/pico/Plano";
 import type { BannerInicio as DatosBanner, VarianteBanner } from "./contenidoInicio";
 import CerrajeriaAsomada from "./CerrajeriaAsomada";
+import { ElectricidadEncendida, GriferiaConAgua, JardinConManguera, VehiculosEnRuta } from "./CentralesConFotos";
 import HerramientasAsomadas from "./HerramientasAsomadas";
 import ObraAsomada from "./ObraAsomada";
 import PinturaEnMovimiento from "./PinturaEnMovimiento";
@@ -134,6 +135,11 @@ export default function BannerInicio({ banner, sizes, tamano = "normal", priorit
           {/* Placa de concreto con la paleta de bloques y la grúa; placa de acero con los candados (persona B). */}
           {grande && banner.id === "obra" && <ObraAsomada />}
           {grande && banner.id === "cerrajeria" && <CerrajeriaAsomada />}
+          {/* Carretera con el aceite, tablero con el breaker, grifo con agua y manguera que riega (persona B). */}
+          {grande && banner.id === "vehiculos" && <VehiculosEnRuta />}
+          {grande && banner.id === "electricidad" && <ElectricidadEncendida />}
+          {grande && banner.id === "griferia" && <GriferiaConAgua />}
+          {grande && banner.id === "jardin" && <JardinConManguera />}
           {grande && banner.tituloPartes ? (
             // Título en dos tiempos: la frase en una línea y la palabra clave enorme, en mayúsculas, sobre un
             // bloque rojo inclinado (el filete de la marca hecho sello). Al pasar el mouse crecen juntos, barra y palabra,

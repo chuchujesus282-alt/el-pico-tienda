@@ -97,10 +97,19 @@ export const bannersPorCategoria: Record<string, Variantes> = {
     },
     vertical: tarjeta("seguridad-industrial", CategoryCardSeguridad),
   },
-  electricidad: { horizontal: H.electricidad, vertical: tarjeta("electricidad", CategoryCardElectricidad) },
-  griferia: { horizontal: H.griferia, vertical: tarjeta("griferia", CategoryCardPlomeria) },
-  "hogar-y-jardin": { horizontal: H["hogar-y-jardin"], vertical: tarjeta("hogar-y-jardin", CategoryCardJardin) },
-  vehiculos: { horizontal: H.vehiculos, vertical: tarjeta("vehiculos", CategoryCardVehiculos) },
+  // Centrales con fotos de producto (CentralesConFotos.tsx, persona B).
+  electricidad: {
+    central: central(bannersCentrales.electricidad),
+    horizontal: H.electricidad,
+    vertical: tarjeta("electricidad", CategoryCardElectricidad),
+  },
+  griferia: { central: central(bannersCentrales.griferia), horizontal: H.griferia, vertical: tarjeta("griferia", CategoryCardPlomeria) },
+  "hogar-y-jardin": {
+    central: central(bannersCentrales["hogar-y-jardin"]),
+    horizontal: H["hogar-y-jardin"],
+    vertical: tarjeta("hogar-y-jardin", CategoryCardJardin),
+  },
+  vehiculos: { central: central(bannersCentrales.vehiculos), horizontal: H.vehiculos, vertical: tarjeta("vehiculos", CategoryCardVehiculos) },
 };
 
 function nombreDe(slug: string): string {
