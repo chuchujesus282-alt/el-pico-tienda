@@ -1,6 +1,6 @@
 import Image from "next/image";
 import { Montanas } from "@/components/layout/Logo";
-import SenalesProducto, { type Senal } from "./SenalesProducto";
+import SenalesProducto, { CALIDAD_BANNER, type Senal } from "./SenalesProducto";
 
 // Escena del banner "Herramientas que rinden" del carrusel: un rotomartillo real que flota a la derecha sobre una
 // placa amarilla de obra, con una cuadrícula tenue. Solo la monta BannerInicio cuando banner.id === "herramientas".
@@ -62,6 +62,7 @@ export default function HerramientasAsomadas() {
             width={900}
             height={757}
             sizes="(min-width: 1536px) 448px, (min-width: 768px) 30vw, 36vw"
+            quality={CALIDAD_BANNER}
             className="h-auto w-full drop-shadow-2xl drop-shadow-pico-azul-oscuro/50"
           />
           {/* Ficha técnica: punto rojo sobre la pieza, línea hasta la columna y etiqueta (SenalesProducto). */}

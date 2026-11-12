@@ -1,6 +1,6 @@
 import Image from "next/image";
 import { Montanas } from "@/components/layout/Logo";
-import SenalesProducto, { type Senal } from "./SenalesProducto";
+import SenalesProducto, { CALIDAD_BANNER, type Senal } from "./SenalesProducto";
 
 // Escena del banner "Cerrajería que protege" del carrusel (persona B, 2026-11-11), igual que HerramientasAsomadas:
 // azul marino con el texto y, cortada en diagonal, una placa de ACERO cepillado (claro) donde flota un candado de
@@ -46,6 +46,7 @@ export default function CerrajeriaAsomada() {
             width={777}
             height={859}
             sizes="(min-width: 1536px) 304px, (min-width: 768px) 22vw, 26vw"
+            quality={CALIDAD_BANNER}
             className="h-auto w-full drop-shadow-2xl drop-shadow-pico-azul-oscuro/50"
           />
           <SenalesProducto senales={SENALES} />

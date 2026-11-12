@@ -6,7 +6,10 @@ import type { CSSProperties } from "react";
  * con el producto, así los puntos no se despegan de las piezas. x/y: el punto, en % de la imagen. Solo desde 1280px:
  * más angosto, las etiquetas de la izquierda pisaban el título.
  */
-export type Senal = { texto: string; x: number; y: number; lado: "izquierda" | "derecha" };
+/** Calidad de las fotos de los banners del carrusel (debe estar en images.qualities de next.config.ts). */
+export const CALIDAD_BANNER = 90;
+
+export type Senal ={ texto: string; x: number; y: number; lado: "izquierda" | "derecha" };
 
 const COLUMNA = { izquierda: 2, derecha: 104 };
 

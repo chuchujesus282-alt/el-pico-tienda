@@ -1,6 +1,6 @@
 import Image from "next/image";
 import { Montanas } from "@/components/layout/Logo";
-import SenalesProducto, { type Senal } from "./SenalesProducto";
+import SenalesProducto, { CALIDAD_BANNER, type Senal } from "./SenalesProducto";
 
 // Escena del banner "Materiales para construir" del carrusel (persona B, 2026-11-11), igual que HerramientasAsomadas:
 // azul marino con el texto y, cortada en diagonal, una placa de CONCRETO (textura real) donde flota una paleta de
@@ -28,7 +28,7 @@ export default function ObraAsomada() {
         <div
           className={`absolute -inset-y-6 -right-24 origin-bottom -skew-x-12 overflow-hidden shadow-tarjeta-hover transition-transform duration-500 ease-out motion-safe:group-hover:translate-x-[-1.5%] ${PLACA}`}
         >
-          <Image src="/banners/construccion/concreto.webp" alt="" fill sizes="50vw" className="skew-x-12 scale-125 object-cover" />
+          <Image src="/banners/construccion/concreto-hd.webp" alt="" fill sizes="50vw" quality={CALIDAD_BANNER} className="skew-x-12 scale-125 object-cover" />
           {/* Sombra hacia el borde y luz detrás de la paleta, para que el concreto no se vea plano. */}
           <div className="absolute inset-0 bg-gradient-to-r from-pico-azul-oscuro/35 via-transparent to-pico-azul-oscuro/10" />
           <div className="absolute top-1/2 left-[50%] aspect-square w-[80%] -translate-x-1/2 -translate-y-1/2 skew-x-12 rounded-chip bg-[radial-gradient(circle,var(--color-pico-blanco)_0%,transparent_62%)] opacity-35" />
@@ -50,6 +50,7 @@ export default function ObraAsomada() {
             width={820}
             height={813}
             sizes="(min-width: 1536px) 352px, (min-width: 768px) 26vw, 30vw"
+            quality={CALIDAD_BANNER}
             className="h-auto w-full drop-shadow-2xl drop-shadow-pico-azul-oscuro/50"
           />
           <SenalesProducto senales={SENALES} />

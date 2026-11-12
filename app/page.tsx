@@ -6,7 +6,6 @@ import BannersPromocionales from "@/components/inicio/BannersPromocionales";
 import BloqueBanners from "@/components/inicio/BloqueBanners";
 import CarruselMarcas from "@/components/inicio/CarruselMarcas";
 import ColumnasCategorias from "@/components/inicio/ColumnasCategorias";
-import NotaPedido from "@/components/inicio/NotaPedido";
 import SeccionCategoria from "@/components/inicio/SeccionCategoria";
 import { marcasDeProductos, seccionesCategoria } from "@/components/inicio/contenidoInicio";
 import Contenedor from "@/components/ui/Contenedor";
@@ -63,16 +62,15 @@ export default async function Inicio({ searchParams }: PageProps<"/">) {
     ];
   });
 
-  // Ritmo: banner + nota van juntos (llegada); entre secciones, aire amplio. Los banners se
+  // Ritmo: el carrusel abre la página (sin la nota de precios, quitada a pedido de persona B); entre secciones, aire amplio. Los banners se
   // intercalan con los productos en vez de apilarse, y el de calculadoras sigue a Construcción
   // (la primera sección), donde están los materiales que calcula.
   return (
     <Contenedor className="space-y-10 pt-4 md:space-y-14 md:pt-6">
       <h1 className="sr-only">Centro Ferretero El Pico</h1>
 
-      <div className="space-y-3 motion-safe:animate-aparecer md:space-y-4">
+      <div className="motion-safe:animate-aparecer">
         <BloqueBanners categorias={banners.central} />
-        <NotaPedido />
       </div>
 
       {todos.length === 0 ? (

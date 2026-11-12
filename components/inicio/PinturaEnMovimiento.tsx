@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import type { CSSProperties } from "react";
+import { CALIDAD_BANNER } from "./SenalesProducto";
 
 // Banner "Renueva tus espacios" del carrusel del inicio (viene de la rama `prueba/animacion-herramientas`).
 // TODO el banner es la pared pintada del color de turno. Cada vez que el cliente pasa el cursor, un rodillo real del
@@ -124,6 +125,7 @@ export default function PinturaEnMovimiento() {
             width={820}
             height={648}
             sizes="(min-width: 1536px) 640px, 50vw"
+            quality={CALIDAD_BANNER}
             className="h-full w-auto max-w-none drop-shadow-2xl drop-shadow-pico-azul-oscuro/50"
           />
           <span
@@ -156,6 +158,7 @@ function Escena({ color }: { color: string }) {
           width={700}
           height={700}
           sizes="(min-width: 1536px) 352px, 22vw"
+          quality={CALIDAD_BANNER}
           className="h-auto w-full drop-shadow-2xl drop-shadow-pico-azul-oscuro/60"
         />
         <span
