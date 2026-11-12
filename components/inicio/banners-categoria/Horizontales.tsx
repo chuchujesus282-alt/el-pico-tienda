@@ -39,7 +39,10 @@ function Foto({ src, ancho, alto, className, sombra = true, children }: {
   );
 }
 
-/** Construcción: concreto real de fondo, la paleta de bloques apoyada y la cinta de precaución abajo. */
+/**
+ * Construcción: concreto real de fondo, el saco de cemento y la transpaleta, que avanza hacia él al pasar el mouse
+ * (va a cargarlo). Cinta de precaución abajo. En el teléfono solo la transpaleta: no caben las dos.
+ */
 function Construccion() {
   return (
     <MarcoHorizontal
@@ -51,12 +54,18 @@ function Construccion() {
           <Image src="/banners/construccion/concreto-hd.webp" alt="" fill sizes="(min-width: 768px) 50vw, 100vw" quality={CALIDAD_BANNER} className="object-cover" />
           <span className="absolute inset-0 bg-gradient-to-r from-pico-azul-oscuro via-pico-azul-oscuro/80 to-pico-azul-oscuro/5" />
           <span className={`absolute inset-x-0 bottom-0 h-2.5 ${FRANJA_OBRA}`} />
-          <span className="absolute right-[7%] bottom-[9%] h-[8%] w-[30%] rounded-chip bg-pico-azul-oscuro/60 blur-lg" />
+          <span className="absolute right-[3%] bottom-[8%] h-[8%] w-[40%] rounded-chip bg-pico-azul-oscuro/60 blur-lg" />
           <Foto
-            src="/banners/construccion/paleta-bloques.webp"
-            ancho={820}
-            alto={813}
-            className="right-[4%] bottom-[12%] h-[72%] group-hover:-translate-y-2 md:right-[6%]"
+            src="/banners/categorias/cemento.webp"
+            ancho={313}
+            alto={474}
+            className="right-[29%] bottom-[12%] hidden h-[52%] origin-bottom group-hover:-rotate-2 md:block"
+          />
+          <Foto
+            src="/banners/categorias/transpaleta.webp"
+            ancho={763}
+            alto={800}
+            className="right-[3%] bottom-[9%] h-[66%] group-hover:-translate-x-3 md:right-[2%] md:h-[80%]"
           />
         </>
       }
