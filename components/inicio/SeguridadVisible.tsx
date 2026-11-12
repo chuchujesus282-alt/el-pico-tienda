@@ -29,14 +29,16 @@ const FLICKER: Keyframe[] = [
 export default function SeguridadVisible({ prioritario = false }: { prioritario?: boolean }) {
   const ref = useRef<HTMLDivElement>(null);
   const oscuridadRef = useRef<HTMLDivElement>(null);
+  const franjasRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const sb = ref.current;
     const dark = oscuridadRef.current;
+    const franjas = franjasRef.current;
     // Todo el banner es el enlace (BannerInicio): ahí se escuchan el puntero y se pone la clase `encendida`, que
     // también le da el resplandor a la placa del título.
     const enlace = sb?.closest("a");
-    if (!sb || !dark || !enlace) return;
+    if (!sb || !dark || !franjas || !enlace) return;
 
     // Placa blanca con la palabra en azul oscuro, como la de Pinturas.
     enlace.style.setProperty("--color-sello", "var(--color-pico-blanco)");
@@ -54,9 +56,13 @@ export default function SeguridadVisible({ prioritario = false }: { prioritario?
     const calm = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     const encendida = () => enlace.classList.contains(estilos.encendida);
 
+    // Las franjas encendidas aparecen y se van junto con la oscuridad (mismo parpadeo, mismo fundido).
+    let animFranjas: Animation | null = null;
     const fade = (frames: Keyframe[], ms: number) => {
       anim?.cancel();
+      animFranjas?.cancel();
       anim = dark.animate(frames, { duration: ms, fill: "forwards", easing: "linear" });
+      animFranjas = franjas.animate(frames, { duration: ms, fill: "forwards", easing: "linear" });
     };
     const aim = (e: PointerEvent) => {
       const r = sb.getBoundingClientRect();
@@ -101,6 +107,8 @@ export default function SeguridadVisible({ prioritario = false }: { prioritario?
       raf = 0;
       anim?.cancel();
       anim = null;
+      animFranjas?.cancel();
+      animFranjas = null;
       enlace.classList.remove(estilos.encendida);
     };
     // En táctil, tocar el banner enciende la linterna en vez de navegar; el botón "Ver seguridad" sí navega. Con
@@ -155,8 +163,20 @@ export default function SeguridadVisible({ prioritario = false }: { prioritario?
         aria-hidden
       />
       <div ref={oscuridadRef} className={`absolute inset-0 ${estilos.oscuridad}`} aria-hidden />
+      {/* Franjas reflectivas encendidas, con su color: con todo apagado se ven en todo el banner, no solo en la
+          linterna. Sacadas de la foto iluminada (solo las franjas, con un resplandor suave); van debajo de ella. */}
+      <div ref={franjasRef} className="absolute inset-0 opacity-0" aria-hidden>
+        <Image
+          src={`${DIR}/seguridad_franjas_brillo.webp`}
+          alt=""
+          fill
+          unoptimized
+          draggable={false}
+          className={`object-cover object-center ${estilos.foto}`}
+        />
+      </div>
       <Image
-        src={`${DIR}/seguridad_nueva_iluminada.webp`}
+        src={`${DIR}/seguridad_iluminada_franjas.webp`}
         alt=""
         aria-hidden
         fill
