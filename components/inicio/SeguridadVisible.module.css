@@ -1,0 +1,87 @@
+/* Escena "Trabaja VISIBLE" del carrusel (SeguridadVisible.tsx). Máscaras, opacidades y tiempos tal cual el prototipo
+   aprobado por persona A; no cambiarlos sin acordarlo. Las coordenadas de la linterna llegan en --mouse-x/--mouse-y.
+   Excepción a la regla de tokens (como las tarjetas animadas): el negro del apagón y los valores de las máscaras van
+   escritos aquí, idénticos al prototipo. */
+
+.escena {
+  /* El radio de la linterna se mide en cqw: el contenedor es la propia escena (todo el banner). */
+  container-type: size;
+  isolation: isolate;
+  --mouse-x: 70%;
+  --mouse-y: 50%;
+}
+
+.foto {
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+.oscuridad,
+.iluminada {
+  --r: clamp(140px, 13.5cqw, 220px);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.iluminada {
+  transition: opacity 0.35s ease;
+  -webkit-mask-image: radial-gradient(
+    circle var(--r) at var(--mouse-x) var(--mouse-y),
+    #000 0%,
+    rgba(0, 0, 0, 0.92) 30%,
+    rgba(0, 0, 0, 0.55) 60%,
+    rgba(0, 0, 0, 0.15) 84%,
+    transparent 100%
+  );
+  mask-image: radial-gradient(
+    circle var(--r) at var(--mouse-x) var(--mouse-y),
+    #000 0%,
+    rgba(0, 0, 0, 0.92) 30%,
+    rgba(0, 0, 0, 0.55) 60%,
+    rgba(0, 0, 0, 0.15) 84%,
+    transparent 100%
+  );
+}
+
+.oscuridad {
+  background: rgba(0, 0, 0, 0.87);
+  -webkit-mask-image: radial-gradient(
+    circle var(--r) at var(--mouse-x) var(--mouse-y),
+    transparent 0%,
+    rgba(0, 0, 0, 0.1) 30%,
+    rgba(0, 0, 0, 0.5) 60%,
+    rgba(0, 0, 0, 0.86) 84%,
+    #000 100%
+  );
+  mask-image: radial-gradient(
+    circle var(--r) at var(--mouse-x) var(--mouse-y),
+    transparent 0%,
+    rgba(0, 0, 0, 0.1) 30%,
+    rgba(0, 0, 0, 0.5) 60%,
+    rgba(0, 0, 0, 0.86) 84%,
+    #000 100%
+  );
+}
+
+.encendida .iluminada {
+  opacity: 1;
+  transition-delay: 0.22s;
+}
+
+/* La placa del título (el sello de BannerInicio, [data-sello]) toma un resplandor cálido en modo linterna. La clase
+   `encendida` va en el enlace del banner, que contiene la escena y el título. */
+.encendida [data-sello] {
+  background-color: color-mix(in srgb, var(--color-pico-blanco) 90%, var(--color-amarillo-obra));
+  box-shadow:
+    0 0 0.5cqw color-mix(in srgb, var(--color-amarillo-obra) 70%, transparent),
+    0 0 2.6cqw color-mix(in srgb, var(--color-amarillo-obra) 45%, transparent);
+  transition:
+    background-color 0.4s ease,
+    box-shadow 0.4s ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .iluminada {
+    transition-duration: 0.01s;
+  }
+}

@@ -82,6 +82,7 @@ export const bannersPorCategoria: Record<string, Variantes> = {
     vertical: tarjeta("tornilleria", CategoryCardTornilleria),
   },
   "seguridad-industrial": {
+    central: central(bannersCentrales["seguridad-industrial"]), // con SeguridadVisible (la linterna)
     horizontal: function Seguridad() {
       const b = bannersHorizontales["seguridad-industrial"];
       return (

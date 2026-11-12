@@ -6,6 +6,7 @@ import Plano from "@/components/icons/pico/Plano";
 import type { BannerInicio as DatosBanner, VarianteBanner } from "./contenidoInicio";
 import HerramientasAsomadas from "./HerramientasAsomadas";
 import PinturaEnMovimiento from "./PinturaEnMovimiento";
+import SeguridadVisible from "./SeguridadVisible";
 
 type Props = {
   banner: DatosBanner;
@@ -129,6 +130,8 @@ export default function BannerInicio({ banner, sizes, tamano = "normal", priorit
           {grande && banner.id === "herramientas" && <HerramientasAsomadas />}
           {/* Pared blanca con un rodillo que pinta una franja de color, solo en el banner de pinturas del carrusel. */}
           {grande && banner.id === "pinturas" && <PinturaEnMovimiento />}
+          {/* Foto del EPP con la "linterna" que enciende las franjas reflectivas, solo en el de seguridad del carrusel. */}
+          {grande && banner.id === "seguridad-visible" && <SeguridadVisible prioritario={prioritario} />}
           {grande && banner.tituloPartes ? (
             // Título en dos tiempos: la frase en una línea y la palabra clave enorme, en mayúsculas, sobre un
             // bloque rojo inclinado (el filete de la marca hecho sello). Al pasar el mouse crecen juntos, barra y palabra,
@@ -143,6 +146,7 @@ export default function BannerInicio({ banner, sizes, tamano = "normal", priorit
                 {/* Rojo de la marca con letra blanca, salvo que el banner defina --color-sello y --color-sello-texto
                     (pinturas: sello blanco con la palabra en el color de la pintura de turno). */}
                 <span
+                  data-sello="" // la escena de seguridad le da un resplandor cálido en modo linterna
                   className="absolute inset-0 -z-10 -skew-x-12 rounded-sm bg-[var(--color-sello,var(--color-pico-rojo))] shadow-boton-hover transition-colors duration-500"
                   aria-hidden
                 />
@@ -192,8 +196,10 @@ export default function BannerInicio({ banner, sizes, tamano = "normal", priorit
             </p>
           )}
           {banner.textoBoton && (
-            // Es un span y no <Boton>: todo el banner ya es un enlace. Misma forma que Boton.
+            // Es un span y no <Boton>: todo el banner ya es un enlace. Misma forma que Boton. data-boton-banner: en
+            // táctil, la escena de seguridad solo deja navegar desde aquí (tocar el resto enciende la linterna).
             <span
+              data-boton-banner=""
               className={`relative mt-1 h-10 w-fit items-center gap-1 rounded-boton px-4 text-sm font-semibold shadow-tarjeta transition duration-200 group-hover:shadow-boton-hover motion-safe:group-hover:-translate-y-0.5 ${estilo.boton} ${
                 grande
                   ? "inline-flex md:mt-2 lg:h-12 lg:px-6 lg:text-base"

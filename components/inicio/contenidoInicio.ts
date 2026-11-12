@@ -86,6 +86,18 @@ export const bannersCentrales: Record<string, BannerInicio> = {
     variante: "azul",
     // Provisional a propósito: solo el texto sobre el azul, sin escena ni ícono.
   },
+  "seguridad-industrial": {
+    id: "seguridad-visible", // monta SeguridadVisible en BannerInicio: no cambiar
+    imagen: null,
+    alt: "Seguridad industrial en El Pico",
+    href: "/categoria/seguridad-industrial",
+    titulo: "Trabaja visible",
+    tituloPartes: ["Trabaja", "visible"],
+    texto: "Cascos, guantes, botas y mascarillas.",
+    textoBoton: "Ver seguridad",
+    // Foto del EPP con una "linterna" que enciende las franjas reflectivas al pasar el cursor (SeguridadVisible).
+    variante: "oscuro",
+  },
 };
 
 /** Mensaje con el que se abre WhatsApp desde "¿No sabes qué necesitas?". */
