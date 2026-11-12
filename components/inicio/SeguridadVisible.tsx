@@ -140,7 +140,7 @@ export default function SeguridadVisible({ prioritario = false }: { prioritario?
     // iluminada recortada en el mismo lugar. El título y el botón (BannerInicio) van después, por encima de todo.
     <div ref={ref} className={`pointer-events-none absolute inset-0 overflow-hidden bg-pico-azul-oscuro ${estilos.escena}`}>
       <Image
-        src={`${DIR}/seguridad_nueva_base.webp`}
+        src={`${DIR}/seguridad_base_apagada.webp`}
         alt="Casco, chaleco reflectivo, lentes, guantes y protectores auditivos"
         fill
         unoptimized // las dos fotos deben coincidir píxel a píxel: se sirven tal cual, sin recomprimir
