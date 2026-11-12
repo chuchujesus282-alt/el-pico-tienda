@@ -68,10 +68,10 @@
   transition-delay: 0.22s;
 }
 
-/* La placa del título (el sello de BannerInicio, [data-sello]) toma un resplandor cálido en modo linterna. La clase
-   `encendida` va en el enlace del banner, que contiene la escena y el título. */
+/* La placa del título (el sello de BannerInicio, [data-sello]) toma un resplandor cálido en modo linterna; sigue
+   amarilla. La clase `encendida` va en el enlace del banner, que contiene la escena y el título. */
 .encendida [data-sello] {
-  background-color: color-mix(in srgb, var(--color-pico-blanco) 90%, var(--color-amarillo-obra));
+  background-color: var(--color-amarillo-obra);
   box-shadow:
     0 0 0.5cqw color-mix(in srgb, var(--color-amarillo-obra) 70%, transparent),
     0 0 2.6cqw color-mix(in srgb, var(--color-amarillo-obra) 45%, transparent);

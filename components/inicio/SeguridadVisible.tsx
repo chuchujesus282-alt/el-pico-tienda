@@ -40,9 +40,9 @@ export default function SeguridadVisible({ prioritario = false }: { prioritario?
     const enlace = sb?.closest("a");
     if (!sb || !dark || !franjas || !enlace) return;
 
-    // Placa blanca con la palabra en azul oscuro, como la de Pinturas.
-    enlace.style.setProperty("--color-sello", "var(--color-pico-blanco)");
-    enlace.style.setProperty("--color-sello-texto", "var(--color-pico-azul)");
+    // Placa amarillo de seguridad con la palabra en azul oscuro (elegida por persona A: más llamativa que la blanca).
+    enlace.style.setProperty("--color-sello", "var(--color-amarillo-obra)");
+    enlace.style.setProperty("--color-sello-texto", "var(--color-pico-azul-oscuro)");
     // El scroll vertical sigue funcionando en táctil; el gesto horizontal lo usa el carrusel para pasar.
     enlace.style.touchAction = "pan-y";
 
@@ -144,8 +144,8 @@ export default function SeguridadVisible({ prioritario = false }: { prioritario?
   }, []);
 
   return (
-    // Capas de abajo hacia arriba: foto base, degradado para el texto, oscuridad con el hueco de la linterna y foto
-    // iluminada recortada en el mismo lugar. El título y el botón (BannerInicio) van después, por encima de todo.
+    // Capas de abajo hacia arriba: foto base (sin degradado a la izquierda: a persona A le incomodaba), oscuridad con
+    // el hueco de la linterna, franjas encendidas y foto iluminada recortada en el mismo lugar. El título y el botón (BannerInicio) van después, por encima de todo.
     <div ref={ref} className={`pointer-events-none absolute inset-0 overflow-hidden bg-pico-azul-oscuro ${estilos.escena}`}>
       <Image
         src={`${DIR}/seguridad_base_apagada.webp`}
@@ -156,11 +156,6 @@ export default function SeguridadVisible({ prioritario = false }: { prioritario?
         fetchPriority={prioritario ? "high" : undefined}
         draggable={false}
         className={`object-cover object-center ${estilos.foto}`}
-      />
-      {/* Degradado oscuro a la izquierda para que el texto se lea (más ancho en el teléfono, donde el texto ocupa más). */}
-      <div
-        className="absolute inset-0 bg-[linear-gradient(90deg,color-mix(in_srgb,var(--color-pico-azul-oscuro)_72%,transparent)_0%,color-mix(in_srgb,var(--color-pico-azul-oscuro)_45%,transparent)_40%,transparent_80%)] md:bg-[linear-gradient(90deg,color-mix(in_srgb,var(--color-pico-azul-oscuro)_72%,transparent)_0%,color-mix(in_srgb,var(--color-pico-azul-oscuro)_45%,transparent)_24%,transparent_46%)]"
-        aria-hidden
       />
       <div ref={oscuridadRef} className={`absolute inset-0 ${estilos.oscuridad}`} aria-hidden />
       {/* Franjas reflectivas encendidas, con su color: con todo apagado se ven en todo el banner, no solo en la
