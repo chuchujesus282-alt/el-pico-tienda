@@ -8,3 +8,5 @@ del producto se conservan) y recortadas. Las usan `components/inicio/banners-cat
 - `grifo.webp`: grifo monomando de cocina en acero (Grifería).
 - `manguera.webp`: manguera Truper Home 1/2" × 20 m (Hogar y jardín).
 - `llaves-torx.webp`: juego de llaves torx Truper (Herramientas, columna).
+- `tornillos.webp`: dos tornillos autoperforantes de cabeza Phillips (Tornillería, carrusel). La foto original era chica (410 px): se agrandó al doble con lanczos antes de recortarla.
+- `guantes.webp`: par de guantes de algodón con puntos de PVC (Seguridad industrial, carrusel).

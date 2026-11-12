@@ -133,6 +133,29 @@ export const bannersCentrales: Record<string, BannerInicio> = {
     textoBoton: "Ver hogar y jardín",
     variante: "oscuro",
   },
+  // Ids distintos de los horizontales ("tornilleria", "seguridad"): BannerInicio monta la escena por id.
+  tornilleria: {
+    id: "tornillos",
+    imagen: null,
+    alt: "Tornillería en El Pico",
+    href: "/categoria/tornilleria",
+    titulo: "Todo para fijar",
+    tituloPartes: ["Todo para", "fijar"],
+    texto: "Tornillos, tuercas, anclajes y fijaciones.",
+    textoBoton: "Ver tornillería",
+    variante: "azul",
+  },
+  "seguridad-industrial": {
+    id: "proteccion",
+    imagen: null,
+    alt: "Seguridad industrial en El Pico",
+    href: "/categoria/seguridad-industrial",
+    titulo: "Trabaja protegido",
+    tituloPartes: ["Trabaja", "protegido"],
+    texto: "Cascos, guantes, botas y mascarillas.",
+    textoBoton: "Ver seguridad",
+    variante: "oscuro",
+  },
 };
 
 /** Mensaje con el que se abre WhatsApp desde "¿No sabes qué necesitas?". */

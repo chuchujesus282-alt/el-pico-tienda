@@ -76,6 +76,7 @@ export const bannersPorCategoria: Record<string, Variantes> = {
   pinturas: { central: central(bannersCentrales.pinturas), horizontal: H.pinturas, vertical: V.pinturas }, // con PinturaEnMovimiento
   cerrajeria: { central: central(bannersCentrales.cerrajeria), horizontal: H.cerrajeria, vertical: V.cerrajeria }, // con CerrajeriaAsomada
   tornilleria: {
+    central: central(bannersCentrales.tornilleria), // con TornilleriaFirme (CentralesConFotos.tsx)
     horizontal: function Tornilleria() {
       const b = bannersHorizontales.tornilleria;
       return (
@@ -87,6 +88,7 @@ export const bannersPorCategoria: Record<string, Variantes> = {
     vertical: tarjeta("tornilleria", CategoryCardTornilleria),
   },
   "seguridad-industrial": {
+    central: central(bannersCentrales["seguridad-industrial"]), // con SeguridadProtegido (CentralesConFotos.tsx)
     horizontal: function Seguridad() {
       const b = bannersHorizontales["seguridad-industrial"];
       return (

@@ -12,6 +12,8 @@ import SenalesProducto, { CALIDAD_BANNER, type Senal } from "./SenalesProducto";
 // - Electricidad: tablero de acero con el breaker; la corriente recorre los cables y el piloto se pone verde.
 // - Grifería: claro como el agua; sale el chorro del grifo y hace ondas.
 // - Hogar y jardín: verde grama con la manguera.
+// - Tornillería: azul con una regla metálica que se corre al pasar el cursor.
+// - Seguridad industrial: cinta de precaución cruzada detrás de los guantes, que corre.
 // Solo las monta BannerInicio (por banner.id). Movimiento reducido: quietas.
 
 const CRECER =
@@ -196,6 +198,105 @@ export function GriferiaConAgua() {
             <span className="absolute inset-y-0 left-[35%] w-[20%] bg-gradient-to-b from-pico-blanco/70 to-transparent" />
           </span>
           <SenalesProducto senales={SENALES_GRIFO} />
+        </span>
+      </div>
+    </Capa>
+  );
+}
+
+/* ───────────────────────── Tornillería ───────────────────────── */
+
+/** Medidos sobre tornillos.webp (627×554). */
+const SENALES_TORNILLOS: Senal[] = [
+  { texto: "Rosca autorroscante", x: 44, y: 29, lado: "izquierda" },
+  { texto: "Punta de broca", x: 95, y: 11, lado: "derecha" },
+  { texto: "Cabeza Phillips", x: 58, y: 81, lado: "derecha" },
+];
+
+/** Regla de taller: marcas de centímetro y medio centímetro (gradientes repetidos, escritos completos para Tailwind). */
+const REGLA_CM =
+  "bg-[repeating-linear-gradient(90deg,var(--color-pico-azul-oscuro)_0,var(--color-pico-azul-oscuro)_2px,transparent_2px,transparent_40px)]";
+const REGLA_MEDIO =
+  "bg-[repeating-linear-gradient(90deg,transparent_0,transparent_20px,var(--color-pico-azul-oscuro)_20px,var(--color-pico-azul-oscuro)_21px,transparent_21px,transparent_40px)]";
+
+export function TornilleriaFirme() {
+  return (
+    <Capa>
+      <div className="absolute inset-0 bg-gradient-to-br from-pico-azul via-pico-azul to-pico-azul-oscuro">
+        <Montanas className="absolute -bottom-16 -left-10 w-[36rem] fill-pico-blanco/[0.05]" />
+        {/* Disco de luz donde descansan los tornillos. */}
+        <div className="absolute top-1/2 right-[2%] aspect-square h-[140%] -translate-y-1/2 rounded-chip bg-[radial-gradient(circle,var(--color-pico-blanco)_0%,transparent_62%)] opacity-20 md:right-[6%] lg:right-[10%]" />
+        {/* Regla metálica abajo a la derecha: los tornillos se miden. Al pasar el cursor se corre un poco. */}
+        <div className="absolute right-0 bottom-[7%] left-[55%] h-[13%] overflow-hidden rounded-l-tarjeta bg-gradient-to-b from-[#f3f5f8] via-[#dfe4ea] to-[#b8c1cc] shadow-tarjeta-hover transition-transform duration-700 ease-out group-hover:-translate-x-3 motion-reduce:transition-none">
+          <div className={`absolute inset-x-0 top-0 h-[45%] ${REGLA_CM}`} />
+          <div className={`absolute inset-x-0 top-0 h-[25%] ${REGLA_MEDIO}`} />
+        </div>
+      </div>
+
+      {/* Los tornillos (sin girar: las etiquetas deben quedar derechas). En el teléfono, más arriba. */}
+      <div
+        className={`absolute top-[38%] right-[3%] aspect-[627/554] w-[38%] -translate-y-1/2 ${CRECER} md:top-[45%] md:right-[8%] md:w-[30%] lg:right-[12%] lg:w-[26%] xl:right-[15%] xl:w-[25%]`}
+      >
+        <SombraPiso />
+        <span className="relative block motion-safe:animate-levitar">
+          <Image
+            src="/banners/categorias/tornillos.webp"
+            alt=""
+            width={627}
+            height={554}
+            sizes="(min-width: 1536px) 368px, (min-width: 768px) 30vw, 38vw"
+            quality={CALIDAD_BANNER}
+            className={`h-auto w-full ${SOMBRA}`}
+          />
+          <SenalesProducto senales={SENALES_TORNILLOS} />
+        </span>
+      </div>
+    </Capa>
+  );
+}
+
+/* ───────────────────────── Seguridad industrial ───────────────────────── */
+
+/** Medidos sobre guantes.webp (1027×886). */
+const SENALES_GUANTES: Senal[] = [
+  { texto: "Puntos de PVC antideslizantes", x: 22, y: 50, lado: "izquierda" },
+  { texto: "Tejido de algodón", x: 17, y: 80, lado: "izquierda" },
+  { texto: "Puño elástico", x: 80, y: 94, lado: "derecha" },
+];
+
+const CINTA_PRECAUCION =
+  "bg-[repeating-linear-gradient(135deg,var(--color-amarillo-obra)_0,var(--color-amarillo-obra)_22px,var(--color-texto)_22px,var(--color-texto)_44px)]";
+
+export function SeguridadProtegido() {
+  return (
+    <Capa>
+      <div className="absolute inset-0 bg-gradient-to-br from-pico-azul-oscuro via-pico-azul-oscuro to-texto">
+        <Montanas className="absolute -bottom-16 -left-10 w-[36rem] fill-pico-blanco/[0.04]" />
+        {/* Cinta de precaución que cruza detrás de los guantes (se desvanece hacia el texto); al pasar el cursor corre. */}
+        <div
+          className={`absolute top-[46%] right-[-10%] left-[42%] h-[22%] -translate-y-1/2 -rotate-[8deg] [mask-image:linear-gradient(to_right,transparent,black_30%)] transition-[background-position] duration-1000 ease-out group-hover:[background-position:124px_0] motion-reduce:transition-none ${CINTA_PRECAUCION}`}
+        >
+          <div className="absolute inset-0 bg-gradient-to-b from-pico-blanco/15 via-transparent to-pico-azul-oscuro/25" />
+        </div>
+        <div className="absolute top-1/2 right-[2%] aspect-square h-[140%] -translate-y-1/2 rounded-chip bg-[radial-gradient(circle,var(--color-pico-blanco)_0%,transparent_60%)] opacity-10 md:right-[8%] lg:right-[12%]" />
+      </div>
+
+      {/* Los guantes, enteros; en el teléfono, más arriba y más chicos. */}
+      <div
+        className={`absolute top-[40%] right-[3%] aspect-[1027/886] w-[40%] -translate-y-1/2 md:top-1/2 md:right-[7%] md:w-[34%] lg:right-[11%] lg:w-[27%] xl:right-[13%] xl:w-[28%] ${CRECER}`}
+      >
+        <SombraPiso />
+        <span className="relative block motion-safe:animate-levitar">
+          <Image
+            src="/banners/categorias/guantes.webp"
+            alt=""
+            width={1027}
+            height={886}
+            sizes="(min-width: 1536px) 412px, (min-width: 768px) 34vw, 40vw"
+            quality={CALIDAD_BANNER}
+            className={`h-auto w-full ${SOMBRA}`}
+          />
+          <SenalesProducto senales={SENALES_GUANTES} />
         </span>
       </div>
     </Capa>
