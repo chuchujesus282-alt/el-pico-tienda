@@ -8,5 +8,3 @@ del producto se conservan) y recortadas. Las usan `components/inicio/banners-cat
 - `grifo.webp`: grifo monomando de cocina en acero (Grifería).
 - `manguera.webp`: manguera Truper Home 1/2" × 20 m (Hogar y jardín).
 - `llaves-torx.webp`: juego de llaves torx Truper (Herramientas, columna).
-- `transpaleta.webp`: transpaleta manual amarilla de 2500 kg (Construcción, horizontal; sombra del piso y huecos del mango quitados).
-- `cemento.webp`: saco de cemento gris CSC Pórtland tipo I de 42,5 kg (Construcción, horizontal).
