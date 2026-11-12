@@ -30,15 +30,17 @@ export default function SeguridadVisible({ prioritario = false }: { prioritario?
   const ref = useRef<HTMLDivElement>(null);
   const oscuridadRef = useRef<HTMLDivElement>(null);
   const franjasRef = useRef<HTMLDivElement>(null);
+  const lienzoRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const sb = ref.current;
     const dark = oscuridadRef.current;
     const franjas = franjasRef.current;
+    const lienzo = lienzoRef.current;
     // Todo el banner es el enlace (BannerInicio): ahí se escuchan el puntero y se pone la clase `encendida`, que
     // también le da el resplandor a la placa del título.
     const enlace = sb?.closest("a");
-    if (!sb || !dark || !franjas || !enlace) return;
+    if (!sb || !dark || !franjas || !lienzo || !enlace) return;
 
     // Placa amarillo de seguridad con la palabra en azul oscuro (elegida por persona A: más llamativa que la blanca).
     enlace.style.setProperty("--color-sello", "var(--color-amarillo-obra)");
@@ -72,6 +74,11 @@ export default function SeguridadVisible({ prioritario = false }: { prioritario?
     const paint = () => {
       sb.style.setProperty("--mouse-x", `${cx.toFixed(1)}px`);
       sb.style.setProperty("--mouse-y", `${cy.toFixed(1)}px`);
+      // La foto iluminada vive en el lienzo (más chico que el banner y pegado a la derecha): sus coordenadas se miden
+      // desde donde empieza el lienzo, para que la linterna calce con la oscuridad.
+      const rb = sb.getBoundingClientRect(), rl = lienzo.getBoundingClientRect();
+      lienzo.style.setProperty("--mouse-x", `${(cx - (rl.left - rb.left)).toFixed(1)}px`);
+      lienzo.style.setProperty("--mouse-y", `${(cy - (rl.top - rb.top)).toFixed(1)}px`);
     };
     const tick = () => {
       const k = calm ? 1 : 0.22;
@@ -144,41 +151,59 @@ export default function SeguridadVisible({ prioritario = false }: { prioritario?
   }, []);
 
   return (
-    // Capas de abajo hacia arriba: foto base (sin degradado a la izquierda: a persona A le incomodaba), oscuridad con
-    // el hueco de la linterna, franjas encendidas y foto iluminada recortada en el mismo lugar. El título y el botón (BannerInicio) van después, por encima de todo.
+    // Capas de abajo hacia arriba: relleno desenfocado, foto base (en el "lienzo"; sin degradado a la izquierda: a
+    // persona A le incomodaba), oscuridad con el hueco de la linterna, franjas encendidas y foto iluminada recortada
+    // en el mismo lugar. El título y el botón (BannerInicio) van después, por encima de todo.
+    // Lienzo: la foto se ajusta al ALTO del banner (con un recorte mínimo) y va pegada a la derecha, así en los
+    // banners anchos no se le corta el chaleco arriba ni los guantes abajo (pedido de persona A); lo que sobra a la
+    // izquierda lo llena la misma foto desenfocada. Las tres fotos van en lienzos idénticos: calzan entre sí.
     <div ref={ref} className={`pointer-events-none absolute inset-0 overflow-hidden bg-pico-azul-oscuro ${estilos.escena}`}>
       <Image
         src={`${DIR}/seguridad_base_apagada.webp`}
-        alt="Casco, chaleco reflectivo, lentes, guantes y protectores auditivos"
-        fill
-        unoptimized // las dos fotos deben coincidir píxel a píxel: se sirven tal cual, sin recomprimir
-        loading={prioritario ? "eager" : undefined}
-        fetchPriority={prioritario ? "high" : undefined}
-        draggable={false}
-        className={`object-cover object-center ${estilos.foto}`}
-      />
-      <div ref={oscuridadRef} className={`absolute inset-0 ${estilos.oscuridad}`} aria-hidden />
-      {/* Franjas reflectivas encendidas, con su color: con todo apagado se ven en todo el banner, no solo en la
-          linterna. Sacadas de la foto iluminada (solo las franjas, con un resplandor suave); van debajo de ella. */}
-      <div ref={franjasRef} className="absolute inset-0 opacity-0" aria-hidden>
-        <Image
-          src={`${DIR}/seguridad_franjas_brillo.webp`}
-          alt=""
-          fill
-          unoptimized
-          draggable={false}
-          className={`object-cover object-center ${estilos.foto}`}
-        />
-      </div>
-      <Image
-        src={`${DIR}/seguridad_iluminada_franjas.webp`}
         alt=""
         aria-hidden
         fill
         unoptimized
         draggable={false}
-        className={`object-cover object-center ${estilos.foto} ${estilos.iluminada}`}
+        className={`object-cover object-left ${estilos.foto} ${estilos.relleno}`}
       />
+      <div className={`${estilos.lienzo} ${estilos.lienzoBase}`}>
+        <Image
+          src={`${DIR}/seguridad_base_apagada.webp`}
+          alt="Casco, chaleco reflectivo, lentes, guantes y protectores auditivos"
+          fill
+          unoptimized // las fotos deben coincidir píxel a píxel: se sirven tal cual, sin recomprimir
+          loading={prioritario ? "eager" : undefined}
+          fetchPriority={prioritario ? "high" : undefined}
+          draggable={false}
+          className={`object-cover ${estilos.foto}`}
+        />
+      </div>
+      <div ref={oscuridadRef} className={`absolute inset-0 ${estilos.oscuridad}`} aria-hidden />
+      {/* Franjas encendidas y foto iluminada, en su lienzo. Las coordenadas de la linterna dentro de este lienzo
+          (--mouse-x/--mouse-y) las corrige paint() restando dónde empieza el lienzo. */}
+      <div ref={lienzoRef} className={estilos.lienzo} aria-hidden>
+        {/* Franjas reflectivas encendidas, con su color: con todo apagado se ven en todo el banner, no solo en la
+            linterna. Sacadas de la foto iluminada (solo las franjas, con un resplandor suave); van debajo de ella. */}
+        <div ref={franjasRef} className="absolute inset-0 opacity-0">
+          <Image
+            src={`${DIR}/seguridad_franjas_suaves.webp`}
+            alt=""
+            fill
+            unoptimized
+            draggable={false}
+            className={`object-cover ${estilos.foto}`}
+          />
+        </div>
+        <Image
+          src={`${DIR}/seguridad_iluminada_franjas.webp`}
+          alt=""
+          fill
+          unoptimized
+          draggable={false}
+          className={`object-cover ${estilos.foto} ${estilos.iluminada}`}
+        />
+      </div>
     </div>
   );
 }

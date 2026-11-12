@@ -16,6 +16,30 @@
   -webkit-user-drag: none;
 }
 
+/* Lienzo de las fotos (1832×858): ajustado al ALTO del banner con un recorte mínimo (106 %), pegado a la derecha y
+   centrado en vertical. En banners más angostos que la foto, manda el ancho (cubre todo, como antes). Así en los
+   anchos (3:1 en PC) no se corta el chaleco arriba ni los guantes abajo. */
+.lienzo {
+  position: absolute;
+  top: 50%;
+  right: 0;
+  height: max(106cqh, calc(100cqw * 858 / 1832));
+  aspect-ratio: 1832 / 858;
+  transform: translateY(-50%);
+}
+
+/* La foto base se funde por la izquierda con el relleno desenfocado (sin borde duro). */
+.lienzoBase {
+  -webkit-mask-image: linear-gradient(to right, transparent 0, #000 12%);
+  mask-image: linear-gradient(to right, transparent 0, #000 12%);
+}
+
+/* Relleno para el espacio que deja el lienzo a la izquierda: la misma foto, desenfocada y un poco más oscura. */
+.relleno {
+  filter: blur(18px) brightness(0.8);
+  transform: scale(1.12);
+}
+
 .oscuridad,
 .iluminada {
   --r: clamp(140px, 13.5cqw, 220px);
