@@ -11,8 +11,8 @@ import SenalesProducto, { CALIDAD_BANNER, type Senal } from "./SenalesProducto";
 //
 // Acabado común (para que se vean de estudio y no planos):
 // - Fondo con luz desde arriba, viñeta en los bordes y grano fino (Acabado).
-// - Al quedar activa la diapositiva, el fondo se acerca despacio y el producto entra desde la derecha, desenfocado,
-//   y se enfoca (clases entrada-fondo / entrada-producto en globals.css, quietas con "reducir movimiento").
+// - Al quedar activa la diapositiva, el fondo se acerca despacio (clase entrada-fondo en globals.css, quieta con
+//   "reducir movimiento"). El producto NO lleva animación de entrada: ver Producto.
 // - Productos de metal o plástico: al pasar el cursor los cruza un reflejo de luz recortado a su forma (Reflejo).
 // - Sombra doble bajo el producto: una de contacto, nítida, y otra amplia y difusa (SombraPiso).
 //
@@ -74,13 +74,13 @@ function Reflejo({ src }: { src: string }) {
   );
 }
 
-/** Producto: entra al quedar activa la diapositiva y flota (o queda quieto, `flotar={false}`). */
+/**
+ * Producto: flota (o queda quieto, `flotar={false}`). SIN animación de entrada con opacidad: dentro van las
+ * especificaciones (SenalesProducto) y, con el producto animado así, Chrome dejaba de pintarlas al pasar el cursor
+ * (mismo fallo que la descripción del carrusel, ver globals.css).
+ */
 function Producto({ children, flotar = true }: { children: ReactNode; flotar?: boolean }) {
-  return (
-    <span className="entrada-producto relative block h-full">
-      <span className={`relative block h-full ${flotar ? "motion-safe:animate-levitar" : ""}`}>{children}</span>
-    </span>
-  );
+  return <span className={`relative block h-full ${flotar ? "motion-safe:animate-levitar" : ""}`}>{children}</span>;
 }
 
 function Capa({ children }: { children: ReactNode }) {
