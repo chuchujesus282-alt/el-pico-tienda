@@ -646,20 +646,6 @@ p {
   [data-activa] .hero-cascada > .hero-descripcion {
     animation: none;
   }
-  /* Escenas con fotos (CentralesConFotos.tsx): el fondo se acerca despacio. Anima una capa propia (sin otras
-     transformaciones) para no pisar las de Tailwind, y con backwards: al terminar no deja nada aplicado. No animar
-     así el producto: lleva dentro las especificaciones y Chrome dejaba de pintarlas. */
-  [data-activa] .entrada-fondo {
-    animation: entrada-fondo 1.6s var(--curva-suave) backwards;
-  }
-}
-@keyframes entrada-fondo {
-  from {
-    scale: 1.06;
-  }
-  to {
-    scale: 1;
-  }
 }
 
 /* Favorito: estallido de partículas rojas alrededor del corazón (BotonFavorito). */

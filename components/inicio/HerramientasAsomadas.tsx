@@ -1,6 +1,6 @@
 import Image from "next/image";
 import { Montanas } from "@/components/layout/Logo";
-import SenalesProducto, { CALIDAD_BANNER, type Senal } from "./SenalesProducto";
+import type { CSSProperties } from "react";
 
 // Escena del banner "Herramientas que rinden" del carrusel: un rotomartillo real que flota a la derecha sobre una
 // placa amarilla de obra, con una cuadrícula tenue. Solo la monta BannerInicio cuando banner.id === "herramientas".
@@ -9,8 +9,13 @@ import SenalesProducto, { CALIDAD_BANNER, type Senal } from "./SenalesProducto";
 // - Escritorio: al pasar el cursor el rotomartillo crece un poco y señala sus partes (desde 1280px).
 // - Movimiento reducido: queda quieto.
 
-/** Partes del rotomartillo que se señalan al pasar el cursor. x/y: el punto, en % de su imagen. */
-const SENALES: Senal[] = [
+const COLUMNA = { izquierda: 2, derecha: 104 };
+
+/**
+ * Partes del rotomartillo que se señalan al pasar el cursor. x/y: el punto, en % de su imagen. columna: dónde
+ * termina la línea y empieza la etiqueta (las de un mismo lado comparten columna, así quedan alineadas).
+ */
+const SENALES: { texto: string; x: number; y: number; lado: "izquierda" | "derecha" }[] = [
   // Medidos sobre rotomartillo.webp (900×757). El mandril va un poco bajo su centro para que la línea no roce la broca.
   { texto: "Mandril SDS", x: 43, y: 17, lado: "izquierda" },
   { texto: "Empuñadura auxiliar", x: 45, y: 58, lado: "izquierda" },
@@ -62,11 +67,35 @@ export default function HerramientasAsomadas() {
             width={900}
             height={757}
             sizes="(min-width: 1536px) 448px, (min-width: 768px) 30vw, 36vw"
-            quality={CALIDAD_BANNER}
             className="h-auto w-full drop-shadow-2xl drop-shadow-pico-azul-oscuro/50"
           />
-          {/* Ficha técnica: punto rojo sobre la pieza, línea hasta la columna y etiqueta (SenalesProducto). */}
-          <SenalesProducto senales={SENALES} />
+          {/* Ficha técnica: punto rojo sobre la pieza, línea hasta la columna y etiqueta centrada en la línea.
+              Solo desde 1280px: más angosto, las etiquetas de la izquierda pisaban el título. */}
+          {SENALES.map((s, i) => {
+            const izquierda = s.lado === "izquierda";
+            const col = COLUMNA[s.lado];
+            const retraso = { "--retraso": `${380 + i * 90}ms` } as CSSProperties;
+            return (
+              <span key={s.texto} className="hidden xl:block" style={retraso}>
+                <span
+                  className={`absolute h-0.5 -translate-y-1/2 scale-x-0 rounded-chip bg-pico-azul-oscuro transition-transform duration-300 group-hover:scale-x-100 group-hover:[transition-delay:var(--retraso)] motion-reduce:transition-none ${
+                    izquierda ? "origin-right" : "origin-left"
+                  }`}
+                  style={{ top: `${s.y}%`, left: `${Math.min(s.x, col)}%`, width: `${Math.abs(s.x - col)}%` }}
+                />
+                <span
+                  className="absolute size-3.5 -translate-x-1/2 -translate-y-1/2 scale-0 rounded-chip border-2 border-pico-blanco bg-pico-rojo shadow-tarjeta transition-transform duration-300 group-hover:scale-100 group-hover:[transition-delay:var(--retraso)] motion-reduce:transition-none"
+                  style={{ top: `${s.y}%`, left: `${s.x}%` }}
+                />
+                <span
+                  className="absolute -translate-y-1/2 rounded-chip bg-pico-azul-oscuro px-3 py-1.5 text-[11px] leading-none font-bold tracking-[0.1em] whitespace-nowrap text-pico-blanco uppercase opacity-0 shadow-tarjeta-hover transition-opacity duration-300 group-hover:opacity-100 group-hover:[transition-delay:calc(var(--retraso)+150ms)]"
+                  style={izquierda ? { top: `${s.y}%`, right: `${100 - col}%` } : { top: `${s.y}%`, left: `${col}%` }}
+                >
+                  {s.texto}
+                </span>
+              </span>
+            );
+          })}
         </span>
       </div>
     </div>

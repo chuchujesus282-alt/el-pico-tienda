@@ -1,7 +1,11 @@
-﻿# Fotos del banner de Construcción
+# Fotos del banner de Construcción
 
 Traídas de la rama `concurso/recuadros-categorias` (persona A): render fotorrealista sin marcas ni logos, con fondo
 transparente, generado igual que las fotos de `public/herramientas/` (ver su `CREDITOS.md`).
 
 - `paleta-bloques`: de `public/banners/obra/`.
-- `concreto-hd`: textura de `public/concurso/equipo-nivel/textura-concreto.webp` (sin transparencia), ampliada a 1600 px con nitidez para que no se vea borrosa (2026-11-11).
+- `paila`, `cabillas`: de `public/concurso/equipo-llave/`.
+- `concreto`: textura de `public/concurso/equipo-nivel/textura-concreto.webp` (sin transparencia).
+- `gancho` y `bloque`: salen de `public/banners/obra/gancho.webp` (un bloque colgando de un gancho), separados en dos
+  capas sobre el mismo lienzo de 397×900 (el borde de arriba del bloque se midió a mano; los grilletes rojos quedan con el
+  gancho y su hueco en el bloque se rellenó con el concreto de al lado).

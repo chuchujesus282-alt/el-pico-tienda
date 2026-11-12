@@ -9,8 +9,6 @@ import CategoryCardVehiculos from "@/components/tarjetas-categoria/CategoryCardV
 import { categorias } from "@/lib/categorias";
 import type { ComponenteIcono } from "@/types/icono";
 import BannerInicio from "./BannerInicio";
-import { horizontalesCategoria } from "./banners-categoria/Horizontales";
-import { verticalesCategoria } from "./banners-categoria/Verticales";
 import BannerTornilleria from "./BannerTornilleria";
 import BannerTrabajaProtegido from "./BannerTrabajaProtegido";
 import ColumnaCategoria from "./ColumnaCategoria";
@@ -66,17 +64,13 @@ function tarjeta(slug: string, Tarjeta: (props: PropsTarjeta) => ReactNode): Var
   };
 }
 
-// Horizontales y columnas con fotos reales (banners-categoria/, persona B): uno distinto por categoría.
-const H = horizontalesCategoria;
-const V = verticalesCategoria;
-
 export const bannersPorCategoria: Record<string, Variantes> = {
-  construccion: { central: central(bannersCentrales.construccion), horizontal: H.construccion, vertical: V.construccion }, // con ObraAsomada
-  herramientas: { central: central(bannersCentrales.herramientas), horizontal: H.herramientas, vertical: V.herramientas }, // con HerramientasAsomadas
-  pinturas: { central: central(bannersCentrales.pinturas), horizontal: H.pinturas, vertical: V.pinturas }, // con PinturaEnMovimiento
-  cerrajeria: { central: central(bannersCentrales.cerrajeria), horizontal: H.cerrajeria, vertical: V.cerrajeria }, // con CerrajeriaAsomada
+  // Construcción y Cerrajería: provisionales a propósito (solo texto sobre el azul), pero son las suyas.
+  construccion: { central: central(bannersCentrales.construccion) },
+  herramientas: { central: central(bannersCentrales.herramientas) }, // con HerramientasAsomadas
+  pinturas: { central: central(bannersCentrales.pinturas) }, // con PinturaEnMovimiento
+  cerrajeria: { central: central(bannersCentrales.cerrajeria) },
   tornilleria: {
-    central: central(bannersCentrales.tornilleria), // con TornilleriaFirme (CentralesConFotos.tsx)
     horizontal: function Tornilleria() {
       const b = bannersHorizontales.tornilleria;
       return (
@@ -88,7 +82,6 @@ export const bannersPorCategoria: Record<string, Variantes> = {
     vertical: tarjeta("tornilleria", CategoryCardTornilleria),
   },
   "seguridad-industrial": {
-    central: central(bannersCentrales["seguridad-industrial"]), // con SeguridadProtegido (CentralesConFotos.tsx)
     horizontal: function Seguridad() {
       const b = bannersHorizontales["seguridad-industrial"];
       return (
@@ -99,19 +92,10 @@ export const bannersPorCategoria: Record<string, Variantes> = {
     },
     vertical: tarjeta("seguridad-industrial", CategoryCardSeguridad),
   },
-  // Centrales con fotos de producto (CentralesConFotos.tsx, persona B).
-  electricidad: {
-    central: central(bannersCentrales.electricidad),
-    horizontal: H.electricidad,
-    vertical: tarjeta("electricidad", CategoryCardElectricidad),
-  },
-  griferia: { central: central(bannersCentrales.griferia), horizontal: H.griferia, vertical: tarjeta("griferia", CategoryCardPlomeria) },
-  "hogar-y-jardin": {
-    central: central(bannersCentrales["hogar-y-jardin"]),
-    horizontal: H["hogar-y-jardin"],
-    vertical: tarjeta("hogar-y-jardin", CategoryCardJardin),
-  },
-  vehiculos: { central: central(bannersCentrales.vehiculos), horizontal: H.vehiculos, vertical: tarjeta("vehiculos", CategoryCardVehiculos) },
+  electricidad: { vertical: tarjeta("electricidad", CategoryCardElectricidad) },
+  griferia: { vertical: tarjeta("griferia", CategoryCardPlomeria) },
+  "hogar-y-jardin": { vertical: tarjeta("hogar-y-jardin", CategoryCardJardin) },
+  vehiculos: { vertical: tarjeta("vehiculos", CategoryCardVehiculos) },
 };
 
 function nombreDe(slug: string): string {
