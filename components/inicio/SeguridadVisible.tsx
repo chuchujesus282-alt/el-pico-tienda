@@ -29,16 +29,14 @@ const FLICKER: Keyframe[] = [
 export default function SeguridadVisible({ prioritario = false }: { prioritario?: boolean }) {
   const ref = useRef<HTMLDivElement>(null);
   const oscuridadRef = useRef<HTMLDivElement>(null);
-  const contornoRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const sb = ref.current;
     const dark = oscuridadRef.current;
-    const contorno = contornoRef.current;
     // Todo el banner es el enlace (BannerInicio): ahí se escuchan el puntero y se pone la clase `encendida`, que
     // también le da el resplandor a la placa del título.
     const enlace = sb?.closest("a");
-    if (!sb || !dark || !contorno || !enlace) return;
+    if (!sb || !dark || !enlace) return;
 
     // Placa blanca con la palabra en azul oscuro, como la de Pinturas.
     enlace.style.setProperty("--color-sello", "var(--color-pico-blanco)");
@@ -56,13 +54,9 @@ export default function SeguridadVisible({ prioritario = false }: { prioritario?
     const calm = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     const encendida = () => enlace.classList.contains(estilos.encendida);
 
-    // Los contornos de las cintas se encienden y se apagan junto con la oscuridad (mismo parpadeo, mismo fundido).
-    let animContorno: Animation | null = null;
     const fade = (frames: Keyframe[], ms: number) => {
       anim?.cancel();
-      animContorno?.cancel();
       anim = dark.animate(frames, { duration: ms, fill: "forwards", easing: "linear" });
-      animContorno = contorno.animate(frames, { duration: ms, fill: "forwards", easing: "linear" });
     };
     const aim = (e: PointerEvent) => {
       const r = sb.getBoundingClientRect();
@@ -107,8 +101,6 @@ export default function SeguridadVisible({ prioritario = false }: { prioritario?
       raf = 0;
       anim?.cancel();
       anim = null;
-      animContorno?.cancel();
-      animContorno = null;
       enlace.classList.remove(estilos.encendida);
     };
     // En táctil, tocar el banner enciende la linterna en vez de navegar; el botón "Ver seguridad" sí navega. Con
@@ -163,19 +155,6 @@ export default function SeguridadVisible({ prioritario = false }: { prioritario?
         aria-hidden
       />
       <div ref={oscuridadRef} className={`absolute inset-0 ${estilos.oscuridad}`} aria-hidden />
-      {/* Contorno de las cintas reflectivas: con todo apagado se ven por toda la escena. Va debajo de la foto
-          iluminada, así dentro de la linterna manda la cinta real encendida. Sacado de las dos fotos (dónde se
-          encienden), en public/banners/seguridad/seguridad_contorno_cintas.webp. */}
-      <div ref={contornoRef} className="absolute inset-0 opacity-0" aria-hidden>
-        <Image
-          src={`${DIR}/seguridad_contorno_cintas.webp`}
-          alt=""
-          fill
-          unoptimized
-          draggable={false}
-          className={`object-cover object-center ${estilos.foto}`}
-        />
-      </div>
       <Image
         src={`${DIR}/seguridad_nueva_iluminada.webp`}
         alt=""
