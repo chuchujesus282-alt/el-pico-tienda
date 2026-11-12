@@ -640,6 +640,41 @@ p {
   [data-activa] .hero-cascada .plano-dibujo {
     animation: kenburns 9s ease-out both;
   }
+  /* La descripción NO entra animada: animada (aunque sea solo la opacidad), Chrome la dejaba sin pintar al terminar
+     (opacidad 1 en los estilos, pero invisible o muy tenue en pantalla, y desaparecía al pasar el cursor). Probado
+     2026-11-12: sin animación se ve siempre. */
+  [data-activa] .hero-cascada > .hero-descripcion {
+    animation: none;
+  }
+  /* Escenas con fotos (CentralesConFotos.tsx): el fondo se acerca despacio y el producto entra desde la derecha,
+     desenfocado, y se enfoca. Animan una capa propia (sin otras transformaciones) para no pisar las de Tailwind, y con
+     backwards: al terminar no dejan nada aplicado. */
+  [data-activa] .entrada-fondo {
+    animation: entrada-fondo 1.6s var(--curva-suave) backwards;
+  }
+  [data-activa] .entrada-producto {
+    animation: entrada-producto 1s var(--curva-suave) 0.12s backwards;
+  }
+}
+@keyframes entrada-fondo {
+  from {
+    scale: 1.06;
+  }
+  to {
+    scale: 1;
+  }
+}
+@keyframes entrada-producto {
+  from {
+    opacity: 0;
+    transform: translateX(10%) scale(0.94);
+    filter: blur(8px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+    filter: none;
+  }
 }
 
 /* Favorito: estallido de partículas rojas alrededor del corazón (BotonFavorito). */

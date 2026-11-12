@@ -199,7 +199,8 @@ export default function BannerInicio({ banner, sizes, tamano = "normal", priorit
             <p
               className={`relative ${conPlano ? "" : "max-w-[75%]"} text-sm ${estilo.texto} ${
                 grande
-                  ? `hidden sm:line-clamp-2 md:text-base lg:max-w-[50%] lg:text-lg ${banner.tituloPartes ? "md:max-w-[50%]" : ""}`
+                  ? // hero-descripcion: sin animación de entrada (ver globals.css; animada, Chrome no la pintaba).
+                    `hero-descripcion hidden sm:line-clamp-2 md:text-base lg:max-w-[50%] lg:text-lg ${banner.tituloPartes ? "md:max-w-[50%]" : ""}`
                   : lateral
                     ? "hidden sm:line-clamp-2"
                     : conPlano
