@@ -30,7 +30,8 @@
   transform: translateY(-50%);
 }
 
-/* La foto base se funde por la izquierda con el relleno desenfocado (sin borde duro). */
+/* Las fotos del lienzo se funden por la izquierda con el relleno desenfocado (sin borde duro). Lo llevan los DOS
+   lienzos (base e iluminada): si solo lo lleva la base, la linterna deja ver el corte recto de la iluminada. */
 .lienzoBase {
   -webkit-mask-image: linear-gradient(to right, transparent 0, #000 12%);
   mask-image: linear-gradient(to right, transparent 0, #000 12%);

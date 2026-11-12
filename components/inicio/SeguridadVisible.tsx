@@ -182,12 +182,14 @@ export default function SeguridadVisible({ prioritario = false }: { prioritario?
       <div ref={oscuridadRef} className={`absolute inset-0 ${estilos.oscuridad}`} aria-hidden />
       {/* Franjas encendidas y foto iluminada, en su lienzo. Las coordenadas de la linterna dentro de este lienzo
           (--mouse-x/--mouse-y) las corrige paint() restando dónde empieza el lienzo. */}
-      <div ref={lienzoRef} className={estilos.lienzo} aria-hidden>
+      {/* Con el mismo fundido por la izquierda que la foto base (lienzoBase): si no, la linterna mostraba el borde
+          recto del lienzo al pasar por la zona desenfocada (lo vio persona A). */}
+      <div ref={lienzoRef} className={`${estilos.lienzo} ${estilos.lienzoBase}`} aria-hidden>
         {/* Franjas reflectivas encendidas, con su color: con todo apagado se ven en todo el banner, no solo en la
             linterna. Sacadas de la foto iluminada (solo las franjas, con un resplandor suave); van debajo de ella. */}
         <div ref={franjasRef} className="absolute inset-0 opacity-0">
           <Image
-            src={`${DIR}/seguridad_franjas_suaves.webp`}
+            src={`${DIR}/seguridad_franjas_v3.webp`}
             alt=""
             fill
             unoptimized
