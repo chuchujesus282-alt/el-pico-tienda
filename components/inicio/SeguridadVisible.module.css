@@ -17,13 +17,15 @@
 }
 
 /* Lienzo de las fotos (1832×858): ajustado al ALTO del banner con un recorte mínimo (106 %), pegado a la derecha y
-   centrado en vertical. En banners más angostos que la foto, manda el ancho (cubre todo, como antes). Así en los
-   anchos (3:1 en PC) no se corta el chaleco arriba ni los guantes abajo. */
+   centrado en vertical. En banners más angostos que la foto (teléfono, tableta) igual cubre todo el ancho, porque la
+   foto es más ancha que ellos, y ahí va centrada (como antes: no se corta el casco). Así en los anchos (3:1 en PC) no
+   se corta el chaleco arriba ni los guantes abajo. */
 .lienzo {
   position: absolute;
   top: 50%;
-  right: 0;
-  height: max(106cqh, calc(100cqw * 858 / 1832));
+  /* 0 si sobra espacio (pegada a la derecha); si la foto es más ancha que el banner, la mitad de lo que sobra (centrada). */
+  right: min(0px, calc((100cqw - 106cqh * 1832 / 858) / 2));
+  height: 106cqh;
   aspect-ratio: 1832 / 858;
   transform: translateY(-50%);
 }
