@@ -184,10 +184,12 @@ function liberarObjetos(raiz: THREE.Object3D) {
   });
 }
 
-/** Libera la escena entera y el contexto WebGL (para cuando la diapositiva deja de verse). */
+/**
+ * Libera la escena entera y el render (al salir del inicio). Sin forceContextLoss(): Chrome cuenta cada pérdida de
+ * contexto provocada por la página y, tras unas cuantas, bloquea WebGL en toda la página.
+ */
 export function liberarTodo(escena: THREE.Scene, render: THREE.WebGLRenderer) {
   liberarObjetos(escena);
   escena.environment?.dispose();
   render.dispose();
-  render.forceContextLoss();
 }

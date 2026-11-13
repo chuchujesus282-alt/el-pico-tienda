@@ -11,7 +11,8 @@ import estilos from "./GriferiaAgua.module.css";
 //
 // - Dos escenas 3D (Three.js): ducha y lavamanos. Se alternan cada día con la fecha LOCAL del visitante
 //   (lib/escenaGriferia.ts; ?escena=ducha|lavamanos para revisarlas). Solo se descarga la del día (import dinámico).
-// - El render (WebGL) se crea solo con la diapositiva activa y se libera entero (dispose) cuando deja de estarlo.
+// - El render (WebGL) se crea la primera vez que la diapositiva está activa, se pausa cuando deja de estarlo y se
+//   reutiliza al volver; se libera (dispose) solo al salir del inicio. Sin WebGL, el banner queda sin escena.
 // - Solo dibuja mientras el agua corre o cambia: con el agua cerrada queda una imagen quieta.
 // - Mouse: al entrar se abre el agua; a la izquierda sale fría y a la derecha caliente (pomos, luz, vapor, etiqueta de
 //   temperatura y el sello del título, que se vuelve azul con agua fría). Al salir se cierra.
@@ -120,31 +121,51 @@ export default function GriferiaAgua() {
     const alCambiarTamano = new ResizeObserver(encuadrar);
     alCambiarTamano.observe(zona);
 
-    // Crea el render solo con la diapositiva activa (en un lienzo nuevo: el anterior perdió su contexto WebGL).
+    // Crea el render la primera vez que la diapositiva está activa y lo REUTILIZA en las vueltas siguientes del
+    // carrusel (antes se destruía y se volvía a crear en cada vuelta: Chrome cuenta esas pérdidas de contexto y, tras
+    // unas cuantas, bloquea WebGL en toda la página). Si el navegador no permite WebGL, el banner se queda sin escena
+    // (fondo, título y botón) y no se reintenta.
+    let sin3D = false;
     const crear = async () => {
-      if (escena) return;
+      if (escena || sin3D) return;
       const { crearEscena } = await modulo;
-      if (!vivo || escena || !activa()) return;
+      if (!vivo || escena || sin3D || !activa()) return;
       lienzo = document.createElement("canvas");
       lienzo.className = estilos.lienzo;
       zona.prepend(lienzo);
-      escena = crearEscena(lienzo);
+      try {
+        escena = crearEscena(lienzo);
+      } catch {
+        sin3D = true;
+        lienzo.remove();
+        lienzo = null;
+        return;
+      }
       escena.actualizar(st);
       encuadrar();
     };
-    const liberar = () => {
+    // Al dejar de verse la diapositiva: se detiene la animación y se cierra el agua; la escena queda guardada.
+    const pausar = () => {
       cancelAnimationFrame(raf);
       raf = 0;
       clearTimeout(espera);
-      escena?.liberar();
-      escena = null;
-      lienzo?.remove();
-      lienzo = null;
       st.abierta = false;
       st.apertura = 0;
       st.obj = st.act = 0.5;
       raiz.classList.remove(estilos.activo);
       ui();
+      if (escena) {
+        escena.actualizar(st);
+        escena.dibujar();
+      }
+    };
+    // Al desmontar (se sale del inicio): se libera todo.
+    const liberar = () => {
+      pausar();
+      escena?.liberar();
+      escena = null;
+      lienzo?.remove();
+      lienzo = null;
     };
 
     const agua = (abierta: boolean) => {
@@ -188,7 +209,7 @@ export default function GriferiaAgua() {
     };
 
     const alCambiarDiapositiva = () => {
-      if (!activa()) return liberar();
+      if (!activa()) return pausar();
       void crear();
       if (sinHover) {
         clearTimeout(espera);
