@@ -57,8 +57,12 @@ export const bannersCentrales: Record<string, BannerInicio> = {
     // Texto blanco como los demás; sobre esta foto clara lo hace legible la sombra suave de BannerInicio (escenaFoto).
     variante: "oscuro",
     escenaFoto: {
-      src: "/banners/construccion/materiales-obra.webp",
+      src: "/banners/construccion/materiales-almacen.webp",
       alt: "Bloques, ladrillos, saco de cemento, cabillas, alambre, manguera y un tobo en una obra",
+      ancho: 2172,
+      alto: 724,
+      // La izquierda (detrás del texto) se desenfoca de a poco, como el foco de una cámara.
+      profundidad: true,
     },
   },
   herramientas: {

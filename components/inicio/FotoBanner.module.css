@@ -1,7 +1,7 @@
 /* Escena de FOTO QUIETA de los banners del carrusel (FotoBanner.tsx; hoy Herramientas y Construcción): sin animación al pasar el
-   cursor. La foto (1832×858) se ve ENTERA: se ajusta al alto del banner y va pegada a la derecha (pedido de persona A:
+   cursor. La foto se ve ENTERA: se ajusta al alto del banner y va pegada a la derecha (pedido de persona A:
    cubriendo todo el ancho se veía con demasiado zoom); lo que sobra a la izquierda lo llena la misma foto
-   desenfocada, que se funde con ella. */
+   desenfocada, que se funde con ella. La proporción de la foto llega en --foto-ancho / --foto-alto. */
 
 .escena {
   /* El lienzo se mide en cq*: el contenedor es la propia escena (todo el banner). */
@@ -9,13 +9,13 @@
 }
 
 /* 0 si sobra espacio (pegada a la derecha); si la foto es más ancha que el banner, la mitad de lo que sobra
-   (centrada: en el teléfono no se cortan las herramientas). */
+   (centrada: en el teléfono no se cortan los productos). */
 .lienzo {
   position: absolute;
   top: 50%;
-  right: min(0px, calc((100cqw - 100cqh * 1832 / 858) / 2));
+  right: min(0px, calc((100cqw - 100cqh * var(--foto-ancho) / var(--foto-alto)) / 2));
   height: 100cqh;
-  aspect-ratio: 1832 / 858;
+  aspect-ratio: var(--foto-ancho) / var(--foto-alto);
   transform: translateY(-50%);
   /* Se funde por la izquierda con el relleno desenfocado (sin borde duro). */
   -webkit-mask-image: linear-gradient(to right, transparent 0, #000 12%);
@@ -26,4 +26,16 @@
 .relleno {
   filter: blur(18px) brightness(0.8);
   transform: scale(1.12);
+}
+
+/* Desenfoque de profundidad (`profundidad`): desenfoca la propia foto que tiene detrás, con una máscara que baja
+   en curva suave (smoothstep) del 18 % al 58 % del ancho: sin corte visible, como el foco de una cámara. Al ser un
+   backdrop-filter sobre la misma foto, lo nítido y lo borroso coinciden pixel a pixel (sin halos ni bordes). */
+.profundidad {
+  position: absolute;
+  inset: 0;
+  -webkit-backdrop-filter: blur(9px) brightness(0.88);
+  backdrop-filter: blur(9px) brightness(0.88);
+  -webkit-mask-image: linear-gradient(to right, #000 18%, rgb(0 0 0 / 0.84) 28%, rgb(0 0 0 / 0.5) 38%, rgb(0 0 0 / 0.16) 48%, transparent 58%);
+  mask-image: linear-gradient(to right, #000 18%, rgb(0 0 0 / 0.84) 28%, rgb(0 0 0 / 0.5) 38%, rgb(0 0 0 / 0.16) 48%, transparent 58%);
 }
