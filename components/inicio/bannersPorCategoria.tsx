@@ -65,7 +65,7 @@ function tarjeta(slug: string, Tarjeta: (props: PropsTarjeta) => ReactNode): Var
 }
 
 export const bannersPorCategoria: Record<string, Variantes> = {
-  // Construcción, Herramientas y Pinturas: foto quieta (FotoBanner, por `escenaFoto`). Cerrajería: provisional a propósito (solo texto).
+  // Construcción, Herramientas, Pinturas y Cerrajería: foto quieta (FotoBanner, por `escenaFoto`).
   construccion: { central: central(bannersCentrales.construccion) },
   herramientas: { central: central(bannersCentrales.herramientas) }, // con foto quieta (FotoBanner, escenaFoto)
   pinturas: { central: central(bannersCentrales.pinturas) }, // con foto quieta (FotoBanner, escenaFoto)
@@ -129,7 +129,7 @@ export function tituloCentral(slug: string): string {
   return bannersPorCategoria[slug]?.central ? (bannersCentrales[slug]?.titulo ?? nombreDe(slug)) : nombreDe(slug);
 }
 
-/** Diapositiva central. Genérica: solo texto sobre el azul, como las provisionales de Construcción y Cerrajería. */
+/** Diapositiva central. Genérica: solo texto sobre el azul (para las categorías sin diseño propio). */
 export function BannerCentral({ slug, prioritario }: { slug: string; prioritario: boolean }) {
   const Propia = bannersPorCategoria[slug]?.central;
   if (Propia) return <Propia prioritario={prioritario} />;

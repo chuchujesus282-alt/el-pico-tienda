@@ -121,10 +121,20 @@ export const bannersCentrales: Record<string, BannerInicio> = {
     alt: "Cerrajería en El Pico",
     href: "/categoria/cerrajeria",
     titulo: "Cerrajería que protege",
-    texto: "Candados, cerraduras, cilindros y bisagras para tu casa o tu negocio.",
+    tituloPartes: ["Cerrajería que", "protege"],
+    tituloMovil: "Cerrajería",
+    texto: "Candados, cerraduras, bisagras y herrajes para tu casa o tu negocio.",
     textoBoton: "Ver cerrajería",
-    variante: "azul",
-    // Provisional a propósito: solo el texto sobre el azul, sin escena ni ícono.
+    variante: "oscuro",
+    // Foto quieta como Herramientas, Construcción y Pinturas (FotoBanner).
+    escenaFoto: {
+      src: "/banners/cerrajeria/herrajes-mesa.jpg",
+      avif: "/banners/cerrajeria/herrajes-mesa.avif",
+      alt: "Cerradura de pomo con llaves, candado, cerradura de embutir, bisagra, rieles, rodaja y escuadra sobre una mesa metálica",
+      ancho: 2172,
+      alto: 724,
+      profundidad: true,
+    },
   },
   griferia: {
     id: "griferia-agua", // monta GriferiaAgua en BannerInicio: no cambiar
