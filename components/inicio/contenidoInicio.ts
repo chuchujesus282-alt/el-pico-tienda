@@ -85,8 +85,8 @@ export const bannersCentrales: Record<string, BannerInicio> = {
     variante: "oscuro",
     // Sin ícono: foto quieta de un taller organizado con herramientas (FotoBanner).
     escenaFoto: {
-      src: "/banners/herramientas/mesa-metalica.jpg",
-      avif: "/banners/herramientas/mesa-metalica.avif",
+      src: "/banners/herramientas/exhibicion-taller.jpg",
+      avif: "/banners/herramientas/exhibicion-taller.avif",
       alt: "Taladro, martillo, nivel, cinta métrica, destornilladores y caja de herramientas en un taller organizado",
       ancho: 2172,
       alto: 724,
