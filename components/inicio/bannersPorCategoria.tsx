@@ -67,7 +67,7 @@ function tarjeta(slug: string, Tarjeta: (props: PropsTarjeta) => ReactNode): Var
 export const bannersPorCategoria: Record<string, Variantes> = {
   // Construcción y Cerrajería: provisionales a propósito (solo texto sobre el azul), pero son las suyas.
   construccion: { central: central(bannersCentrales.construccion) },
-  herramientas: { central: central(bannersCentrales.herramientas) }, // con HerramientasAsomadas
+  herramientas: { central: central(bannersCentrales.herramientas) }, // con HerramientasFoto (foto quieta)
   pinturas: { central: central(bannersCentrales.pinturas) }, // con PinturaEnMovimiento
   cerrajeria: { central: central(bannersCentrales.cerrajeria) },
   tornilleria: {

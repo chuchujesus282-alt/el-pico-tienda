@@ -4,7 +4,7 @@ import { ChevronRight } from "lucide-react";
 import type { ReactNode } from "react";
 import Plano from "@/components/icons/pico/Plano";
 import type { BannerInicio as DatosBanner, VarianteBanner } from "./contenidoInicio";
-import HerramientasAsomadas from "./HerramientasAsomadas";
+import HerramientasFoto from "./HerramientasFoto";
 import PinturaEnMovimiento from "./PinturaEnMovimiento";
 import SeguridadVisible from "./SeguridadVisible";
 import GriferiaAgua from "./GriferiaAgua";
@@ -127,8 +127,8 @@ export default function BannerInicio({ banner, sizes, tamano = "normal", priorit
               />
             </span>
           )}
-          {/* Placa amarilla con el rotomartillo flotante, solo en el banner de herramientas del carrusel. */}
-          {grande && banner.id === "herramientas" && <HerramientasAsomadas />}
+          {/* Foto quieta del banco de trabajo, solo en el banner de herramientas del carrusel. */}
+          {grande && banner.id === "herramientas" && <HerramientasFoto prioritario={prioritario} />}
           {/* Pared blanca con un rodillo que pinta una franja de color, solo en el banner de pinturas del carrusel. */}
           {grande && banner.id === "pinturas" && <PinturaEnMovimiento />}
           {/* Foto del EPP con la "linterna" que enciende las franjas reflectivas, solo en el de seguridad del carrusel. */}

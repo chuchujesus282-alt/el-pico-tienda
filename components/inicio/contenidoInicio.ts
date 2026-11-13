@@ -61,7 +61,7 @@ export const bannersCentrales: Record<string, BannerInicio> = {
     texto: "Taladros, esmeriles y herramientas manuales para cada trabajo.",
     textoBoton: "Ver herramientas",
     variante: "oscuro",
-    // Sin ícono: en su lugar flota un rotomartillo real (HerramientasAsomadas).
+    // Sin ícono: foto quieta de un banco de trabajo con herramientas (HerramientasFoto).
   },
   pinturas: {
     id: "pinturas",
