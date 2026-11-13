@@ -162,6 +162,7 @@ Resumen para persona B y cualquier sesión nueva. Detalle: `lib/auth.ts`, `lib/c
 
 ## Registro de cambios
 Lo más reciente arriba. Formato: fecha · rama · quién · qué cambió y qué debe saber el compañero.
+- 2026-11-13 · `main` · persona A · **Banner de Cerrajería: foto nueva** `public/banners/cerrajeria/herrajes-encimera.{avif,jpg}` ("Herrajes metálicos sobre encimera amplia", 2172×724; reemplaza a `herrajes-banco`, borrada). Mismo tratamiento y textos.
 - 2026-11-13 · `main` · persona A · **Banner de Pinturas: foto nueva** `public/banners/pinturas/luz-natural.{avif,jpg}` ("Suministros de pintura bajo la luz natural", 2172×724: piso de terracota, escalera de madera y luz de ventana; reemplaza a `suministros-renovacion`, borrada). Mismo tratamiento y textos.
 - 2026-11-13 · `main` · persona A · **Banner de Herramientas: foto nueva** `public/banners/herramientas/taller-calido.{avif,jpg}` ("Exhibición de herramientas en taller cálido", 2172×724: mesa de madera y luz cálida; reemplaza a `exhibicion-taller`, borrada). Mismo tratamiento y textos.
 - 2026-11-13 · `main` · persona A · **Banner de Cerrajería: foto nueva** `public/banners/cerrajeria/herrajes-banco.{avif,jpg}` ("Herrajes de Cerrajería sobre Banco de Trabajo", 2172×724; reemplaza a `herrajes-mesa`, borrada). Los herrajes quedan más a la derecha: la placa PROTEGE ya no roza la cerradura de pomo.
