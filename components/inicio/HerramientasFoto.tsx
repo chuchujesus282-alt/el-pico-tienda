@@ -4,13 +4,13 @@ import Image from "next/image";
 // herramientas (pedido de persona A: sin animación al pasar el cursor; reemplazó al rotomartillo flotante de
 // HerramientasAsomadas). La monta BannerInicio cuando banner.id === "herramientas"; el título, la descripción y el
 // botón "Ver herramientas" (con su efecto al pasar el cursor) son los de BannerInicio.
-// Foto del dueño en public/banners/herramientas/banco-trabajo.webp (1832×858).
+// Foto del dueño en public/banners/herramientas/taller-organizado.webp (1832×858).
 //
-// Cubre todo el banner, nítida y sin degradados (persona A no quiso el relleno desenfocado de la izquierda). En los
+// Cubre todo el banner, nítida y sin relleno desenfocado a la izquierda. En los
 // banners anchos se recorta arriba y abajo: va un poco por debajo del centro (63 %) para que quepan la punta del
 // taladro arriba y el martillo, los destornilladores y la llave abajo.
 
-const FOTO = "/banners/herramientas/banco-trabajo.webp";
+const FOTO = "/banners/herramientas/taller-organizado.webp";
 
 export default function HerramientasFoto({ prioritario = false }: { prioritario?: boolean }) {
   return (
