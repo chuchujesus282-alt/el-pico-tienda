@@ -47,6 +47,9 @@ export default function FotoBanner({
           alt={alt}
           fill
           sizes="(min-width: 1536px) 1472px, 100vw"
+          // Más calidad que la de siempre (75): es la foto grande del carrusel y a 75 perdía nitidez. La foto de
+          // public/ va en webp de calidad 95 (sacada del PNG original del dueño).
+          quality={90}
           loading={prioritario ? "eager" : undefined}
           fetchPriority={prioritario ? "high" : undefined}
           className="object-cover"
