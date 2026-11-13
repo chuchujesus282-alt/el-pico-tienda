@@ -48,12 +48,14 @@ export const bannersCentrales: Record<string, BannerInicio> = {
     imagen: null,
     alt: "Materiales de construcción en El Pico",
     href: "/categoria/construccion",
-    titulo: "Materiales para construir",
-    tituloPartes: ["Materiales para", "construir"],
+    // Pareja de "Herramientas que RINDEN": la placa lleva una idea, no el nombre de la categoría, y de 8 letras o
+    // menos para que salga del mismo tamaño que las demás (más largas se achican solas).
+    titulo: "Materiales que aguantan",
+    tituloPartes: ["Materiales que", "aguantan"],
     texto: "Cemento, bloques, pegos y más para construir sin paradas.",
     textoBoton: "Ver materiales",
-    // La foto es clara (concreto y ladrillo): texto en azul marino, que se lee mejor que el blanco sobre ella.
-    variante: "claro",
+    // Texto blanco como los demás; sobre esta foto clara lo hace legible la sombra suave de BannerInicio (escenaFoto).
+    variante: "oscuro",
     escenaFoto: {
       src: "/banners/construccion/materiales-obra.webp",
       alt: "Bloques, ladrillos, saco de cemento, cabillas, alambre, manguera y un tobo en una obra",

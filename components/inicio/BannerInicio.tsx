@@ -79,6 +79,12 @@ export default function BannerInicio({ banner, sizes, tamano = "normal", priorit
   // pantalla, @container) y el texto tiene reservado lo que queda a su izquierda, así ningún texto (el más largo de
   // las 10 categorías) choca con el dibujo, sea cual sea el ancho del banner.
   const conPlano = Boolean(Icono) && !grande && !lateral;
+  // Sobre una foto (escenaFoto), sombra suave y oscura en la frase y la descripción para que el texto blanco se lea
+  // también en fotos claras (Construcción), sin degradados sobre la foto (persona A no los quiere).
+  const sombraTexto =
+    grande && banner.escenaFoto
+      ? "[text-shadow:0_2px_14px_color-mix(in_srgb,var(--color-pico-azul-oscuro)_80%,transparent),0_1px_3px_color-mix(in_srgb,var(--color-pico-azul-oscuro)_60%,transparent)]"
+      : "";
 
   return (
     <Destino
@@ -139,7 +145,7 @@ export default function BannerInicio({ banner, sizes, tamano = "normal", priorit
             // Título en dos tiempos: la frase en una línea y la palabra clave enorme, en mayúsculas, sobre un
             // bloque rojo inclinado (el filete de la marca hecho sello). Al pasar el mouse crecen juntos, barra y palabra,
             // desde la izquierda y con el mismo rebote.
-            <p className={`relative font-bold ${estilo.titulo}`}>
+            <p className={`relative font-bold ${estilo.titulo} ${sombraTexto}`}>
               <span className="block text-lg leading-none md:text-3xl lg:text-4xl">{banner.tituloPartes[0]}</span>
               <span
                 className={`relative isolate mt-2 inline-block origin-left px-2.5 pt-1 leading-[0.92] tracking-[-0.02em] text-[var(--color-sello-texto,var(--color-pico-blanco))] uppercase transition-transform duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] motion-safe:group-hover:scale-[1.08] md:mt-3 md:px-4 ${
@@ -186,7 +192,7 @@ export default function BannerInicio({ banner, sizes, tamano = "normal", priorit
             <p
               // data-descripcion-banner: la escena de grifería cambia el texto según la escena del día.
               data-descripcion-banner={grande ? "" : undefined}
-              className={`relative ${conPlano ? "" : "max-w-[75%]"} text-sm ${estilo.texto} ${
+              className={`relative ${conPlano ? "" : "max-w-[75%]"} text-sm ${estilo.texto} ${sombraTexto} ${
                 grande
                   ? // hero-descripcion: sin animación de entrada (ver globals.css; animada, Chrome no la pintaba).
                     `hero-descripcion hidden sm:line-clamp-2 md:text-base lg:max-w-[50%] lg:text-lg ${banner.tituloPartes ? "md:max-w-[50%]" : ""}`

@@ -1,7 +1,7 @@
 import Image from "next/image";
 import estilos from "./FotoBanner.module.css";
 
-// Escena de FOTO QUIETA para un banner del carrusel central (hoy Herramientas "RINDEN" y Construcción "CONSTRUIR";
+// Escena de FOTO QUIETA para un banner del carrusel central (hoy Herramientas "RINDEN" y Construcción "AGUANTAN";
 // pedidos de persona A). BannerInicio la monta cuando el banner trae `escenaFoto` (contenidoInicio.ts); el título,
 // la descripción y el botón (con su efecto al pasar el cursor) son los de BannerInicio. Sin animación al pasar el
 // cursor.
