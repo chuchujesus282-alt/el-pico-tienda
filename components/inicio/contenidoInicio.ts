@@ -63,7 +63,8 @@ export const bannersCentrales: Record<string, BannerInicio> = {
     // Texto blanco como los demás; sobre esta foto clara lo hace legible la sombra suave de BannerInicio (escenaFoto).
     variante: "oscuro",
     escenaFoto: {
-      src: "/banners/construccion/materiales-almacen.webp",
+      src: "/banners/construccion/materiales-almacen.jpg",
+      avif: "/banners/construccion/materiales-almacen.avif",
       alt: "Bloques, ladrillos, saco de cemento, cabillas, alambre, manguera y un tobo en una obra",
       ancho: 2172,
       alto: 724,
@@ -84,7 +85,8 @@ export const bannersCentrales: Record<string, BannerInicio> = {
     variante: "oscuro",
     // Sin ícono: foto quieta de un taller organizado con herramientas (FotoBanner).
     escenaFoto: {
-      src: "/banners/herramientas/mesa-metalica.webp",
+      src: "/banners/herramientas/mesa-metalica.jpg",
+      avif: "/banners/herramientas/mesa-metalica.avif",
       alt: "Taladro, martillo, nivel, cinta métrica, destornilladores y caja de herramientas en un taller organizado",
       ancho: 2172,
       alto: 724,

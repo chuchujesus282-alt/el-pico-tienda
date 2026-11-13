@@ -2,8 +2,6 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   images: {
-    // 75 es la de siempre; 90 la usan las fotos de los banners del carrusel (FotoBanner): a 75 se veían menos nítidas.
-    qualities: [75, 90],
     // Cuando la API entregue URLs de imágenes, agrega aquí el dominio que las sirve.
     // Ej.: { protocol: "https", hostname: "imagenes.elpico.com", pathname: "/**" }
     remotePatterns: [
