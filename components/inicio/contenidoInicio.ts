@@ -86,6 +86,19 @@ export const bannersCentrales: Record<string, BannerInicio> = {
     variante: "azul",
     // Provisional a propósito: solo el texto sobre el azul, sin escena ni ícono.
   },
+  griferia: {
+    id: "griferia-agua", // monta GriferiaAgua en BannerInicio: no cambiar
+    imagen: null,
+    alt: "Grifería en El Pico",
+    href: "/categoria/griferia",
+    titulo: "Agua a tu medida",
+    tituloPartes: ["Agua a tu", "medida"],
+    // El de la ducha; GriferiaAgua lo cambia por el del lavamanos los días que toca (lib/escenaGriferia.ts).
+    texto: "Duchas, regaderas, mezcladoras y grifería para baño y cocina.",
+    textoBoton: "Ver grifería",
+    // Ducha o lavamanos en 3D (se alternan cada día); el agua sale fría o caliente según el cursor (GriferiaAgua).
+    variante: "oscuro",
+  },
   "seguridad-industrial": {
     id: "seguridad-visible", // monta SeguridadVisible en BannerInicio: no cambiar
     imagen: null,

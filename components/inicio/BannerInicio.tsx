@@ -7,6 +7,7 @@ import type { BannerInicio as DatosBanner, VarianteBanner } from "./contenidoIni
 import HerramientasAsomadas from "./HerramientasAsomadas";
 import PinturaEnMovimiento from "./PinturaEnMovimiento";
 import SeguridadVisible from "./SeguridadVisible";
+import GriferiaAgua from "./GriferiaAgua";
 
 type Props = {
   banner: DatosBanner;
@@ -132,6 +133,8 @@ export default function BannerInicio({ banner, sizes, tamano = "normal", priorit
           {grande && banner.id === "pinturas" && <PinturaEnMovimiento />}
           {/* Foto del EPP con la "linterna" que enciende las franjas reflectivas, solo en el de seguridad del carrusel. */}
           {grande && banner.id === "seguridad-visible" && <SeguridadVisible prioritario={prioritario} />}
+          {/* Ducha o lavamanos en 3D (según el día) con el agua que sale fría o caliente al pasar el cursor. */}
+          {grande && banner.id === "griferia-agua" && <GriferiaAgua />}
           {grande && banner.tituloPartes ? (
             // Título en dos tiempos: la frase en una línea y la palabra clave enorme, en mayúsculas, sobre un
             // bloque rojo inclinado (el filete de la marca hecho sello). Al pasar el mouse crecen juntos, barra y palabra,
@@ -181,6 +184,8 @@ export default function BannerInicio({ banner, sizes, tamano = "normal", priorit
           {banner.texto && (
             // En el banner grande y en móvil se omite el texto: no cabe con el título y el botón.
             <p
+              // data-descripcion-banner: la escena de grifería cambia el texto según la escena del día.
+              data-descripcion-banner={grande ? "" : undefined}
               className={`relative ${conPlano ? "" : "max-w-[75%]"} text-sm ${estilo.texto} ${
                 grande
                   ? // hero-descripcion: sin animación de entrada (ver globals.css; animada, Chrome no la pintaba).

@@ -94,7 +94,7 @@ export const bannersPorCategoria: Record<string, Variantes> = {
     vertical: tarjeta("seguridad-industrial", CategoryCardSeguridad),
   },
   electricidad: { vertical: tarjeta("electricidad", CategoryCardElectricidad) },
-  griferia: { vertical: tarjeta("griferia", CategoryCardPlomeria) },
+  griferia: { central: central(bannersCentrales.griferia), vertical: tarjeta("griferia", CategoryCardPlomeria) }, // con GriferiaAgua
   "hogar-y-jardin": { vertical: tarjeta("hogar-y-jardin", CategoryCardJardin) },
   vehiculos: { vertical: tarjeta("vehiculos", CategoryCardVehiculos) },
 };

@@ -1,0 +1,110 @@
+/* Escena "Agua a tu MEDIDA" del carrusel (GriferiaAgua.tsx), portada del prototipo banner-griferia.html. Excepción a
+   la regla de tokens (como SeguridadVisible): el fondo casi negro, el velo de lectura, los tintes frío/cálido y la
+   neblina van escritos aquí, idénticos al prototipo. */
+
+.escena {
+  background: #0b0f13;
+}
+
+/* Donde va el lienzo 3D (y los tintes encima). En el celular, la escena a la derecha del texto. */
+.zona {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+.lienzo {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.tinte,
+.neblina {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  pointer-events: none;
+}
+.frio {
+  background: radial-gradient(ellipse 70% 100% at 72% 40%, rgb(120 185 255 / 0.45), rgb(30 80 170 / 0.4));
+  mix-blend-mode: soft-light;
+}
+.frio2 {
+  background: rgb(70 140 230 / 0.08);
+  mix-blend-mode: color;
+}
+.calido {
+  background: radial-gradient(ellipse 70% 100% at 72% 40%, rgb(255 190 110 / 0.5), rgb(200 70 20 / 0.4));
+  mix-blend-mode: soft-light;
+}
+.calido2 {
+  background: rgb(255 120 40 / 0.07);
+  mix-blend-mode: color;
+}
+.neblina {
+  background: linear-gradient(0deg, rgb(243 233 223 / 0.28), rgb(243 233 223 / 0.08) 60%, rgb(243 233 223 / 0));
+}
+
+/* Velo de lectura: la columna del texto siempre se lee. */
+.lectura {
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 85%;
+  pointer-events: none;
+  background: linear-gradient(90deg, rgb(9 13 17 / 0.9), rgb(9 13 17 / 0.55) 50%, transparent);
+}
+@media (min-width: 768px) {
+  .lectura {
+    width: 50%;
+  }
+}
+@media (max-width: 767px) {
+  .zona {
+    left: 40%;
+  }
+  .lectura {
+    width: 78%;
+    background: linear-gradient(90deg, #090d11 0, #090d11 50%, rgb(9 13 17 / 0.85) 62%, rgb(9 13 17 / 0) 100%);
+  }
+}
+
+/* Etiqueta de temperatura junto al grifo (la posiciona el componente). */
+.chip {
+  position: absolute;
+  transform: translateY(-50%);
+  padding: 5px 10px;
+  border-radius: 999px;
+  border: 1px solid rgb(255 255 255 / 0.25);
+  background: rgb(9 13 17 / 0.72);
+  color: var(--color-pico-blanco);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  opacity: 0;
+  transition: opacity 0.35s;
+  pointer-events: none;
+}
+.chip b {
+  font-weight: 700;
+}
+.activo .chip {
+  opacity: 1;
+}
+
+/* El sello del título (BannerInicio, [data-sello]) cambia de color y brilla con el agua: transición suave. */
+.conAgua [data-sello] {
+  transition:
+    background-color 0.45s,
+    box-shadow 0.5s;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .chip,
+  .conAgua [data-sello] {
+    transition: none;
+  }
+}
