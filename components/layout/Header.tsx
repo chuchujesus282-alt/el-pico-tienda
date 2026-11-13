@@ -22,9 +22,9 @@ export default function Header() {
         En el teléfono se va con la página: lo único que queda fijo arriba es la barra del buscador (abajo). */}
     <header className="relative z-40 bg-pico-azul-claro transition-[background-color,box-shadow] duration-300 md:sticky md:top-0 md:border-b md:border-pico-azul/10 md:shadow-header md:[html[data-desplazado]_&]:bg-pico-azul-claro/85 md:[html[data-desplazado]_&]:shadow-tarjeta-hover md:[html[data-desplazado]_&]:backdrop-blur-md">
       <MarcaDesplazamiento />
-      {/* En el teléfono es una cuadrícula: la primera fila (logo, tasa, dirección, calculadoras) nunca se parte, aunque
-          la píldora de la tasa crezca o el iPhone tenga el texto/zoom más grande; el buscador va solo en la segunda. */}
-      <Contenedor className="grid grid-cols-[auto_minmax(0,1fr)_auto_auto] items-center gap-x-2 pt-3 pb-1 min-[400px]:gap-x-3 md:flex md:gap-x-6 md:py-4 lg:gap-x-8">
+      {/* En el teléfono es una cuadrícula: la primera fila (logo, tasa, dirección) nunca se parte, aunque la píldora de
+          la tasa crezca o el iPhone tenga el texto/zoom más grande; el buscador va solo en la segunda. */}
+      <Contenedor className="grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-x-2 pt-3 pb-1 min-[400px]:gap-x-3 md:flex md:gap-x-6 md:py-4 lg:gap-x-8">
         <span className="origin-left transition-transform duration-300 ease-(--curva-suave) md:[html[data-desplazado]_&]:scale-[0.88]">
           <Logo placa={false} />
         </span>
@@ -39,18 +39,19 @@ export default function Header() {
         {/* "Entregar en": la dirección a la que va el pedido, gemela de la píldora de la tasa. */}
         <SelectorDireccion />
 
-        <div className="flex items-center gap-1 md:ml-auto md:gap-2">
+        {/* Calculadoras, favoritos, Mi cuenta y el carrito: en el teléfono viven en la barra inferior
+            (BarraInferiorMovil), así que todo este grupo es solo desde 768px. */}
+        <div className="hidden items-center gap-1 md:ml-auto md:flex md:gap-2">
           {/* Calculadoras de proyectos: mismo estilo y protagonismo que "Mi cuenta" y el carrito. */}
           <EnlaceCalculadoras />
-          {/* Favoritos, Mi cuenta y el carrito: en el teléfono viven en la barra inferior (BarraInferiorMovil). */}
           <EnlaceFavoritos className="hidden md:flex" />
           <EnlaceCuenta className="hidden md:flex" />
           <BotonCarrito />
         </div>
       </Contenedor>
     </header>
-    {/* Teléfono: solo el buscador, compacto, queda pegado arriba al bajar (como en las apps de tiendas). La tasa, la
-        dirección y la calculadora se quedan en el header de arriba y se van con la página. */}
+    {/* Teléfono: solo el buscador, compacto, queda pegado arriba al bajar (como en las apps de tiendas). La tasa y la
+        dirección se quedan en el header de arriba y se van con la página (la calculadora está en la barra inferior). */}
     <div className="sticky top-0 z-40 bg-pico-azul-claro/90 py-2 backdrop-blur-md transition-shadow duration-300 md:hidden [html[data-desplazado]_&]:shadow-header">
       <Contenedor>
         <BuscadorConSugerencias compacto />

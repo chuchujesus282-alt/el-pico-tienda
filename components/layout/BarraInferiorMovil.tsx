@@ -4,6 +4,7 @@ import type { MouseEvent } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { House, LayoutGrid } from "lucide-react";
+import IconoCalculadora from "@/components/icons/pico/IconoCalculadora";
 import IconoCarrito from "@/components/icons/pico/IconoCarrito";
 import IconoCorazon from "@/components/icons/pico/IconoCorazon";
 import FotoCuenta, { usePrimerNombre } from "@/components/cuenta/FotoCuenta";
@@ -85,8 +86,8 @@ const clasePestana =
 
 /**
  * Barra de navegación fija abajo, SOLO en el teléfono (debajo de 768px), como la de las apps de tiendas: cada
- * pestaña es una página propia (Inicio `/`, Categorías `/categorias`, Carrito `/carrito`, Favoritos `/favoritos`
- * y Entrar `/iniciar-sesion`); nada se abre encima de la página. Blanca, con la pestaña activa en un círculo azul
+ * pestaña es una página propia (Inicio `/`, Categorías `/categorias`, Calcular `/calculadoras`, Carrito
+ * `/carrito`, Favoritos `/favoritos` y Entrar `/iniciar-sesion`); nada se abre encima de la página. Blanca, con la pestaña activa en un círculo azul
  * marino. Reemplaza en móvil a la barra horizontal de categorías y a las bolas flotantes (subir y carrito). Su alto
  * vive en `--alto-barra-inferior` (globals.css) para que el resto de la página y las barras fijas de producto y
  * calculadoras se acomoden encima.
@@ -103,13 +104,15 @@ export default function BarraInferiorMovil() {
       ? "inicio"
       : ruta === "/categorias" || ruta.startsWith("/categoria/")
         ? "categorias"
-        : ruta === "/carrito"
-          ? "carrito"
-          : ruta === "/favoritos"
-            ? "favoritos"
-            : enCuenta
-              ? "entrar"
-              : null;
+        : ruta === "/calculadoras" || ruta.startsWith("/calculadoras/")
+          ? "calculadoras"
+          : ruta === "/carrito"
+            ? "carrito"
+            : ruta === "/favoritos"
+              ? "favoritos"
+              : enCuenta
+                ? "entrar"
+                : null;
 
   type Datos = {
     id: NonNullable<typeof activa>;
@@ -123,6 +126,9 @@ export default function BarraInferiorMovil() {
   const pestanas: Datos[] = [
     { id: "inicio", href: "/", icono: House, texto: "Inicio" },
     { id: "categorias", href: "/categorias", icono: LayoutGrid, texto: "Categorías" },
+    // Antes en el header del teléfono, al lado de la tasa BCV (pedido de persona A). "Calcular" y no "Calculadoras":
+    // con seis pestañas, la palabra larga no cabe bajo el ícono en teléfonos de 360px.
+    { id: "calculadoras", href: "/calculadoras", icono: IconoCalculadora, texto: "Calcular" },
     { id: "carrito", href: "/carrito", icono: IconoCarrito, texto: "Carrito", contador: cantidadTotal, destinoCarrito: true },
     { id: "favoritos", href: "/favoritos", icono: IconoCorazon, texto: "Favoritos", contador: cantidadFavoritos, rellenoActivo: true },
     // Con la sesión abierta: la foto del cliente y "Mi cuenta" (lleva a /mi-cuenta).
@@ -146,7 +152,7 @@ export default function BarraInferiorMovil() {
         aria-label="Navegación principal"
         className="fixed inset-x-0 bottom-0 z-42 border-t border-gris-borde bg-pico-blanco pb-[env(safe-area-inset-bottom)] shadow-[0_-4px_16px_-10px_var(--color-pico-azul-oscuro)]"
       >
-        <ul className="grid h-16 grid-cols-5 px-1">
+        <ul className="grid h-16 grid-cols-6 px-1">
           {pestanas.map(({ id, href, texto, ...resto }) => (
             <li key={id}>
               <Link
