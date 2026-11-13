@@ -99,13 +99,14 @@ export default function CarruselBanners({ diapositivas, etiquetas, className = "
             <ChevronRight className="size-5" />
           </button>
 
-          {/* Abajo a la derecha para no tapar el título ni el botón del banner. Cada indicador es una barra
-              que se llena mientras dura su diapositiva. */}
-          <div className="absolute right-3 bottom-3 z-20 flex items-center gap-0.5 rounded-chip bg-pico-azul-oscuro/50 px-1.5 backdrop-blur-sm">
+          {/* Abajo a la derecha para no tapar el título ni el botón del banner. Desde `md`: botón de pausa y una barra
+              por diapositiva que se llena mientras dura. En el teléfono (pedido de persona A): solo puntos pequeños en
+              la esquina, sin pausa ni fondo; el actual en rojo. Deslizar o tocar un punto lo detiene igual. */}
+          <div className="absolute right-2 bottom-2 z-20 flex items-center md:right-3 md:bottom-3 md:gap-0.5 md:rounded-chip md:bg-pico-azul-oscuro/50 md:px-1.5 md:backdrop-blur-sm">
             <button
               type="button"
               onClick={() => setDetenido((d) => !d)}
-              className={`flex size-8 items-center justify-center rounded-chip text-pico-blanco ${claseFoco}`}
+              className={`hidden size-8 items-center justify-center rounded-chip text-pico-blanco md:flex ${claseFoco}`}
               aria-label={detenido ? "Reanudar carrusel" : "Pausar carrusel"}
             >
               {detenido ? <Play className="size-3.5" /> : <Pause className="size-3.5" />}
@@ -117,13 +118,17 @@ export default function CarruselBanners({ diapositivas, etiquetas, className = "
                 onClick={() => ir(i)}
                 aria-label={`Ir al banner ${i + 1}`}
                 aria-current={i === indice ? "true" : undefined}
-                className={`group/punto flex h-8 w-9 items-center justify-center rounded-chip ${claseFoco}`}
+                className={`group/punto flex h-6 w-5 items-center justify-center rounded-chip md:h-8 md:w-9 ${claseFoco}`}
               >
-                <span className="relative h-1 w-7 overflow-hidden rounded-chip bg-pico-blanco/30 transition-colors group-hover/punto:bg-pico-blanco/50">
+                <span
+                  className={`relative size-1.5 overflow-hidden rounded-chip shadow-[0_0_3px_rgb(0_0_0/0.45)] transition-colors md:h-1 md:w-7 md:bg-pico-blanco/30 md:shadow-none md:group-hover/punto:bg-pico-blanco/50 ${
+                    i === indice ? "bg-pico-rojo" : "bg-pico-blanco/85"
+                  }`}
+                >
                   {i === indice && (
                     <span
                       key={`${indice}-${corriendo}`}
-                      className={`absolute inset-0 origin-left rounded-chip bg-pico-rojo ${corriendo ? "motion-safe:animate-progreso" : ""}`}
+                      className={`absolute inset-0 hidden origin-left rounded-chip bg-pico-rojo md:block ${corriendo ? "motion-safe:animate-progreso" : ""}`}
                       style={{ animationDuration: `${INTERVALO_MS}ms` }}
                     />
                   )}
