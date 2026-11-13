@@ -5,7 +5,6 @@ import type { ReactNode } from "react";
 import Plano from "@/components/icons/pico/Plano";
 import type { BannerInicio as DatosBanner, VarianteBanner } from "./contenidoInicio";
 import FotoBanner from "./FotoBanner";
-import PinturaEnMovimiento from "./PinturaEnMovimiento";
 import SeguridadVisible from "./SeguridadVisible";
 import GriferiaAgua from "./GriferiaAgua";
 
@@ -137,10 +136,8 @@ export default function BannerInicio({ banner, sizes, tamano = "normal", priorit
               />
             </span>
           )}
-          {/* Foto quieta (Herramientas, Construcción…): cualquier banner del carrusel que traiga `escenaFoto`. */}
+          {/* Foto quieta (Herramientas, Construcción, Pinturas…): cualquier banner del carrusel que traiga `escenaFoto`. */}
           {grande && banner.escenaFoto && <FotoBanner {...banner.escenaFoto} prioritario={prioritario} />}
-          {/* Pared blanca con un rodillo que pinta una franja de color, solo en el banner de pinturas del carrusel. */}
-          {grande && banner.id === "pinturas" && <PinturaEnMovimiento />}
           {/* Foto del EPP con la "linterna" que enciende las franjas reflectivas, solo en el de seguridad del carrusel. */}
           {grande && banner.id === "seguridad-visible" && <SeguridadVisible prioritario={prioritario} />}
           {/* Ducha o lavamanos en 3D (según el día) con el agua que sale fría o caliente al pasar el cursor. */}
@@ -157,7 +154,7 @@ export default function BannerInicio({ banner, sizes, tamano = "normal", priorit
                 }`}
               >
                 {/* Rojo de la marca con letra blanca, salvo que el banner defina --color-sello y --color-sello-texto
-                    (pinturas: sello blanco con la palabra en el color de la pintura de turno). */}
+                    (la escena de seguridad: placa amarilla con la palabra en azul marino). */}
                 <span
                   data-sello="" // la escena de seguridad le da un resplandor cálido en modo linterna
                   className="absolute inset-0 -z-10 -skew-x-12 rounded-sm bg-[var(--color-sello,var(--color-pico-rojo))] shadow-boton-hover transition-colors duration-500"

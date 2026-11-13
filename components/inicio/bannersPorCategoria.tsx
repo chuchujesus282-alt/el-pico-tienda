@@ -65,10 +65,10 @@ function tarjeta(slug: string, Tarjeta: (props: PropsTarjeta) => ReactNode): Var
 }
 
 export const bannersPorCategoria: Record<string, Variantes> = {
-  // Construcción y Herramientas: foto quieta (FotoBanner, por `escenaFoto`). Cerrajería: provisional a propósito (solo texto).
+  // Construcción, Herramientas y Pinturas: foto quieta (FotoBanner, por `escenaFoto`). Cerrajería: provisional a propósito (solo texto).
   construccion: { central: central(bannersCentrales.construccion) },
   herramientas: { central: central(bannersCentrales.herramientas) }, // con foto quieta (FotoBanner, escenaFoto)
-  pinturas: { central: central(bannersCentrales.pinturas) }, // con PinturaEnMovimiento
+  pinturas: { central: central(bannersCentrales.pinturas) }, // con foto quieta (FotoBanner, escenaFoto)
   cerrajeria: { central: central(bannersCentrales.cerrajeria) },
   tornilleria: {
     horizontal: function Tornilleria() {
@@ -107,7 +107,7 @@ function nombreDe(slug: string): string {
 function datosGenericos(slug: string, variante: VarianteBanner, icono?: ComponenteIcono): DatosBanner {
   const textos = textosCategoria[slug];
   return {
-    id: `generico-${slug}`, // nunca "herramientas" ni "pinturas": esos ids montan sus escenas en BannerInicio
+    id: `generico-${slug}`, // nunca un id que monte escena en BannerInicio ("seguridad-visible", "griferia-agua")
     imagen: null,
     alt: `${nombreDe(slug)} en El Pico`,
     href: `/categoria/${slug}`,

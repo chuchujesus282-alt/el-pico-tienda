@@ -27,8 +27,8 @@
      obra. Solo para esa placa y su franja de seguridad; el texto encima va en azul marino (≥4,5:1). */
   --color-amarillo-obra: #f2b705;
   --color-amarillo-obra-oscuro: #d99a00;
-  /* Colores de las latas reales del banner de Pinturas (public/banners/pinturas/), medidos sobre cada foto. SOLO para
-     ese banner: la placa de la derecha y la ficha de color toman el de la lata de turno. */
+  /* Colores de pintura del banner de la página de la categoría Pinturas (components/categoria/banner/banner.css). Antes
+     también los usaba el banner del carrusel del inicio (la escena del rodillo, ya borrada). */
   --color-pintura-azul: #0b3fae;
   --color-pintura-mostaza: #b0801a;
   --color-pintura-petroleo: #0a5f5c;

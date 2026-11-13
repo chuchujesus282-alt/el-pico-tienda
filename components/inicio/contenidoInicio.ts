@@ -44,8 +44,8 @@ export type SeccionCategoriaInicio = {
 
 /**
  * Datos de las variantes PROPIAS del carrusel central (por slug de la categoría). Qué categoría va en cada lugar cada
- * día lo dice lib/rotacionBanners.ts; el registro de diseños, bannersPorCategoria.tsx. Las escenas de herramientas y
- * pinturas se montan por `id` en BannerInicio: no cambies esos ids.
+ * día lo dice lib/rotacionBanners.ts; el registro de diseños, bannersPorCategoria.tsx. Las escenas de seguridad y grifería
+ * se montan por `id` en BannerInicio (no cambies esos ids); las fotos quietas, por `escenaFoto`.
  */
 export const bannersCentrales: Record<string, BannerInicio> = {
   construccion: {
@@ -101,10 +101,19 @@ export const bannersCentrales: Record<string, BannerInicio> = {
     href: "/categoria/pinturas",
     titulo: "Renueva tus espacios",
     tituloPartes: ["Renueva tus", "espacios"],
+    tituloMovil: "Pinturas",
     texto: "Pinturas, rodillos y brochas para darle color a tu casa.",
     textoBoton: "Ver pinturas",
-    // Todo el banner es la pared pintada del color de turno; un rodillo la repinta (PinturaEnMovimiento).
     variante: "oscuro",
+    // Foto quieta como Herramientas y Construcción (FotoBanner); reemplazó a la escena del rodillo (PinturaEnMovimiento).
+    escenaFoto: {
+      src: "/banners/pinturas/suministros-renovacion.jpg",
+      avif: "/banners/pinturas/suministros-renovacion.avif",
+      alt: "Cuñetes y galones de pintura, aerosoles, brochas, rodillo y cinta de enmascarar en una casa en renovación",
+      ancho: 2172,
+      alto: 724,
+      profundidad: true,
+    },
   },
   cerrajeria: {
     id: "cerrajeria",
