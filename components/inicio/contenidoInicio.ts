@@ -123,7 +123,8 @@ export const bannersCentrales: Record<string, BannerInicio> = {
     titulo: "Cerrajería que protege",
     tituloPartes: ["Cerrajería que", "protege"],
     tituloMovil: "Cerrajería",
-    texto: "Candados, cerraduras, bisagras y herrajes para tu casa o tu negocio.",
+    // Corta a propósito: en una línea termina antes de la cerradura de pomo de la foto (más larga, la pisaba).
+    texto: "Candados, cerraduras y herrajes para tu casa.",
     textoBoton: "Ver cerrajería",
     variante: "oscuro",
     // Foto quieta como Herramientas, Construcción y Pinturas (FotoBanner).
