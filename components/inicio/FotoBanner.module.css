@@ -40,8 +40,13 @@
   mask-image: linear-gradient(to right, #000 18%, rgb(0 0 0 / 0.84) 28%, rgb(0 0 0 / 0.5) 38%, rgb(0 0 0 / 0.16) 48%, transparent 58%);
 }
 
-/* En el teléfono, sin desenfoque (pedido de persona A): la foto se ve nítida entera. Mismo corte que `md` de Tailwind. */
+/* En el teléfono (mismo corte que `md` de Tailwind), pedidos de persona A: sin desenfoque (la foto va nítida) y la foto
+   pegada a la derecha en vez de centrada, para que se vean los productos (centrada se veían sobre todo los estantes). */
 @media (width < 48rem) {
+  .lienzo {
+    right: 0;
+  }
+
   .profundidad {
     display: none;
   }
