@@ -85,6 +85,10 @@ export default function BannerInicio({ banner, sizes, tamano = "normal", priorit
     grande && banner.escenaFoto
       ? "[text-shadow:0_2px_14px_color-mix(in_srgb,var(--color-pico-azul-oscuro)_80%,transparent),0_1px_3px_color-mix(in_srgb,var(--color-pico-azul-oscuro)_60%,transparent)]"
       : "";
+  // En el teléfono, los banners con foto que traen `tituloMovil` (Herramientas, Construcción; pedido de persona A: "en
+  // lugar de tanto texto") solo llevan el nombre de la sección esquinado arriba a la izquierda, y la foto se ve limpia.
+  // Desde `md`, el título, la descripción y el botón de siempre.
+  const esquina = grande && Boolean(banner.escenaFoto) && Boolean(banner.tituloMovil);
 
   return (
     <Destino
@@ -145,7 +149,7 @@ export default function BannerInicio({ banner, sizes, tamano = "normal", priorit
             // Título en dos tiempos: la frase en una línea y la palabra clave enorme, en mayúsculas, sobre un
             // bloque rojo inclinado (el filete de la marca hecho sello). Al pasar el mouse crecen juntos, barra y palabra,
             // desde la izquierda y con el mismo rebote.
-            <p className={`relative font-bold ${estilo.titulo} ${sombraTexto}`}>
+            <p className={`relative font-bold ${estilo.titulo} ${sombraTexto} ${esquina ? "hidden md:block" : ""}`}>
               <span className="block text-lg leading-none md:text-3xl lg:text-4xl">{banner.tituloPartes[0]}</span>
               <span
                 className={`relative isolate mt-2 inline-block origin-left px-2.5 pt-1 leading-[0.92] tracking-[-0.02em] text-[var(--color-sello-texto,var(--color-pico-blanco))] uppercase transition-transform duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] motion-safe:group-hover:scale-[1.08] md:mt-3 md:px-4 ${
@@ -195,7 +199,7 @@ export default function BannerInicio({ banner, sizes, tamano = "normal", priorit
               className={`relative ${conPlano ? "" : "max-w-[75%]"} text-sm ${estilo.texto} ${sombraTexto} ${
                 grande
                   ? // hero-descripcion: sin animación de entrada (ver globals.css; animada, Chrome no la pintaba).
-                    `hero-descripcion hidden sm:line-clamp-2 md:text-base lg:max-w-[50%] lg:text-lg ${banner.tituloPartes ? "md:max-w-[50%]" : ""}`
+                    `hero-descripcion hidden ${esquina ? "md:line-clamp-2" : "sm:line-clamp-2"} md:text-base lg:max-w-[50%] lg:text-lg ${banner.tituloPartes ? "md:max-w-[50%]" : ""}`
                   : lateral
                     ? "hidden sm:line-clamp-2"
                     : conPlano
@@ -213,7 +217,7 @@ export default function BannerInicio({ banner, sizes, tamano = "normal", priorit
               data-boton-banner=""
               className={`relative mt-1 h-10 w-fit items-center gap-1 rounded-boton px-4 text-sm font-semibold shadow-tarjeta transition duration-200 group-hover:shadow-boton-hover motion-safe:group-hover:-translate-y-0.5 ${estilo.boton} ${
                 grande
-                  ? "inline-flex md:mt-2 lg:h-12 lg:px-6 lg:text-base"
+                  ? `${esquina ? "hidden md:inline-flex" : "inline-flex"} md:mt-2 lg:h-12 lg:px-6 lg:text-base`
                   : lateral
                     ? "hidden sm:inline-flex"
                     : conPlano
@@ -223,6 +227,16 @@ export default function BannerInicio({ banner, sizes, tamano = "normal", priorit
             >
               {banner.textoBoton}
               <ChevronRight className="size-4 transition-transform duration-300 group-hover:translate-x-1" aria-hidden />
+            </span>
+          )}
+          {esquina && (
+            // Solo en el teléfono: el nombre de la sección sobre el bloque rojo inclinado de la marca, en la esquina.
+            <span
+              className="absolute top-4 left-4 isolate inline-flex items-center gap-1 px-3 py-1.5 text-base leading-none font-bold tracking-wide text-pico-blanco uppercase md:hidden"
+            >
+              <span className="absolute inset-0 -z-10 -skew-x-12 rounded-sm bg-pico-rojo shadow-boton-hover" aria-hidden />
+              {banner.tituloMovil}
+              <ChevronRight className="size-4" aria-hidden />
             </span>
           )}
         </div>

@@ -24,6 +24,11 @@ export type BannerInicio = Omit<Banner, "imagen"> & {
   tituloPartes?: [string, string];
   /** Foto quieta de fondo (solo carrusel principal): la monta FotoBanner, entera y pegada a la derecha. */
   escenaFoto?: EscenaFoto;
+  /**
+   * Solo banners con `escenaFoto`: en el teléfono, en lugar del título, la descripción y el botón, este nombre corto de
+   * la sección va esquinado arriba a la izquierda (BannerInicio).
+   */
+  tituloMovil?: string;
 };
 
 export type Marca = {
@@ -52,6 +57,7 @@ export const bannersCentrales: Record<string, BannerInicio> = {
     // menos para que salga del mismo tamaño que las demás (más largas se achican solas).
     titulo: "Materiales que aguantan",
     tituloPartes: ["Materiales que", "aguantan"],
+    tituloMovil: "Construcción",
     texto: "Cemento, bloques, pegos y más para construir sin paradas.",
     textoBoton: "Ver materiales",
     // Texto blanco como los demás; sobre esta foto clara lo hace legible la sombra suave de BannerInicio (escenaFoto).
@@ -72,6 +78,7 @@ export const bannersCentrales: Record<string, BannerInicio> = {
     href: "/categoria/herramientas",
     titulo: "Herramientas que rinden",
     tituloPartes: ["Herramientas que", "rinden"],
+    tituloMovil: "Herramientas",
     texto: "Taladros, esmeriles y herramientas manuales para cada trabajo.",
     textoBoton: "Ver herramientas",
     variante: "oscuro",
