@@ -129,9 +129,9 @@ export const bannersCentrales: Record<string, BannerInicio> = {
     variante: "oscuro",
     // Foto quieta como Herramientas, Construcción y Pinturas (FotoBanner).
     escenaFoto: {
-      src: "/banners/cerrajeria/herrajes-mesa.jpg",
-      avif: "/banners/cerrajeria/herrajes-mesa.avif",
-      alt: "Cerradura de pomo con llaves, candado, cerradura de embutir, bisagra, rieles, rodaja y escuadra sobre una mesa metálica",
+      src: "/banners/cerrajeria/herrajes-banco.jpg",
+      avif: "/banners/cerrajeria/herrajes-banco.avif",
+      alt: "Cerradura de pomo con llaves, candado, cerradura de embutir, bisagra, riel, rodaja y escuadra sobre un banco de trabajo",
       ancho: 2172,
       alto: 724,
       profundidad: true,
