@@ -1,4 +1,4 @@
-/* Escena "Herramientas que RINDEN" del carrusel (HerramientasFoto.tsx): una foto quieta, sin animación al pasar el
+/* Escena de FOTO QUIETA de los banners del carrusel (FotoBanner.tsx; hoy Herramientas y Construcción): sin animación al pasar el
    cursor. La foto (1832×858) se ve ENTERA: se ajusta al alto del banner y va pegada a la derecha (pedido de persona A:
    cubriendo todo el ancho se veía con demasiado zoom); lo que sobra a la izquierda lo llena la misma foto
    desenfocada, que se funde con ella. */

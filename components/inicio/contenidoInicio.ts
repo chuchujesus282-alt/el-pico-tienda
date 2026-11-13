@@ -2,6 +2,7 @@ import IconoCasco from "@/components/icons/pico/IconoCasco";
 import IconoTornillo from "@/components/icons/pico/IconoTornillo";
 import type { ComponenteIcono } from "@/types/icono";
 import type { Banner, Producto } from "@/types/catalogo";
+import type { EscenaFoto } from "./FotoBanner";
 
 // Contenido editable de la página principal: banners, asesoría, logos de marcas y
 // secciones por categoría. Mientras no haya imágenes en public/banners/ y public/marcas/,
@@ -21,6 +22,8 @@ export type BannerInicio = Omit<Banner, "imagen"> & {
    * rojo. Debe decir lo mismo que `titulo`, que se sigue usando como nombre del banner.
    */
   tituloPartes?: [string, string];
+  /** Foto quieta de fondo (solo carrusel principal): la monta FotoBanner, entera y pegada a la derecha. */
+  escenaFoto?: EscenaFoto;
 };
 
 export type Marca = {
@@ -46,10 +49,15 @@ export const bannersCentrales: Record<string, BannerInicio> = {
     alt: "Materiales de construcción en El Pico",
     href: "/categoria/construccion",
     titulo: "Materiales para construir",
+    tituloPartes: ["Materiales para", "construir"],
     texto: "Cemento, bloques, pegos y más para construir sin paradas.",
     textoBoton: "Ver materiales",
-    variante: "azul",
-    // Provisional a propósito: solo el texto sobre el azul, sin escena ni ícono (la escena se quitó el 2026-10-23).
+    // La foto es clara (concreto y ladrillo): texto en azul marino, que se lee mejor que el blanco sobre ella.
+    variante: "claro",
+    escenaFoto: {
+      src: "/banners/construccion/materiales-obra.webp",
+      alt: "Bloques, ladrillos, saco de cemento, cabillas, alambre, manguera y un tobo en una obra",
+    },
   },
   herramientas: {
     id: "herramientas",
@@ -61,7 +69,11 @@ export const bannersCentrales: Record<string, BannerInicio> = {
     texto: "Taladros, esmeriles y herramientas manuales para cada trabajo.",
     textoBoton: "Ver herramientas",
     variante: "oscuro",
-    // Sin ícono: foto quieta de un banco de trabajo con herramientas (HerramientasFoto).
+    // Sin ícono: foto quieta de un taller organizado con herramientas (FotoBanner).
+    escenaFoto: {
+      src: "/banners/herramientas/taller-organizado.webp",
+      alt: "Taladro, martillo, nivel, cinta métrica, destornilladores y caja de herramientas en un taller organizado",
+    },
   },
   pinturas: {
     id: "pinturas",
