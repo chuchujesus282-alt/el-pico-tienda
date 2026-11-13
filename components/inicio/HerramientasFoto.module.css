@@ -1,0 +1,29 @@
+/* Escena "Herramientas que RINDEN" del carrusel (HerramientasFoto.tsx): una foto quieta, sin animación al pasar el
+   cursor. La foto (1832×858) se ve ENTERA: se ajusta al alto del banner y va pegada a la derecha (pedido de persona A:
+   cubriendo todo el ancho se veía con demasiado zoom); lo que sobra a la izquierda lo llena la misma foto
+   desenfocada, que se funde con ella. */
+
+.escena {
+  /* El lienzo se mide en cq*: el contenedor es la propia escena (todo el banner). */
+  container-type: size;
+}
+
+/* 0 si sobra espacio (pegada a la derecha); si la foto es más ancha que el banner, la mitad de lo que sobra
+   (centrada: en el teléfono no se cortan las herramientas). */
+.lienzo {
+  position: absolute;
+  top: 50%;
+  right: min(0px, calc((100cqw - 100cqh * 1832 / 858) / 2));
+  height: 100cqh;
+  aspect-ratio: 1832 / 858;
+  transform: translateY(-50%);
+  /* Se funde por la izquierda con el relleno desenfocado (sin borde duro). */
+  -webkit-mask-image: linear-gradient(to right, transparent 0, #000 12%);
+  mask-image: linear-gradient(to right, transparent 0, #000 12%);
+}
+
+/* Relleno para el espacio que deja el lienzo a la izquierda: la misma foto, desenfocada y un poco más oscura. */
+.relleno {
+  filter: blur(18px) brightness(0.8);
+  transform: scale(1.12);
+}
