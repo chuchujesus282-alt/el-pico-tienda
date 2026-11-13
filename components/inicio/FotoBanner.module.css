@@ -39,3 +39,10 @@
   -webkit-mask-image: linear-gradient(to right, #000 18%, rgb(0 0 0 / 0.84) 28%, rgb(0 0 0 / 0.5) 38%, rgb(0 0 0 / 0.16) 48%, transparent 58%);
   mask-image: linear-gradient(to right, #000 18%, rgb(0 0 0 / 0.84) 28%, rgb(0 0 0 / 0.5) 38%, rgb(0 0 0 / 0.16) 48%, transparent 58%);
 }
+
+/* En el teléfono, sin desenfoque (pedido de persona A): la foto se ve nítida entera. Mismo corte que `md` de Tailwind. */
+@media (width < 48rem) {
+  .profundidad {
+    display: none;
+  }
+}
