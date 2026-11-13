@@ -107,8 +107,8 @@ export const bannersCentrales: Record<string, BannerInicio> = {
     variante: "oscuro",
     // Foto quieta como Herramientas y Construcción (FotoBanner); reemplazó a la escena del rodillo (PinturaEnMovimiento).
     escenaFoto: {
-      src: "/banners/pinturas/suministros-renovacion.jpg",
-      avif: "/banners/pinturas/suministros-renovacion.avif",
+      src: "/banners/pinturas/luz-natural.jpg",
+      avif: "/banners/pinturas/luz-natural.avif",
       alt: "Cuñetes y galones de pintura, aerosoles, brochas, rodillo y cinta de enmascarar en una casa en renovación",
       ancho: 2172,
       alto: 724,
