@@ -41,6 +41,8 @@
   --color-grama-claro: #8fc45a;
   --color-grama-oscuro: #16351a;
   --color-agua: #d9f0ff;
+  /* Pintura que el rodillo pone en el plano del banner de calculadoras del inicio (BannerCalculadorasInicio). */
+  --color-plano-pintura: #4f86d9;
 
   --radius-tarjeta: 12px;
   --radius-boton: 8px;
@@ -730,9 +732,8 @@ p {
   animation: avance-navegacion 6s cubic-bezier(0.1, 0.7, 0.2, 1) forwards;
 }
 
-/* Tira de calculadoras del inicio (components/inicio/BannerCalculadorasInicio.tsx). */
-/* El plano: el mismo azul marino de los demás banners (de pico-azul a pico-azul-oscuro), luz de mesa de dibujo detrás
-   de la libreta y cuadrícula de tiza (maestra cada 120px). También lo usa el encabezado de /calculadoras. */
+/* Plano de obra: el azul marino de los demás banners (de pico-azul a pico-azul-oscuro) con cuadrícula de tiza
+   (maestra cada 120px). Lo usa el encabezado de /calculadoras (EncabezadoPagina, tono "plano"). */
 .tira-plano {
   background-color: var(--color-pico-azul);
   background-image:
@@ -742,72 +743,5 @@ p {
     repeating-linear-gradient(0deg, color-mix(in srgb, var(--color-pico-blanco) 4%, transparent) 0 1px, transparent 1px 24px),
     repeating-linear-gradient(90deg, color-mix(in srgb, var(--color-pico-blanco) 4%, transparent) 0 1px, transparent 1px 24px),
     linear-gradient(to bottom right, var(--color-pico-azul), var(--color-pico-azul) 50%, var(--color-pico-azul-oscuro));
-}
-.tira-subrayado {
-  fill: none;
-  stroke: var(--color-amarillo-obra);
-  stroke-linecap: round;
-}
-/* La libreta amarilla: hoja rayada con margen rojo, sombra de papel pegado encima de la tira. */
-.libreta {
-  --renglon: 1.25rem;
-  border-radius: 3px;
-  background-color: color-mix(in srgb, var(--color-amarillo-obra) 34%, var(--color-pico-blanco));
-  background-image: repeating-linear-gradient(
-    to bottom,
-    transparent 0 calc(var(--renglon) - 1px),
-    color-mix(in srgb, var(--color-pico-azul) 18%, transparent) calc(var(--renglon) - 1px) var(--renglon)
-  );
-  background-position: 0 0.35rem;
-  box-shadow:
-    0 22px 40px -14px color-mix(in srgb, var(--color-pico-azul-oscuro) 75%, transparent),
-    0 6px 12px -6px color-mix(in srgb, var(--color-pico-azul-oscuro) 45%, transparent);
-}
-@media (min-width: 768px) {
-  .libreta { --renglon: 1.6rem; }
-}
-.libreta::after {
-  content: "";
-  position: absolute;
-  inset-block: 0;
-  left: 0.75rem;
-  width: 1.5px;
-  background: color-mix(in srgb, var(--color-pico-rojo) 50%, transparent);
-}
-@media (min-width: 768px) {
-  .libreta::after { left: 1.15rem; }
-}
-.libreta-tirro {
-  background: color-mix(in srgb, var(--color-pico-blanco) 75%, var(--color-amarillo-obra));
-  opacity: 0.9;
-  box-shadow: 0 1px 2px color-mix(in srgb, var(--color-texto) 20%, transparent);
-  clip-path: polygon(3% 0, 97% 4%, 100% 100%, 0 96%);
-}
-/* Palomitas a lápiz rojo. Quietas: marcadas. Con movimiento: se marcan en cascada, se borran y repiten. */
-.libreta-check {
-  fill: none;
-  stroke: var(--color-pico-rojo);
-  stroke-linecap: round;
-  stroke-linejoin: round;
-  stroke-dasharray: 1;
-  stroke-dashoffset: 0;
-}
-@media (prefers-reduced-motion: no-preference) {
-  .libreta-check {
-    animation: libreta-check 5s var(--curva-suave) infinite;
-    animation-delay: calc(var(--i) * 0.45s);
-  }
-  /* "Lo que te falte": la casilla punteada late, esperando que el cliente la complete. */
-  .libreta-falta {
-    animation: libreta-falta 1.4s ease-in-out infinite;
-  }
-}
-@keyframes libreta-check {
-  0%, 8% { stroke-dashoffset: 1; }
-  18%, 80% { stroke-dashoffset: 0; }
-  90%, 100% { stroke-dashoffset: 1; }
-}
-@keyframes libreta-falta {
-  50% { opacity: 0.3; transform: scale(0.85); }
 }
 

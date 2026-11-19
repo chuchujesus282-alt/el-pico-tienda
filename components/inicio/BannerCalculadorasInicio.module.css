@@ -1,0 +1,630 @@
+/* Banner de calculadoras del inicio (BannerCalculadorasInicio.tsx), portado del prototipo banner-calculadoras.html con
+   los colores y la letra del proyecto. Los estados los pone el componente en la raíz: .cambiando (fundido entre
+   escenas), .conCotas (aparecen las cotas del plano) y .lista (escena terminada: brillo del botón y "Lista para pedir").
+   Excepción a la regla de tokens: los brillos del fondo, las líneas del plano y los grises de la tarjeta van escritos
+   aquí, idénticos al prototipo. */
+
+.banner {
+  --duracion: 8200ms;
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  display: grid;
+  grid-template-columns: 1.1fr 1fr 1.05fr auto;
+  align-items: center;
+  gap: 36px;
+  min-height: 250px;
+  padding: 34px 48px;
+  border-radius: var(--radius-banner);
+  color: var(--color-pico-blanco);
+  background:
+    radial-gradient(600px 300px at 45% 50%, rgb(56 110 190 / 0.32), transparent 70%),
+    radial-gradient(400px 260px at 100% 100%, color-mix(in srgb, var(--color-pico-rojo) 18%, transparent), transparent 70%),
+    linear-gradient(120deg, var(--color-pico-azul) 0%, var(--color-pico-azul-oscuro) 100%);
+  box-shadow: 0 24px 50px -20px color-mix(in srgb, var(--color-pico-azul-oscuro) 55%, transparent);
+}
+/* Cuadrícula de plano (maestra cada 96px), desvanecida en los bordes. */
+.banner::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background-image:
+    linear-gradient(rgb(255 255 255 / 0.08) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(255 255 255 / 0.08) 1px, transparent 1px),
+    linear-gradient(rgb(255 255 255 / 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(255 255 255 / 0.035) 1px, transparent 1px);
+  background-size:
+    96px 96px,
+    96px 96px,
+    24px 24px,
+    24px 24px;
+  mask-image: linear-gradient(90deg, transparent 0%, #000 30%, #000 80%, transparent 100%);
+}
+/* Filete rojo arriba a la izquierda. */
+.banner::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 4px;
+  background: linear-gradient(90deg, var(--color-pico-rojo) 0 120px, transparent 120px);
+}
+
+/* ---------- Texto ---------- */
+.antetitulo {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 14px;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--color-amarillo-obra);
+}
+.punto {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--color-amarillo-obra);
+  animation: pulso 2s infinite;
+}
+@keyframes pulso {
+  0% {
+    box-shadow: 0 0 0 0 color-mix(in srgb, var(--color-amarillo-obra) 60%, transparent);
+  }
+  70%,
+  100% {
+    box-shadow: 0 0 0 8px transparent;
+  }
+}
+.tituloChico {
+  font-size: 22px;
+  font-weight: 600;
+  line-height: 1.1;
+}
+.tituloGrande {
+  display: inline-block;
+  margin-top: 4px;
+  /* En una línea, como el prototipo: se achica un poco en las columnas angostas. */
+  font-size: clamp(30px, 2.7vw, 44px);
+  white-space: nowrap;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: -0.01em;
+}
+.tituloGrande em {
+  position: relative;
+  font-style: normal;
+}
+.tituloGrande em::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -6px;
+  height: 4px;
+  border-radius: 4px;
+  background: var(--color-pico-rojo);
+  transform: scaleX(0);
+  transform-origin: left;
+}
+.visto .tituloGrande em::after {
+  animation: subrayar 1s 0.3s cubic-bezier(0.7, 0, 0.2, 1) forwards;
+}
+@keyframes subrayar {
+  to {
+    transform: scaleX(1);
+  }
+}
+.descripcion {
+  max-width: 440px;
+  margin-top: 16px;
+  font-size: 16px;
+  line-height: 1.5;
+  color: rgb(255 255 255 / 0.72);
+}
+
+/* Pestañas de escena con su barra de progreso. */
+.pestanas {
+  display: flex;
+  gap: 18px;
+  margin-top: 18px;
+}
+.pestana {
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+  text-align: left;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgb(255 255 255 / 0.5);
+  transition: color 0.3s;
+}
+.pestana:hover {
+  color: rgb(255 255 255 / 0.85);
+}
+.pestana:focus-visible {
+  outline: 2px solid var(--color-pico-blanco);
+  outline-offset: 4px;
+  border-radius: 2px;
+}
+.pestanaActiva {
+  color: var(--color-pico-blanco);
+}
+.pista {
+  display: block;
+  width: 74px;
+  height: 3px;
+  margin-top: 7px;
+  overflow: hidden;
+  border-radius: 3px;
+  background: rgb(255 255 255 / 0.18);
+}
+.relleno {
+  display: block;
+  width: 0;
+  height: 100%;
+  border-radius: 3px;
+  background: var(--color-pico-rojo);
+}
+.pestanaActiva .relleno {
+  width: 100%;
+  transition: width var(--duracion) linear;
+}
+.pestanaHecha .relleno {
+  width: 100%;
+  background: rgb(255 255 255 / 0.45);
+}
+
+/* ---------- Plano ---------- */
+.plano {
+  position: relative;
+  display: flex;
+  justify-content: center;
+}
+.plano svg {
+  width: 100%;
+  max-width: 360px;
+  height: auto;
+  overflow: visible;
+}
+.dibujo,
+.contador,
+.cuerpoTarjeta,
+.cabeceraTarjeta {
+  transition:
+    opacity 0.35s ease,
+    transform 0.35s ease;
+}
+.cambiando .dibujo,
+.cambiando .contador,
+.cambiando .cuerpoTarjeta,
+.cambiando .cabeceraTarjeta {
+  opacity: 0;
+  transform: translateY(6px);
+}
+
+.cotas {
+  opacity: 0;
+  transition: opacity 0.5s;
+}
+.cotas line {
+  stroke: rgb(255 255 255 / 0.55);
+  stroke-width: 1;
+}
+.cotas text {
+  fill: rgb(255 255 255 / 0.75);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+}
+.cotas rect {
+  fill: var(--color-pico-azul);
+}
+.conCotas .cotas {
+  opacity: 1;
+}
+.trazo {
+  stroke-dasharray: var(--largo);
+  stroke-dashoffset: var(--largo);
+  transition: stroke-dashoffset 0.8s ease;
+}
+.conCotas .trazo {
+  stroke-dashoffset: 0;
+}
+.contorno {
+  fill: none;
+  stroke: rgb(255 255 255 / 0.35);
+  stroke-width: 1;
+  stroke-dasharray: 4 4;
+}
+.suelo {
+  stroke: rgb(255 255 255 / 0.6);
+  stroke-width: 2;
+}
+
+/* Pared de bloques. */
+.bloque {
+  fill: rgb(255 255 255 / 0.06);
+  stroke: rgb(255 255 255 / 0.75);
+  stroke-width: 1.1;
+  opacity: 0;
+  transform: translateY(-14px);
+  transform-box: fill-box;
+  transition:
+    opacity 0.25s ease,
+    transform 0.35s cubic-bezier(0.3, 1.5, 0.6, 1),
+    fill 0.4s;
+}
+.bloque.puesto {
+  opacity: 1;
+  transform: none;
+}
+.bloque.marcado {
+  fill: var(--color-pico-rojo);
+  stroke: #ff6b7c;
+}
+/* Losa con malla de cabillas. */
+.losa {
+  fill: rgb(255 255 255 / 0.035);
+  stroke: rgb(255 255 255 / 0.35);
+  stroke-width: 1;
+}
+.barra {
+  stroke: rgb(255 255 255 / 0.8);
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-dasharray: var(--largo);
+  stroke-dashoffset: var(--largo);
+  transition: stroke-dashoffset 0.45s ease;
+}
+.barra.puesto {
+  stroke-dashoffset: 0;
+}
+.amarre {
+  fill: var(--color-pico-blanco);
+  transform: scale(0);
+  transform-box: fill-box;
+  transform-origin: center;
+  transition: transform 0.3s cubic-bezier(0.3, 1.8, 0.6, 1);
+}
+.amarre.puesto {
+  transform: scale(1);
+}
+.amarre.marcado {
+  fill: var(--color-pico-rojo);
+}
+/* Pared que se pinta. */
+.muro {
+  fill: rgb(255 255 255 / 0.04);
+  stroke: rgb(255 255 255 / 0.75);
+  stroke-width: 1.2;
+}
+.hueco {
+  fill: var(--color-pico-azul);
+  stroke: rgb(255 255 255 / 0.75);
+  stroke-width: 1.1;
+}
+.huecoLinea {
+  stroke: rgb(255 255 255 / 0.45);
+  stroke-width: 1;
+}
+.pintado {
+  fill: var(--color-plano-pintura);
+  opacity: 0.75;
+}
+.rodillo {
+  transition: opacity 0.4s;
+}
+.rodilloFelpa {
+  fill: var(--color-pico-blanco);
+}
+.rodilloPintura {
+  fill: var(--color-plano-pintura);
+}
+.rodilloArmazon {
+  fill: none;
+  stroke: var(--color-pico-blanco);
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.rodilloMango {
+  fill: var(--color-pico-rojo);
+}
+
+/* Barrido de luz cuando termina la escena. */
+.barrido {
+  opacity: 0;
+}
+.lista .barrido {
+  animation: barrido 1.4s ease-in-out;
+}
+@keyframes barrido {
+  0% {
+    opacity: 1;
+    transform: translateX(-40px);
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(300px);
+  }
+}
+
+.contador {
+  position: absolute;
+  top: -6px;
+  right: 6%;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 12px;
+  border: 1px solid rgb(255 255 255 / 0.15);
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--color-pico-azul-oscuro) 85%, transparent);
+  backdrop-filter: blur(6px);
+  font-size: 13px;
+  font-weight: 700;
+}
+.contador b {
+  min-width: 30px;
+  text-align: right;
+  font-size: 16px;
+  font-variant-numeric: tabular-nums;
+  color: var(--color-amarillo-obra);
+}
+
+/* ---------- Tarjeta de materiales ---------- */
+.tarjeta {
+  justify-self: center;
+  width: 100%;
+  max-width: 380px;
+  padding: 16px 18px 14px;
+  border-radius: 14px;
+  background: rgb(255 255 255 / 0.97);
+  color: var(--color-pico-azul);
+  box-shadow: 0 20px 40px -12px rgb(0 0 0 / 0.45);
+}
+.cabeceraTarjeta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 6px;
+  padding-bottom: 10px;
+  border-bottom: 1px dashed #cfd7e3;
+}
+.cabeceraTarjeta span {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--color-pico-rojo);
+}
+.cabeceraTarjeta small {
+  padding: 3px 8px;
+  border-radius: 6px;
+  background: #eef2f7;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+  color: #6b7a90;
+}
+.fila {
+  display: grid;
+  grid-template-columns: 22px 1fr auto;
+  align-items: center;
+  gap: 10px;
+  padding: 7px 0;
+  opacity: 0.35;
+  transition: opacity 0.4s;
+}
+.fila.encendida {
+  opacity: 1;
+}
+.check {
+  width: 22px;
+  height: 22px;
+}
+.check circle {
+  fill: #eef2f7;
+  stroke: #cfd7e3;
+  stroke-width: 1.5;
+  transition:
+    fill 0.3s,
+    stroke 0.3s;
+}
+.check path {
+  fill: none;
+  stroke: var(--color-pico-blanco);
+  stroke-width: 2.4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 14;
+  stroke-dashoffset: 14;
+  transition: stroke-dashoffset 0.35s 0.15s ease;
+}
+.fila.lista .check circle {
+  fill: var(--color-pico-rojo);
+  stroke: var(--color-pico-rojo);
+}
+.fila.lista .check path {
+  stroke-dashoffset: 0;
+}
+.nombre {
+  font-size: 15px;
+  font-weight: 600;
+}
+.nombre small {
+  display: block;
+  margin-top: 1px;
+  font-size: 12px;
+  font-weight: 400;
+  color: #7b889b;
+}
+.valor {
+  text-align: right;
+  white-space: nowrap;
+  font-size: 16px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+.valor small {
+  margin-left: 3px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #7b889b;
+}
+.pieTarjeta {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 6px;
+  padding-top: 10px;
+  border-top: 1px dashed #cfd7e3;
+  font-size: 13px;
+  font-weight: 600;
+}
+.progreso {
+  flex: 1;
+  height: 6px;
+  overflow: hidden;
+  border-radius: 6px;
+  background: #eef2f7;
+}
+.progreso i {
+  display: block;
+  width: 0;
+  height: 100%;
+  border-radius: 6px;
+  background: linear-gradient(90deg, var(--color-pico-rojo), #ff4d61);
+  transition: width 0.5s ease;
+}
+.aviso {
+  white-space: nowrap;
+  color: var(--color-estado-abierto);
+  opacity: 0;
+  transform: translateX(-4px);
+  transition: 0.3s;
+}
+.lista .aviso {
+  opacity: 1;
+  transform: none;
+}
+
+/* ---------- Botón ---------- */
+.accion {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+.boton {
+  position: relative;
+  overflow: hidden;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 16px 26px;
+  border-radius: 12px;
+  background: var(--color-pico-rojo);
+  color: var(--color-pico-blanco);
+  font-size: 17px;
+  font-weight: 700;
+  white-space: nowrap;
+  box-shadow: 0 10px 24px -8px color-mix(in srgb, var(--color-pico-rojo) 70%, transparent);
+  transition:
+    transform 0.2s,
+    background 0.2s,
+    box-shadow 0.2s;
+}
+.boton:hover {
+  background: var(--color-pico-rojo-oscuro);
+  transform: translateY(-2px);
+  box-shadow: 0 14px 28px -8px color-mix(in srgb, var(--color-pico-rojo) 80%, transparent);
+}
+.boton:focus-visible {
+  outline: 2px solid var(--color-pico-blanco);
+  outline-offset: 3px;
+}
+.boton svg {
+  transition: transform 0.2s;
+}
+.boton:hover svg {
+  transform: translateX(4px);
+}
+/* Brillo que cruza el botón cuando termina la escena. */
+.boton::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -60%;
+  width: 40%;
+  height: 100%;
+  background: linear-gradient(100deg, transparent, rgb(255 255 255 / 0.35), transparent);
+  transform: skewX(-20deg);
+}
+.lista .boton::after {
+  animation: brillo-boton 1s 0.3s ease;
+}
+@keyframes brillo-boton {
+  to {
+    left: 130%;
+  }
+}
+.nota {
+  font-size: 12.5px;
+  color: rgb(255 255 255 / 0.72);
+}
+
+/* ---------- Responsive (igual que el prototipo) ---------- */
+@media (max-width: 1280px) {
+  .banner {
+    grid-template-columns: 1fr 1fr auto;
+  }
+  .plano {
+    display: none;
+  }
+}
+@media (max-width: 860px) {
+  .banner {
+    grid-template-columns: 1fr;
+    gap: 24px;
+    padding: 30px 24px;
+  }
+  .tituloGrande {
+    font-size: 36px;
+  }
+  .tarjeta {
+    justify-self: stretch;
+    max-width: none;
+  }
+  .accion {
+    align-items: stretch;
+  }
+  .boton {
+    justify-content: center;
+  }
+  .pista {
+    width: 64px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .banner *,
+  .banner::before,
+  .banner::after {
+    animation: none !important;
+    transition: none !important;
+  }
+  .tituloGrande em::after {
+    transform: scaleX(1);
+  }
+}
