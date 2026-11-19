@@ -72,7 +72,7 @@ export function calcularDrywall(entrada: Entrada): Resultado {
 
 export const drywall: Calculadora = {
   slug: "drywall",
-  imagen: null, // foto pendiente (persona B): el espacio queda con el plano del ícono
+  imagen: "/calculadoras/drywall-materiales.jpg", // foto del trabajo (public/calculadoras/)
   titulo: "Drywall",
   descripcion: "Láminas, parales, rieles, tornillos, cinta y masilla para tu pared.",
   icono: IconoDrywall,

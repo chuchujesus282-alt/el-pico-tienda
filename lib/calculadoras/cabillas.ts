@@ -77,7 +77,7 @@ export function calcularCabillas(entrada: Entrada): Resultado {
 
 export const cabillas: Calculadora = {
   slug: "cabillas",
-  imagen: null, // foto pendiente (persona B): el espacio queda con el plano del ícono
+  imagen: "/calculadoras/cabillas-materiales.jpg", // foto del trabajo (public/calculadoras/)
   titulo: "Cabillas para losas",
   descripcion: "Barras de acero y alambre de amarre para la malla de una losa o placa.",
   icono: IconoMalla,

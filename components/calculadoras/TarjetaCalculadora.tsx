@@ -13,7 +13,7 @@ export default function TarjetaCalculadora({ calculadora, prioritaria = false }:
       href={`/calculadoras/${calculadora.slug}`}
       className="group grupo-icono relative flex h-full flex-col overflow-hidden rounded-tarjeta border border-gris-borde bg-pico-blanco shadow-tarjeta transition duration-300 hover:border-pico-azul/20 hover:shadow-tarjeta-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-pico-azul motion-safe:hover:-translate-y-1"
     >
-      {/* Foto de alguien haciendo ese trabajo; sin foto, fondo azul con el plano del ícono. */}
+      {/* Foto de los materiales de ese trabajo (public/calculadoras/); sin foto, fondo azul con el plano del ícono. */}
       <div className="relative aspect-[16/9] overflow-hidden bg-gradient-to-br from-pico-azul to-pico-azul-oscuro">
         {calculadora.imagen ? (
           <Image
@@ -38,7 +38,8 @@ export default function TarjetaCalculadora({ calculadora, prioritaria = false }:
             <Icono />
           </PlacaIcono>
         </span>
-        <h2 className="text-lg leading-tight font-bold text-pico-azul">{calculadora.titulo}</h2>
+        {/* h3: va dentro del grupo (h2) de /calculadoras. */}
+        <h3 className="text-lg leading-tight font-bold text-pico-azul">{calculadora.titulo}</h3>
         <p className="mt-1.5 flex-1 text-sm leading-snug text-gris-texto">{calculadora.descripcion}</p>
         {/* Es un span y no <Boton>: toda la tarjeta ya es un enlace. Misma forma que Boton. */}
         <span className="mt-4 inline-flex h-10 w-fit items-center gap-1.5 rounded-boton bg-pico-rojo px-4 text-sm font-semibold text-pico-blanco transition duration-200 group-hover:bg-pico-rojo-oscuro group-hover:shadow-boton-hover">

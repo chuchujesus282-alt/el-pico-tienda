@@ -4,7 +4,7 @@ import Contenedor from "@/components/ui/Contenedor";
 import Revelar from "@/components/ui/Revelar";
 import TituloPagina from "@/components/ui/TituloPagina";
 import FondoCalculadora from "@/components/calculadoras/FondoCalculadora";
-import { CALCULADORAS } from "@/lib/calculadoras/registro";
+import { GRUPOS_CALCULADORAS } from "@/lib/calculadoras/registro";
 
 // Calculadoras de proyectos — responsable: persona B (rama `calculadoras`).
 // Las calculadoras salen de lib/calculadoras/registro.ts: agregar una ahí la muestra aquí sola.
@@ -41,15 +41,24 @@ export default function PaginaCalculadoras() {
         </ol>
       </TituloPagina>
 
-      <ul className="grid gap-3 sm:grid-cols-2 md:gap-4 lg:grid-cols-3 xl:grid-cols-5">
-        {CALCULADORAS.map((calculadora, i) => (
-          <li key={calculadora.slug}>
-            <Revelar retraso={(i % 5) * 70} className="h-full">
-              <TarjetaCalculadora calculadora={calculadora} prioritaria={i < 2} />
-            </Revelar>
-          </li>
-        ))}
-      </ul>
+      {/* Por tipo de trabajo, cada grupo con su título (lib/calculadoras/registro.ts). */}
+      {GRUPOS_CALCULADORAS.map((grupo, g) => (
+        <section key={grupo.titulo} aria-labelledby={`grupo-${g}`} className="space-y-3 md:space-y-4">
+          <h2 id={`grupo-${g}`} className="flex items-center gap-3 text-lg font-bold text-pico-azul md:text-xl">
+            <span className="h-1 w-8 -skew-x-12 rounded-sm bg-pico-rojo" aria-hidden />
+            {grupo.titulo}
+          </h2>
+          <ul className="grid gap-3 sm:grid-cols-2 md:gap-4 lg:grid-cols-3 xl:grid-cols-5">
+            {grupo.calculadoras.map((calculadora, i) => (
+              <li key={calculadora.slug}>
+                <Revelar retraso={(i % 5) * 70} className="h-full">
+                  <TarjetaCalculadora calculadora={calculadora} prioritaria={g === 0 && i < 2} />
+                </Revelar>
+              </li>
+            ))}
+          </ul>
+        </section>
+      ))}
 
       <p className="rounded-tarjeta border border-gris-borde bg-pico-blanco px-4 py-3 text-[13px] leading-relaxed text-gris-texto shadow-tarjeta md:px-5">
         <strong className="font-semibold text-pico-azul">Cálculos referenciales.</strong> Las cantidades pueden variar según la obra; consulta con tu

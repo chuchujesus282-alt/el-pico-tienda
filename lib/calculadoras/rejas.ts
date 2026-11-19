@@ -71,7 +71,7 @@ export function calcularRejas(entrada: Entrada): Resultado {
 
 export const rejas: Calculadora = {
   slug: "rejas",
-  imagen: null, // foto pendiente (persona B): el espacio queda con el plano del ícono
+  imagen: "/calculadoras/rejas-materiales.jpg", // foto del trabajo (public/calculadoras/)
   titulo: "Pintar rejas y metal",
   descripcion: "Fondo de herrería, esmalte y thinner para rejas, portones y puertas de metal.",
   icono: IconoReja,

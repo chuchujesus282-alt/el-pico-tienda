@@ -50,7 +50,7 @@ export function calcularBarniz(entrada: Entrada): Resultado {
 
 export const barniz: Calculadora = {
   slug: "barniz",
-  imagen: null, // foto pendiente (persona B): el espacio queda con el plano del ícono
+  imagen: "/calculadoras/barniz-materiales.jpg", // foto del trabajo (public/calculadoras/)
   titulo: "Barnizar madera",
   descripcion: "Sellador y barniz natural o marino para puertas, muebles y techos de madera.",
   icono: IconoBrocha,

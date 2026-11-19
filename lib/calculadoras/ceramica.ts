@@ -54,7 +54,7 @@ export function calcularCeramica(entrada: Entrada): Resultado {
 
 export const ceramica: Calculadora = {
   slug: "ceramica",
-  imagen: null, // foto pendiente (persona B): el espacio queda con el plano del ícono
+  imagen: "/calculadoras/ceramica-materiales.jpg", // foto del trabajo (public/calculadoras/)
   titulo: "Cerámica y porcelanato",
   descripcion: "Cajas de cerámica o porcelanato, pego y carato para tu piso.",
   icono: IconoBaldosas,

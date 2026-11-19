@@ -43,7 +43,7 @@ export function calcularCerca(entrada: Entrada): Resultado {
 
 export const cerca: Calculadora = {
   slug: "cerca",
-  imagen: null, // foto pendiente (persona B): el espacio queda con el plano del ícono
+  imagen: "/calculadoras/cerca-materiales.jpg", // foto del trabajo (public/calculadoras/)
   titulo: "Cerca de alambre de púas",
   descripcion: "Rollos de alambre de púas para cercar un terreno o un potrero, según el perímetro y los hilos.",
   icono: IconoCerca,

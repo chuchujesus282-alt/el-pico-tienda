@@ -53,7 +53,7 @@ export function calcularImpermeabilizacion(entrada: Entrada): Resultado {
 
 export const impermeabilizacion: Calculadora = {
   slug: "impermeabilizacion",
-  imagen: null, // foto pendiente (persona B): el espacio queda con el plano del ícono
+  imagen: "/calculadoras/impermeabilizacion-materiales.jpg", // foto del trabajo (public/calculadoras/)
   titulo: "Impermeabilización de techos",
   descripcion: "Manto asfáltico con su primer, o impermeabilizante acrílico.",
   icono: IconoManto,

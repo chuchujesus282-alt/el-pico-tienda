@@ -13,23 +13,16 @@ import { rejas } from "./rejas";
 import { techo } from "./techo";
 import type { Calculadora, Entrada, GrupoOpciones, OpcionCalculadora } from "./tipos";
 
-// Lista de calculadoras, en el orden en que salen en /calculadoras.
-// Para agregar una: crea su archivo (como bloques.ts) y súmala aquí. Nada más.
-export const CALCULADORAS: Calculadora[] = [
-  bloques,
-  concreto,
-  friso,
-  cabillas,
-  pintura,
-  rejas,
-  barniz,
-  ceramica,
-  contrapiso,
-  techo,
-  impermeabilizacion,
-  drywall,
-  cerca,
+// Calculadoras agrupadas por tipo de trabajo, en el orden en que salen en /calculadoras (cada grupo con su título).
+// Para agregar una: crea su archivo (como bloques.ts) y súmala a su grupo aquí. Nada más.
+export const GRUPOS_CALCULADORAS: { titulo: string; calculadoras: Calculadora[] }[] = [
+  { titulo: "Obra gris", calculadoras: [bloques, concreto, cabillas, contrapiso, friso] },
+  { titulo: "Pintura y acabados", calculadoras: [pintura, rejas, barniz, ceramica, drywall] },
+  { titulo: "Techos y exteriores", calculadoras: [techo, impermeabilizacion, cerca] },
 ];
+
+/** Todas, en el mismo orden (las usan las rutas, el carrito y los buscadores). */
+export const CALCULADORAS: Calculadora[] = GRUPOS_CALCULADORAS.flatMap((g) => g.calculadoras);
 
 export function obtenerCalculadora(slug: string): Calculadora | undefined {
   return CALCULADORAS.find((c) => c.slug === slug);

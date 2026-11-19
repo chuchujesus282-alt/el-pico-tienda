@@ -59,7 +59,7 @@ export function calcularTecho(entrada: Entrada): Resultado {
 
 export const techo: Calculadora = {
   slug: "techo",
-  imagen: null, // foto pendiente (persona B): el espacio queda con el plano del ícono
+  imagen: "/calculadoras/techo-materiales.jpg", // foto del trabajo (public/calculadoras/)
   titulo: "Techo con láminas",
   descripcion: "Láminas de zinc o Acerotec y los tornillos para fijarlas.",
   icono: IconoLamina,
